@@ -73,7 +73,9 @@ classdef Utilities < handle
             end
             
             disp('Calculating results...');
+            % Train results (note last argument)
             Utilities.results([logsDir filesep 'Results'],1);
+            % Test results 
             Utilities.results([logsDir filesep 'Results']);
             rmpath('Measures');
             rmpath('Algorithms');
@@ -99,8 +101,8 @@ classdef Utilities < handle
                         
             experimentos = dir([experiment_folder filesep '*-*']);
 
-            idx=strfind(experiment_folder,'Results');
-            scriptpath = [experiment_folder(1:idx-1)];
+            %idx=strfind(experiment_folder,'Results');
+            %scriptpath = [experiment_folder(1:idx-1)];
    
             for i=1:numel(experimentos)
                 if experimentos(i).isdir
@@ -123,13 +125,13 @@ classdef Utilities < handle
                         guess_files = dir([experiment_folder filesep experimentos(i).name filesep 'Guess' filesep 'test_*']);
                     end
                     
-                    str=predicted_files(1).name;
-                    [matchstart,matchend] = regexp( str,'_(.+)\.\d+');
-                    dataset=str(matchstart+1:matchend-2);
+                    %str=predicted_files(1).name;
+                    %[matchstart,matchend] = regexp( str,'_(.+)\.\d+');
+                    %dataset=str(matchstart+1:matchend-2);
 
-                    auxscript =  experimentos(i).name;
-                    [matchstart,matchend]=regexp(auxscript,dataset);
-                    basescript = ['exp-' auxscript(matchend+2:end) '-' dataset '-'];
+                    %auxscript =  experimentos(i).name;
+                    %[matchstart,matchend]=regexp(auxscript,dataset);
+                    %basescript = ['exp-' auxscript(matchend+2:end) '-' dataset '-'];
 
                     % Discard "." and ".."
                     time_files = time_files(3:numel(time_files));
@@ -305,6 +307,7 @@ classdef Utilities < handle
             while ~feof(fid),
                 nueva_linea = fgetl(fid);
                 if strncmpi(nueva_linea,'%',1),
+                    %Doing nothing!
                 elseif strcmpi('new experiment', nueva_linea),
                     num_experiment = num_experiment + 1;
                     id_experiment = num2str(num_experiment);
@@ -339,6 +342,8 @@ classdef Utilities < handle
                         fich = fopen(fichero,'w');
                         fprintf(fich, [directory filesep splitstring{i} filesep 'gpor']);
                         fclose(fich);
+
+			runfolds = numel(train{i});
                         
                         for j=1:runfolds,
                             fichero = [fichero_ini '-' splitstring{i} '-' num2str(j)];
