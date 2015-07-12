@@ -1,15 +1,13 @@
-
-Utilities.runExperiments('tests/scriptPOM')
-Utilities.runExperiments('tests/scriptELMOR')
-Utilities.runExperiments('tests/scriptFHSVM')
-Utilities.runExperiments('tests/scriptKDLOR')
-Utilities.runExperiments('tests/scriptORBoostAllPer')
-Utilities.runExperiments('tests/scriptPOM')
-Utilities.runExperiments('tests/scriptREDSVM')
-Utilities.runExperiments('tests/scriptSVC1_1')
-Utilities.runExperiments('tests/scriptSVC1_A')
-Utilities.runExperiments('tests/scriptSVC1_AOrdinal')
-Utilities.runExperiments('tests/scriptSVOREX')
-Utilities.runExperiments('tests/scriptSVORIM')
-Utilities.runExperiments('tests/scriptSVORIMLIBSVM')
-Utilities.runExperiments('tests/scriptSVR')
+Utilities.runExperiments('tests/cssvc')
+Utilities.runExperiments('tests/elmop')
+Utilities.runExperiments('tests/kdlor')
+Utilities.runExperiments('tests/orboostall') % no
+Utilities.runExperiments('tests/pom')
+Utilities.runExperiments('tests/redsvm')
+Utilities.runExperiments('tests/svc1v1')
+Utilities.runExperiments('tests/svc1va')
+Utilities.runExperiments('tests/svmop')
+Utilities.runExperiments('tests/svorex') % no
+Utilities.runExperiments('tests/svorim') % no
+Utilities.runExperiments('tests/svorimlin') % no
+Utilities.runExperiments('tests/svr')
