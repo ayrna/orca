@@ -1,4 +1,4 @@
-classdef ELMOR < Algorithm
+classdef ELMOP < Algorithm
     %ELM Extreme Learning Machine
     %   This class derives from the Algorithm Class and implements the
     %   ELM method with some alternatives
@@ -47,7 +47,7 @@ classdef ELMOR < Algorithm
         % 
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         
-        function obj = ELMOR(activationFunction)%, opt)
+        function obj = ELMOP(activationFunction)%, opt)
             obj.name = 'Extreme Learning Machine for Ordinal Regression';
             if(nargin ~= 0)
                 obj.activationFunction = activationFunction;
@@ -306,7 +306,7 @@ classdef ELMOR < Algorithm
             end
 
             model.OutputWeight = OutputWeight;
-            model.algorithm = 'ELMOR';
+            model.algorithm = 'ELMOP';
             model.parameters = parameters;
 
         end

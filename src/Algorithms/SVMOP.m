@@ -1,8 +1,8 @@
-classdef FHSVM < Algorithm
-    % FHSVM Support vector machines using Frank & Hall method for ordinal
+classdef SVMOP < Algorithm
+    % SVMOP Support vector machines using Frank & Hall method for ordinal
     % regression (by binary decomposition)
     %   This class derives from the Algorithm Class and implements the
-    %   FHSVM method.
+    %   SVMOP method.
     %   Characteristics:
     %               -Kernel functions: Yes
     %               -Ordinal: Yes
@@ -31,9 +31,9 @@ classdef FHSVM < Algorithm
         
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         %
-        % Function: FHSVM (Public Constructor)
+        % Function: SVMOP (Public Constructor)
         % Description: It constructs an object of the class
-        %               FHSVM and sets its characteristics.
+        %               SVMOP and sets its characteristics.
         % Type: Void
         % Arguments:
         %           kernel--> Type of Kernel function
@@ -41,7 +41,7 @@ classdef FHSVM < Algorithm
         %
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         
-        function obj = FHSVM(kernel)
+        function obj = SVMOP(kernel)
             obj.name = 'Frank Hall Support Vector Machines';
             if(nargin ~= 0)
                 obj.kernelType = kernel;
@@ -108,7 +108,7 @@ classdef FHSVM < Algorithm
             model_information.testTime = etime(c2,c1);
             
             model.models=models;
-            model.algorithm = 'FHSVM';
+            model.algorithm = 'SVMOP';
             model.parameters = param;
             model.weights = obj.weights;
             model_information.model = model;
@@ -120,7 +120,7 @@ classdef FHSVM < Algorithm
         %
         % Function: train (Public)
         % Description: This function train the model for
-        %               the FHSVM algorithm.
+        %               the SVMOP algorithm.
         % Type: [Array, Array]
         % Arguments:
         %           trainPatterns --> Trainning data for
