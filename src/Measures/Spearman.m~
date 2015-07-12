@@ -73,20 +73,6 @@ classdef Spearman < Metric
 
         end
 
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        %
-        % Function: calculateCrossvalMetric (static)
-        % Description: Computes the evaluation metric
-        % Outputs: metric results
-        % Arguments:
-        %           argum1--> First argument (confusion matrix or predictions)
-	%	    argum2--> Second argument (true labels)
-	% 	    If there is only one argument, the results are computed
-	%	    using the confusion matrix. In other case, with the
-	%	    predictions and true labels.
-        %
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 	function value = calculateCrossvalMetric(argum1,argum2)
             if nargin == 2,
                 value = 1 - Spearman.calculateMetric(argum1,argum2);

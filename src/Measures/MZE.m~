@@ -3,7 +3,7 @@
 % María Pérez Ortiz (i82perom at uco dot es)
 % Javier Sánchez Monedero (jsanchezm at uco dot es)
 %
-% This file implements the code for the Spearman's Rho.
+% This file implements the code for the Mean Zero Error (MZE).
 % 
 % The code has been tested with Ubuntu 12.04 x86_64, Debian Wheezy 8, Matlab R2009a and Matlab 2011
 % 
@@ -31,17 +31,17 @@
 % Licence available at: http://www.gnu.org/licenses/gpl-3.0.html
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+classdef MZE < Metric
 
-classdef Spearman < Metric
- 
-     methods
-         function obj = MZE(obj)
-                 obj.name = 'Rho Spearman';
-         end
-     end
+    methods
+        function obj = MZE()
+                obj.name = 'Mean Zero Error';
+        end
+    end
     
     methods(Static = true)
 	    
+
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         %
         % Function: calculateMetric (static)
@@ -56,26 +56,17 @@ classdef Spearman < Metric
         %
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-        function spearman = calculateMetric(argum1,argum2)
-            
-            if nargin < 2,
-                [argum1, argum2] = calculaEtiquetasViaCM(argum1);
-            end
-	
-            n = size(argum1,1);
-		    num = sum((argum1-repmat(mean(argum1),n,1)).*(argum2-repmat(mean(argum2),n,1)));
-		    div= sqrt(sum((argum1-repmat(mean(argum1),n,1)).^2)*sum((argum2-repmat(mean(argum2),n,1)).^2));    
-		    if(num == 0)
-                spearman = 0;
+        function ccr = calculateMetric(argum1,argum2)
+            if nargin == 2,
+                ccr = 1 - (sum(argum1==argum2)/numel(argum1));
             else
-                spearman = num/div;
-    		end
-
+                ccr = 1 - sum(diag(cm)) / sum(sum(cm));
+            end
         end
 
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         %
-        % Function: calculateCrossvalMetric (static)
+        % Function: calculateMetric (static)
         % Description: Computes the evaluation metric
         % Outputs: metric results
         % Arguments:
@@ -89,13 +80,10 @@ classdef Spearman < Metric
 
 	function value = calculateCrossvalMetric(argum1,argum2)
             if nargin == 2,
-                value = 1 - Spearman.calculateMetric(argum1,argum2);
+                value = MZE.calculateMetric(argum1,argum2);
             else
-                value = 1 - Spearman.calculateMetric(argum1);
+                value = MZE.calculateMetric(argum1);
             end
-        end
-        
     end
-            
-    
+    end
 end
