@@ -1,0 +1,21 @@
+# Definimos los nodos del grafo
+JOB CREATEEXPERIMENTS ./FECHA_ACTUAL-SCRIPT_EJECUCION/condor-createExperiments.submit
+JOB RUNEXPERIMENTS ./FECHA_ACTUAL-SCRIPT_EJECUCION/condor-runExperiments.submit
+JOB JOINRESULTS ./FECHA_ACTUAL-SCRIPT_EJECUCION/condor-joinResults.submit
+
+# Definimos las variables para cada uno de los procesos
+
+# Fichero en el que se encuentra el fichero XML original
+VARS CREATEEXPERIMENTS nombreExperimento="SCRIPT_EJECUCION"
+VARS CREATEEXPERIMENTS directorio="FECHA_ACTUAL-SCRIPT_EJECUCION"
+
+# Raiz de los ficheros XML del algoritmo
+VARS RUNEXPERIMENTS numRuns="NUMERO_RUNS"
+VARS RUNEXPERIMENTS directorio="FECHA_ACTUAL-SCRIPT_EJECUCION"
+
+# Carpeta en la que se encuentran todas las salidas generadas por el algoritmo
+VARS JOINRESULTS directorio="FECHA_ACTUAL-SCRIPT_EJECUCION"
+
+# Definimos las dependencias
+PARENT CREATEEXPERIMENTS CHILD RUNEXPERIMENTS
+PARENT RUNEXPERIMENTS CHILD JOINRESULTS

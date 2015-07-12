@@ -1,0 +1,51 @@
+##################################
+#### Ejecutar el Algoritmo ####### 
+##################################
+
+# Universo
+universe = vanilla
+
+# Ejecutable, en este caso un jar. Cuelga del directorio de inicio
+executable = condor-runExperiments.sh
+
+# Argumentos del ejecutable
+arguments = $(directorio) $(Process)
+
+# No hay transferencia de archivos, hay NFS
+should_transfer_files = no
+
+# Requerimientos de arquitectura, cpu, memoria, etc para lanzar una tarea.
+#+MachineList1 = Machine == "srvrrycinf05.priv.uco.es" || Machine == "srvrrycinf06.priv.uco.es" || Machine == "srvrrycinf07.priv.uco.es" || Machine == "srvrrycinf08.priv.uco.es" || Machine == "srvrrycinf09.priv.uco.es" || Machine == "srvrrycinf10.priv.uco.es" || Machine == "srvrrycinf11.priv.uco.es" || Machine == "srvrrycinf12.priv.uco.es" || Machine == "srvrrycarn01.priv.uco.es" || Machine == "srvrrycarn02.priv.uco.es" || Machine == "srvrrycarn03.priv.uco.es" || Machine == "srvrrycarn04.priv.uco.es"
+# Y poner abajo "&& MachineList1"
+requirements = ((Arch == "X86_64" && OpSys == "Linux") || (Arch == "INTEL" && OpSys == "Linux")) && (Memory >= 400)
+
+# Requerimientos de memoria (Memory >= 400)
+
+# Si tenemos que elegir entre distintas máquina, como hacemos el ranking
+Rank = Memory
+
+# Fichero de log
+# DAG obliga a que solo haya un fichero de log!!
+log = ./$(directorio)/condor-runExperiments.log
+
+# Fichero de salida por consola
+output = ./$(directorio)/condor-runExperiments-$(Process).out
+
+# Fichero de errores (aquí podremos ver las excepciones JAVA)
+error = ./$(directorio)/condor-runExperiments-$(Process).err
+
+# Notificacion por correo cuando se producza algún error en la prueba
+notification = Error
+notify_user = i82perom@uco.es
+
+# Prioridad de nuestro proceso propietario, por defecto a 0. Cada usuario le puede dar
+# a sus jobs la prioridad que desee entre [-20.20]. Otra cosa distinta es la prioridad
+# del usuario, la cual configura el administrador y tambien Condor mediante la macro
+# PRIORITY_HALFLIFE
+priority = 0
+
+# Hacer que estén todas las variables de entorno actuales en la ejecución del proceso
+getenv = True
+
+# Poner en cola 100 ejecuciones teniendo en cuenta la variable $(Process)
+queue $(numRuns)
