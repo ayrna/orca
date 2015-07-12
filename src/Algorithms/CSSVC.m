@@ -1,11 +1,8 @@
-classdef OREnsemblePer < Algorithm
-    % -------
-    % TODO: Muy mal hecho
-    % -------
-    
-    %KDLOR Kernel Discriminant Learning for Ordinal Regression
+classdef CSSVC < Algorithm
+    %CSSVCOrdinal Support Vector Classifier using 1VsAll approach with ordinal
+    % weights
     %   This class derives from the Algorithm Class and implements the
-    %   KLDOR method. 
+    %   CSSVC method. 
     %   Characteristics: 
     %               -Kernel functions: Yes
     %               -Ordinal: Yes
@@ -24,19 +21,17 @@ classdef OREnsemblePer < Algorithm
         %               kernel parameters
         %
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        
-        parameters = []
-        name_parameters = {}
-        weights = true;
+        name_parameters = {'C','k'}
+        parameters
     end
     
     methods
     
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         %
-        % Function: KDLOR (Public Constructor)
+        % Function: CSSVCOrdinal (Public Constructor)
         % Description: It constructs an object of the class
-        %               KDLOR and sets its characteristics.
+        %               CSSVCOrdinal and sets its characteristics.
         % Type: Void
         % Arguments: 
         %           kernel--> Type of Kernel function
@@ -44,8 +39,13 @@ classdef OREnsemblePer < Algorithm
         % 
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         
-        function obj = OREnsemblePer()
-            obj.name = 'OR Ensemble with perceptron';
+        function obj = CSSVC(kernel)
+            obj.name = 'Support Vector Machine Classifier with 1vsAll paradigm with ordinal weights';
+            if(nargin ~= 0)
+                 obj.kernelType = kernel;
+            else
+                obj.kernelType = 'rbf';
+            end
             
         end
         
@@ -61,7 +61,8 @@ classdef OREnsemblePer < Algorithm
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
         function obj = defaultParameters(obj)
-            obj.parameters = [];
+            obj.parameters.C = 10.^(-3:1:3);
+            obj.parameters.k = 10.^(-3:1:3);
         end
 
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -81,41 +82,27 @@ classdef OREnsemblePer < Algorithm
         % 
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-        function [model_information] = runAlgorithm(obj,train, test)
-                trainFile = tempname();
-                dlmwrite(trainFile,[train.patterns train.targets],'delimiter',' ','precision',10);
-                testFile = tempname();
-                dlmwrite(testFile,[test.patterns test.targets],'delimiter',' ','precision',10);
-                modelFile = tempname();
+        function [model_information] = runAlgorithm(obj,train, test, parameters)
+            	addpath(fullfile('Algorithms','libsvm-weights-3.12','matlab'));
+                param.C = parameters(1);
+                param.k = parameters(2);
                 
                 c1 = clock;
-                obj.train( train,trainFile, modelFile);
+                model = obj.train(train, param);
                 c2 = clock;
                 model_information.trainTime = etime(c2,c1);
+                
                 c1 = clock;
-                [model_information.projectedTrain,model_information.predictedTrain] = obj.test(train,trainFile,modelFile);
-                [model_information.projectedTest,model_information.predictedTest] = obj.test(test,testFile,modelFile);
+                [model_information.projectedTrain, model_information.predictedTrain] = obj.test(train,model);
+                [model_information.projectedTest,model_information.predictedTest ] = obj.test(test,model);
                 c2 = clock;
                 model_information.testTime = etime(c2,c1);
-                
-                fid = fopen(modelFile);
-                s = textscan(fid,'%s','Delimiter','\n','bufsize', 2^18-1);
-                s = s{1};
-                fclose(fid);
-                
-                model.algorithm = 'OREnsemble';
-                model.textInformation = s;
-                model.weights = obj.weights;
+                           
+                model.algorithm = 'CSSVC';
+                model.parameters = param;
                 model_information.model = model;
-                
-                system(['rm ' trainFile]);
-                system(['rm ' testFile]);
-                system(['rm ' modelFile]);
 
-                
-%                 dataSetStatistics.projectedTest = p2;
-%                 dataSetStatistics.projectedTrain = p;
-                 
+            	rmpath(fullfile('Algorithms','libsvm-weights-3.12','matlab'));
 
         end
         
@@ -134,23 +121,45 @@ classdef OREnsemblePer < Algorithm
         % 
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         
-        function train( obj,train,trainFile, modelFile )
-            execute_train = sprintf('./Algorithms/orensemble/hack.sh ./Algorithms/orensemble/boostrank-train %s %d %d %d1 204 %d 2000 %s',trainFile,size(train.patterns,1),size(train.patterns,2),(3+obj.weights),max(unique(train.targets)),modelFile);
-            system(execute_train);
+        function [model]= train( obj, train, param)  
+            options = ['-t 2 -c ' num2str(param.C) ' -g ' num2str(param.k) ' -q'];
+            
+            labelSet = unique(train.targets);
+            labelSetSize = length(labelSet);
+            models = cell(labelSetSize,1);
+
+            for i=1:labelSetSize,
+                etiquetas = double(train.targets == labelSet(i));
+                weights = obj.ordinalWeights(i, train.targets);
+                models{i} = svmtrain(weights,etiquetas, train.patterns, options);
+            end
+
+            model = struct('models', {models}, 'labelSet', labelSet);
+
         end
         
-        function [projected, testTargets]= test( obj,test,testFile,modelFile )
-                predictFile = tempname();
-                execute_test = sprintf('./Algorithms/orensemble/hack.sh ./Algorithms/orensemble/boostrank-predict %s %d %d %s 2000 %s',testFile,size(test.patterns,1),size(test.patterns,2),modelFile,predictFile);
-
-                system(execute_test);
-                all = load(predictFile);
-                testTargets = all(:,1);
-                projected = all(:,2);
-                system(['rm ' predictFile]);
-                
-
-        end  
+        function [decv, pred]= test(obj, test, model)
             
+            labelSet = model.labelSet;
+            labelSetSize = length(labelSet);
+            models = model.models;
+            decv= zeros(size(test.targets, 1), labelSetSize);
+
+            for i=1:labelSetSize
+                etiquetas = double(test.targets == labelSet(i));
+                [l,a,d] = svmpredict(etiquetas, test.patterns, models{i});
+                decv(:, i) = d * (2 * models{i}.Label(1) - 1);
+            end
+
+            [tmp,pred] = max(decv, [], 2);
+            pred = labelSet(pred);
+
+        end      
+        
+        function [weights] = ordinalWeights(obj, p, targets)
+            weights = ones(size(targets));
+            weights(targets~=p) = (abs(p-targets(targets~=p))+1) * size(targets(targets~=p),1) / sum(abs(p-targets(targets~=p))+1);
+            weights(targets==p) = 1;
+        end
     end
 end
