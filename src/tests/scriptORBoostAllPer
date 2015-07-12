@@ -1,0 +1,20 @@
+% ----------------------------------------------------------
+% Names of experiments should be unique for each script file
+% ----------------------------------------------------------
+% weigths=true => ORBoostAll
+% weigths=false => ORBoostLR
+new experiment
+name
+orboostall-real
+dir
+/home/javi/uco/SVNAYRNA/framework-matlab/ayrnaMatlab/datasets/ordinal/real/30-holdout
+datasets
+pasture
+algorithm
+OREnsemblePer
+standarize
+1
+weights
+true
+end experiment
+
