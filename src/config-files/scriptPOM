@@ -5,7 +5,7 @@ new experiment
 name
 pom-real
 dir
-../../../datasets/ordinal/real/30-holdout
+/home/javi/uco/SVNAYRNA/framework-matlab/ayrnaMatlab/datasets/ordinal/real/30-holdout
 datasets
 automobile,balance-scale,bondrate,car,contact-lenses,ERA,ESL,eucalyptus,LEV,marketing,newthyroid,pasture,squash-stored,squash-unstored,SWD,tae,thyroid,toy,winequality-red,winequality-white
 algorithm
@@ -18,7 +18,7 @@ new experiment
 name
 pom-regression5
 dir
-../../../datasets/ordinal/regression/5bins/
+/home/javi/uco/SVNAYRNA/framework-matlab/ayrnaMatlab/datasets/ordinal/regression/5bins/
 datasets
 abalone,housing,machine,pyrim,stock
 algorithm
@@ -31,7 +31,7 @@ new experiment
 name
 pom-regression10
 dir
-../../../datasets/ordinal/regression/10bins/
+/home/javi/uco/SVNAYRNA/framework-matlab/ayrnaMatlab/datasets/ordinal/regression/10bins/
 datasets
 abalone10,housing10,machine10,pyrim10,stock10
 algorithm
