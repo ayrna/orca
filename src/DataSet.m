@@ -1,99 +1,61 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Copyright (C) Pedro Antonio Gutiérrez (pagutierrez at uco dot es)
+% María Pérez Ortiz (i82perom at uco dot es)
+% Javier Sánchez Monedero (jsanchezm at uco dot es)
+%
+% This file implements the code for handling the different data partitions (mainly preprocessing steps), presented in the paper Ordinal regression methods: survey and experimental study published in the IEEE Transactions on Knowledge and Data Engineering. 
+% 
+% The code has been tested with Ubuntu 12.04 x86_64, Debian Wheezy 8, Matlab R2009a and Matlab 2011
+% 
+% If you use this code, please cite the associated paper
+% Code updates and citing information:
+% http://www.uco.es/grupos/ayrna/orreview
+% https://github.com/ayrna/orca
+% 
+% AYRNA Research group's website:
+% http://www.uco.es/ayrna 
+%
+% This program is free software; you can redistribute it and/or
+% modify it under the terms of the GNU General Public License
+% as published by the Free Software Foundation; either version 3
+% of the License, or (at your option) any later version.
+%
+% This program is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+% GNU General Public License for more details.
+%
+% You should have received a copy of the GNU General Public License
+% along with this program; if not, write to the Free Software
+% Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA. 
+% Licence available at: http://www.gnu.org/licenses/gpl-3.0.html
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 classdef DataSet < handle
     % DataSet 
-    % Class to specify the name of the databases and process them for further
-    % use of the data.
+    % Class to specify the name of the datasets and preprocess them.
     
     properties
-        
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        %
-        % Variable: directory (Public)
-        % Type: String
-        % Description: It specifies the directory 
-        %               containing the set of
-        %               databases. For example:
-        %               'dataset-real-holdout\30-holdout' 
-        %
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        
+
         directory = ''
         
         train = ''
        
         test = ''
         
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        %
-        % Variable: standarize (Public)
-        % Type: Logical
-        % Description: This variable specifies if the data 
-        %               will be standarized. By default, 
-        %               this variable is assigned
-        %               to 1, so, the data is standarized.
-        %
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        
         standarize = true
-        
-        reorderlabels = 0
         
         dataname = ''
         
-%         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%         %
-%         % Variable: relabel (Public)
-%         % Type: String
-%         % Description: This variable specifies whether the labels
-%         %               must be converted. For instance, most ANNs
-%         %               needs a binary representation instead of 
-%         %               integer numbersdefault, 
-%         %
-%         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%         
-%         relabel = 'no' % 'no'/'integer', 'binary', 'latent'
-        
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        %
-        % Variable: nOfFolds (Public)
-        % Type: Integer
-        % Description: Number of partitions of the data 
-        %               for doing the
-        %               parameters crossvalidation
-        %
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        
         nOfFolds = 5
-        
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        %
-        % Variable: repeatFold (Public)
-        % Type: Logical
-        % Description: This variable is set to the number 
-        %               of repetitions we
-        %               want to do with the same fold.
-        %
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        
-        repeatFold = 1
-        
 
+        repeatFold = 1
 
     end
     
     
     methods   
-        
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        %
-        % Function: DataSet (Public Constructor)
-        % Description: It constructs an object of the class
-        %               DataSet and fixes the directory 
-        %               to the value of the argument.
-        % Type: Void
-        % Arguments: 
-        %           direct--> Value for the variable directory.
-        % 
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+       
         
         function obj = dataSet(direct)
             if(nargin ~= 0)
@@ -101,18 +63,6 @@ classdef DataSet < handle
             end
         end
         
-      
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        %
-        % Function: set.directory (Public)
-        % Description: It verifies if the value for the 
-        %               variable directory is correct 
-        %           and it exists a directory with this name.
-        % Type: Void
-        % Arguments: 
-        %           direc--> directory to be processed.
-        % 
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         
         function obj = set.directory(obj,direc)
                 if isdir(direc)
@@ -125,19 +75,12 @@ classdef DataSet < handle
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         %
         % Function: preProcessData (Public)
-        % Description: This funciton preprocess a file 
-        %               indicated by the argument 'file'
-        %               and the number of the folder 'folder'.
-        %               It checks if the file exists and 
-        %               in that case it loads the patterns 
-        %               and targets for training and testing. 
-        %               Besides, it deletes the constant and
-        %               non numerical atributes and standarize
-        %               the data.
-        % Type: It returns the patterns loaded from the file (train and test)
+        % Description: This funciton preprocess a data partition, 
+	%               deletes the constant and non numerical atributes
+	% 		and standarize the data.
+        % Type: It returns the patterns loaded from the file (trainSet and testSet)
         % Arguments: 
-        %           folder--> Number of the folder in which the file is.
-        %           file--> Number of the file.
+        %           No arguments
         % 
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         
@@ -169,20 +112,7 @@ classdef DataSet < handle
                             otherwise
                                 %do nothing
                         end
-                        
-%                         % add sone useful information
-%                         trainSet.uniqueTargets = unique(trainSet.targets);
-%                         testSet.uniqueTargets = unique(testSet.targets);
-%                         
-%                         trainSet.nOfClasses = length(trainSet.uniqueTargets);
-%                         testSet.nOfClasses = trainSet.nOfClasses; % Number of classes that we see on the train set
-%                         
-%                         [trainSet.nOfPatterns trainSet.dim] = size(trainSet.patterns);
-%                         [testSet.nOfPatterns testSet.dim] = size(testSet.patterns);
-%                         
-%                         trainSet.nOfPattPerClass = sum(repmat(trainSet.targets,1,size(trainSet.uniqueTargets,1))==repmat(trainSet.uniqueTargets',size(trainSet.targets,1),1));
-%                         testSet.nOfPattPerClass = sum(repmat(testSet.targets,1,size(testSet.uniqueTargets,1))==repmat(testSet.uniqueTargets',size(testSet.targets,1),1));
-
+ 
                           datasetname=[obj.directory filesep obj.train];
                           [matchstart,matchend] = regexpi(datasetname,filesep);
                           trainSet.name = datasetname(matchend(end)+1:end);
@@ -201,8 +131,8 @@ classdef DataSet < handle
         
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         %
-        % Function: standarizeData (Private)
-        % Description: It standarize a set of training and testing
+        % Function: standarizeData (static)
+        % Description: standarize a set of training and testing
         %               patterns.
         % Type: It returns the standarized patterns (train and test)
         % Arguments: 
@@ -231,7 +161,7 @@ classdef DataSet < handle
         
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         %
-        % Function: deleteNonNumericalValues (Private)
+        % Function: deleteNonNumericalValues (static)
         % Description: This function deletes non numerical
         %               values in the data, as NaN or Inf.
         % Type: It returns the patterns without non numerical
@@ -272,11 +202,10 @@ classdef DataSet < handle
         
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         %
-        % Function: deleteConstantAtributes (Private)
+        % Function: deleteConstantAtributes (static)
         % Description: This function deletes constant 
-        %               atributes because they are not 
-        %               helpful for the classification.
-        % Type: It returns the patterns without this constant atributes
+        %               atributes.
+        % Type: It returns the patterns without this constant attributes
         % Arguments: 
         %           trainSet--> Array of training patterns
         %           testSet--> Array of testing patterns
@@ -308,197 +237,18 @@ classdef DataSet < handle
                 end
         end
         
-        
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         %
-        % Function:  (Private)
-        % Description: This function reorder the target 
-        %               labels. 
-        % Type: It returns the new dataset with label reordering. 
+        % Function: standarizeFunction (static)
+        % Description: Function for data standarization.
+        % Type: It returns the standardized patterns (XN), 
+	%	the mean (Xmeans) and the standard deviation (XStds)
         % Arguments: 
-        %           trainSet--> Array of training patterns
-        %           testSet--> Array of testing patterns
+        %           X--> data
+        %           XMeans--> Data mean (optional)
+	%	    XStds --> Standard deviation for the data (optional)
         % 
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        
-        function [trainSet,testSet] = reorderLabels(trainSet, testSet)
-            labels = unique([trainSet.targets;testSet.targets]);
-            J = max(labels);
-            
-            switch(J)
-                case 2 % :P
-                    labelsre = [2;1];
-                case 3
-                    labelsre = [1;3;2];
-                case 4
-                    labelsre = [1;4;2;3];
-                case 5
-                    labelsre = [3;1;5;2;4];
-                case 6
-                    labelsre = [1;5;2;4;6;3];
-                case 7
-                    labelsre = [3;1;7;5;2;6;4];
-                case 8
-                    labelsre = [3;8;1;7;5;2;6;4];
-                case 9
-                    labelsre = [3;8;1;7;5;9;2;6;4];
-                case 10
-                    labelsre = [3;10;8;1;7;5;9;2;6;4];
-                case 19
-                    labelsre = [3;19;10;13;8;18;1;16;11;7;5;12;17;9;2;15;6;4;14];
-                otherwise
-                    error('¡Number of classes is too high!')
-            end
-            
-            trainTargets = zeros(size(trainSet.targets,1),1);
-            testTargets = zeros(size(testSet.targets,1),1);
-            
-            % Esto es para resistir a distinto número de etiquetas por
-            % clase en la partición train/test
-            labels = unique(trainSet.targets);
-            for j=1:length(labels)
-                trainTargets(trainSet.targets==labels(j,1)) = labelsre(j,1);
-            end
-            
-            labels = unique(testSet.targets);
-            for j=1:length(labels)
-                testTargets(testSet.targets==labels(j,1)) = labelsre(j,1);
-            end
-            
-            % Reordenamos el dataset por la etiqueta tal porque esto lo
-            % asumen algunos métodos. 
-            P = [trainSet.patterns,trainTargets];
-            P = sortrows(P,size(P,2));            
-            trainSet.patterns = P(:,1:end-1);
-            trainSet.targets = P(:,end);
-            
-            P = [testSet.patterns,testTargets];
-            P = sortrows(P,size(P,2));            
-            testSet.patterns = P(:,1:end-1);
-            testSet.targets = P(:,end);
-            
-        end
- 
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        %
-        % Function: reorderLabelsInverse (Private)
-        % Description: This function reorder the target 
-        %               labels. 
-        % Type: It returns the patterns without this constant atributes
-        % Arguments: 
-        %           trainSet--> Array of training patterns
-        %           testSet--> Array of testing patterns
-        % 
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        
-        function [trainSet, testSet] = reorderLabelsInverse(trainSet, testSet)
-            labels = unique([trainSet.targets;testSet.targets]);
-            
-            labelsre=sort(labels,1,'descend');
-            
-            % Esto es para resistir a distinto número de etiquetas por
-            % clase en la partición train/test
-            labels = unique(trainSet.targets);
-            for j=1:length(labels)
-                trainTargets(trainSet.targets==labels(j,1)) = labelsre(j,1);
-            end
-            
-            labels = unique(testSet.targets);
-            for j=1:length(labels)
-                testTargets(testSet.targets==labels(j,1)) = labelsre(j,1);
-            end
-            
-            %trainSetLabels = trainTargets';
-            %testSetLabels = testTargets';
-            
-            % Reordenamos el dataset por la etiqueta tal porque esto lo
-            % asumen algunos métodos. 
-            P = [trainSet.patterns,trainTargets'];
-            P = sortrows(P,size(P,2));            
-            trainSet.patterns = P(:,1:end-1);
-            trainSet.targets = P(:,end);
-            
-            P = [testSet.patterns,testTargets'];
-            P = sortrows(P,size(P,2));            
-            testSet.patterns = P(:,1:end-1);
-            testSet.targets = P(:,end);
-        end
-        
-%         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%         %
-%         % Function: labelToBinary (Private)
-%         % Description: 
-%         % Type: 
-%         % Arguments: 
-%         %           trainSet--> Array of training patterns
-%         %           testSet--> Array of testing patterns
-%         % 
-%         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%         
-%         function [trainSet, testSet] = labelToBinary(trainSet,testSet)
-%             % Adapt labels to Matlab's newff / ELM / etc. 
-% 
-%             % NOTE: This option based on full + ind2vec is not valid since 
-%             % it have problems if a datasets do not have patterns of a
-%             % given class
-%             %DataSet.TrainTT = full(ind2vec(DataSet.TrainT'));
-%             %DataSet.TestTT = full(ind2vec(DataSet.TestT'));
-% 
-%             trainN = size(trainSet.targets,1);
-%             TT = zeros(trainN,trainSet.nOfClasses);
-%             for ii=1:trainN
-%                 TT(ii,trainSet.targets(ii,1)) = 1;
-%             end
-% 
-%             trainSet.targetsBinary = TT;
-% 
-%             testN = size(testSet.targets,1);
-%             TT = zeros(testN,testSet.nOfClasses);
-%             for ii=1:testN
-%                 TT(ii,testSet.targets(ii,1)) = 1;
-%             end
-% 
-%             testSet.targetsBinary = TT;
-% 
-%             clear trainN testN TT;
-%         end
-%         
-%         
-%         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%         %
-%         % Function: labelToOrelm (Private)
-%         % Description: 
-%         % Type: 
-%         % Arguments: 
-%         %           trainSet--> Array of training patterns
-%         %           testSet--> Array of testing patterns
-%         % 
-%         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%         
-%         function [trainSet, testSet] = labelToOrelm(trainSet,testSet)
-% 
-%             uniqueTargets = unique(trainSet.targets);
-%             newTargets = zeros(trainSet.nOfPatterns,trainSet.nOfClasses);
-% 
-%             for i=1:trainSet.nOfClasses,
-%                 newTargets(trainSet.targets<uniqueTargets(i),i) = -1;
-%                 newTargets(trainSet.targets>=uniqueTargets(i),i) = 1;
-%             end
-%             
-%             trainSet.targetsOrelm = newTargets;
-%             
-%             uniqueTargets = unique(testSet.targets);
-%             newTargets = zeros(testSet.nOfPatterns,testSet.nOfClasses);
-% 
-%             for i=1:testSet.nOfClasses,
-%                 newTargets(testSet.targets<uniqueTargets(i),i) = -1;
-%                 newTargets(testSet.targets>=uniqueTargets(i),i) = 1;
-%             end
-%             
-%             testSet.targetsOrelm = newTargets;
-%             clear newTargets;
-%         end
-
 
 	function [XN, XMeans, XStds] = standarizeFunction(X,XMeans,XStds)
 
