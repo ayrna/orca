@@ -98,6 +98,12 @@ classdef Utilities < handle
                    
             addpath('Measures');
             addpath('Algorithms');
+
+            if nargin < 2
+                train = 0;
+            elseif nargin == 1
+                train = train;
+            end
                         
             experimentos = dir([experiment_folder filesep '*-*']);
 
