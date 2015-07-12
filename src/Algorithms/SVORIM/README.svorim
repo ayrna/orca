@@ -1,0 +1,95 @@
+########################################################################
+
+Support Vector Ordinal Regression with Explicit Constraints v1.0
+Chu Wei (C)Copyright 2002-2004 at Gatsby Unit.
+
+########################################################################
+
+1. Installation
+	a) download svorim.tar to your machine (assume Linux)
+	b) tar -xvf svorim.tar
+	c) cd svorim
+	d) gcc -o svorim *.c -lm -O2 -Wall
+	
+2. Data Format
+	a) data should be stored as plain text files.
+	b) each line contains one sample.
+	c) elements are separated by a space.
+	c) for each line, the last element is the target, integers from 1
+	 to rank R; other elements are of the input vector.
+	d) training data saved in a text file, say "mytask_train.0".
+	e) the data for test with no targers saved in "mytask_test.0".
+	f) the test targets are saved in "mytask_targets.0" if available.
+	g) "mytask" could be any string followed by "_train" and "_test".
+	
+3. Input and Output
+	a) prepare your data files
+		"mytask_train.0"
+		"mytask_test.0"
+		"mytask_targets.0" (optional)
+	b) run the program
+		./svorim mytask_train.0
+	c) 5-fold cross validation will be done for model selection.
+	d) output files
+		1) "mytask_cguess.0" to save predictive ordinal scales
+		 for test data, integers from 1 to R.
+		2) "mytask_cguess.0.svm.conf" to save the predictive
+		 function values of test data.
+		3) "mytask_train.0.svm.conf" to save the function values
+		 of training data at the optimal solution.
+		4) "mytask_train.0.validation" to save the validation
+		 results of the function values for training data.
+		5) "mytask_train.0.svm.alpha" to save the optimal
+		 alphas and thresholds.
+		6) "validation_explicit.log" to save the model we selected.
+		
+	e) if you have a BATCH of tasks, prepare your data files as
+	 "mytask_train.0" "mytask_test.0" "mytask_targets.0"(optional),
+	 "mytask_train.1" "mytask_test.1" "mytask_targets.1"(optional),
+	 "mytask_train.2" "mytask_test.2" "mytask_targets.2"(optional),
+	 ... ...
+	 the program 'svorim' will make them done one by one.
+	 the results of these files are saved in "ordinal_explicit.log".
+	
+4. Options
+	a) for help information
+		./svorim
+	b) specify K-fold cross validation, say 10-fold
+		./svorim -F 10 mytask_train.0
+	c) specify the number of Rehearsal that could reduce the
+	 randomness in fold generation, say 20 times
+		./svorim -R 20 mytask_train.0
+	d) specify the grid for searching in the space of model parameter
+	 say C starting from 0.001 ending at 1000 with step 10^1
+		./svorim -Cc 0.001 -Ce 1000 -Cs 1 mytask_train.0 
+	 similar for Kappa (for Gaussian kernel only)
+		./svorim -Kc 0.001 -Ke 1000 -Ks 1 mytask_train.0
+	e) specify the times of 'zoom in' in grid searching, say 3 times
+		./svorim -Z 3 mytask_train.0
+	f) specify to use linear kernel 
+		./svorim -P 1 mytask_train.0
+	g) specify to use polynomial kernel with order 3
+		./svorim -P 3 mytask_train.0
+	h) normalize input features to normal distribution
+		./svorim -i mytask_train.0
+	i) seed the random number generator for reproducibility
+		./svorim -S 2004 mytask_train.0
+
+5. Reference
+	"Support Vector Ordinal Regression and its Solution",
+	Chu, W and S. S. Keerthi, Technical Report, 2004
+	http://www.gatsby.ucl.ac.uk/~chuwei/paper/svors.pdf
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
