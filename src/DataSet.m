@@ -103,15 +103,7 @@ classdef DataSet < handle
                             %[trainSet, testSet] = obj.scaleData(trainSet,testSet);
                             [trainSet, testSet] = obj.deleteNonNumericValues(trainSet, testSet);
                         end
-                        
-                        switch(obj.reorderlabels)
-                            case 1
-                                [trainSet, testSet] = obj.reorderLabels(trainSet, testSet);
-                            case 2
-                                [trainSet, testSet] = obj.reorderLabelsInverse(trainSet, testSet);
-                            otherwise
-                                %do nothing
-                        end
+                      
  
                           datasetname=[obj.directory filesep obj.train];
                           [matchstart,matchend] = regexpi(datasetname,filesep);
