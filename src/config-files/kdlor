@@ -3,13 +3,13 @@
 % ----------------------------------------------------------
 new experiment
 name
-svc1vaord-mae-real
+kdlor-mae-real
 dir
 ../../../datasets/ordinal/real/30-holdout
 datasets
 automobile,balance-scale,bondrate,car,contact-lenses,ERA,ESL,eucalyptus,LEV,marketing,newthyroid,pasture,squash-stored,squash-unstored,SWD,tae,thyroid,toy,winequality-red,winequality-white
 algorithm
-SVC_1vAOrdinal
+KDLOR
 num fold
 5
 standarize
@@ -17,9 +17,11 @@ standarize
 crossval
 mae
 parameter C
-10.^(-3:1:3)
+10.^(-1:1:1)
 parameter k
 10.^(-3:1:3)
+parameter u 
+0.01,0.001,0.0001,0.00001,0.000001
 kernel
 rbf
 seed
@@ -28,72 +30,25 @@ end experiment
 
 new experiment
 name
-svc1vaord-mae-regression5
-dir
-../../../datasets/ordinal/regression/5bins/
-datasets
-abalone,housing,machine,pyrim,stock,bank1-5,bank2-5,calhousing-5,census1-5,census2-5,computer1-5,computer2-5
-algorithm
-SVC_1vAOrdinal
-num fold
-5
-standarize
-1
-crossval
-mae
-parameter C
-10.^(-3:1:3)
-parameter k
-10.^(-3:1:3)
-kernel
-rbf
-seed
-1
-end experiment
-
-new experiment
-name
-svc1vaord-mae-regression10
-dir
-../../../datasets/ordinal/regression/10bins/
-datasets
-abalone10,housing10,machine10,pyrim10,stock10,,bank1-10,bank2-10,calhousing-10,census1-10,census2-10,computer1-10,computer2-10
-algorithm
-SVC_1vAOrdinal
-num fold
-5
-standarize
-1
-crossval
-mae
-parameter C
-10.^(-3:1:3)
-parameter k
-10.^(-3:1:3)
-kernel
-rbf
-seed
-1
-end experiment
-new experiment
-name
-svc1vaord-mze-real
+kdlor-mze-real
 dir
 ../../../datasets/ordinal/real/30-holdout
 datasets
 automobile,balance-scale,bondrate,car,contact-lenses,ERA,ESL,eucalyptus,LEV,marketing,newthyroid,pasture,squash-stored,squash-unstored,SWD,tae,thyroid,toy,winequality-red,winequality-white
 algorithm
-SVC_1vAOrdinal
+KDLOR
 num fold
 5
 standarize
 1
 crossval
-ccr
+mze
 parameter C
-10.^(-3:1:3)
+10.^(-1:1:1)
 parameter k
 10.^(-3:1:3)
+parameter u 
+0.01,0.001,0.0001,0.00001,0.000001
 kernel
 rbf
 seed
@@ -102,23 +57,25 @@ end experiment
 
 new experiment
 name
-svc1vaord-mze-regression5
+kdlor-mae-regression5
 dir
 ../../../datasets/ordinal/regression/5bins/
 datasets
-abalone,housing,machine,pyrim,stock,bank1-5,bank2-5,calhousing-5,census1-5,census2-5,computer1-5,computer2-5
+abalone,housing,machine,pyrim,stock
 algorithm
-SVC_1vAOrdinal
+KDLOR
 num fold
 5
 standarize
 1
 crossval
-ccr
+mae
 parameter C
-10.^(-3:1:3)
+10.^(-1:1:1)
 parameter k
 10.^(-3:1:3)
+parameter u 
+0.01,0.001,0.0001,0.00001,0.000001
 kernel
 rbf
 seed
@@ -127,23 +84,79 @@ end experiment
 
 new experiment
 name
-svc1vaord-mze-regression10
+kdlor-mze-regression5
 dir
-../../../datasets/ordinal/regression/10bins/
+../../../datasets/ordinal/regression/5bins/
 datasets
-abalone10,housing10,machine10,pyrim10,stock10,,bank1-10,bank2-10,calhousing-10,census1-10,census2-10,computer1-10,computer2-10
+abalone,housing,machine,pyrim,stock
 algorithm
-SVC_1vAOrdinal
+KDLOR
 num fold
 5
 standarize
 1
 crossval
-ccr
+mze
 parameter C
-10.^(-3:1:3)
+10.^(-1:1:1)
 parameter k
 10.^(-3:1:3)
+parameter u 
+0.01,0.001,0.0001,0.00001,0.000001
+kernel
+rbf
+seed
+1
+end experiment
+
+new experiment
+name
+kdlor-mae-regression10
+dir
+../../../datasets/ordinal/regression/10bins/
+datasets
+abalone10,housing10,machine10,pyrim10,stock10
+algorithm
+KDLOR
+num fold
+5
+standarize
+1
+crossval
+mae
+parameter C
+10.^(-1:1:1)
+parameter k
+10.^(-3:1:3)
+parameter u 
+0.01,0.001,0.0001,0.00001,0.000001
+kernel
+rbf
+seed
+1
+end experiment
+
+new experiment
+name
+kdlor-mze-regression10
+dir
+../../../datasets/ordinal/regression/10bins/
+datasets
+abalone10,housing10,machine10,pyrim10,stock10
+algorithm
+KDLOR
+num fold
+5
+standarize
+1
+crossval
+mze
+parameter C
+10.^(-1:1:1)
+parameter k
+10.^(-3:1:3)
+parameter u 
+0.01,0.001,0.0001,0.00001,0.000001
 kernel
 rbf
 seed

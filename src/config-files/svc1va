@@ -9,7 +9,7 @@ dir
 datasets
 automobile,balance-scale,bondrate,car,contact-lenses,ERA,ESL,eucalyptus,LEV,marketing,newthyroid,pasture,squash-stored,squash-unstored,SWD,tae,thyroid,toy,winequality-red,winequality-white
 algorithm
-SVC_1vA
+SVC1VA
 num fold
 5
 standarize
@@ -34,7 +34,7 @@ dir
 datasets
 abalone,housing,machine,pyrim,stock
 algorithm
-SVC_1vA
+SVC1VA
 num fold
 5
 standarize
@@ -59,7 +59,7 @@ dir
 datasets
 abalone10,housing10,machine10,pyrim10,stock10
 algorithm
-SVC_1vA
+SVC1VA
 num fold
 5
 standarize
