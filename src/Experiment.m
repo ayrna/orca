@@ -103,7 +103,9 @@ classdef Experiment < handle
                 totalResults.crossvaltime = crossvaltime;
             else
                 totalResults = obj.method.runAlgorithm(train, test);
-            end    
+            end
+
+	    obj.saveResults(totalResults);    
             
         end
 
