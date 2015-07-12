@@ -3,7 +3,7 @@
 ORCA (Ordinal Regression and Classification Algorithms) is a MATLAB framework including a wide set of ordinal regression methods associated to the paper "Ordinal regression methods: survey and experimental study" published in IEEE Transactions on Knowledge and Data Engineering. If you use this framework please cite the following work:
 
 ```
-P.A. Gutiérrez, M. Pérez-Ortiz, J. Sánchez-Monedero, F. Fernández-Navarro and C. Hervás-Martínez (2015), "Ordinal regression methods: survey and experimental study", IEEE Transactions on Knowledge and Data Engineering. Vol. Accepted 
+P.A. Gutiérrez, M. Pérez-Ortiz, J. Sánchez-Monedero, F. Fernández-Navarro and C. Hervás-Martínez (2015), "Ordinal regression methods: survey and experimental study", IEEE Transactions on Knowledge and Data Engineering. Vol. Accepted
 ```
 
 Bibtex entry:
@@ -21,19 +21,17 @@ Bibtex entry:
 For more information about the paper and the ordinal datasets used please visit the associated webpage: http://www.uco.es/grupos/ayrna/orreview
 For more information about our reserarch group please visit [Learning and Artificial Neural Networks (AYRNA) website](http://www.uco.es/grupos/ayrna/index.php/en).
 
-The code is mainly composed of the following folders and files: 
-	-doc: Folder containing the documentation (class diagram and example of use)
-	-src: Folder containing the matlab code. 
+The code is mainly composed of the following folders and files:
+- doc: Folder containing the documentation (class diagram and example of use)
+- src: Folder containing the matlab code.
 
-The src folder contains the following folders and files: 
-	-Algorithms: Folder containing the matlab classes for the algorithms included and the original code (if applicable).
-	-condor: Folder with the necessary files and steps for using condor with our framework.
-	-config-files: Folder with different scripts for running all the algorithms.
-	-Measures: Folder with the matlab classes for the metrics used for evaluating the classifiers.
-	-Algorithm.m: File that sets the necessary properties and functions for an algorithm class.
-	-DataSet.m: Matlab class for data preprocessing.
-	-Experiment.m: Matlab class that runs the different experiments.
-	-Metric.m: File that sets the necessary properties and functions for a metric class.
-	-Utilities.m: Class that preprocess the experiment files, run the different algorithms and produces the results.
-
-
+The src folder contains the following folders and files:
+- Algorithms: Folder containing the matlab classes for the algorithms included and the original code (if applicable).
+- condor: Folder with the necessary files and steps for using condor with our framework.
+- config-files: Folder with different configuration files for running all the algorithms.
+- Measures: Folder with the matlab classes for the metrics used for evaluating the classifiers.
+- Algorithm.m: File that sets the necessary properties and functions for an algorithm class.
+- [DataSet.m](src/DataSet.m): Matlab class for data preprocessing.
+- Experiment.m: Matlab class that runs the different experiments.
+- Metric.m: File that sets the necessary properties and functions for a metric class.
+- Utilities.m: Class that preprocess the experiment files, run the different algorithms and produces the results.
