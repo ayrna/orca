@@ -1,9 +1,39 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Copyright (C) Pedro Antonio Gutiérrez (pagutierrez at uco dot es)
+% María Pérez Ortiz (i82perom at uco dot es)
+% Javier Sánchez Monedero (jsanchezm at uco dot es)
+%
+% This file contains the class that configures and executes the experiments, presented in the paper Ordinal regression methods: survey and experimental study published in the IEEE Transactions on Knowledge and Data Engineering. 
+% 
+% The code has been tested with Ubuntu 12.04 x86_64, Debian Wheezy 8, Matlab R2009a and Matlab 2011
+% 
+% If you use this code, please cite the associated paper
+% Code updates and citing information:
+% http://www.uco.es/grupos/ayrna/orreview
+% https://github.com/ayrna/orca
+% 
+% AYRNA Research group's website:
+% http://www.uco.es/ayrna 
+%
+% This program is free software; you can redistribute it and/or
+% modify it under the terms of the GNU General Public License
+% as published by the Free Software Foundation; either version 3
+% of the License, or (at your option) any later version.
+%
+% This program is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+% GNU General Public License for more details.
+%
+% You should have received a copy of the GNU General Public License
+% along with this program; if not, write to the Free Software
+% Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA. 
+% Licence available at: http://www.gnu.org/licenses/gpl-3.0.html
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%﻿
+
 classdef Utilities < handle
-    % Algorithm Abstract interface class
-    % Abstract class which defines Machine Learning algorithms.
-    % It describes some common methods and variables for all the
-    % algorithMs.
-    
+    % Utilities class
+    % Class that contains several methods for configurating and running the experiments
     
     properties
          
@@ -11,20 +41,20 @@ classdef Utilities < handle
     
     
     methods (Static = true)
+
+     	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        %
+        % Function: runExperiments (static)
+        % Description: Function for setting and running the experiments
+        % Type: void
+        % Arguments:
+        %           -ficheroExperimentos: Name for the current experiment file
+        %
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         
         function runExperiments(ficheroExperimentos)
-            % Guardamos esto aquí porque la información se guarda en 
-            % Data dentro de Experiment y los objetos son destruídos
-            % antes de procesar la carpeta de experimentos
-            % Hay que declararla como global en cada función que vaya a
-            % usarla
-            % http://stackoverflow.com/questions/9961697/undefined-function-or-variable-in-matlab
-            global reorderlabels; 
-            reorderlabels = 0;
             
             c = clock;
-            %addpath libsvm-2.81/
-            %addpath libsvm-weights-3.12/matlab
             addpath('Measures');
             addpath('Algorithms');
             dirSuffix = [num2str(c(1)) '-' num2str(c(2)) '-'  num2str(c(3)) '-' num2str(c(4)) '-' num2str(c(5)) '-' num2str(uint8(c(6)))];
@@ -33,11 +63,9 @@ classdef Utilities < handle
             
             ficheros_experimentos = dir([logsDir filesep 'exp-*']);
             
-            
             for i=1:numel(ficheros_experimentos),
                 if ~strcmp(ficheros_experimentos(i).name(end), '~')
                     auxiliar = Experiment;
-                    reorderlabels = auxiliar.data.reorderlabels;
                     
                     disp(['Running experiment ', ficheros_experimentos(i).name]);
                     auxiliar.launch([logsDir filesep ficheros_experimentos(i).name]);
@@ -45,27 +73,27 @@ classdef Utilities < handle
             end
             
             disp('Calculating results...');
-            if auxiliar.topology
-                Utilities.resultsMCTOL([logsDir filesep 'Results']);
-            else
-                Utilities.results([logsDir filesep 'Results'],1);
-                Utilities.results([logsDir filesep 'Results']);
-            end
+            Utilities.results([logsDir filesep 'Results'],1);
+            Utilities.results([logsDir filesep 'Results']);
             rmpath('Measures');
             rmpath('Algorithms');
             
         end
         
+     	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        %
+        % Function: results (static)
+        % Description: Function for computing the results
+        % Type: void
+        % Arguments:
+        %           -experiment_folder: folder where the information
+	%				about the experiment is contained
+	%	    -train: train set structure
+        %
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         
         function results(experiment_folder,train)
-            global reorderlabels;           
-            
-            if nargin < 2
-                train = 0;
-            elseif nargin == 1
-                train = train;
-            end
-                                    
+                   
             addpath('Measures');
             addpath('Algorithms');
                         
@@ -73,10 +101,7 @@ classdef Utilities < handle
 
             idx=strfind(experiment_folder,'Results');
             scriptpath = [experiment_folder(1:idx-1)];
-            %experimentos_scripts = dir([experiment_folder(1:idx-1) 'exp-*']);
-            
-            % Recorremos las carpetas de experimentos ejecutados para sacar los
-            % resultados
+   
             for i=1:numel(experimentos)
                 if experimentos(i).isdir
                     disp([experiment_folder filesep experimentos(i).name filesep 'dataset'])
@@ -98,8 +123,6 @@ classdef Utilities < handle
                         guess_files = dir([experiment_folder filesep experimentos(i).name filesep 'Guess' filesep 'test_*']);
                     end
                     
-
-                    % recomponemos el nombre de los scripts
                     str=predicted_files(1).name;
                     [matchstart,matchend] = regexp( str,'_(.+)\.\d+');
                     dataset=str(matchstart+1:matchend-2);
@@ -124,7 +147,7 @@ classdef Utilities < handle
 
                     times = [];
                     param = [];
-                    % Recorremos cada fichero de test de la carpeta de resultados
+
                     for j=1:numel(predicted_files)
                         pred{j} = importdata([experiment_folder filesep experimentos(i).name filesep 'Predictions' filesep predicted_files(j).name]);
                         times(:,j) = importdata([experiment_folder filesep experimentos(i).name filesep 'Times' filesep time_files(j).name]);
@@ -138,52 +161,9 @@ classdef Utilities < handle
                         actual = importdata([ruta_dataset filesep real_files(j).name]);
                         act{j} = actual(:,end);
 
-                        % jsanchez: Si hemos reetiquetado, reequitamos antes de evaluar 
-                        % TODO: modificar las funciones de coste de las
-                        % métricas ordinales como MAE, AMAE...
-                        fid = fopen([scriptpath basescript num2str(j)],'r');
-                        tline = fgetl(fid);
-                        while ischar(tline)
-                            if strcmpi(tline,'reorderlabels')
-                                reorderlabels = str2num(fgetl(fid));
-                            end
-                            tline = fgetl(fid);
-                        end
-                        fclose(fid);
-                        
-                        if ~exist('reorderlabels','var') || isempty(reorderlabels)
-                            reorderlabels = 0;
-                        end
-
-                        switch(reorderlabels)
-                            case 1
-                                dummyTrain.patterns = zeros(size(act{j}));
-                                dummyTrain.targets = act{j};
-                                
-                                dummyTest.patterns = zeros(size(act{j}));
-                                dummyTest.targets = act{j};
-                                
-                                [dummyTrain,dummyTest] = DataSet.reorderLabels(dummyTrain, dummyTest);
-                                act{j} = dummyTest.targets;
-                                
-                                clear dummyTrain dummyTest;
-                            case 2
-                                dummyTrain.patterns = zeros(size(act{j}));
-                                dummyTrain.targets = act{j};
-                                
-                                dummyTest.patterns = zeros(size(act{j}));
-                                dummyTest.targets = act{j};
-                                
-                                [dummyTrain,dummyTest] = DataSet.reorderLabelsInverse(dummyTrain, dummyTest);
-                                act{j} = dummyTest.targets;
-                                
-                                clear dummyTrain dummyTest;
-                            otherwise
-                                % do nothing
-                        end
                     end
 
-                    names = {'Dataset', 'Acc', 'MAcc', 'GM', 'MS', 'AUC', 'MAE', 'AMAE', 'MMAE', 'MinMAE','RSpearman', 'Tkendall', 'Wkappa', 'TrainTime', 'TestTime', 'CrossvalTime'};%, 'ClassCCR'};
+                    names = {'Dataset', 'Acc', 'GM', 'MS', 'MAE', 'AMAE', 'MMAE','RSpearman', 'Tkendall', 'Wkappa', 'TrainTime', 'TestTime', 'CrossvalTime'};
 
                     if length(hyp_files)~=0
                         for j=1:numel(struct_hyperparams(1).textdata),
@@ -192,19 +172,15 @@ classdef Utilities < handle
                     end
 
                     accs = cell2mat(cellfun(@CCR.calculateMetric, act, pred, 'UniformOutput', false)) * 100;
-                    mccrs = cell2mat(cellfun(@MCCR.calculateMetric, act, pred, 'UniformOutput', false)) * 100;
                     gms = cell2mat(cellfun(@GM.calculateMetric, act, pred, 'UniformOutput', false)) * 100;
                     mss = cell2mat(cellfun(@MS.calculateMetric, act, pred, 'UniformOutput', false)) * 100;
-                    aucs = cell2mat(cellfun(@AUC.calculateMetric, act, proj, 'UniformOutput', false));
                     maes = cell2mat(cellfun(@MAE.calculateMetric, act, pred, 'UniformOutput', false));
                     amaes = cell2mat(cellfun(@AMAE.calculateMetric, act, pred, 'UniformOutput', false));
                     maxmaes = cell2mat(cellfun(@MMAE.calculateMetric, act, pred, 'UniformOutput', false));
-                    minmaes = cell2mat(cellfun(@MinMAE.calculateMetric, act, pred, 'UniformOutput', false));
                     spearmans = cell2mat(cellfun(@Spearman.calculateMetric, act, pred, 'UniformOutput', false));
                     kendalls = cell2mat(cellfun(@Tkendall.calculateMetric, act, pred, 'UniformOutput', false));
                     wkappas = cell2mat(cellfun(@Wkappa.calculateMetric, act, pred, 'UniformOutput', false));
-                    %classccrs = cell2mat(cellfun(@ClassCCR.calculateMetric, act, pred, 'UniformOutput', false));
-                    results_matrix = [accs; mccrs; gms; mss; aucs; maes; amaes; maxmaes; minmaes; spearmans; kendalls; wkappas; times(1,:); times(2,:); times(3,:)];%; classccrs];
+                    results_matrix = [accs; gms; mss; maes; amaes; maxmaes; spearmans; kendalls; wkappas; times(1,:); times(2,:); times(3,:)];
                     if length(hyp_files)~=0
                         for j=1:numel(struct_hyperparams(1).textdata),
                             results_matrix = [results_matrix ; param(j,:) ];
@@ -272,17 +248,7 @@ classdef Utilities < handle
                         fid = fopen([experiment_folder filesep 'mean-results_test.csv'],'at');
                     end
                 
-%                     if i==1,
-%                         fprintf(fid, 'Dataset-Experiment,');
-% 
-%                         for h = 2:numel(names),
-%                             fprintf(fid, 'Mean%s,Std%s,', names{h},names{h});
-%                         end
-%                         fprintf(fid,'\n');
-%                     end
-
-                    % Si no existe previamente el fichero, añadimos la
-                    % cabecera                    
+                  
                     if add_head
                         fprintf(fid, 'Dataset-Experiment,');
 
@@ -308,152 +274,23 @@ classdef Utilities < handle
             
             
         end
-        
-        function resultsMCTOL(experiment_folder,train)
-            addpath('Measures');
-            addpath('Algorithms');
-            
-            global reorderlabels;           
-            
-            if nargin < 2
-                train = 0;
-            end
-                        
-            experimentos = dir([experiment_folder filesep '*-*']);
-
-            idx=strfind(experiment_folder,'Results');
-            scriptpath = [experiment_folder(1:idx-1)];
-            %experimentos_scripts = dir([experiment_folder(1:idx-1) 'exp-*']);
-            
-            % Recorremos las carpetas de experimentos ejecutados para sacar los
-            % resultados
-            for i=1:numel(experimentos)
-                if experimentos(i).isdir
-                    disp([experiment_folder filesep experimentos(i).name filesep 'dataset'])
-                    fid = fopen([experiment_folder filesep experimentos(i).name filesep 'dataset'],'r');
-                    ruta_dataset = fgetl(fid);
-                    fclose(fid);
-
-                    %TODO: Seleccionar qué carpetas se crean o no en
-                    %función de los algoritmos
-                    topology_files = dir([experiment_folder filesep experimentos(i).name filesep 'Topology' filesep '*stochasticmatrix']);
-                    
-                    time_files = dir([experiment_folder filesep experimentos(i).name filesep 'Times' filesep '*.*']);
-                    hyp_files = dir([experiment_folder filesep experimentos(i).name filesep 'OptHyperparams' filesep '*.*']);
-                    
-                    % recomponemos el nombre de los scripts
-                    str=topology_files(1).name;
-                    [matchstart,matchend] = regexp( str,'\.\d+');
-                    dataset = str(1:matchstart-1);
-
-                    auxscript =  experimentos(i).name;
-                    [matchstart,matchend]=regexp(auxscript,dataset);
-                    basescript = ['exp-' auxscript(matchend+2:end) '-' dataset '-'];
-                    
-                    % TODO: suprimir model_* ??
-                    %model_files = dir([experiment_folder filesep experimentos(i).name filesep 'Models' filesep '*.*']);
-                    topo_lo_files = dir([experiment_folder filesep experimentos(i).name filesep 'Topology' filesep '*.loss']);
-                    topo_od_files = dir([experiment_folder filesep experimentos(i).name filesep 'Topology' filesep '*.ordinalitydegree']);
-                    topo_st_files = dir([experiment_folder filesep experimentos(i).name filesep 'Topology' filesep '*.stochasticmatrix']);
-                    
-
-                    % Discard "." and ".."
-                    time_files = time_files(3:numel(time_files));
-                    %model_files = model_files(3:numel(model_files));
-                    
-                    topo_loss = cell(1,numel(time_files));
-                    topo_sthoc = cell(1,numel(time_files));
-
-                    times = [];
                 
-                    % Recorremos cada fichero de test de la carpeta de resultados
-                    for j=1:numel(topology_files)
-                        times(:,j) = importdata([experiment_folder filesep experimentos(i).name filesep 'Times' filesep time_files(j).name]);
-                        
-                        topo_loss{:,j} = importdata([experiment_folder filesep experimentos(i).name filesep 'Topology' filesep topo_lo_files(j).name]);
-                        topo_odegree(:,j) = importdata([experiment_folder filesep experimentos(i).name filesep 'Topology' filesep topo_od_files(j).name]);
-                        topo_sthoc{:,j} = importdata([experiment_folder filesep experimentos(i).name filesep 'Topology' filesep topo_st_files(j).name]);
-                    end
-                    
-                    names = {'Dataset', 'OrdDegree', 'TrainTime', 'TestTime', 'CrossvalTime'};
-                        
-                    results_matrix = [topo_odegree; times(1,:); times(2,:); times(3,:)];
-
-    %                 for j=1:numel(struct_hyperparams(1).textdata),
-    %                     results_matrix = [results_matrix ; param(j,:) ];
-    %                 end
-
-
-                    results_matrix = results_matrix';
-
-                    fid = fopen([experiment_folder filesep experimentos(i).name filesep 'results.csv'],'w');
-                    for h = 1:numel(names),
-                        fprintf(fid, '%s,', names{h});
-                    end
-                    fprintf(fid,'\n');
-
-                    for h = 1:size(results_matrix,1),
-                        fprintf(fid, '%s,', time_files(h).name);
-                        for z = 1:size(results_matrix,2),
-                            fprintf(fid, '%f,', results_matrix(h,z));
-                        end
-                        fprintf(fid,'\n');
-                    end
-                    fclose(fid);
-
-                    medias = mean(results_matrix,1);
-                    stdev = std(results_matrix,0,1);
-
-                    fid = fopen([experiment_folder filesep 'mean-results.csv'],'at');
-
-                    if i==1,
-                        fprintf(fid, 'Dataset-Experiment,');
-
-                        for h = 2:numel(names),
-                            fprintf(fid, 'Mean%s,Std%s,', names{h},names{h});
-                        end
-                        fprintf(fid,'\n');
-                    end
-
-                    fprintf(fid, '%s,', experimentos(i).name);
-                    for h = 1:numel(medias),
-                        fprintf(fid, '%f,%f,', medias(h), stdev(h));
-                    end
-                    fprintf(fid,'\n');
-                    fclose(fid);
-
-                    % Stochastic Matrices
-                    fid = fopen([experiment_folder filesep 'stochastic-matrices.csv'],'at');
-
-                    for h=1:size(topo_sthoc,1)
-                        SMtemp = topo_sthoc{h,1};
-                        [cm_fi cm_co] = size(SMtemp);
-
-                        fprintf(fid, ['# Stochastic Matrix for ' time_files(h).name ' fold ' num2str(h) '\n']);
-                        % For each matrix
-                        for mi=1:cm_fi
-                            for mj=1:cm_co-1
-                                fprintf(fid,'%1.4f\t',SMtemp(mi,mj));
-                            end
-                            fprintf(fid,'%1.4f\n',SMtemp(mi,cm_co)); 
-                        end
-                    end
-
-                    fprintf(fid,'\n');
-                    fclose(fid);
-                
-                end
-            end
-            rmpath('Measures');
-            rmpath('Algorithms');
-            
-        end
-                
+     	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        %
+        % Function: configureExperiment (static)
+        % Description: Function for setting the configuration of the
+	% 	different experiments
+        % Output: -logsDir: Folder where the logs are contained 
+        % Arguments:
+        %           -ficheroExperimentos: Name for the current experiment file
+	%	    -dirSuffix: experiment directory identifier
+        %
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         
         function logsDir = configureExperiment(ficheroExperimentos,dirSuffix)
             
             if( ~(exist(ficheroExperimentos,'file')))
-                fprintf('The file %s does not exist!!!\n',ficheroExperimentos);
+                fprintf('The file %s does not exist\n',ficheroExperimentos);
                 return;
             end
             
@@ -467,9 +304,7 @@ classdef Utilities < handle
             
             while ~feof(fid),
                 nueva_linea = fgetl(fid);
-                %fprintf('configureExperiment: %s\n', nueva_linea)
                 if strncmpi(nueva_linea,'%',1),
-                    %Doing nothing!
                 elseif strcmpi('new experiment', nueva_linea),
                     num_experiment = num_experiment + 1;
                     id_experiment = num2str(num_experiment);
@@ -480,34 +315,22 @@ classdef Utilities < handle
                     directory = fgetl(fid);
                 elseif strcmpi('datasets', nueva_linea),
                     datasets = fgetl(fid);
-                % jsanchez
-%                 elseif strcmpi('algorithm', nueva_linea),
-%                      algorithmName = fgetl(fid);
-%                      fprintf('\tconfigureExperiment algorithm: %s\n', algorithmName)
                 elseif strcmpi('folds', nueva_linea),
-                    nOfFolds = str2num(fgetl(fid)); %#ok<ST2NM> % 0 means all
+                    nOfFolds = str2num(fgetl(fid)); 
                 elseif strcmpi('end experiment', nueva_linea),
                     fichero_ini = [logsDir filesep 'exp-' id_experiment];
                     [matchstart,matchend,tokenindices,matchstring,tokenstring,tokenname,splitstring] = regexpi(datasets,',');
                     if( ~(exist(directory,'dir')))
-                        fprintf('The directory %s does not exist!!!\n',directory);
+                        fprintf('The directory %s does not exist\n',directory);
                         return;
                     end
                     [train, test] = Utilities.processDirectory(directory,splitstring);
                     for i=1:numel(train)
                         aux_directory = [resultados filesep splitstring{i} '-' id_experiment];
                         mkdir(aux_directory);
-                        
-%                         if strcmpi(algorithm,'MCTOL')
-%             	            mkdir([aux_directory filesep 'Topology']);
-%                         else
-%                             mkdir([aux_directory filesep 'OptHyperparams']);
-%                         end
-
-                        mkdir([aux_directory filesep 'Topology']);
+                       
                         mkdir([aux_directory filesep 'OptHyperparams']);
-                        
-                        mkdir([aux_directory filesep 'Times']);
+                                                mkdir([aux_directory filesep 'Times']);
                         mkdir([aux_directory filesep 'Models']);
                         mkdir([aux_directory filesep 'Predictions']);
                         mkdir([aux_directory filesep 'Guess']);
@@ -516,12 +339,6 @@ classdef Utilities < handle
                         fich = fopen(fichero,'w');
                         fprintf(fich, [directory filesep splitstring{i} filesep 'gpor']);
                         fclose(fich);
-                        % jsanchez: Number of folds
-                        if nOfFolds == 0
-                            runfolds = numel(train{i});
-                        else
-                            runfolds = nOfFolds;
-                        end
                         
                         for j=1:runfolds,
                             fichero = [fichero_ini '-' splitstring{i} '-' num2str(j)];
@@ -543,6 +360,17 @@ classdef Utilities < handle
             
         end
         
+     	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        %
+        % Function: processDirectory (static)
+        % Description: Function for processing the dataset
+        % Output:  -trainFileNames: Files for the different training folds
+	%	   -testFileNames: Files for the different test folds
+        % Arguments:
+        %           -directory: Name for the current experiment file
+	%	    -dataSetNames: experiment directory identifier
+        %
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         
         function [trainFileNames, testFileNames] = processDirectory(directory, dataSetNames)
             dbs = dir(directory);
@@ -576,6 +404,16 @@ classdef Utilities < handle
             end
         end
         
+     	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        %
+        % Function: runExperiment (static)
+        % Description: Simple function for launching the experiments
+        % Type: void
+        % Arguments:
+        %           No arguments
+        %
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
         function runExperiment(fichero)
             addpath('Measures');
             addpath('Algorithms');
