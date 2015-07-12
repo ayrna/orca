@@ -1,0 +1,49 @@
+% ----------------------------------------------------------
+% Names of experiments should be unique for each script file
+% ----------------------------------------------------------
+% weigths=true => ORBoostAll
+% weigths=false => ORBoostLR
+new experiment
+name
+orboostall-real
+dir
+../../../datasets/ordinal/real/30-holdout
+datasets
+automobile,balance-scale,bondrate,car,contact-lenses,ERA,ESL,eucalyptus,LEV,marketing,newthyroid,pasture,squash-stored,squash-unstored,SWD,tae,thyroid,toy,winequality-red,winequality-white
+algorithm
+OREnsemblePer
+standarize
+1
+weights
+true
+end experiment
+
+new experiment
+name
+orboostall-regression5
+dir
+../../../datasets/ordinal/regression/5bins/
+datasets
+abalone,housing,machine,pyrim,stock
+algorithm
+OREnsemblePer
+standarize
+1
+weights
+true
+end experiment
+
+new experiment
+name
+orboostall-regression10
+dir
+../../../datasets/ordinal/regression/10bins/
+datasets
+abalone10,housing10,machine10,pyrim10,stock10
+algorithm
+OREnsemblePer
+standarize
+1
+weights
+true
+end experiment
