@@ -61,7 +61,7 @@ kdlor-mae-regression5
 dir
 ../../../datasets/ordinal/regression/5bins/
 datasets
-abalone,housing,machine,pyrim,stock
+abalone,housing,machine,pyrim,stock,bank1-5,bank2-5,calhousing-5,census1-5,census2-5,computer1-5,computer2-5
 algorithm
 KDLOR
 num fold
@@ -88,7 +88,7 @@ kdlor-mze-regression5
 dir
 ../../../datasets/ordinal/regression/5bins/
 datasets
-abalone,housing,machine,pyrim,stock
+abalone,housing,machine,pyrim,stock,bank1-5,bank2-5,calhousing-5,census1-5,census2-5,computer1-5,computer2-5
 algorithm
 KDLOR
 num fold
@@ -115,7 +115,7 @@ kdlor-mae-regression10
 dir
 ../../../datasets/ordinal/regression/10bins/
 datasets
-abalone10,housing10,machine10,pyrim10,stock10
+abalone10,housing10,machine10,pyrim10,stock10bank1-10,bank2-10,calhousing-10,census1-10,census2-10,computer1-10,computer2-10
 algorithm
 KDLOR
 num fold
@@ -142,7 +142,7 @@ kdlor-mze-regression10
 dir
 ../../../datasets/ordinal/regression/10bins/
 datasets
-abalone10,housing10,machine10,pyrim10,stock10
+abalone10,housing10,machine10,pyrim10,stock10bank1-10,bank2-10,calhousing-10,census1-10,census2-10,computer1-10,computer2-10
 algorithm
 KDLOR
 num fold
