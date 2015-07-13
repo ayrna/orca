@@ -146,7 +146,8 @@ classdef Experiment < handle
                 elseif strncmpi('standarize', nueva_linea, 5),
                     obj.data.standarize = str2num(fgetl(fid));
                 elseif strncmpi('weights', nueva_linea, 7),
-                    obj.method.weights = str2num(fgetl(fid));
+                    wei = fgetl(fid);
+                    eval(['obj.method.weights = ' wei ';']);
                 elseif strncmpi('crossval', nueva_linea, 8),
                     met = upper(fgetl(fid));
                     eval(['obj.cvCriteria = ' met ';']);

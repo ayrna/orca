@@ -3,13 +3,13 @@
 % ----------------------------------------------------------
 new experiment
 name
-svorim-real
+svc1v1-real
 dir
-/home/javi/uco/SVNAYRNA/framework-matlab/ayrnaMatlab/datasets/ordinal/real/30-holdout
+datasets/ordinal/real/30-holdout
 datasets
 pasture
 algorithm
-SVORIM
+SVC1V1
 num fold
 5
 standarize

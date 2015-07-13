@@ -3,25 +3,23 @@
 % ----------------------------------------------------------
 new experiment
 name
-redsvm-real
+elmor-real
 dir
-/home/javi/uco/SVNAYRNA/framework-matlab/ayrnaMatlab/datasets/ordinal/real/30-holdout
+datasets/ordinal/real/30-holdout
 datasets
 pasture
 algorithm
-REDSVM
+ELMOP
 num fold
 5
 standarize
 1
 crossval
 mae
-parameter C
-10.^(-3:1:3)
-parameter k
-10.^(-3:1:3)
-kernel
-rbf
+parameter hiddenN
+5,10,20,30,40,50,60,70,80,90,100
+ActivationFunction
+sig
 seed
 1
 end experiment

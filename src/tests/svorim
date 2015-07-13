@@ -3,13 +3,13 @@
 % ----------------------------------------------------------
 new experiment
 name
-svr-real
+svorim-real
 dir
-/home/javi/uco/SVNAYRNA/framework-matlab/ayrnaMatlab/datasets/ordinal/real/30-holdout
+datasets/ordinal/real/30-holdout
 datasets
 pasture
 algorithm
-SVR
+SVORIM
 num fold
 5
 standarize
@@ -20,8 +20,6 @@ parameter C
 10.^(-3:1:3)
 parameter k
 10.^(-3:1:3)
-parameter e
-10.^(-3:1:0)
 kernel
 rbf
 seed

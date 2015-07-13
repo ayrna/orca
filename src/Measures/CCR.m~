@@ -3,7 +3,7 @@
 % María Pérez Ortiz (i82perom at uco dot es)
 % Javier Sánchez Monedero (jsanchezm at uco dot es)
 %
-% This file implements the code for the Spearman's Rho.
+% This file implements the code for the Correct Classification Rate (CCR).
 % 
 % The code has been tested with Ubuntu 12.04 x86_64, Debian Wheezy 8, Matlab R2009a and Matlab 2011
 % 
@@ -32,16 +32,14 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-classdef Spearman < Metric
- 
-     methods
-         function obj = MZE(obj)
-                 obj.name = 'Rho Spearman';
-         end
-     end
-    
-    methods(Static = true)
-	    
+classdef CCR < Metric 
+
+    methods
+        function obj = CCR()
+                obj.name = 'Correct Classification Rate';
+        end
+    end
+
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         %
         % Function: calculateMetric (static)
@@ -55,43 +53,22 @@ classdef Spearman < Metric
 	%	    predictions and true labels.
         %
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-        function spearman = calculateMetric(argum1,argum2)
-            
-            if nargin < 2,
-                [argum1, argum2] = calculaEtiquetasViaCM(argum1);
-            end
-	
-            n = size(argum1,1);
-		    num = sum((argum1-repmat(mean(argum1),n,1)).*(argum2-repmat(mean(argum2),n,1)));
-		    div= sqrt(sum((argum1-repmat(mean(argum1),n,1)).^2)*sum((argum2-repmat(mean(argum2),n,1)).^2));    
-		    if(num == 0)
-                spearman = 0;
+    
+    methods(Static = true)
+	    
+        function ccr = calculateMetric(argum1,argum2)
+            if nargin == 2,
+                ccr = sum(argum1==argum2)/numel(argum1);
             else
-                spearman = num/div;
-    		end
-
+                ccr = sum(diag(argum1)) / sum(sum(argum1));
+            end
         end
-
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        %
-        % Function: calculateCrossvalMetric (static)
-        % Description: Computes the evaluation metric
-        % Outputs: metric results
-        % Arguments:
-        %           argum1--> First argument (confusion matrix or predictions)
-	%	    argum2--> Second argument (true labels)
-	% 	    If there is only one argument, the results are computed
-	%	    using the confusion matrix. In other case, with the
-	%	    predictions and true labels.
-        %
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 	function value = calculateCrossvalMetric(argum1,argum2)
             if nargin == 2,
-                value = 1 - Spearman.calculateMetric(argum1,argum2);
+                value = 1 - sum(argum1==argum2)/numel(argum1);
             else
-                value = 1 - Spearman.calculateMetric(argum1);
+                value = 1 - sum(diag(argum1)) / sum(sum(argum1));
             end
         end
         
@@ -99,3 +76,4 @@ classdef Spearman < Metric
             
     
 end
+

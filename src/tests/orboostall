@@ -7,11 +7,11 @@ new experiment
 name
 orboostall-real
 dir
-/home/javi/uco/SVNAYRNA/framework-matlab/ayrnaMatlab/datasets/ordinal/real/30-holdout
+datasets/ordinal/real/30-holdout
 datasets
 pasture
 algorithm
-OREnsemblePer
+ORBoost
 standarize
 1
 weights

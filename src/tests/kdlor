@@ -3,13 +3,13 @@
 % ----------------------------------------------------------
 new experiment
 name
-fhsvm-real
+kdlor-real
 dir
-/home/javi/uco/SVNAYRNA/framework-matlab/ayrnaMatlab/datasets/ordinal/real/30-holdout
+datasets/ordinal/real/30-holdout
 datasets
 pasture
 algorithm
-FHSVM
+KDLOR
 num fold
 5
 standarize
@@ -17,13 +17,13 @@ standarize
 crossval
 mae
 parameter C
-10.^(-3:1:3)
+10.^(-1:1:1)
 parameter k
 10.^(-3:1:3)
+parameter u 
+0.01,0.001,0.0001,0.00001,0.000001
 kernel
 rbf
-weights
-true
 seed
 1
 end experiment

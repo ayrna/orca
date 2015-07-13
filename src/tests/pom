@@ -3,26 +3,14 @@
 % ----------------------------------------------------------
 new experiment
 name
-svc1va-real
+pom-tests
 dir
-/home/javi/uco/SVNAYRNA/framework-matlab/ayrnaMatlab/datasets/ordinal/real/30-holdout
+datasets/ordinal/real/30-holdout
 datasets
 pasture
 algorithm
-SVC_1vA
-num fold
-5
+POM
 standarize
-1
-crossval
-mae
-parameter C
-10.^(-3:1:3)
-parameter k
-10.^(-3:1:3)
-kernel
-rbf
-seed
 1
 end experiment
 

@@ -3,12 +3,13 @@
 % ----------------------------------------------------------
 new experiment
 name
-svc1vaord-mae-real
-/home/javi/uco/SVNAYRNA/framework-matlab/ayrnaMatlab/datasets/ordinal/real/30-holdout
+cssvc-mae-real
+dir
+datasets/ordinal/real/30-holdout
 datasets
 pasture
 algorithm
-SVC_1vAOrdinal
+CSSVC
 num fold
 5
 standarize
@@ -24,4 +25,3 @@ rbf
 seed
 1
 end experiment
-
