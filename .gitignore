@@ -2,3 +2,4 @@
 *.mexa64
 src/Experiments
 src/Algorithms/orensemble/boostrank-*
+*~
