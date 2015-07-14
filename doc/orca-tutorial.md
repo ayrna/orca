@@ -151,10 +151,9 @@ The meanings of the directives associated to hyper-parameter optimisation are:
  - *num fold*: *k* value for the nested *k*-fold cross validation over the training data.
  - *crossval*: metric used to select the best hyper-parameters in the grid search. The metrics available are: `AMAE`,`CCR`,`GM`,`MAE`,`MMAE`,`MS`,`MZE`,`Spearman`,`Tkendall` and `Wkappa`.
  - List of hyper-parameters to be optimised and values considered for each parameter during the grid search:
-  - *parameter C*: add a new parameter with name `C` and a set of values of `10.^(-3:1:3)` (10<sup>-3</sup>,...,10^3).
- - Other parameters of the model depends of the specific method, here the kernel type is set up with *kernel* parameter. These are parameters that are not need to be optimized.
-
- - *seed*: is the value to initialize MATLAB random number generator. This is helpful to debug algorithms.
+  - *parameter C*: add a new parameter with name `C` and a set of values of `10.^(-3:1:3)` (10<sup>-3</sup>,10<sup>-2</sup>,...,10<sup>3</sup>).
+ - Other parameters of the model depends on the specific algorithm (and they should be checked in the documentation of the algorithm). Here the kernel type is set up with *kernel* parameter. These are parameters that will not be optimized.
+ - *seed*: is the value to initialize MATLAB random number generator. This can be helpful to debug algorithms.
 
 # Experimental results and reports
 
