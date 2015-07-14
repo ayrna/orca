@@ -161,15 +161,15 @@ ORCA uses the `Experiments` folder to store all the results of the different exp
  - Individual experiment configuration files for each dataset and partition.
  - A `Results` folder with the following information:
   - `mean-results_train.csv` and `mean-results_test.csv` which are reports in CSV format (easily read by Excel or LibreOffice Calc). They contain the mean and standard deviation for each performance measure (`AMAE`,`CCR`,`GM`,`MAE`,`MMAE`,`MS`,`MZE`,`Spearman`,`Tkendall` and `Wkappa`) and the computational time. These averages and standard deviations are obtained for all the partitions of each algorithm and dataset.
-  - One folder for each dataset with the following data:
-   - Train and test confusion matrices (`matrices.txt`).
-   - Name of the folder used for the experiments (`dataset`).
-   - Individual results for each of the partitions in CSV format (`results.csv`).
-   - Models of each partition in `.mat` format (`Models` folder).
-   - For threshold models, the one dimensional mapping (before applying the discretisation based on the thresholds) for training and test datasets ('Guess' folder).
-   - Labels predicted by the models for each partition ('Predictions' folder).
-   - Optimal hyper-parameters values obtained after nested cross-validation ('OptHyperparams').
-   - Computational time results ('Times').
+ - The `Results` folder contains one subfolder for each dataset with the following data:
+  - Train and test confusion matrices (`matrices.txt`).
+  - Name of the folder used for the experiments (`dataset`).
+  - Individual results for each of the partitions in CSV format (`results.csv`).
+  - Models of each partition in `.mat` format (`Models` folder).
+  - For threshold models, the one dimensional mapping (before applying the discretisation based on the thresholds) for training and test datasets ('Guess' folder).
+  - Labels predicted by the models for each partition ('Predictions' folder).
+  - Optimal hyper-parameters values obtained after nested cross-validation ('OptHyperparams').
+  - Computational time results ('Times').
 
 # Use ORCA with your own datasets
 
