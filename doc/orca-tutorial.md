@@ -114,7 +114,7 @@ Calculating results...
 
 As can be observed, ORCA analyses all the files included in the folder of the dataset, where the training and test partitions are included (a pair of files `train_dataset.X` and `test_dataset.X` for each dataset, where `X` is the number of partition). For each partition, a model is trained using training data and tested using test data.
 
-After running all the experiments, all the results are generated in the `Experiments` folder, as described in the corresponding section of this tutorial.
+After running all the experiments, all the results are generated in the `Experiments` folder, as described in the [corresponding section](doc/orca-tutorial.md#experimental-results-and-reports) of this tutorial.
 
 ## Hyper-parameters optimization
 
