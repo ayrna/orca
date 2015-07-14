@@ -72,7 +72,6 @@ $ rm -Rf orensemble
 ## Experiments configuration
 
 ORCA experiments are specified in configuration files, which run an algorithm (or many algorithms) for a collections of datasets (each dataset with a given number of partitions). The folder [src/config-files](src/config-files) contains example configuration files for running all the algorithms included in ORCA for all the algorithms and datasets of the [review paper](http://www.uco.es/grupos/ayrna/orreview). The following code is an example for running the Proportion Odds Model (POM), a.k.a. Ordinal Logistic Regression:
-
 ```
 new experiment
 name
@@ -99,7 +98,6 @@ Utilities.runExperiments('config-files/pom')
 ```
 
 This should produce and output like this:
-
 ```MATLAB
 Setting up experiments...
 Running experiment exp-pom-real1-ERA-1
@@ -120,8 +118,7 @@ After running all the experiments, all the results are generated in the `Experim
 
 ## Hyper-parameters optimization
 
-Many machine learning methods depends on hyper-parameters to achieve optimal results. ORCA automates hyper-parameter optimization by using a grid search with an internal nested *k*-fold cross-validation considering only the training partition. Let's see an example for optimization of SVORIM cost parameter ('C') and kernel width parameter ('k', a.k.a *gamma*):
-
+Many machine learning methods depends on hyper-parameters to achieve optimal results. ORCA automates hyper-parameter optimization by using a grid search with an internal nested *k*-fold cross-validation considering only the training partition. Let see an example for the optimisation of the two hyper-parameters of SVORIM: cost ('C') and kernel width parameter ('k', a.k.a *gamma*):
 ```
 new experiment
 name
@@ -149,12 +146,12 @@ seed
 end experiment
 ```
 
-The meaning of each directive are the following:
+The meanings of the directives associated to hyper-parameter optimisation are:
 
- - *num fold*: k value for the k-fold cross validation with the training data.
- - *crossval*: metric to select the best hyper-parameters in the grid search. Metrics available are: AMAE,CCR,GM,MAE,MMAE,MS,MZE,Spearman,Tkendall,Wkappa
- - List of hyper-parameters and set of values for the grid search:
-  - *parameter C*: add a new parameter with name 'C' and set of values '10.^(-3:1:3)'.
+ - *num fold*: *k* value for the nested *k*-fold cross validation over the training data.
+ - *crossval*: metric used to select the best hyper-parameters in the grid search. The metrics available are: `AMAE`,`CCR`,`GM`,`MAE`,`MMAE`,`MS`,`MZE`,`Spearman`,`Tkendall` and `Wkappa`.
+ - List of hyper-parameters to be optimised and values considered for each parameter during the grid search:
+  - *parameter C*: add a new parameter with name `C` and a set of values of '10.^(-3:1:3)' (10^-3,...,10^3).
  - Other parameters of the model depends of the specific method, here the kernel type is set up with *kernel* parameter. These are parameters that are not need to be optimized.
 
  - *seed*: is the value to initialize MATLAB random number generator. This is helpful to debug algorithms.
