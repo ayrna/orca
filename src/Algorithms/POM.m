@@ -1,10 +1,40 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Copyright (C) Pedro Antonio Gutiérrez (pagutierrez at uco dot es)
+% María Pérez Ortiz (i82perom at uco dot es)
+% Javier Sánchez Monedero (jsanchezm at uco dot es)
+%
+% This file implements the code for the POM method.
+% 
+% The code has been tested with Ubuntu 12.04 x86_64, Debian Wheezy 8, Matlab R2009a and Matlab 2011
+% 
+% If you use this code, please cite the associated paper
+% Code updates and citing information:
+% http://www.uco.es/grupos/ayrna/orreview
+% https://github.com/ayrna/orca
+% 
+% AYRNA Research group's website:
+% http://www.uco.es/ayrna 
+%
+% This program is free software; you can redistribute it and/or
+% modify it under the terms of the GNU General Public License
+% as published by the Free Software Foundation; either version 3
+% of the License, or (at your option) any later version.
+%
+% This program is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+% GNU General Public License for more details.
+%
+% You should have received a copy of the GNU General Public License
+% along with this program; if not, write to the Free Software
+% Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA. 
+% Licence available at: http://www.gnu.org/licenses/gpl-3.0.html
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 classdef POM < Algorithm
-    % POM Linear Proportional Odd Model for Ordinal Regression
+    % POM Proportional Odd Model for Ordinal Regression
     %   This class derives from the Algorithm Class and implements the
-    %   linear POM method. 
-    %   Characteristics: 
-    %               -Kernel functions: No
-    %               -Ordinal: Yes
+    %   POM method. 
     
     properties
 		
@@ -15,6 +45,7 @@ classdef POM < Algorithm
         %
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         parameters = []
+
         name_parameters = {}
     end
     
@@ -26,7 +57,7 @@ classdef POM < Algorithm
         %               characteristics.
         % Type: Void
         % Arguments:
-        %           No Parameters
+        %           No arguments
         % 
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 		
@@ -51,19 +82,19 @@ classdef POM < Algorithm
             obj.parameters = [];
         end
         
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         %
         % Function: runAlgorithm (Public)
-        % Description: This function runs the corresponding algorithm, fitting the
-        %               model, and testing it in a dataset. It also calculates some
-        %               statistics as CCR, Confusion Matrix, and others. 
-        % Type: It returns a set of statistics (Struct) 
+        % Description: This function runs the corresponding
+        %               algorithm, fitting the model and 
+        %               testing it in a dataset.
+        % Type: It returns the model (Struct) 
         % Arguments: 
-        %           train --> trainning data for fitting the model
-        %           test --> test data for validation
-        %           parameter --> No Parameters
+        %           Train --> Training data for fitting the model
+        %           Test --> Test data for validation
+        %           parameters --> vector with the parameter information
         % 
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 		
         function model_information = runAlgorithm(obj,train, test)
 
@@ -84,10 +115,21 @@ classdef POM < Algorithm
                 
         end
         
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        %
+        % Function: train (Public)
+        % Description: This function train the model for
+        %               the KDLOR algorithm.
+        % Type: It returns the model
+        % Arguments: 
+        %           trainPatterns --> Train structure
+        % 
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
         function [model]= train( obj,train)
                     
                     nOfClasses = numel(unique(train.targets));
-                    % Training the ordinal linear model
+
                     % Obtain coefficients of the ordinal regression model
                     betaHatOrd = mnrfit(train.patterns,train.targets,'model','ordinal','interactions','off');
                     
@@ -98,14 +140,26 @@ classdef POM < Algorithm
                     %pHatOrd = mnrval(betaHatOrd,trainPatterns,'model','ordinal','interactions','off');
         end
 
+
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        %
+        % Function: test (Public)
+        % Description: This function test a model given in
+        %               a set of test patterns.
+        % Outputs: Two arrays (projected patterns and predicted targets)
+        % Arguments: 
+        %           testPatterns --> Test data
+        %           model --> struct with the model information
+        % 
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
-        function [ projected,testTargets ]= test( obj, testPatterns, model)
+        function [ projected,testTargets ] = test( obj, testPatterns, model)
                 numClasses = size(model.thresholds,1)+1;
                 projected = model.projection' * testPatterns';
                 
-                % We calculate the projected patterns - each thresholds, and then with
-                % the following decision rule we can induce the class each pattern
-                % belows.
+                % We calculate the projected patterns minus each threshold, and then with
+                % the following decision rule we can compute the class to which each pattern
+                % belongs to.
                 projected2 = repmat(projected, numClasses-1,1);
                 projected2 = projected2 - model.thresholds*ones(1,size(projected2,2));
 
@@ -117,11 +171,11 @@ classdef POM < Algorithm
                 % We assign the values > 0 to NaN
                 wx(wx(:,:)>0)=NaN;
 
-                % Then, we choose the bigger one.
+                % Then, we choose the biggest one.
                 [maximum,testTargets]=max(wx,[],1);
 
                 % If a max is equal to NaN is because Wx-bk for all k is >0, so this
-                % pattern below to the last class.
+                % pattern belongs to the last class.
                 testTargets(isnan(maximum(:,:)))=numClasses;
 
                 testTargets = testTargets';
