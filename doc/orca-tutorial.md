@@ -13,8 +13,10 @@ ORCA has been developed and tested in GNU/Linux systems. Although it may run on 
 
 To download ORCA you can simply clone this GitHub repository by using the following commands:
 ```bash
-git clone https://github.com/ayrna/orca
+$ git clone https://github.com/ayrna/orca
 ```
+
+All the contents of the repository can also be downloaded from the GitHub site by using the "Download ZIP" button.
 
 ORCA is programmed in MATLAB, but many of the classification algorithms are implemented in C/C++. Because of this reason, they have to be compiled and packaged into the corresponding `MEX` files.
 
