@@ -1,6 +1,6 @@
 # orca
 
-ORCA (Ordinal Regression and Classification Algorithms) is a MATLAB framework including a wide set of ordinal regression methods associated to the paper "Ordinal regression methods: survey and experimental study" published in IEEE Transactions on Knowledge and Data Engineering. If you use this framework please cite the following work:
+![ORCA logo](doc/orca_small.png) ORCA (Ordinal Regression and Classification Algorithms) is a MATLAB framework including a wide set of ordinal regression methods associated to the paper "Ordinal regression methods: survey and experimental study" published in IEEE Transactions on Knowledge and Data Engineering. If you use this framework please cite the following work: 
 
 ```
 P.A. Gutiérrez, M. Pérez-Ortiz, J. Sánchez-Monedero, F. Fernández-Navarro and C. Hervás-Martínez (2015), "Ordinal regression methods: survey and experimental study", IEEE Transactions on Knowledge and Data Engineering. Vol. Accepted
