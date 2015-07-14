@@ -18,7 +18,20 @@ $ git clone https://github.com/ayrna/orca
 
 All the contents of the repository can also be downloaded from the GitHub site by using the "Download ZIP" button.
 
-ORCA is programmed in MATLAB, but many of the classification algorithms are implemented in C/C++. Because of this reason, they have to be compiled and packaged into the corresponding `MEX` files.
+ORCA is programmed in MATLAB, but many of the classification algorithms are implemented in C/C++. Because of this, these methods have to be compiled and/or packaged into the corresponding `MEX` files. Next, we provide the instructions to compile all the dependencies:
+
+### libsvm-weights-3.12
+
+These instructions are adapted from the corresponding README of `libsvm`. First, you should open MATLAB console and then `cd` to the directory `src/Algorithms/libsvm-weights-3.12/matlab`. After that, try to compile the `MEX` files using `make.m`:
+```matlab
+>> cd src/Algorithms/libsvm-weights-3.12/matlab
+>> make
+```
+
+These commands could fail (especially for Windows) if the compiler is not correctly installed and configured. In those cases, please try `mex -setup` to choose a suitable compiler for `mex`. Make sure your compiler is accessible and workable. Then type `make` to start the installation.
+
+On GNU/Linux systems, if neither `make.m` nor `mex -setup` works, please use `Makefile`, typing `make` in a command window. Please change MATLABDIR in Makefile to point the directory of Matlab (usually `/usr/local/matlab`).
+
 
 ## Experiments configuration
 
