@@ -5,7 +5,7 @@ new experiment
 name
 pom-tests
 dir
-data
+../exampledata/
 datasets
 toy
 algorithm

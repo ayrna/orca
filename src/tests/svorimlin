@@ -5,9 +5,9 @@ new experiment
 name
 svorimlin-mae-real
 dir
-datasets/ordinal/real/30-holdout
+../exampledata
 datasets
-pasture
+toy
 algorithm
 svorimlin
 num fold
@@ -26,9 +26,9 @@ new experiment
 name
 svorimlin-mze-real
 dir
-../../datasets/ordinal/real/30-holdout
+../../../exampledata
 datasets
-automobile,balance-scale,bondrate,car,contact-lenses,ERA,ESL,eucalyptus,LEV,newthyroid,pasture,squash-stored,squash-unstored,SWD,tae,toy,winequality-red
+automobile,balance-scale,bondrate,car,contact-lenses,ERA,ESL,eucalyptus,LEV,newthyroid,toy,squash-stored,squash-unstored,SWD,tae,toy,winequality-red
 algorithm
 svorimlin
 num fold

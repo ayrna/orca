@@ -5,9 +5,9 @@ new experiment
 name
 svc1va-real
 dir
-datasets/ordinal/real/30-holdout
+../exampledata
 datasets
-pasture
+toy
 algorithm
 SVC1VA
 num fold

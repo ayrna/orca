@@ -5,9 +5,9 @@ new experiment
 name
 cssvc-mae-real
 dir
-datasets/ordinal/real/30-holdout
+../exampledata
 datasets
-pasture
+toy
 algorithm
 CSSVC
 num fold

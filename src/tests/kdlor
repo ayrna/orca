@@ -5,9 +5,9 @@ new experiment
 name
 kdlor-real
 dir
-datasets/ordinal/real/30-holdout
+../exampledata
 datasets
-pasture
+toy
 algorithm
 KDLOR
 num fold
