@@ -23,7 +23,7 @@ ORCA is programmed in MATLAB, but many of the classification algorithms are impl
 ### libsvm-weights-3.12
 
 These instructions are adapted from the corresponding README of `libsvm`. First, you should open MATLAB console and then `cd` to the directory `src/Algorithms/libsvm-weights-3.12/matlab`. After that, try to compile the `MEX` files using `make.m` (from the Matlab console):
-```matlab
+```MATLAB
 >> cd src/Algorithms/libsvm-weights-3.12/matlab
 >> make
 ```
@@ -35,7 +35,7 @@ On GNU/Linux systems, if neither `make.m` nor `mex -setup` works, please use `Ma
 ### libsvm-rank-2.81
 
 To compile this dependency, the instructions are similar to those of `libsvm-weights-3.12` (from the Matlab console):
-```matlab
+```MATLAB
 >> cd src/Algorithms/libsvm-rank-2.81/matlab
 >> make
 ```
@@ -43,7 +43,7 @@ To compile this dependency, the instructions are similar to those of `libsvm-wei
 ### SVOREX and SVORIM
 
 For both algorithms, please use the `make.m` file included in them (from the Matlab console):
-```matlab
+```MATLAB
 >> cd src/Algorithms/SVOREX
 >> make
 >> cd ..
@@ -114,9 +114,13 @@ Processing Experiments/exp-2015-7-14-9-31-27/exp-pom-real1-ERA-12
 Calculating results...
 ```
 
+As can be observed, ORCA analyses all the files included in the folder of the dataset, where the training and test partitions are included (a pair of files `train_dataset.X` and `test_dataset.X` for each dataset, where `X` is the number of partition). For each partition, a model is trained using training data and tested using test data.
+
+After running all the experiments, all the results are generated in the `Experiments` folder, as described in the corresponding section of this tutorial.
+
 ## Hyper-parameters optimization
 
-Many machine learning methods depends on hyper-parameters to achieve optimal results. ORCA automates parameters optimization by using a grid search using an internal k-fold with the training partition. Let's see an example for optimization of SVORIM cost parameter ('C') and kernel width parameter ('k', a.k.a *gamma*):
+Many machine learning methods depends on hyper-parameters to achieve optimal results. ORCA automates hyper-parameter optimization by using a grid search with an internal nested k-fold cross-validation using only the training partition. Let's see an example for optimization of SVORIM cost parameter ('C') and kernel width parameter ('k', a.k.a *gamma*):
 
 ```
 new experiment
