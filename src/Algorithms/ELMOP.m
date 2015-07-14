@@ -1,33 +1,51 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Copyright (C) Pedro Antonio Gutiérrez (pagutierrez at uco dot es)
+% María Pérez Ortiz (i82perom at uco dot es)
+% Javier Sánchez Monedero (jsanchezm at uco dot es)
+%
+% This file implements the code for the ELMOP method.
+% 
+% The code has been tested with Ubuntu 12.04 x86_64, Debian Wheezy 8, Matlab R2009a and Matlab 2011
+% 
+% If you use this code, please cite the associated paper
+% Code updates and citing information:
+% http://www.uco.es/grupos/ayrna/orreview
+% https://github.com/ayrna/orca
+% 
+% AYRNA Research group's website:
+% http://www.uco.es/ayrna 
+%
+% This program is free software; you can redistribute it and/or
+% modify it under the terms of the GNU General Public License
+% as published by the Free Software Foundation; either version 3
+% of the License, or (at your option) any later version.
+%
+% This program is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+% GNU General Public License for more details.
+%
+% You should have received a copy of the GNU General Public License
+% along with this program; if not, write to the Free Software
+% Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA. 
+% Licence available at: http://www.gnu.org/licenses/gpl-3.0.html
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 classdef ELMOP < Algorithm
-    %ELM Extreme Learning Machine
+    %ELM Extreme Learning Machine for Ordinal Regression
     %   This class derives from the Algorithm Class and implements the
-    %   ELM method with some alternatives
-    %   Characteristics: 
-    %               -TODO
-    %               -Parameters: 
-    %                       -hiddenNC: number of networks in the hidden
-    %                       layer
-    %
+    %   ELMOP method
     
     properties
         
         activationFunction = 'sig';
+
         % Input Weights range 
         wMin = -1;
         wMax = 1;
-        
-        
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        %
-        % Variable: parameters (Public)
-        % Type: Struct
-        % Description: This variable keeps the values for 
-        %               the C penalty coefficient, the 
-        %               kernel parameters and epsilon
-        %
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        
+       
         parameters
+
         name_parameters = {'hiddenN'}
     end
 
@@ -36,18 +54,16 @@ classdef ELMOP < Algorithm
     
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         %
-        % Function: ELM (Public Constructor)
+        % Function: ELMOP (Public Constructor)
         % Description: It constructs an object of the class
         %               ELM and sets its characteristics.
         % Type: Void
         % Arguments: 
-        %           classifier--> Type of ANN: classifier or regressor
-        %           activationFunction--> 
-        %           hiddenN--> Number of neurons in the hidden layer
+        %           activationFunction
         % 
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         
-        function obj = ELMOP(activationFunction)%, opt)
+        function obj = ELMOP(activationFunction)
             obj.name = 'Extreme Learning Machine for Ordinal Regression';
             if(nargin ~= 0)
                 obj.activationFunction = activationFunction;
@@ -75,22 +91,18 @@ classdef ELMOP < Algorithm
         %
         % Function: runAlgorithm (Public)
         % Description: This function runs the corresponding
-        %               algorithm, fitting the model, and 
-        %               testing it in a dataset. It also 
-        %               calculates some statistics as CCR,
-        %               Confusion Matrix, and others. 
-        % Type: It returns a set of statistics (Struct) 
+        %               algorithm, fitting the model and 
+        %               testing it in a dataset.
+        % Type: It returns the model (Struct) 
         % Arguments: 
-        %           Train --> Trainning data for fitting the model
+        %           Train --> Training data for fitting the model
         %           Test --> Test data for validation
-        %           parameters --> Penalty coefficient C 
-        %           for the SVRPCDOC method and kernel parameters
+        %           parameters --> vector with the parameter information
         % 
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
         function [model_information] = runAlgorithm(obj,train, test, parameters)
             
-                % <Mover a una función >
                 train.uniqueTargets = unique([test.targets ;train.targets]);
                 test.uniqueTargets = train.uniqueTargets;
                 train.nOfClasses = max(train.uniqueTargets);
@@ -100,7 +112,6 @@ classdef ELMOP < Algorithm
                 
                 train.dim = size(train.patterns,2);
                 test.dim = train.dim;
-                % </Mover a una función >
                 
                 param.hiddenN = parameters(1);
                 
@@ -130,21 +141,16 @@ classdef ELMOP < Algorithm
         %
         % Function: train (Public)
         % Description: This function train the model for
-        %               the SVRPCDOC algorithm.
-        % Type: [Structure]
+        %               the ELMOP algorithm.
+        % Type: model structure
         % Arguments: 
-        %           train.patterns --> Trainning data for 
-        %                              fitting the model
-        %           testTargets --> Training targets
-        %           parameters --> 
-        % ,  wMin, wMax
+        %           train --> Train structure
+        %           parameters --> parameters for the model
         % 
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         
-        %[InputWeight,BiasofHiddenNeurons,OutputWeight,Y,TrainingTime]
         function model = train( obj,train, parameters)
             
-            % TODO: UNHACK A NIVEL DE CROSSVALIDACIÓN
             if( strcmp(obj.activationFunction,'rbf') && parameters.hiddenN > train.nOfPatterns)
                     %disp(['User''s number of hidden neurons ' num2str(parameters.hiddenN) ... 
                      %   ' was too high and has been adjusted to the number of training patterns']);
@@ -248,7 +254,6 @@ classdef ELMOP < Algorithm
                     end
                     clear temp;
                 case {'rbf','krbf'}
-                    % TODO: Un hack
                     H = zeros(train.nOfPatterns, obj.parameters.hiddenN);
                     for j=1:obj.parameters.hiddenN
                         H(:,j)=gaussian_func(P,W1(j,:),W10(j,:));
@@ -314,18 +319,12 @@ classdef ELMOP < Algorithm
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         %
         % Function: test (Public)
-        % Description: This function test a model given
+        % Description: This function test the model in
         %               a set of test patterns.
-        % Type: [Array, Array]
+        % Type: Two arrays (projected patterns and predicted labels)
         % Arguments: 
-        %           test.patterns --> Testing data
-        %           projection --> Projection previously 
-        %                       calculated fitting the model
-        %           thresholds --> Thresholds previously 
-        %                       calculated fitting the model
-        %           train.patterns --> Trainning data (needed
-        %                              for the gram matrix)
-        %           kernelParam --> kernel parameter for SVRPCDOC
+        %           test --> Test structure
+        %           model --> model structure
         % 
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         
@@ -428,26 +427,16 @@ classdef ELMOP < Algorithm
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         %
         % Function: orelmToLabel (Private)
-        % Description: 
-        % Type: 
+        % Description: Compute the exponential loss and the final prediction
+        % Type: It returns the final prediction and the losses
         % Arguments: 
-        %           trainSet--> Array of training patterns
-        %           testSet--> Array of testing patterns
+        %           predictions--> Array of predictions
+        %           uniqueNewTargets--> Array of unique labels
         % 
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         
         function [finalOutput,expLosses] = orelmToLabel(obj,predictions,uniqueNewTargets)
             
-            % Distancia Euclidea
-            %            finalOutput = zeros(1,size(predictions,1));
-            %            distancias = zeros(1,size(predictions,2));
-            
-            %             for i=1:size(predictions,1),
-            %                 for j=1:size(predictions,2),
-            %                     distancias(j) = pdist([predictions(i,:);uniqueNewTargets(j,:)]);
-            %                 end
-            %                 [FOO,finalOutput(i)] = min(distancias);
-            %             end
             
             % Minimal Exponential Loss
             expLosses=zeros(size(predictions));
@@ -460,12 +449,19 @@ classdef ELMOP < Algorithm
             finalOutput = finalOutput';
         end
         
-
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        %
+        % Function: labelToOrelm (Private)
+        % Description: Compute the labels to the ordinal format
+        % Type: It returns the two pattern structures (train and test)
+        % Arguments: 
+        %           trainSet--> train structure
+        %           testSet--> test structure
+        % 
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 	function [trainSet, testSet] = labelToOrelm(obj,trainSet,testSet)
-            %uniqueTargets = unique([trainSet.targets; testSet.targets]);
 
-            %   newTargets = zeros(trainSet.nOfPatterns,trainSet.nOfClasses);
             trainSet.targetsOrelm = ones(trainSet.nOfPatterns,trainSet.nOfClasses);
             testSet.targetsOrelm = ones(testSet.nOfPatterns,trainSet.nOfClasses);
             
