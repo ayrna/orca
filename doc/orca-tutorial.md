@@ -22,7 +22,7 @@ ORCA is programmed in MATLAB, but many of the classification algorithms are impl
 
 ### libsvm-weights-3.12
 
-These instructions are adapted from the corresponding README of `libsvm`. First, you should open MATLAB console and then `cd` to the directory `src/Algorithms/libsvm-weights-3.12/matlab`. After that, try to compile the `MEX` files using `make.m`:
+These instructions are adapted from the corresponding README of `libsvm`. First, you should open MATLAB console and then `cd` to the directory `src/Algorithms/libsvm-weights-3.12/matlab`. After that, try to compile the `MEX` files using `make.m` (from the Matlab console):
 ```matlab
 >> cd src/Algorithms/libsvm-weights-3.12/matlab
 >> make
@@ -34,7 +34,7 @@ On GNU/Linux systems, if neither `make.m` nor `mex -setup` works, please use `Ma
 
 ### libsvm-rank-2.81
 
-To compile this dependency, the instructions are similar to those of `libsvm-weights-3.12`:
+To compile this dependency, the instructions are similar to those of `libsvm-weights-3.12` (from the Matlab console):
 ```matlab
 >> cd src/Algorithms/libsvm-rank-2.81/matlab
 >> make
@@ -42,7 +42,7 @@ To compile this dependency, the instructions are similar to those of `libsvm-wei
 
 ### SVOREX and SVORIM
 
-For both algorithms, please use the `make.m` file included in them:
+For both algorithms, please use the `make.m` file included in them (from the Matlab console):
 ```matlab
 >> cd src/Algorithms/SVOREX
 >> make
@@ -53,7 +53,7 @@ For both algorithms, please use the `make.m` file included in them:
 
 ### orensemble
 
-We have not prepared a proper MEX interface for ORBoost, so the binary files of this algorithm should be compiled and are then invoked directly from Matlab. For compiling the ORBoost algorithm, you should uncompress the file `orsemble.tar.gz` and compile the corresponding source code. In GNU/Linux, this can be done by:
+We have not prepared a proper MEX interface for ORBoost, so the binary files of this algorithm should be compiled and are then invoked directly from Matlab. For compiling the ORBoost algorithm, you should uncompress the file `orsemble.tar.gz` and compile the corresponding source code. In GNU/Linux, this can be done by (from the `bash` console):
 ```bash
 $ cd src/Algorithms/orensemble
 $ tar zxf orensemble.tar.gz
@@ -62,7 +62,7 @@ $ make
 g++ -Ilemga-20060516/lemga -Wall -Wshadow -Wcast-qual -Wpointer-arith -Wconversion -Wredundant-decls -Wwrite-strings -Woverloaded-virtual -D NDEBUG -O3 -funroll-loops -c -o robject.o lemga-20060516/lemga/object.cpp
 ...
 ```
-Then, you should move the binary files to `..` folder and clean the folder:
+Then, you should move the binary files to `..` folder and clean the folder (from the `bash` console):
 ```bash
 $ mv boostrank-predict ../
 $ mv boostrank-train ../
