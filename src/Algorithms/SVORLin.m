@@ -1,24 +1,45 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Copyright (C) Pedro Antonio Gutiérrez (pagutierrez at uco dot es)
+% María Pérez Ortiz (i82perom at uco dot es)
+% Javier Sánchez Monedero (jsanchezm at uco dot es)
+%
+% This file implements the code for the SVORIMLin method.
+% 
+% The code has been tested with Ubuntu 12.04 x86_64, Debian Wheezy 8, Matlab R2009a and Matlab 2011
+% 
+% If you use this code, please cite the associated paper
+% Code updates and citing information:
+% http://www.uco.es/grupos/ayrna/orreview
+% https://github.com/ayrna/orca
+% 
+% AYRNA Research group's website:
+% http://www.uco.es/ayrna 
+%
+% This program is free software; you can redistribute it and/or
+% modify it under the terms of the GNU General Public License
+% as published by the Free Software Foundation; either version 3
+% of the License, or (at your option) any later version.
+%
+% This program is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+% GNU General Public License for more details.
+%
+% You should have received a copy of the GNU General Public License
+% along with this program; if not, write to the Free Software
+% Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA. 
+% Licence available at: http://www.gnu.org/licenses/gpl-3.0.html
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 classdef SVORLin < Algorithm
-    % SVOR Support Vector for Ordinal Regression (Implicit constraints)
+    % SVOR Linear Support Vector for Ordinal Regression (Implicit constraints)
     %   This class derives from the Algorithm Class and implements the
-    %   SVORIM method.
-    %   Characteristics:
-    %               -Kernel functions: Yes
-    %               -Ordinal: Yes
+    %   linear SVORIM method.
     
     properties
         
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        %
-        % Variable: parameters (Public)
-        % Type: Struct
-        % Description: This variable keeps the values for
-        %               the C penalty coefficient and the
-        %               kernel parameters
-        %
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        
         parameters
+
         name_parameters = {'C'}
     end
     
@@ -27,11 +48,9 @@ classdef SVORLin < Algorithm
         %
         % Function: SVORIM (Public Constructor)
         % Description: It constructs an object of the class
-        %               SVORIM and sets its characteristics.
+        %               SVORIMLin and sets its characteristics.
         % Type: Void
         % Arguments:
-        %           kernel--> Type of Kernel function
-        %           opt--> Type of optimization used in the method.
         %
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         
@@ -60,39 +79,26 @@ classdef SVORLin < Algorithm
         %
         % Function: runAlgorithm (Public)
         % Description: This function runs the corresponding
-        %               algorithm, fitting the model, and
-        %               testing it in a dataset. It also
-        %               calculates some statistics as CCR,
-        %               Confusion Matrix, and others.
-        % Type: It returns a set of statistics (Struct)
-        % Arguments:
-        %           Train --> Trainning data for fitting the model
+        %               algorithm, fitting the model and 
+        %               testing it in a dataset.
+        % Type: It returns the model (Struct) 
+        % Arguments: 
+        %           Train --> Training data for fitting the model
         %           Test --> Test data for validation
-        %           parameters --> Penalty coefficient C
-        %           for the SVORIM method and kernel parameters
-        %
+        %           parameters --> vector with the parameter information
+        % 
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         
         function [model_information] = runAlgorithm(obj,train, test, parameters)
             
             param.C = parameters(1);
             
-            
             c1 = clock;
             [model,model_information.projectedTest,model_information.projectedTrain, model_information.trainTime, model_information.testTime] = obj.train([train.patterns train.targets],[test.patterns test.targets],param);
-            % thresholds = SVORIM.adaptThresholds(train.targets, model_information.projectedTrain);
+
             c2 = clock;
             model_information.trainTime = etime(c2,c1);
 
-
-            % Cross validar con una partición de los datos
-            %cv = cvpartition(train.targets,'holdout',0.5);
-            %[validateProject, alpha, thresholds, trainProject] = svorex([train.patterns(cv.test,:) train.targets(cv.test,:)],[train.patterns(~cv.test,:) train.targets(~cv.test,:)],param.k,param.C);
-            %thresholds = obj.adaptThresholds(train.targets(~cv.test,:), validateProject);
-            %trainProject = sum(repmat(alpha,size(train.patterns,1),1).*computeKernelMatrix(train.patterns',train.patterns(cv.test,:)',obj.kernelType, param.k),2)';
-            %testProject =
-            %sum(repmat(alpha,size(test.patterns,1),1).*computeKernelMatrix(test.patterns',train.patterns(cv.test,:)',obj.kernelType, param.k),2)';
-            
             c1 = clock; 
             model_information.predictedTrain = obj.test(model_information.projectedTrain, model);
             model_information.predictedTest = obj.test(model_information.projectedTest, model);
@@ -102,6 +108,20 @@ classdef SVORLin < Algorithm
             
         end
         
+
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        %
+        % Function: train (Public)
+        % Description: This function train the model for
+        %               the SVORIMLin algorithm.
+        % Type: It returns the model, the projected test patterns,
+	%	the projected train patterns and the time information.
+        % Arguments: 
+        %           train --> Train struct
+	%	    test --> Test struct
+        %           parameters--> struct with the parameter information
+        % 
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         
         function [model, projectedTest, projectedTrain, trainTime, testTime] = train(obj, train,test, parameters)
             
@@ -111,6 +131,19 @@ classdef SVORLin < Algorithm
                   model.parameters = parameters;
                   model.algorithm = 'SVORLin';
         end
+
+
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        %
+        % Function: test (Public)
+        % Description: This function test a model given in
+        %               a set of test patterns.
+        % Outputs: Array of predicted patterns
+        % Arguments: 
+        %           project --> projected patterns
+        %           model --> struct with the model information
+        % 
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         
         function [targets] = test(obj, project, model)
             
@@ -126,11 +159,11 @@ classdef SVORLin < Algorithm
             % We assign the values > 0 to NaN
             wx(wx(:,:)>0)=NaN;
             
-            % Then, we choose the bigger one.
+            % Then, we choose the biggest one.
             [maximum,targets]=max(wx,[],1);
             
             % If a max is equal to NaN is because Wx-bk for all k is >0, so this
-            % pattern below to the last class.
+            % pattern belongs to the last class.
             targets(isnan(maximum(:,:)))=numClasses;
             
             targets = targets';
