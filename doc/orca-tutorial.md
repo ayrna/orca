@@ -28,9 +28,9 @@ These instructions are adapted from the corresponding README of `libsvm`. First,
 >> make
 ```
 
-These commands could fail (especially for Windows) if the compiler is not correctly installed and configured. In those cases, please try `mex -setup' to choose a suitable compiler for `mex`. Make sure your compiler is accessible and workable. Then type `make` to start the installation.
+These commands could fail (especially for Windows) if the compiler is not correctly installed and configured. In those cases, please try `mex -setup` to choose a suitable compiler for `mex`. Make sure your compiler is accessible and workable. Then type `make` to start the installation.
 
-On GNU/Linux systems, if neither `make.m` nor 'mex -setup' works, please use `Makefile`, typing `make` in a command window. Please change MATLABDIR in Makefile to point the directory of Matlab (usually `/usr/local/matlab`).
+On GNU/Linux systems, if neither `make.m` nor `mex -setup` works, please use `Makefile`, typing `make` in a command window. Please change MATLABDIR in Makefile to point the directory of Matlab (usually `/usr/local/matlab`).
 
 
 ## Experiments configuration
