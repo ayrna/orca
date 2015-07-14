@@ -69,7 +69,7 @@ $ mv boostrank-train ../
 $ cd ..
 $ rm -Rf orensemble
 ```
-## Experiments configuration
+## Experiment configuration
 
 ORCA experiments are specified in configuration files, which run an algorithm (or many algorithms) for a collections of datasets (each dataset with a given number of partitions). The folder [src/config-files](src/config-files) contains example configuration files for running all the algorithms included in ORCA for all the algorithms and datasets of the [review paper](http://www.uco.es/grupos/ayrna/orreview). The following code is an example for running the Proportion Odds Model (POM), a.k.a. Ordinal Logistic Regression:
 ```
@@ -116,7 +116,7 @@ As can be observed, ORCA analyses all the files included in the folder of the da
 
 After running all the experiments, all the results are generated in the `Experiments` folder, as described in the [corresponding section](orca-tutorial.md#experimental-results-and-reports) of this tutorial.
 
-## Hyper-parameters optimization
+## Hyper-parameter optimization
 
 Many machine learning methods depends on hyper-parameters to achieve optimal results. ORCA automates hyper-parameter optimization by using a grid search with an internal nested *k*-fold cross-validation considering only the training partition. Let see an example for the optimisation of the two hyper-parameters of SVORIM: cost ('C') and kernel width parameter ('k', a.k.a *gamma*):
 ```
@@ -171,26 +171,23 @@ ORCA uses the `Experiments` folder to store all the results of the different exp
   - Optimal hyper-parameters values obtained after nested cross-validation ('OptHyperparams').
   - Computational time results ('Times').
 
-# Use ORCA with your own datasets
+# Using ORCA with your own datasets
 
-This section teach you how to use ORCA with your own datasets.
+This section shows how to use ORCA with custom datasets.
 
 ## Data format
 
-ORCA used the common MATLAB's file format, this is one pattern per file:
-
+ORCA uses the default text file format for MATLAB. This is, one pattern per row with the following structure:
 ```
 attr1 attr2 ... attrN label
 attr1 attr2 ... attrN label
 attr1 attr2 ... attrN label
 ```
+ORCA is intended to be used for ordinal regression problems, so the labels should be integer numbers: `1` for the first class in the ordinal scale, `2` for the second one, ..., `Q` for the last one, where `Q` is the number of classes of the problem.
 
-Due to some algorithms restrictions, patterns should be sorted by increasing label in the files.
+## Data partitions for the experiments
 
-## Data partitions for experiments
-
-ORCA needs pairs of train and test files for each dataset. These pairs of files would be used to train and measure generalization performance of each algorithm. For instance, for 'toy' dataset, we have the following folder and files arrangement to perform an stratified 30-holdout:
-
+The datasets should be partitioned before applying the ORCA algorithms, i.e. ORCA needs all the pairs of training and test files for each dataset. These pairs of files would be used to train and measure generalization performance of each algorithm. For instance, for the `toy` dataset, we have the following folder and file arrangement to perform `30` times a stratified holdout validation:
 ```
 toy
 toy/gpor/
@@ -202,5 +199,4 @@ toy/gpor/train_toy.1
 toy/gpor/test_toy.29
 toy/gpor/train_toy.29
 ```
-
-In this case ORCA will run all the train and test pairs and performance results will be used for the reports.
+ORCA will train a model for all the training/test pairs, and the performance results will be used for the reports. The website of the review paper associated to ORCA includes the [partitions](http://www.uco.es/grupos/ayrna/orreview) for all the datasets considered in the experimental part.
