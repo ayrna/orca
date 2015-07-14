@@ -1,32 +1,47 @@
-classdef ORBoost < Algorithm
-    % -------
-    % TODO: Muy mal hecho
-    % -------
-    
-    %KDLOR Kernel Discriminant Learning for Ordinal Regression
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Copyright (C) Pedro Antonio Gutiérrez (pagutierrez at uco dot es)
+% María Pérez Ortiz (i82perom at uco dot es)
+% Javier Sánchez Monedero (jsanchezm at uco dot es)
+%
+% This file implements the code for the ORBoost method.
+% 
+% The code has been tested with Ubuntu 12.04 x86_64, Debian Wheezy 8, Matlab R2009a and Matlab 2011
+% 
+% If you use this code, please cite the associated paper
+% Code updates and citing information:
+% http://www.uco.es/grupos/ayrna/orreview
+% https://github.com/ayrna/orca
+% 
+% AYRNA Research group's website:
+% http://www.uco.es/ayrna 
+%
+% This program is free software; you can redistribute it and/or
+% modify it under the terms of the GNU General Public License
+% as published by the Free Software Foundation; either version 3
+% of the License, or (at your option) any later version.
+%
+% This program is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+% GNU General Public License for more details.
+%
+% You should have received a copy of the GNU General Public License
+% along with this program; if not, write to the Free Software
+% Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA. 
+% Licence available at: http://www.gnu.org/licenses/gpl-3.0.html
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+classdef ORBoost < Algorithm    
+    %ORBoost Boosting ensemble for Ordinal Regression
     %   This class derives from the Algorithm Class and implements the
-    %   KLDOR method. 
-    %   Characteristics: 
-    %               -Kernel functions: Yes
-    %               -Ordinal: Yes
-    %               -Parameters: 
-    %                       -C: Penalty coefficient
-    %                       -Others (depending on the kernel choice)
+    %   ORBoost method. 
     
     properties
-       
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        %
-        % Variable: parameters (Public)
-        % Type: Struct
-        % Description: This variable keeps the values for 
-        %               the C penalty coefficient and the 
-        %               kernel parameters
-        %
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        
+      
         parameters = []
-        name_parameters = {}
+        
+	name_parameters = {}
+
         weights = true;
     end
     
@@ -39,13 +54,12 @@ classdef ORBoost < Algorithm
         %               KDLOR and sets its characteristics.
         % Type: Void
         % Arguments: 
-        %           kernel--> Type of Kernel function
-        %           opt--> Type of optimization used in the method.
+	%		-No arguments	
         % 
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         
         function obj = ORBoost()
-            obj.name = 'OR Ensemble with perceptron';
+            obj.name = 'OR Ensemble with perceptrons';
             
         end
         
@@ -111,10 +125,6 @@ classdef ORBoost < Algorithm
                 system(['rm ' trainFile]);
                 system(['rm ' testFile]);
                 system(['rm ' modelFile]);
-
-                
-%                 dataSetStatistics.projectedTest = p2;
-%                 dataSetStatistics.projectedTrain = p;
                  
 
         end
@@ -123,21 +133,33 @@ classdef ORBoost < Algorithm
         %
         % Function: train (Public)
         % Description: This function train the model for
-        %               the KDLOR algorithm.
-        % Type: [Array, Array]
+        %               the ORBoost algorithm.
+        % Type: void
         % Arguments: 
-        %           trainPatterns --> Trainning data for 
-        %                              fitting the model
-        %           testTargets --> Training targets
-        %           parameters --> Penalty coefficient C 
-        %           for the KDLOR method and kernel parameters
+        %           train --> Train struct
+	%	    trainFile --> Path to the training file
+        %           modelFile--> Path to the file where the model is to be saved
         % 
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
         
         function train( obj,train,trainFile, modelFile )
             execute_train = sprintf('./Algorithms/orensemble/hack.sh ./Algorithms/orensemble/boostrank-train %s %d %d %d1 204 %d 2000 %s',trainFile,size(train.patterns,1),size(train.patterns,2),(3+obj.weights),max(unique(train.targets)),modelFile);
             system(execute_train);
         end
+
+
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        %
+        % Function: test (Public)
+        % Description: This function test a model given in
+        %               a set of test patterns.
+        % Outputs: Two arrays (projected patterns and predicted targets)
+        % Arguments: 
+        %           test --> Test struct
+	%	    testFile --> Path to the test file
+        %           modelFile--> Path to the file where the model is to be saved
+        % 
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         
         function [projected, testTargets]= test( obj,test,testFile,modelFile )
                 predictFile = tempname();
