@@ -9,7 +9,7 @@ ORCA is a framework focused on productivity. The two main objectives of the fram
 
 ORCA has been developed and tested in GNU/Linux systems. Although it may run on Windows and other proprietary operating systems, the following instructions are given for GNU/Linux.
 
-## Download and build ORCA
+## Download and compile ORCA dependencies
 
 To download ORCA you can simply clone this GitHub repository by using the following commands:
 ```bash
