@@ -32,7 +32,43 @@ These commands could fail (especially for Windows) if the compiler is not correc
 
 On GNU/Linux systems, if neither `make.m` nor `mex -setup` works, please use `Makefile`, typing `make` in a command window. Please change MATLABDIR in Makefile to point the directory of Matlab (usually `/usr/local/matlab`).
 
+### libsvm-rank-2.81
 
+To compile this dependency, the instructions are similar to those of `libsvm-weights-3.12`:
+```matlab
+>> cd src/Algorithms/libsvm-rank-2.81/matlab
+>> make
+```
+
+### SVOREX and SVORIM
+
+For both algorithms, please use the `make.m` file included in them:
+```matlab
+>> cd src/Algorithms/SVOREX
+>> make
+>> cd ..
+>> cd SVORIM
+>> make
+```
+
+### orensemble
+
+We have not prepared a proper MEX interface for ORBoost, so the binary files of this algorithm should be compiled and are then invoked directly from Matlab. For compiling the ORBoost algorithm, you should uncompress the file `orsemble.tar.gz` and compile the corresponding source code. In GNU/Linux, this can be done by:
+```bash
+$ cd src/Algorithms/orensemble
+$ tar zxf orensemble.tar.gz
+$ cd orensemble/
+$ make
+g++ -Ilemga-20060516/lemga -Wall -Wshadow -Wcast-qual -Wpointer-arith -Wconversion -Wredundant-decls -Wwrite-strings -Woverloaded-virtual -D NDEBUG -O3 -funroll-loops -c -o robject.o lemga-20060516/lemga/object.cpp
+...
+```
+Then, you should move the binary files to `..` folder and clean the folder:
+```bash
+$ mv boostrank-predict ../
+$ mv boostrank-train ../
+$ cd ..
+$ rm -Rf orensemble
+```
 ## Experiments configuration
 
 In the folder [src/config-files](src/config-files) you will find configuration files for running all the algorithms included in ORCA. Here there ir an example for running the Proportion Odds Model (POM), a.k.a. Ordinal Logistic Regression:
