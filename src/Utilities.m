@@ -346,7 +346,7 @@ classdef Utilities < handle
                         
                         fichero = [resultados filesep splitstring{i} '-' id_experiment filesep 'dataset'];
                         fich = fopen(fichero,'w');
-                        fprintf(fich, [directory filesep splitstring{i} filesep 'gpor']);
+                        fprintf(fich, [directory filesep splitstring{i} filesep 'matlab']);
                         fclose(fich);
 
 			runfolds = numel(train{i});
@@ -354,7 +354,7 @@ classdef Utilities < handle
                         for j=1:runfolds,
                             fichero = [fichero_ini '-' splitstring{i} '-' num2str(j)];
                             fich = fopen(fichero,'w');
-                            fprintf(fich, ['directory\n' directory filesep splitstring{i} filesep 'gpor' '\n']);
+                            fprintf(fich, ['directory\n' directory filesep splitstring{i} filesep 'matlab' '\n']);
                             fprintf(fich, ['train\n' train{i}(j).name '\n']);
                             fprintf(fich, ['test\n' test{i}(j).name '\n']);
                             fprintf(fich, ['results\n' resultados filesep splitstring{i} '-' id_experiment '\n']);
@@ -393,9 +393,9 @@ classdef Utilities < handle
                 for dd=1:size(dbs,1)
                     % get directory
                     if dbs(dd).isdir,
-                        ejemplo = [directory filesep dbs(dd).name filesep 'gpor' filesep 'train_' dbs(dd).name '.*'];
+                        ejemplo = [directory filesep dbs(dd).name filesep 'matlab' filesep 'train_' dbs(dd).name '.*'];
                         trainFileNames{validDataSets, :} = dir(ejemplo);
-                        ejemplo = [directory filesep dbs(dd).name filesep 'gpor' filesep 'test_' dbs(dd).name '.*'];
+                        ejemplo = [directory filesep dbs(dd).name filesep 'matlab' filesep 'test_' dbs(dd).name '.*'];
                         testFileNames{validDataSets, :} = dir(ejemplo);
                         validDataSets = validDataSets + 1;
                     end
@@ -405,9 +405,9 @@ classdef Utilities < handle
                 for j=1:numel(dataSetNames),
                     isdirectory = [directory filesep dataSetNames{j}];
                     if(isdir(isdirectory)),
-                        ejemplo = [isdirectory filesep 'gpor' filesep 'train_' dataSetNames{j} '.*'];
+                        ejemplo = [isdirectory filesep 'matlab' filesep 'train_' dataSetNames{j} '.*'];
                         trainFileNames{validDataSets, :} = dir(ejemplo);
-                        ejemplo = [isdirectory filesep 'gpor' filesep 'test_' dataSetNames{j} '.*'];
+                        ejemplo = [isdirectory filesep 'matlab' filesep 'test_' dataSetNames{j} '.*'];
                         testFileNames{validDataSets, :} = dir(ejemplo);
                         validDataSets = validDataSets + 1;
                     end

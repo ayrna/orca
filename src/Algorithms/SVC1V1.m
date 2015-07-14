@@ -122,7 +122,7 @@ classdef SVC1V1 < Algorithm
         %
         % Function: train (Public)
         % Description: This function train the model for
-        %               the KDLOR algorithm.
+        %               the SVC1v1 algorithm.
         % Type: It returns the model
         % Arguments: 
         %           train --> Train struct

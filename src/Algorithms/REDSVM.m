@@ -127,7 +127,7 @@ classdef REDSVM < Algorithm
         %
         % Function: train (Public)
         % Description: This function train the model for
-        %               the KDLOR algorithm.
+        %               the REDSVM algorithm.
         % Type: It returns the model
         % Arguments: 
         %           train --> train struct data

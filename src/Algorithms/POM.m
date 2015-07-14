@@ -119,7 +119,7 @@ classdef POM < Algorithm
         %
         % Function: train (Public)
         % Description: This function train the model for
-        %               the KDLOR algorithm.
+        %               the POM algorithm.
         % Type: It returns the model
         % Arguments: 
         %           trainPatterns --> Train structure

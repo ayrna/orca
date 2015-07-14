@@ -26,7 +26,7 @@ do
 	for iii in `seq 1 ${#DATASETS[@]}`
 	do
 		iiii=`expr $iii - 1`;
-		numFiles=`ls ${RUTAS[$jR]}/${DATASETS[$iiii]}/gpor/train_* -l | wc -l`;
+		numFiles=`ls ${RUTAS[$jR]}/${DATASETS[$iiii]}/matlab/train_* -l | wc -l`;
 		expresion="expr ( "$total" + "$numFiles" )";
 		total=`$expresion`;
 	done

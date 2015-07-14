@@ -1,20 +1,46 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Copyright (C) Pedro Antonio Gutiérrez (pagutierrez at uco dot es)
+% María Pérez Ortiz (i82perom at uco dot es)
+% Javier Sánchez Monedero (jsanchezm at uco dot es)
+%
+% This file implements the code for the SVR method.
+% 
+% The code has been tested with Ubuntu 12.04 x86_64, Debian Wheezy 8, Matlab R2009a and Matlab 2011
+% 
+% If you use this code, please cite the associated paper
+% Code updates and citing information:
+% http://www.uco.es/grupos/ayrna/orreview
+% https://github.com/ayrna/orca
+% 
+% AYRNA Research group's website:
+% http://www.uco.es/ayrna 
+%
+% This program is free software; you can redistribute it and/or
+% modify it under the terms of the GNU General Public License
+% as published by the Free Software Foundation; either version 3
+% of the License, or (at your option) any later version.
+%
+% This program is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+% GNU General Public License for more details.
+%
+% You should have received a copy of the GNU General Public License
+% along with this program; if not, write to the Free Software
+% Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA. 
+% Licence available at: http://www.gnu.org/licenses/gpl-3.0.html
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 classdef SVR < Algorithm
     %SVR Support Vector Regression
+    %   This class derives from the Algorithm Class and implements the
+    %   SVR method. 
     
     properties
         
-        
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        %
-        % Variable: parameters (Public)
-        % Type: Struct
-        % Description: This variable keeps the values for
-        %               the C penalty coefficient, the
-        %               kernel parameters and epsilon
-        %
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         name_parameters = {'C','k','e'}
-        parameters
+        
+	parameters
     end
     
     methods
@@ -27,7 +53,6 @@ classdef SVR < Algorithm
         % Type: Void
         % Arguments:
         %           kernel--> Type of Kernel function
-        %           opt--> Type of optimization used in the method.
         %
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         
@@ -54,7 +79,9 @@ classdef SVR < Algorithm
         
         function obj = defaultParameters(obj)
             obj.parameters.C = 10.^(3:-1:-3);
+	    % kernel width
             obj.parameters.k = 10.^(3:-1:-3);
+	    % epsilon
             obj.parameters.e = 10.^(-3:1:0);
         end
         
@@ -62,17 +89,14 @@ classdef SVR < Algorithm
         %
         % Function: runAlgorithm (Public)
         % Description: This function runs the corresponding
-        %               algorithm, fitting the model, and
-        %               testing it in a dataset. It also
-        %               calculates some statistics as CCR,
-        %               Confusion Matrix, and others.
-        % Type: It returns a set of statistics (Struct)
-        % Arguments:
-        %           Train --> Trainning data for fitting the model
+        %               algorithm, fitting the model and 
+        %               testing it in a dataset.
+        % Type: It returns the model (Struct) 
+        % Arguments: 
+        %           Train --> Training data for fitting the model
         %           Test --> Test data for validation
-        %           parameters --> Penalty coefficient C
-        %           for the SVRPCDOC method and kernel parameters
-        %
+        %           parameters --> vector with the parameter information
+        % 
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         
         function [model_information] = runAlgorithm(obj,train, test, parameters)
@@ -112,6 +136,17 @@ classdef SVR < Algorithm
             rmpath(fullfile('Algorithms','libsvm-weights-3.12','matlab'));
         end
         
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        %
+        % Function: train (Public)
+        % Description: This function train the model for
+        %               the SVR algorithm.
+        % Type: It returns the model
+        % Arguments: 
+        %           train --> Train struct
+        %           parameters--> struct with the parameter information
+        % 
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         
         function model = train(obj,train, parameters)
             
@@ -123,6 +158,18 @@ classdef SVR < Algorithm
             
         end
         
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        %
+        % Function: test (Public)
+        % Description: This function test a model given in
+        %               a set of test patterns.
+        % Outputs: Two arrays (projected patterns and predicted targets)
+        % Arguments: 
+        %           test --> Test struct data
+        %           model --> struct with the model information
+	%	    classes --> set of labels
+        % 
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         
         function [projected, predicted]= test(obj, test, model,classes)
             

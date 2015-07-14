@@ -5,9 +5,9 @@ new experiment
 name
 pom-tests
 dir
-datasets/ordinal/real/30-holdout
+data
 datasets
-pasture
+toy
 algorithm
 POM
 standarize
