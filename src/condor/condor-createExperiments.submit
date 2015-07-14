@@ -1,48 +1,42 @@
 #########################################################
-####     Separar los ficheros de configuración    ####### 
+####     Separar los ficheros de configuración    #######
 #########################################################
 
-# Universo
+# Condor Universe
 universe = vanilla
 
-# Ejecutable, en este caso un jar. Cuelga del directorio de inicio
+# Script to run
 executable = condor-createExperiments.sh
 
-# Argumentos del ejecutable
-arguments = $(nombreExperimento) $(directorio)
+# Script parameters
+arguments = $(experimentName) $(directory)
 
-# No hay transferencia de archivos, hay NFS
+# In our system, all the machines share the experiments directories by NFS
 should_transfer_files = no
 
-# Requerimientos de arquitectura, cpu, memoria, etc para lanzar una tarea.
-#+MachineList1 = Machine == "srvrrycinf05.priv.uco.es" || Machine == "srvrrycinf06.priv.uco.es" || Machine == "srvrrycinf07.priv.uco.es" || Machine == "srvrrycinf08.priv.uco.es" || Machine == "srvrrycinf09.priv.uco.es" || Machine == "srvrrycinf10.priv.uco.es" || Machine == "srvrrycinf11.priv.uco.es" || Machine == "srvrrycinf12.priv.uco.es" || Machine == "srvrrycarn01.priv.uco.es" || Machine == "srvrrycarn02.priv.uco.es" || Machine == "srvrrycarn03.priv.uco.es" || Machine == "srvrrycarn04.priv.uco.es"
-# Y poner abajo "&& MachineList1"
+# Requirements to match tasks with machines
 requirements = ((Arch == "X86_64" && OpSys == "Linux") || (Arch == "INTEL" && OpSys == "Linux"))
 
-# Si tenemos que elegir entre distintas máquina, como hacemos el ranking
+# Rank machines by available memory
 Rank = Memory
 
-# Fichero de log
-log = ./$(directorio)/condor-createExperiments.log
+# log file
+log = ./$(directory)/condor-createExperiments.log
 
-# Fichero de salida por consola
-output = ./$(directorio)/condor-createExperiments.out
+# console output file
+output = ./$(directory)/condor-createExperiments.out
 
-# Fichero de errores
-error = ./$(directorio)/condor-createExperiments.err
+# error file
+error = ./$(directory)/condor-createExperiments.err
 
-# Notificacion por correo cuando se produzca algún error en la prueba
+# Error notification email
 notification = Error
-notify_user = i82perom@uco.es
+notify_user = admin@foo.net
 
-# Prioridad de nuestro proceso propietario, por defecto a 0. Cada usuario le puede dar
-# a sus jobs la prioridad que desee entre [-20.20]. Otra cosa distinta es la prioridad
-# del usuario, la cual configura el administrador y tambien Condor mediante la macro
-# PRIORITY_HALFLIFE
 priority = 0
 
-# Hacer que estén todas las variables de entorno actuales en la ejecución del proceso
+# Get all environment variables
 getenv = True
 
-# Poner en cola 30 ejecuciones teniendo en cuenta la variable $(Process)
+# Queue executions considering variable $(Process)
 queue

@@ -4,21 +4,21 @@ if [ $# != 1 ]; then
 	echo "Usage:" $0 "name-of-experiment-file"
 	exit 127
 fi
-# Capturamos la hora del sistema
+# Get system time
 DATE=`date +%F-%H.%M.%S`;
 
-# Creamos un directorio especificado por la fecha y hora del sistema y el nombre del script a ejecutar
+# Create a directory with date and time, and the name of the configuration file
 if [ ! -d "$DATE-$1" ]; then
 	mkdir $DATE-$1
 fi
 
-# Conseguir el numero de experimentos para pasarselo a la cola del fichero condor-runExperiments
-# Se va iterando por los distintos directorios calculando el numero de archivos de train y test con distinta configuracion a ejecutar
-LINEAS=`cat $1 | grep dir -n`;
+# Get the number of experiments and pass it later to the queue of condor-runExperiments
+# For this, we iterate over the directories and count train-test pairs with diferent configuration to run
+LINES=`cat $1 | grep dir -n`;
 RUTAS=(`cat $1 |  grep dir --after-context=1 | grep -v dir | grep -v --regexp "--" | sed -e 's/\ //g'`)
 total=0;
 jR=0;
-for i in $LINEAS
+for i in $LINES
 do
 	ii=`echo $i | sed -e 's/:dir//g'`;
 	j=`expr $ii + 4`;
@@ -33,9 +33,9 @@ do
 	jR=`expr $jR + 1`;
 done
 
-# Copiamos los archivos a la carpeta para salvar la configuracion con la que se lanzo
+# Copy files to keep the configuration used for the experiments
 cp *.submit $DATE-$1/
-# Modificamos algunas etiquetas en el fichero .dag con las correspondientes a la ejecucion del trabajo actual
-sed -e 's/FECHA_ACTUAL/'$DATE'/g' -e 's/SCRIPT_EJECUCION/'$1'/g' -e 's/NUMERO_RUNS/'$total'/g' condor-matlabFramework.dag > ./$DATE-$1/condor-matlabFramework.dag
-# Enviamos el arbol de dependencias a utilizar a condor que se encargara finalmente de lanzar todos los procesos
+# We modify some of the tags of the .dag file from the DAG template to match the current job
+sed -e 's/CURRENT_DATE/'$DATE'/g' -e 's/EXEC_SCRIPT/'$1'/g' -e 's/NUM_RUNS/'$total'/g' condor-matlabFramework.dag > ./$DATE-$1/condor-matlabFramework.dag
+# Send the DAG to Condor, so that Condor will manage all the process from now on
 condor_submit_dag ./$DATE-$1/condor-matlabFramework.dag
