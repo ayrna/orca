@@ -2,7 +2,10 @@
 
 # How to use ORCA
 
-ORCA is designed focused on productivity. This is not a tool such as Weka or KNIME while we focus on running many experiments to ease algorithms comparison with a collection of datasets.
+ORCA is a framework focused on productivity. The two main objectives of the framework are: 
+
+1. To run many experiments as easily as possible to compare **many algorithms** and **many datasets**.
+2. To provide an easy way of including new algorithms into the framework by simply defining the parameters of the algorithms and the training and test methods.
 
 ORCA has been developed and tested in GNU/Linux systems, though it may run on Windows and other propietary systems, the ahead instructions are
 
