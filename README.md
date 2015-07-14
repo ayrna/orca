@@ -22,7 +22,7 @@ For more information about the paper and the ordinal datasets used please visit 
 For more information about our research group please visit [Learning and Artificial Neural Networks (AYRNA) website](http://www.uco.es/grupos/ayrna/index.php/en) at [University of Córdoba](http://www.uco.es/) (Spain).
 
 The code is mainly composed of the following folders and files:
-- [doc](doc): Folder containing the documentation (class diagram and example of use)
+- [doc](doc): Folder containing the documentation (class diagrams and example of use). There is a [How to tutorial](doc/orca-tutorial.md) to get started.
 - [src](src): Folder containing the matlab code.
 
 The [src](src) folder contains the following folders and files:
