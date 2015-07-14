@@ -71,7 +71,7 @@ $ rm -Rf orensemble
 ```
 ## Experiments configuration
 
-In the folder [src/config-files](src/config-files) you will find configuration files for running all the algorithms included in ORCA. Here there ir an example for running the Proportion Odds Model (POM), a.k.a. Ordinal Logistic Regression:
+ORCA experiments are specified in configuration files, which run an algorithm (or many algorithms) for a collections of datasets (each dataset with a given number of partitions). The folder [src/config-files](src/config-files) contains example configuration files for running all the algorithms included in ORCA for all the algorithms and datasets of the [review paper](http://www.uco.es/grupos/ayrna/orreview). The following code is an example for running the Proportion Odds Model (POM), a.k.a. Ordinal Logistic Regression:
 
 ```
 new experiment
@@ -88,7 +88,7 @@ standarize
 end experiment
 ```
 
-The above file tells ORCA to run the algorithm *POM* with the train and test datasets partition at folder *dir*. *standarize* switch on standardization of the data (by using the mean and standard deviation of the train set). Directive *name* is used as and identifier for the experiment set.
+The above file tells ORCA to run the algorithm `POM` for all the datasets specified in the list `datasets`. Each of these datasets should be found at folder *dir*, in such a way that ORCA expects one subfolder for each dataset, where the name of the subfolder must match the name of the dataset. The *standarize* flag activates the standardization of the data (by using the mean and standard deviation of the train set). Directive *name* is used as and identifier for the experiment set.
 
 ## Launch experiments
 
