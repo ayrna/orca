@@ -157,13 +157,19 @@ The meanings of the directives associated to hyper-parameter optimisation are:
 
 # Experimental results and reports
 
-ORCA uses the 'Experiments' folder to store experimental results. Each report is placed in a folder named with the current date and time (for example 'exp-2015-7-14-10-5-57'). After a suscessful experiment, this folder should have the following information:
-
- - Experiments configuration files for each dataset and partition
- - 'Results' folder with the following information:
-  - 'mean-results_train.csv' and 'mean-results_test.csv' that contains mean and standard deviation for each one of the ordinal classificacion performance metrics, and the computational time.
-  - Train and test confusion matrices.
-  - One folder for each dataset including the models ('Models' folder), threshold models one dimensional mapping values ('Guess' folder), labels predictions ('Predictions' folder), optimal hyper-parameters values ('OptHyperparams') and computational time results ('Times').
+ORCA uses the `Experiments` folder to store all the results of the different experiments run. Each report is placed in a subfolder of `Experiments` named with the current date, time and the name of the configuration file (for example 'exp-2015-7-14-10-5-57-pom'). After a successful experiment, this folder should contain the following information:
+ - Individual experiment configuration files for each dataset and partition.
+ - A `Results` folder with the following information:
+  - `mean-results_train.csv` and `mean-results_test.csv` which are reports in CSV format (easily read by Excel or LibreOffice Calc). They contain the mean and standard deviation for each performance measure (`AMAE`,`CCR`,`GM`,`MAE`,`MMAE`,`MS`,`MZE`,`Spearman`,`Tkendall` and `Wkappa`) and the computational time. These averages and standard deviations are obtained for all the partitions of each algorithm and dataset.
+  - One folder for each dataset with the following data:
+   - Train and test confusion matrices (`matrices.txt`).
+   - Name of the folder used for the experiments (`dataset`).
+   - Individual results for each of the partitions in CSV format (`results.csv`).
+   - Models of each partition in `.mat` format (`Models` folder).
+   - For threshold models, the one dimensional mapping (before applying the discretisation based on the thresholds) for training and test datasets ('Guess' folder).
+   - Labels predicted by the models for each partition ('Predictions' folder).
+   - Optimal hyper-parameters values obtained after nested cross-validation ('OptHyperparams').
+   - Computational time results ('Times').
 
 # Use ORCA with your own datasets
 
