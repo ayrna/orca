@@ -52,7 +52,25 @@ classdef Utilities < handle
         %
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         
-        function runExperiments(ficheroExperimentos)
+        function runExperiments(ficheroExperimentos, varargin)
+            
+            parallel = 0;
+            num_cores = 0;
+            
+            optargin = size(varargin,2);
+            if optargin == 1
+                parallel = varargin{1};
+                num_cores = feature('numCores'); 
+            else
+                if optargin == 2
+                    parallel = varargin{1};
+                    num_cores = varargin{2}; 
+                    if num_cores > feature('numCores')
+                        disp(['Number of cores was too high and was set up to the maximum available: ' num2str(feature('numCores')) ])
+                        num_cores = feature('numCores');
+                    end
+                end                    
+            end
             
             c = clock;
             addpath('Measures');
@@ -63,12 +81,43 @@ classdef Utilities < handle
             
             ficheros_experimentos = dir([logsDir filesep 'exp-*']);
             
-            for i=1:numel(ficheros_experimentos),
-                if ~strcmp(ficheros_experimentos(i).name(end), '~')
-                    auxiliar = Experiment;
-                    
-                    disp(['Running experiment ', ficheros_experimentos(i).name]);
-                    auxiliar.launch([logsDir filesep ficheros_experimentos(i).name]);
+            if parallel
+
+                % Check if the pool is open, then close and open with the
+                % right number of cores
+                poolsize = matlabpool('size');
+                if poolsize > 0
+                    if poolsize ~= num_cores
+                        matlabpool close;
+                        matlabpool(num_cores);
+                    end
+                else
+                    matlabpool(num_cores)
+                end
+                
+                parfor i=1:numel(ficheros_experimentos),
+                    if ~strcmp(ficheros_experimentos(i).name(end), '~')
+                        auxiliar = Experiment;
+
+                        disp(['Running experiment ', ficheros_experimentos(i).name]);
+                        auxiliar.launch([logsDir filesep ficheros_experimentos(i).name]);
+                    end
+                end
+                
+                isOpen = matlabpool('size') > 0;
+                if isOpen
+                    matlabpool close;
+                end
+
+                
+            else
+                for i=1:numel(ficheros_experimentos),
+                    if ~strcmp(ficheros_experimentos(i).name(end), '~')
+                        auxiliar = Experiment;
+
+                        disp(['Running experiment ', ficheros_experimentos(i).name]);
+                        auxiliar.launch([logsDir filesep ficheros_experimentos(i).name]);
+                    end
                 end
             end
             
