@@ -7,11 +7,16 @@ ORCA is a framework focused on productivity. The two main objectives of the fram
 1. To run many experiments as easily as possible to compare **many algorithms** and **many datasets**.
 2. To provide an easy way of including new algorithms into the framework by simply defining the parameters of the algorithms and the training and test methods.
 
-ORCA has been developed and tested in GNU/Linux systems, though it may run on Windows and other propietary systems, the ahead instructions are
+ORCA has been developed and tested in GNU/Linux systems. Although it may run on Windows and other proprietary operating systems, the following instructions are given for GNU/Linux.
 
 ## Download and build ORCA
 
-Though ORCA is programmed in MATLAB, there are some algorithms which implemented in C/C++. To
+To download ORCA you can simply clone this GitHub repository by using the following commands:
+```bash
+git clone https://github.com/ayrna/orca
+```
+
+ORCA is programmed in MATLAB, but many of the classification algorithms are implemented in C/C++. Because of this reason, they have to be compiled and packaged into the corresponding `MEX` files.
 
 ## Experiments configuration
 
