@@ -3,3 +3,8 @@
 src/Experiments
 src/Algorithms/orensemble/boostrank-*
 *~
+src/Algorithms/libsvm-rank-2.81/svm-predict
+src/Algorithms/libsvm-rank-2.81/svm-train
+src/Algorithms/libsvm-weights-3.12/svm-predict
+src/Algorithms/libsvm-weights-3.12/svm-scale
+src/Algorithms/libsvm-weights-3.12/svm-train
