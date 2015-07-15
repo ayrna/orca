@@ -108,6 +108,7 @@ classdef SVOREX < Algorithm
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         
         function [model_information] = runAlgorithm(obj,train, test, parameters)
+            addpath(fullfile('Algorithms','SVOREX'));
             
             param.C = parameters(1);
             param.k = parameters(2);
@@ -123,6 +124,8 @@ classdef SVOREX < Algorithm
             c2 = clock;
             model_information.testTime = etime(c2,c1);
             model_information.model = model;
+
+            rmpath(fullfile('Algorithms','SVOREX'));
         end
         
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
