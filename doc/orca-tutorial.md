@@ -24,13 +24,12 @@ Under GNU/Linux, the simplest way to compile all the algorithms is to use the [M
 ```bash
 $ cd src/Algorithms
 $ make
-$ make -C libsvm-rank-2.81/matlab
-make[1]: se ingresa al directorio `/home/pagutierrez/Escritorio/TOSHIBAHD/Ayrna/ClasificacionOrdinal/orcaFramework/orca/src/Algorithms/libsvm-rank-2.81/matlab'
+...
 
 ```
 If the command fails, please edit the files `src/Algorithms/libsvm-rank-2.81/matlab/Makefile`, `src/Algorithms/libsvm-weights-3.12/matlab/Makefile`, `src/Algorithms/SVOREX/Makefile` and `src/Algorithms/SVORIM/Makefile`. Make sure that the variable `MATLABDIR` is correctly pointing to the folder of your Matlab installation (by default, `/usr/local/matlab`). You can also make a symbolic link to your current Matlab installation folder:
 ```bash
-$ sudo ln -s /usr/local/MATLAB/ /usr/local/matlab 
+$ sudo ln -s /path/to/matlab /usr/local/matlab 
 ```
 The following subsections provides individual instructions for compiling each of the dependencies in case the [Makefile](../src/Algorithms/Makefile) still fails or for those which are working in other operating systems.
 
@@ -83,6 +82,11 @@ $ mv boostrank-train ../
 $ cd ..
 $ rm -Rf orensemble
 ```
+
+## Running ORCA algorithms from your own Matlab code
+
+ORCA algorithms can be used from your own Matlab code. All algorithms included in the [Algorithms](../src/Algorithms) have a `runAlgorithm`, which can be used for running the algorithms with your data. The method receives the matrix of training data, the matrix of test data and a structure with the values of the different parameters.
+
 ## Experiment configuration
 
 ORCA experiments are specified in configuration files, which run an algorithm (or many algorithms) for a collections of datasets (each dataset with a given number of partitions). The folder [src/config-files](src/config-files) contains example configuration files for running all the algorithms included in ORCA for all the algorithms and datasets of the [review paper](http://www.uco.es/grupos/ayrna/orreview). The following code is an example for running the Proportion Odds Model (POM), a.k.a. Ordinal Logistic Regression:
