@@ -60,6 +60,7 @@ The [src](src) folder contains the following folders and files:
 - [Experiment.m](src/Experiment.m): Matlab class that runs the different experiments.
 - [Metric.m](src/Metric.m): File that sets the necessary properties and functions for a metric class.
 - [Utilities.m](src/Utilities.m): Class that preprocess the experiment files, run the different algorithms and produces the results.
+- [runtests.m](src/runtests.m): Script to run all the methods in order to check that the instalation is correct.
 
 # External software
 
