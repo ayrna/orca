@@ -35,6 +35,18 @@ classdef SVC1V1 < Algorithm
     %SVC1V1 Support Vector Classifier using 1Vs1 approach
     %   This class derives from the Algorithm Class and implements the
     %   SVC1V1 method. 
+    % Further details in: * P.A. Gutiérrez, M. Pérez-Ortiz, J. Sánchez-Monedero, 
+    %                       F. Fernández-Navarro and C. Hervás-Martínez (2015), 
+    %                       "Ordinal regression methods: survey and
+    %                       experimental study",  
+    %                       IEEE Transactions on Knowledge and Data
+    %                       Engineering. Vol. Accepted 
+    %                     * C.-W. Hsu and C.-J. Lin, “A comparison of
+    %                       methods for multi-class support vector
+    %                       machines,” IEEE Transaction on Neural Networks,
+    %                       vol. 13, no. 2, pp. 415–425, 2002.    
+    % Dependencies: this class uses
+    % - libsvm-weights-3.12 for SVM training: https://www.csie.ntu.edu.tw/~cjlin/libsvm
     
     properties
        

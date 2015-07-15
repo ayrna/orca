@@ -35,6 +35,22 @@ classdef ORBoost < Algorithm
     %ORBoost Boosting ensemble for Ordinal Regression
     %   This class derives from the Algorithm Class and implements the
     %   ORBoost method. 
+    % Further details in: * P.A. Gutiérrez, M. Pérez-Ortiz, J. Sánchez-Monedero, 
+    %                       F. Fernández-Navarro and C. Hervás-Martínez (2015), 
+    %                       "Ordinal regression methods: survey and
+    %                       experimental study",  
+    %                       IEEE Transactions on Knowledge and Data
+    %                       Engineering. Vol. Accepted 
+    %                     * H.-T. Lin and L. Li, “Large-margin thresholded
+    %                       ensembles for ordinal regression: Theory and
+    %                       practice,” in Proc. of the 17th Algorithmic
+    %                       Learning Theory International Conference, ser.
+    %                       Lecture Notes in Artificial Intelligence
+    %                       (LNAI), J. L. Balcazar, P. M. Long, and F.
+    %                       Stephan, Eds., vol. 4264. Springer-Verlag,
+    %                       October 2006, pp. 319–333.       
+    % Dependencies: this class uses
+    % - orensemble implementation http://www.work.caltech.edu/~htlin/program/orensemble/
     
     properties
       
@@ -49,12 +65,12 @@ classdef ORBoost < Algorithm
     
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         %
-        % Function: KDLOR (Public Constructor)
+        % Function: ORBoost (Public Constructor)
         % Description: It constructs an object of the class
-        %               KDLOR and sets its characteristics.
+        %               ORBoost and sets its characteristics.
         % Type: Void
         % Arguments: 
-	%		-No arguments	
+	    %		-No arguments	
         % 
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         
@@ -90,8 +106,6 @@ classdef ORBoost < Algorithm
         % Arguments: 
         %           Train --> Trainning data for fitting the model
         %           Test --> Test data for validation
-        %           parameters --> Penalty coefficient C 
-        %           for the KDLOR method and kernel parameters
         % 
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

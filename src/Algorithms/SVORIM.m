@@ -35,6 +35,17 @@ classdef SVORIM < Algorithm
     % SVOR Support Vector for Ordinal Regression (Implicit constraints)
     %   This class derives from the Algorithm Class and implements the
     %   SVORIM method.
+    % Further details in: * P.A. Gutiérrez, M. Pérez-Ortiz, J. Sánchez-Monedero, 
+    %                       F. Fernández-Navarro and C. Hervás-Martínez (2015), 
+    %                       "Ordinal regression methods: survey and
+    %                       experimental study",  
+    %                       IEEE Transactions on Knowledge and Data
+    %                       Engineering. Vol. Accepted 
+    %                     * W. Chu and S. S. Keerthi, “Support Vector
+    %                       Ordinal Regression,” Neural Computation, vol.
+    %                       19, no. 3, pp. 792–815, 2007.   
+    % Dependencies: this class uses
+    % - svorim implementation: http://www.gatsby.ucl.ac.uk/~chuwei/svor.htm
     
     properties
         

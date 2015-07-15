@@ -35,7 +35,18 @@ classdef ELMOP < Algorithm
     %ELM Extreme Learning Machine for Ordinal Regression
     %   This class derives from the Algorithm Class and implements the
     %   ELMOP method
-    
+    % Further details in: * P.A. Gutiérrez, M. Pérez-Ortiz, J. Sánchez-Monedero, 
+    %                       F. Fernández-Navarro and C. Hervás-Martínez (2015), 
+    %                       "Ordinal regression methods: survey and
+    %                       experimental study",  
+    %                       IEEE Transactions on Knowledge and Data
+    %                       Engineering. Vol. Accepted 
+    %                     * W.-Y. Deng, Q.-H. Zheng, S. Lian, L. Chen, and
+    %                       X. Wang, “Ordinal extreme learning machine,”
+    %                       Neurocomputing, vol. 74, no. 1–3, pp. 447– 456,
+    %                       2010.   
+    % This class is an extended version of the source code provided by
+    % Guang-Bin Huang (http://www.ntu.edu.sg/home/egbhuang/)
     properties
         
         activationFunction = 'sig';
