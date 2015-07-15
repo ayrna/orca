@@ -18,7 +18,21 @@ $ git clone https://github.com/ayrna/orca
 
 All the contents of the repository can also be downloaded from the GitHub site by using the "Download ZIP" button.
 
-ORCA is programmed in MATLAB, but many of the classification algorithms are implemented in C/C++. Because of this, these methods have to be compiled and/or packaged into the corresponding `MEX` files. Next, we provide the instructions to compile all the dependencies:
+ORCA is programmed in MATLAB, but many of the classification algorithms are implemented in C/C++. Because of this, these methods have to be compiled and/or packaged into the corresponding `MEX` files. 
+
+Under GNU/Linux, the simplest way to compile all the algorithms is to use the [Makefile](../src/Algorithms/Makefile) included in ORCA. This will compile all the algorithms and clean intermediate object files:
+```bash
+$ cd src/Algorithms
+$ make
+$ make -C libsvm-rank-2.81/matlab
+make[1]: se ingresa al directorio `/home/pagutierrez/Escritorio/TOSHIBAHD/Ayrna/ClasificacionOrdinal/orcaFramework/orca/src/Algorithms/libsvm-rank-2.81/matlab'
+
+```
+If the command fails, please edit the files `src/Algorithms/libsvm-rank-2.81/matlab/Makefile`, `src/Algorithms/libsvm-weights-3.12/matlab/Makefile`, `src/Algorithms/SVOREX/Makefile` and `src/Algorithms/SVORIM/Makefile`. Make sure that the variable `MATLABDIR` is correctly pointing to the folder of your Matlab installation (by default, `/usr/local/matlab`). You can also make a symbolic link to your current Matlab installation folder:
+```bash
+$ sudo ln -s /usr/local/MATLAB/ /usr/local/matlab 
+```
+The following subsections provides individual instructions for compiling each of the dependencies in case the [Makefile](../src/Algorithms/Makefile) still fails or for those which are working in other operating systems.
 
 ### libsvm-weights-3.12
 
