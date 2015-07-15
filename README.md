@@ -61,6 +61,14 @@ The [src](src) folder contains the following folders and files:
 - [Metric.m](src/Metric.m): File that sets the necessary properties and functions for a metric class.
 - [Utilities.m](src/Utilities.m): Class that preprocess the experiment files, run the different algorithms and produces the results.
 
+# External software
+
+The ORCA frameworks makes use of the following external software implementations. For some of them, a Matlab interface has been developed through the use of MEX files.
+- [libsvm-weights-3.12](http://ntucsu.csie.ntu.edu.tw/~cjlin/libsvmtools/#weights_for_data_instances): we have used this framework for Support Vector Machine algorithms. The version considered was 3.12.
+- [libsvm-rank-2.81](http://www.work.caltech.edu/~htlin/program/libsvm/): this implementation was used for the method REDSVM. The version considered was 2.81.
+- [orensemble](http://www.work.caltech.edu/~htlin/program/orensemble/): this implementation was used for the method ORBoost.
+- [SVOR](http://www.gatsby.ucl.ac.uk/~chuwei/svor.htm): this implementation was used for the methods SVOREX, SVORIM and SVORIMLin.
+
 # References
 - [1] C.-W. Hsu and C.-J. Lin, “A comparison of methods for multi-class support vector machines,” IEEE Transaction on Neural Networks, vol. 13, no. 2, pp. 415–425, 2002.
 - [2] A. Smola and B. Schölkopf, “A tutorial on support vector regression,” Statistics and Computing, vol. 14, no. 3, pp. 199–222, 2004.
