@@ -1,6 +1,6 @@
-% ----------------------------------------------------------
-% Names of experiments should be unique for each script file
-% ----------------------------------------------------------
+% ----------------------------------------
+% Configuration file for POM algorithm
+% ----------------------------------------
 new experiment
 name
 pom-real
