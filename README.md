@@ -28,7 +28,20 @@ The code is mainly composed of the following folders and files:
 - [src](src): Folder containing the matlab code.
 
 The [src](src) folder contains the following folders and files:
-- [Algorithms](src/Algorithms): Folder containing the matlab classes for the algorithms included and the original code (if applicable).
+- [Algorithms](src/Algorithms): Folder containing the matlab classes for the algorithms included and the original code (if applicable). The algorithms included in ORCA are the followings:
+ - [CSSVC](src/Algorithms/CSSVC.m): This is a nominal SVM with the OneVsAll decomposition, where absolute costs are included as different weights for the negative class of each decomposition (it is considered as a naïve approach for ordinal regression since the assumption of equal distances between classes is done).
+ - [ELMOP](src/Algorithms/ELMOP.m): Standard Extreme Learning Machine imposing an ordinal structure in the coding scheme representing the target variable.
+ - [KDLOR](src/Algorithms/KDLOR.m): Reformulation of the well-known Kernel Discriminant Analysis for Ordinal Regression by imposing an order constraint in the projection to compute.
+ - [ORBoost](src/Algorithms/ORBoost.m): This is an ensemble model based on the threshold model structure, where normalised sigmoid functions are used as the base classifier. The *weights* parameters configures whether the All margins versions is used (`weights=true`) or the Left-Right margin is used (`weights=false`).
+ - [POM](src/Algorithms/POM.m): Extension of the linear binary Logistic Regression methodology to Ordinal Classification by means of Cumulative Link Functions.
+ - [REDSVM](src/Algorithms/REDSVM.m): Augmented Binary Classification framework that solves the Ordinal Regression problem by a single binary model (SVM is applied in this case).
+ - [SVC1V1](src/Algorithms/SVC1V1.m): Nominal Support Vector Machine performing the OneVsOne formulation (considered as a naïve approach for ordinal regression since it ignores the order information).
+ - [SVC1VA](src/Algorithms/SVC1VA.m): Nominal Support Vector Machine with the OneVsAll paradigm (considered as a naïve approach for ordinal regression since it ignores the order information).
+ - [SVMOP](src/Algorithms/SVMOP.m): Binary ordinal decomposition methodology with SVM as base method, it imposes explicit weights over the patterns and performs a probabilistic framework for the prediction.
+ - [SVOREX](src/Algorithms/SVOREX.m): Ordinal formulation of the SVM paradigm, which computes discriminant parallel hyperplanes for the data and a set of thresholds by imposing explicit constraints in the optimization problem.
+ - [SVORIM](src/Algorithms/SVORIM.m): Ordinal formulation of the SVM paradigm, which computes discriminant parallel hyperplanes for the data and a set of thresholds by imposing implicit constraints in the optimization problem.
+ - [SVORLin](src/Algorithms/SVORLin.m): We have also included a linear version of the SVORIM method (considering the linear kernel instead of the Gaussian one) to check how the kernel trick affects the final performance (SVORLin).
+ - [SVR](src/Algorithms/SVR.m): Standard Support Vector Regression with normalised targets (considered as a naïve approach for ordinal regression since the assumption of equal distances between targets is done).
 - [condor](src/condor): Folder with the necessary files and steps for using condor with our framework.
 - [config-files](src/config-files): Folder with different configuration files for running all the algorithms.
 - [Measures](src/Measures): Folder with the matlab classes for the metrics used for evaluating the classifiers.
