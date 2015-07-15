@@ -1,6 +1,6 @@
 # orca
 
-![ORCA logo](doc/orca_small.png) ORCA (Ordinal Regression and Classification Algorithms) is a MATLAB framework including a wide set of ordinal regression methods associated to the paper "Ordinal regression methods: survey and experimental study" published in IEEE Transactions on Knowledge and Data Engineering. If you use this framework please cite the following work: 
+![ORCA logo](doc/orca_small.png) ORCA (Ordinal Regression and Classification Algorithms) is a MATLAB framework including a wide set of ordinal regression methods associated to the paper "Ordinal regression methods: survey and experimental study" published in IEEE Transactions on Knowledge and Data Engineering. If you use this framework please cite the following work:
 
 ```
 P.A. Gutiérrez, M. Pérez-Ortiz, J. Sánchez-Monedero, F. Fernández-Navarro and C. Hervás-Martínez (2015), "Ordinal regression methods: survey and experimental study", IEEE Transactions on Knowledge and Data Engineering. Vol. Accepted
@@ -22,7 +22,9 @@ For more information about the paper and the ordinal datasets used please visit 
 For more information about our research group please visit [Learning and Artificial Neural Networks (AYRNA) website](http://www.uco.es/grupos/ayrna/index.php/en) at [University of Córdoba](http://www.uco.es/) (Spain).
 
 The code is mainly composed of the following folders and files:
-- [doc](doc): Folder containing the documentation (class diagrams and example of use). There is a [How to tutorial](doc/orca-tutorial.md) to get started.
+- [doc](doc): Folder containing the documentation (class diagrams and example of use). There is a [How to tutorial](doc/orca-tutorial.md) to get started. Other tutorials are:
+  - [Use ORCA with HTCondor](orca/doc/orca-condor.md)
+  - [Paralelize ORCA experiments](orca/doc/orca-condor.md)
 - [src](src): Folder containing the matlab code.
 
 The [src](src) folder contains the following folders and files:
