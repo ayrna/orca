@@ -9,7 +9,7 @@ dir
 datasets
 automobile,balance-scale,bondrate,car,contact-lenses,ERA,ESL,eucalyptus,LEV,newthyroid,pasture,squash-stored,squash-unstored,SWD,tae,toy,winequality-red
 algorithm
-svorimlin
+SVORLin
 num fold
 5
 standarize
@@ -30,7 +30,7 @@ dir
 datasets
 automobile,balance-scale,bondrate,car,contact-lenses,ERA,ESL,eucalyptus,LEV,newthyroid,pasture,squash-stored,squash-unstored,SWD,tae,toy,winequality-red
 algorithm
-svorimlin
+SVORLin
 num fold
 5
 standarize
@@ -51,7 +51,7 @@ dir
 datasets
 abalone,housing,machine,pyrim,stock,bank1-5,bank2-5,calhousing-5,census1-5,census2-5,computer1-5,computer2-5
 algorithm
-svorimlin
+SVORLin
 num fold
 5
 standarize
@@ -72,7 +72,7 @@ dir
 datasets
 abalone10,housing10,machine10,pyrim10,stock10bank1-10,bank2-10,calhousing-10,census1-10,census2-10,computer1-10,computer2-10
 algorithm
-svorimlin
+SVORLin
 num fold
 5
 standarize
@@ -93,7 +93,7 @@ dir
 datasets
 abalone,housing,machine,pyrim,stock,bank1-5,bank2-5,calhousing-5,census1-5,census2-5,computer1-5,computer2-5
 algorithm
-svorimlin
+SVORLin
 num fold
 5
 standarize
@@ -114,7 +114,7 @@ dir
 datasets
 abalone10,housing10,machine10,pyrim10,stock10bank1-10,bank2-10,calhousing-10,census1-10,census2-10,computer1-10,computer2-10
 algorithm
-svorimlin
+SVORLin
 num fold
 5
 standarize
