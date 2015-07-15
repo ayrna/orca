@@ -22,4 +22,4 @@ matlab: $(objects) mainSvorex.c
 original: main.c alphas.c cachelist.c datalist.c def_settings.c kcv.c loadfile.c ordinal_takestep.c setandfi.c smo_kernel.c smo_routine.c smo_settings.c smo_timer.c svc_predict.c
 	gcc -o svorex main.c alphas.c cachelist.c datalist.c def_settings.c kcv.c loadfile.c ordinal_takestep.c setandfi.c smo_kernel.c smo_routine.c smo_settings.c smo_timer.c svc_predict.c -lm -O2 -Wall
 clean:
-	rm *.o svorex
+	rm -f *.o svorex

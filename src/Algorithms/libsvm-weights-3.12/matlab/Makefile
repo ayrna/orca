@@ -50,4 +50,4 @@ svm_model_matlab.o:     svm_model_matlab.c ../svm.h
 	make -C .. svm.o
 
 clean:
-	rm -f *~ *.o *.mex* *.obj ../svm.o
+	rm -f *~ *.o *.obj ../svm.o

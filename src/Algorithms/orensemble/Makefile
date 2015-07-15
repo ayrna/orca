@@ -8,4 +8,4 @@ orensemble:
 	tar xzf orensemble.tar.gz
 
 clean:
-	make -C orensemble
+	rm -Rf orensemble
