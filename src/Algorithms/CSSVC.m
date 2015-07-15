@@ -36,6 +36,14 @@ classdef CSSVC < Algorithm
     % weights
     %   This class derives from the Algorithm Class and implements the
     %   CSSVC method. 
+    % Further details in: * P.A. Gutiérrez, M. Pérez-Ortiz, J. Sánchez-Monedero, 
+    %                       F. Fernández-Navarro and C. Hervás-Martínez (2015), 
+    %                       "Ordinal regression methods: survey and
+    %                       experimental study",  
+    %                       IEEE Transactions on Knowledge and Data
+    %                       Engineering. Vol. Accepted 
+    % Dependencies: this class uses
+    % - libsvm-weights-3.12 for SVM training: https://www.csie.ntu.edu.tw/~cjlin/libsvm
     
     properties
        

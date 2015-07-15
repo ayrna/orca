@@ -36,6 +36,24 @@ classdef SVMOP < Algorithm
     % regression (by binary decomposition)
     %   This class derives from the Algorithm Class and implements the
     %   SVMOP method.
+    % Further details in: * P.A. Gutiérrez, M. Pérez-Ortiz, J. Sánchez-Monedero, 
+    %                       F. Fernández-Navarro and C. Hervás-Martínez (2015), 
+    %                       "Ordinal regression methods: survey and
+    %                       experimental study",  
+    %                       IEEE Transactions on Knowledge and Data
+    %                       Engineering. Vol. Accepted 
+    %                     * E. Frank and M. Hall, “A simple approach to
+    %                       ordinal classification,” in Proceedings of the
+    %                       12th European Conference on Machine Learning,
+    %                       ser. EMCL ’01. London, UK: Springer-Verlag,
+    %                       2001, pp. 145–156.    
+    %                     * W. Waegeman and L. Boullart, “An ensemble of
+    %                       weighted support vector machines for ordinal
+    %                       regression,” International Journal of Computer
+    %                       Systems Science and Engineering, vol. 3, no. 1,
+    %                       pp. 47–51, 2009.    
+    % Dependencies: this class uses
+    % - libsvm-weights-3.12 for SVM training: https://www.csie.ntu.edu.tw/~cjlin/libsvm
     
     properties
 

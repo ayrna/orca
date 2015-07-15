@@ -35,6 +35,16 @@ classdef POM < Algorithm
     % POM Proportional Odd Model for Ordinal Regression
     %   This class derives from the Algorithm Class and implements the
     %   POM method. 
+    % Further details in: * P.A. Gutiérrez, M. Pérez-Ortiz, J. Sánchez-Monedero, 
+    %                       F. Fernández-Navarro and C. Hervás-Martínez (2015), 
+    %                       "Ordinal regression methods: survey and
+    %                       experimental study",  
+    %                       IEEE Transactions on Knowledge and Data
+    %                       Engineering. Vol. Accepted 
+    %                     * P. McCullagh, “Regression models for ordinal
+    %                       data,” Journal of the Royal Statistical
+    %                       Society. Series B (Methodological), vol. 42,
+    %                       no. 2, pp. 109–142, 1980.    
     
     properties
 		

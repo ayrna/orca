@@ -35,6 +35,17 @@ classdef KDLOR < Algorithm
     %KDLOR Kernel Discriminant Learning for Ordinal Regression
     %   This class derives from the Algorithm Class and implements the
     %   KLDOR method. 
+    % Further details in: * P.A. Gutiérrez, M. Pérez-Ortiz, J. Sánchez-Monedero, 
+    %                       F. Fernández-Navarro and C. Hervás-Martínez (2015), 
+    %                       "Ordinal regression methods: survey and
+    %                       experimental study",  
+    %                       IEEE Transactions on Knowledge and Data
+    %                       Engineering. Vol. Accepted 
+    %                     * B.-Y. Sun, J. Li, D. D. Wu, X.-M. Zhang, and
+    %                       W.-B. Li, “Kernel discriminant learning for
+    %                       ordinal regression,” IEEE Transactions on
+    %                       Knowledge and Data Engineering, vol. 22, no. 6,
+    %                       pp. 906–910, 2010.    
     
     properties
         
