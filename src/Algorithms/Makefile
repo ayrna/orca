@@ -1,4 +1,4 @@
-SUBDIRS = libsvm-rank-2.81 libsvm-weights-3.12 orensemble SVORIM SVOREX
+SUBDIRS = libsvm-rank-2.81/matlab libsvm-weights-3.12/matlab orensemble SVORIM SVOREX
 
 .PHONY: subdirs $(SUBDIRS)
      

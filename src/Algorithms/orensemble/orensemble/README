@@ -1,0 +1,24 @@
+The program implements three large-margin thresholded ensemble
+algorithms for ordinal regression. It includes an improved RankBoost
+algorithm, the ORBoost-LR algorithm, and the ORBoost-All algorithm. 
+Details can be found in
+
+H.-T. Lin and L. Li.  Large-Margin Thresholded Ensembles for 
+Ordinal Regression: Theory and Practice. In J. Balcazar et al., eds., 
+Algorithmic Learning Theory: ALT '06, vol. 4264 of Lecture Notes in 
+Artificial Intelligence, 319-333, Springer-Verlag. Barcelona, Spain, 2006.
+
+===Installation===
+The program needs to be linked to the LEMGA library by Ling Li. LEMGA
+can be downloaded at
+
+http://www.work.caltech.edu/ling/lemga/index.html
+
+The Makefile entry "LEMGA" should be modified for correct linking. 
+The program has been tested to work with the 2006/05/16 snapshot of LEMGA.
+
+===Copyright Disclaimer===
+Copyright (c) 2006-2007 Hsuan-Tien Lin (htlin at caltech.edu)
+All rights reserved. Redistribution and use in source and binary forms, 
+with or without modification, are only permitted for non-commercial purposes. 
+The author takes no responsibility on damages or other problems caused. 
