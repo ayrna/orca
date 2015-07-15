@@ -5,6 +5,9 @@ SUBDIRS = libsvm-rank-2.81/matlab libsvm-weights-3.12/matlab orensemble SVORIM S
 subdirs: $(SUBDIRS)
 
 all: $(SUBDIRS)
+
+clean: $(SUBDIRS)
  
 $(SUBDIRS):
 	$(MAKE) -C $@
+ 
