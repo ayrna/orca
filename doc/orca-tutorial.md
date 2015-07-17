@@ -267,4 +267,4 @@ toy/gpor/train_toy.1
 toy/gpor/test_toy.29
 toy/gpor/train_toy.29
 ```
-ORCA will train a model for all the training/test pairs, and the performance results will be used for the reports. The website of the review paper associated to ORCA includes the [partitions](http://www.uco.es/grupos/ayrna/orreview) for all the datasets considered in the experimental part.
+ORCA will train a model for all the training/test pairs, and the performance results will be used for the reports. The website of the review paper associated to ORCA includes the [partitions](http://www.uco.es/grupos/ayrna/ucobigfiles/datasets-orreview.zip) for all the datasets considered in the experimental part.
