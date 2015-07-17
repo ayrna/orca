@@ -85,8 +85,58 @@ $ rm -Rf orensemble
 
 ## Running ORCA algorithms from your own Matlab code
 
-ORCA algorithms can be used from your own Matlab code. All algorithms included in the [Algorithms](../src/Algorithms) have a `runAlgorithm`, which can be used for running the algorithms with your data. The method receives the matrix of training data, the matrix of test data and a structure with the values of the different parameters.
+ORCA algorithms can be used from your own Matlab code. All algorithms included in the [Algorithms](../src/Algorithms) have a `runAlgorithm` method, which can be used for running the algorithms with your data. The method receives the matrix of training data, the matrix of test data and a structure with the values of the parameters associated.
 
+For example, the KDLOR method has a total of five parameters. Two of them (the type of kernel, `kernel`, and the optimisation routine considered, `opt`) are received in the constructor of the corresponding class, and the other three parameters (cost, `C`, kernel parameter, `k`, and value to avoid singularities, `u`) are supposed to have to be fine-tuned for each dataset and partition, so they are received in a list passed to the `runAlgorithm` method. This an example of execution of KDLOR from the Matlab console:
+```MATLAB
+>> cd src/Algorithms/
+>> addpath ..
+>> kdlorAlgorithm = KDLOR('rbf','quadprog');
+>> kdlorAlgorithm
+
+kdlorAlgorithm = 
+
+  KDLOR handle
+
+  Properties:
+    optimizationMethod: 'quadprog'
+       name_parameters: {'C'  'k'  'u'}
+            parameters: []
+            kernelType: 'rbf'
+                  name: 'Kernel Discriminant Learning for Ordinal Regression'
+
+  Methods, Events, Superclasses
+
+>> load ../../exampledata/toy/matlab/train_toy.0
+>> load ../../exampledata/toy/matlab/test_toy.0
+>> train.patterns = train_toy(:,1:(size(train_toy,2)-1));
+>> train.targets = train_toy(:,size(train_toy,2));
+>> test.patterns = test_toy(:,1:(size(test_toy,2)-1));
+>> test.targets = test_toy(:,size(test_toy,2));
+>> param(1) = 10;
+>> param(2) = 0.1;
+>> param(3) = 0.001;
+>> info = kdlorAlgorithm.runAlgorithm(train,test,param);
+>> info
+
+info = 
+
+         trainTime: 0.2834
+    projectedTrain: [225x1 double]
+    predictedTrain: [225x1 double]
+     projectedTest: [75x1 double]
+     predictedTest: [75x1 double]
+          testTime: 0.0108
+             model: [1x1 struct]
+
+>> fprintf('Accuracy Train %f, Accuracy Test %f\n',sum(train.targets==info.predictedTrain)/size(train.targets,1),sum(test.targets==info.predictedTest)/size(test.targets,1));
+Accuracy Train 0.871111, Accuracy Test 0.853333
+```
+The corresponding script ([exampleKDLOR.m](../src/tests/exampleKDLOR.m)) can found and run in the [tests](../src/tests) folder:
+```MATLAB
+>> exampleKDLOR
+Accuracy Train 0.871111, Accuracy Test 0.853333
+```
 ## Experiment configuration
 
 ORCA experiments are specified in configuration files, which run an algorithm (or many algorithms) for a collections of datasets (each dataset with a given number of partitions). The folder [src/config-files](src/config-files) contains example configuration files for running all the algorithms included in ORCA for all the algorithms and datasets of the [review paper](http://www.uco.es/grupos/ayrna/orreview). The following code is an example for running the Proportion Odds Model (POM), a.k.a. Ordinal Logistic Regression:
