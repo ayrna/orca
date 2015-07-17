@@ -22,9 +22,10 @@ For more information about the paper and the ordinal datasets used please visit 
 For more information about our research group please visit [Learning and Artificial Neural Networks (AYRNA) website](http://www.uco.es/grupos/ayrna/index.php/en) at [University of Córdoba](http://www.uco.es/) (Spain).
 
 The code is mainly composed of the following folders and files:
-- [doc](doc): Folder containing the documentation (class diagrams and example of use). There is a [How to tutorial](doc/orca-tutorial.md) to get started. Other tutorials are:
-  - [Use ORCA with HTCondor](orca/doc/orca-condor.md)
-  - [Paralelize ORCA experiments](orca/doc/orca-condor.md)
+- [doc](doc): Folder containing the documentation. 
+  - [How to tutorial](doc/orca-tutorial.md) to get started with ORCA.
+  - [Use ORCA with HTCondor](orca/doc/orca-condor.md).
+  - [Paralelize ORCA experiments](orca/doc/orca-condor.md).
 - [src](src): Folder containing the matlab code.
 
 The [src](src) folder contains the following folders and files:
