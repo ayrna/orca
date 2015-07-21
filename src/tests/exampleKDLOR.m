@@ -9,10 +9,10 @@ load ../../exampledata/toy/matlab/train_toy.0
 load ../../exampledata/toy/matlab/test_toy.0
 
 % "patterns" refers to the input variables and targets to the output one
-train.patterns = train_toy(:,1:(size(train_toy,2)-1));
-train.targets = train_toy(:,size(train_toy,2));
-test.patterns = test_toy(:,1:(size(test_toy,2)-1));
-test.targets = test_toy(:,size(test_toy,2));
+train.patterns = train_toy(:,1:end-1);
+train.targets = train_toy(:,end);
+test.patterns = test_toy(:,1:end-1);
+test.targets = test_toy(:,end);
 
 % Parameter C (Cost)
 param(1) = 10;
