@@ -26,7 +26,7 @@ The code is mainly composed of the following folders and files:
 - [doc](doc): Folder containing the documentation. 
   - [How to tutorial](doc/orca-tutorial.md) to get started with ORCA.
   - [Use ORCA with HTCondor](doc/orca-condor.md).
-  - [Paralelize ORCA experiments](doc/orca-condor.md).
+  - [Paralelize ORCA experiments](doc/orca-parallel.md).
 - [src](src): Folder containing the matlab code.
 
 The [src](src) folder contains the following folders and files:
