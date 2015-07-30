@@ -1,5 +1,4 @@
 # orca
-
 ![ORCA logo](doc/orca_small.png) ORCA (Ordinal Regression and Classification Algorithms) is a MATLAB framework including a wide set of ordinal regression methods associated to the paper ["Ordinal regression methods: survey and experimental study"](http://dx.doi.org/10.1109/TKDE.2015.2457911) published in IEEE Transactions on Knowledge and Data Engineering. If you use this framework please cite the following work:
 
 ```
@@ -65,12 +64,16 @@ The [src](src) folder contains the following folders and files:
 - [runtests.m](src/runtests.m): Script to run all the methods in order to check that the instalation is correct.
 
 # External software
-
 The ORCA frameworks makes use of the following external software implementations. For some of them, a Matlab interface has been developed through the use of MEX files.
 - [libsvm-weights-3.12](http://ntucsu.csie.ntu.edu.tw/~cjlin/libsvmtools/#weights_for_data_instances): we have used this framework for Support Vector Machine algorithms. The version considered was 3.12.
 - [libsvm-rank-2.81](http://www.work.caltech.edu/~htlin/program/libsvm/): this implementation was used for the method REDSVM. The version considered was 2.81.
 - [orensemble](http://www.work.caltech.edu/~htlin/program/orensemble/): this implementation was used for the method ORBoost.
 - [SVOR](http://www.gatsby.ucl.ac.uk/~chuwei/svor.htm): this implementation was used for the methods SVOREX, SVORIM and SVORIMLin.
+
+
+# Other contributors
+Apart from the authors of the paper and the authors of the implementations referenced in "External software" section, the following persons have also contributed to ORCA framework:
+- [Juan Martín Jiménez Alcaide](https://es.linkedin.com/pub/juan-martín-jiménez/89/824/a31) developed the Matlab wrappers for the SVORIM and SVOREX algorithms.
 
 # References
 - [1] C.-W. Hsu and C.-J. Lin, “A comparison of methods for multi-class support vector machines,” IEEE Transaction on Neural Networks, vol. 13, no. 2, pp. 415–425, 2002.
