@@ -13,7 +13,7 @@ Then, you have to edit the test file, so that the path of the experiments is cor
 ```
 Now the script is ready to be used. The following command:
 ```bash
-$ condor-matlabExperiment.sh svorim
+~/orca/orca/src/condor$ condor-matlabExperiment.sh svorim
 ```
 will create a HTCondor work and will add this work to the HTCondor queue. Each work consists of a task for dividing the work into different independent configuration files, a train-test task for each dataset partition, and an extra task to collect all the data and create the reports. Most of the experimental results will be compressed, with the exception of the CSV files. To adapt the set of scripts to your HTCondor system please set up environment variables corresponding to MATLAB's path, universe, requirements and so on.
 
