@@ -18,7 +18,7 @@ Bibtex entry:
 }
 ```
 
-For more information about the paper and the ordinal datasets used please visit the associated webpage: http://www.uco.es/grupos/ayrna/orreview
+For more information about the paper and the ordinal datasets used please visit the associated webpage: [http://www.uco.es/grupos/ayrna/orreview](http://www.uco.es/grupos/ayrna/orreview)
 For more information about our research group please visit [Learning and Artificial Neural Networks (AYRNA) website](http://www.uco.es/grupos/ayrna/index.php/en) at [University of Córdoba](http://www.uco.es/) (Spain).
 
 The code is mainly composed of the following folders and files:
@@ -44,7 +44,7 @@ The [src](src) folder contains the following folders and files:
  - [REDSVM](src/Algorithms/REDSVM.m) [9]: Augmented Binary Classification framework that solves the Ordinal Regression problem by a single binary model (SVM is applied in this case).
  - [ORBoost](src/Algorithms/ORBoost.m) [10]: This is an ensemble model based on the threshold model structure, where normalised sigmoid functions are used as the base classifier. The *weights* parameters configures whether the All margins versions is used (`weights=true`) or the Left-Right margin is used (`weights=false`).
 - [condor](src/condor): Folder with the necessary files and steps for using condor with our framework.
-- [config-files](src/config-files): Folder with different configuration files for running all the algorithms.
+- [config-files](src/config-files): Folder with different configuration files for running all the algorithms. In order to use these files, you will need the [datasets](http://www.uco.es/grupos/ayrna/ucobigfiles/datasets-orreview.zip) of our review paper.
 - [Measures](src/Measures): Folder with the matlab classes for the metrics used for evaluating the classifiers. The measures included in ORCA are the following (more details about the metrics can be found in [11,12]:
  - [MAE](src/Measures/MAE.m): Mean Absolute Error between predicted and expected categories, representing classes as integer numbers (1, 2, ...).
  - [MZE](src/Measures/MZE.m): Mean Zero-one Error or standard classification error (1-accuracy).
@@ -61,7 +61,7 @@ The [src](src) folder contains the following folders and files:
 - [Experiment.m](src/Experiment.m): Matlab class that runs the different experiments.
 - [Metric.m](src/Metric.m): File that sets the necessary properties and functions for a metric class.
 - [Utilities.m](src/Utilities.m): Class that preprocess the experiment files, run the different algorithms and produces the results.
-- [runtests.m](src/runtests.m): Script to run all the methods in order to check that the instalation is correct.
+- [runtests.m](src/runtests.m): Script to run all the methods in order to check that the installation is correct.
 
 # External software
 The ORCA frameworks makes use of the following external software implementations. For some of them, a Matlab interface has been developed through the use of MEX files.
