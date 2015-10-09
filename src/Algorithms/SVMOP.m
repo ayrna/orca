@@ -183,7 +183,7 @@ classdef SVMOP < Algorithm
                 etiquetas_train = [ ones(size(train.targets(train.targets<i))) ;  ones(size(train.targets(train.targets>=i)))*2];
                 
                 % Train
-                options = ['-b 1 -t 2 -c ' num2str(parameteres.C) ' -g ' num2str(parameters.k) ' -q'];
+                options = ['-b 1 -t 2 -c ' num2str(parameters.C) ' -g ' num2str(parameters.k) ' -q'];
                 if obj.weights,
                     weightsTrain = obj.computeWeights(i-1,train.targets);
                 else
