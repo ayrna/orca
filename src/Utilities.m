@@ -267,16 +267,19 @@ classdef Utilities < handle
                     end
                     fclose(fid);
 
-                    % Confusion matrices
+                    % Confusion matrices and sum of confusion matrices
                     if train == 1
                         fid = fopen([experiment_folder filesep experimentos(i).name filesep 'matrices_train.txt'],'w');
                     else
                         fid = fopen([experiment_folder filesep experimentos(i).name filesep 'matrices_test.txt'],'w');
                     end
 
+                    J = length(unique(act{1}));
+                    cm_sum = zeros(J);
                     for h = 1:size(results_matrix,1),
                         fprintf(fid, '%s\n----------\n', real_files(h).name);
                         cm = confusionmat(act{h},pred{h});
+                        cm_sum = cm_sum + cm;
                         for ii = 1:size(cm,1),
                             for jj = 1:size(cm,2),
                                 fprintf(fid, '%d ', cm(ii,jj));
@@ -285,6 +288,21 @@ classdef Utilities < handle
                         end
                     end
                     fclose(fid);
+                    
+                    % Calculate metrics with the sum of confusion matrices
+                    accs_sum = CCR.calculateMetric(cm_sum) * 100;
+                    gms_sum = GM.calculateMetric(cm_sum) * 100;
+                    mss_sum = MS.calculateMetric(cm_sum) * 100;
+                    maes_sum = MAE.calculateMetric(cm_sum);
+                    amaes_sum = AMAE.calculateMetric(cm_sum);
+                    maxmaes_sum = MMAE.calculateMetric(cm_sum);
+                    spearmans_sum = Spearman.calculateMetric(cm_sum);
+                    kendalls_sum = Tkendall.calculateMetric(cm_sum);
+                    wkappas_sum = Wkappa.calculateMetric(cm_sum);
+                    results_matrix_sum = [accs_sum; gms_sum; mss_sum; maes_sum; amaes_sum; maxmaes_sum; spearmans_sum; kendalls_sum; wkappas_sum; sum(times(1,:)); sum(times(2,:)); sum(times(3,:))];
+
+                    results_matrix_sum = results_matrix_sum';
+
 
                     medias = mean(results_matrix,1);
                     stdev = std(results_matrix,0,1);
@@ -323,6 +341,30 @@ classdef Utilities < handle
                     end
                     fprintf(fid,'\n');
                     fclose(fid);
+                    
+                    
+                    if train == 1
+                        fid = fopen([experiment_folder filesep 'mean-results_matrices_sum_train.csv'],'at');
+                    else
+                        fid = fopen([experiment_folder filesep 'mean-results_matrices_sum_test.csv'],'at');
+                    end
+                    
+                    if add_head
+                        fprintf(fid, 'Dataset-Experiment,');
+
+                        for h = 2:numel(names),
+                            fprintf(fid, '%s,', names{h});
+                        end
+                        fprintf(fid,'\n');
+                    end
+                    
+                    fprintf(fid, '%s,', experimentos(i).name);
+                    for h = 1:numel(results_matrix_sum),
+                        fprintf(fid, '%f,', results_matrix_sum(h));
+                    end
+                    fprintf(fid,'\n');
+                    fclose(fid);
+
                 end
                 
             end
