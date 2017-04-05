@@ -15,7 +15,7 @@ Bibtex entry:
   Year                     = {2016},
   Url                      = {http://dx.doi.org/10.1109/TKDE.2015.2457911},
   Volume                   = {28},
-  Number		   = {1}
+  Number                   = {1}
 }
 ```
 
