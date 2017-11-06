@@ -52,7 +52,7 @@ classdef Utilities < handle
         %
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         
-        function runExperiments(ficheroExperimentos, varargin)
+        function [logsDir] = runExperiments(ficheroExperimentos, varargin)
             
             parallel = 0;
             num_cores = 0;
