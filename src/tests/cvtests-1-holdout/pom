@@ -3,24 +3,14 @@
 % ----------------------------------------------------------
 new experiment
 name
-elmor-real
+pom-tests
 dir
-../exampledata
+../exampledata/1-holdout/
 datasets
 toy
 algorithm
-ELMOP
-num fold
-5
+POM
 standarize
-1
-crossval
-mae
-parameter hiddenN
-5,10,20,30,40,50,60,70,80,90,100
-ActivationFunction
-sig
-seed
 1
 end experiment
 

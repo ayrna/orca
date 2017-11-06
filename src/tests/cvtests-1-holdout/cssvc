@@ -3,13 +3,13 @@
 % ----------------------------------------------------------
 new experiment
 name
-svc1va-real
+cssvc-mae-real
 dir
-../exampledata
+../exampledata/1-holdout
 datasets
 toy
 algorithm
-SVC1VA
+CSSVC
 num fold
 5
 standarize
@@ -25,4 +25,3 @@ rbf
 seed
 1
 end experiment
-

@@ -3,13 +3,13 @@
 % ----------------------------------------------------------
 new experiment
 name
-svorim-real
+svc1va-real
 dir
-../exampledata
+../exampledata/1-holdout
 datasets
 toy
 algorithm
-SVORIM
+SVC1VA
 num fold
 5
 standarize
