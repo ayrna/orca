@@ -2,12 +2,19 @@
 
 # How to use ORCA
 
-ORCA is a framework focused on productivity. The two main objectives of the framework are: 
+ORCA is a framework focused on productivity. The two main objectives of the framework are:
 
 1. To run many experiments as easily as possible to compare **many algorithms** and **many datasets**.
 2. To provide an easy way of including new algorithms into the framework by simply defining the parameters of the algorithms and the training and test methods.
 
 ORCA has been developed and tested in GNU/Linux systems. Although it may run on Windows and other proprietary operating systems, the following instructions are given for GNU/Linux.
+
+## Instalation requirements
+
+In order to use ORCA you need:
+
+* `gcc` and `g++`
+* MATLAB, including `mex`. 
 
 ## Download and compile ORCA dependencies
 
@@ -18,7 +25,7 @@ $ git clone https://github.com/ayrna/orca
 
 All the contents of the repository can also be downloaded from the GitHub site by using the "Download ZIP" button.
 
-ORCA is programmed in MATLAB, but many of the classification algorithms are implemented in C/C++. Because of this, these methods have to be compiled and/or packaged into the corresponding `MEX` files. 
+ORCA is programmed in MATLAB, but many of the classification algorithms are implemented in C/C++. Because of this, these methods have to be compiled and/or packaged into the corresponding `MEX` files.
 
 Under GNU/Linux, the simplest way to compile all the algorithms is to use the [Makefile](../src/Algorithms/Makefile) included in ORCA. This will compile all the algorithms and clean intermediate object files:
 ```bash
@@ -29,7 +36,7 @@ $ make
 ```
 If the command fails, please edit the files `src/Algorithms/libsvm-rank-2.81/matlab/Makefile`, `src/Algorithms/libsvm-weights-3.12/matlab/Makefile`, `src/Algorithms/SVOREX/Makefile` and `src/Algorithms/SVORIM/Makefile`. Make sure that the variable `MATLABDIR` is correctly pointing to the folder of your Matlab installation (by default, `/usr/local/matlab`). You can also make a symbolic link to your current Matlab installation folder:
 ```bash
-$ sudo ln -s /path/to/matlab /usr/local/matlab 
+$ sudo ln -s /path/to/matlab /usr/local/matlab
 ```
 The following subsections provides individual instructions for compiling each of the dependencies in case the [Makefile](../src/Algorithms/Makefile) still fails or for those which are working in other operating systems.
 
@@ -94,7 +101,7 @@ For example, the KDLOR method has a total of five parameters. Two of them (the t
 >> kdlorAlgorithm = KDLOR('rbf','quadprog');
 >> kdlorAlgorithm
 
-kdlorAlgorithm = 
+kdlorAlgorithm =
 
   KDLOR handle
 
@@ -119,7 +126,7 @@ kdlorAlgorithm =
 >> info = kdlorAlgorithm.runAlgorithm(train,test,param);
 >> info
 
-info = 
+info =
 
          trainTime: 0.2834
     projectedTrain: [225x1 double]
@@ -228,7 +235,7 @@ The meanings of the directives associated to hyper-parameter optimisation are:
 ORCA uses the `Experiments` folder to store all the results of the different experiments run. Each report is placed in a subfolder of `Experiments` named with the current date, time and the name of the configuration file (for example 'exp-2015-7-14-10-5-57-pom'). After a successful experiment, this folder should contain the following information:
  - Individual experiment configuration files for each dataset and partition.
  - A `Results` folder with the following information:
-  - `mean-results_train.csv` and `mean-results_test.csv` which are reports in CSV format (easily read by Excel or LibreOffice Calc). They contain the mean and standard deviation for each performance measure (`AMAE`,`CCR`,`GM`,`MAE`,`MMAE`,`MS`,`MZE`,`Spearman`,`Tkendall` and `Wkappa`) and the computational time. These averages and standard deviations are obtained for all the partitions of each algorithm and dataset. `mean-results_matrices_sum_train.csv` and `mean-results_matrices_sum_test.csv` present the same metrics results, but these results are calculated with the sum of confusion matrices for train and generalization sets. This is useful for metrics such as `GM`, `MS` and `MMAE`, however these performance results may be considered a `k`-fold experiments setup in which there are `k` generalization sets without patterns repetitions. 
+  - `mean-results_train.csv` and `mean-results_test.csv` which are reports in CSV format (easily read by Excel or LibreOffice Calc). They contain the mean and standard deviation for each performance measure (`AMAE`,`CCR`,`GM`,`MAE`,`MMAE`,`MS`,`MZE`,`Spearman`,`Tkendall` and `Wkappa`) and the computational time. These averages and standard deviations are obtained for all the partitions of each algorithm and dataset. `mean-results_matrices_sum_train.csv` and `mean-results_matrices_sum_test.csv` present the same metrics results, but these results are calculated with the sum of confusion matrices for train and generalization sets. This is useful for metrics such as `GM`, `MS` and `MMAE`, however these performance results may be considered a `k`-fold experiments setup in which there are `k` generalization sets without patterns repetitions.
  - The `Results` folder contains one subfolder for each dataset with the following data:
   - Train and test confusion matrices (`matrices.txt`).
   - Name of the folder used for the experiments (`dataset`).
@@ -271,4 +278,4 @@ ORCA will train a model for all the training/test pairs, and the performance res
 
 ## Warning about highly imbalanced datasets
 
-ORCA is an tool to automate experiments for algorithm comparison. The default experimental setup is a n-hold-out (n=10). However, if your dataset has only less than 10-15 patterns in one or more classes, it is very likely that there will not be enough data to do the corresponding partitions, so there will be folds with varying number of classes. This can cause some errors since the confusion matrices dimensions do not agree. 
+ORCA is an tool to automate experiments for algorithm comparison. The default experimental setup is a n-hold-out (n=10). However, if your dataset has only less than 10-15 patterns in one or more classes, it is very likely that there will not be enough data to do the corresponding partitions, so there will be folds with varying number of classes. This can cause some errors since the confusion matrices dimensions do not agree.
