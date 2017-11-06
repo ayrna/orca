@@ -1,27 +1,25 @@
 % To run an individual test just use the right function call
 %
-% Utilities.runExperiments('tests/cssvc')
-% Utilities.runExperiments('tests/elmop')
-% Utilities.runExperiments('tests/kdlor')
-% Utilities.runExperiments('tests/orboostall')
-% Utilities.runExperiments('tests/pom')
-% Utilities.runExperiments('tests/redsvm')
-% Utilities.runExperiments('tests/svc1v1')
-% Utilities.runExperiments('tests/svc1va')
-% Utilities.runExperiments('tests/svmop')
-% Utilities.runExperiments('tests/svorex')
-% Utilities.runExperiments('tests/svorim')
-% Utilities.runExperiments('tests/svorimlin')
-% Utilities.runExperiments('tests/svr')
+% Utilities.runExperiments('tests/cvtests/cssvc')
+% Utilities.runExperiments('tests/cvtests/elmop')
+% Utilities.runExperiments('tests/cvtests/kdlor')
+% Utilities.runExperiments('tests/cvtests/orboostall')
+% Utilities.runExperiments('tests/cvtests/pom')
+% Utilities.runExperiments('tests/cvtests/redsvm')
+% Utilities.runExperiments('tests/cvtests/svc1v1')
+% Utilities.runExperiments('tests/cvtests/svc1va')
+% Utilities.runExperiments('tests/cvtests/svmop')
+% Utilities.runExperiments('tests/cvtests/svorex')
+% Utilities.runExperiments('tests/cvtests/svorim')
+% Utilities.runExperiments('tests/cvtests/svorimlin')
+% Utilities.runExperiments('tests/cvtests/svr')
 
-d = dir('tests');
+d = dir(['tests' filesep 'cvtests']);
 
 % Delete .. and .
 d(1)=[];
 d(1)=[];
 
 for i=1:length(d)
-    Utilities.runExperiments(['tests/' d(1).name], true);
+    Utilities.runExperiments(['tests' filesep 'cvtests' filesep  d(1).name], true);
 end
-
-
