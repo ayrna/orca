@@ -101,7 +101,7 @@ classdef SVORLin < Algorithm
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         
         function [model_information] = runAlgorithm(obj,train, test, parameters)
-            
+            addpath(fullfile('Algorithms','SVORIM'));
             param.C = parameters(1);
             
             c1 = clock;
@@ -116,7 +116,7 @@ classdef SVORLin < Algorithm
             c2 = clock;
             model_information.testTime = etime(c2,c1);
             model_information.model = model;
-            
+            rmpath(fullfile('Algorithms','SVORIM'));
         end
         
 
