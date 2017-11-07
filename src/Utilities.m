@@ -398,11 +398,11 @@ classdef Utilities < handle
             logsDir = ['Experiments' filesep 'exp-' dirSuffix];
             % Prevent to overwrite log dir of parallel or fast experiments
             % with same ID
-            if exist(logsDir, 'dir')
-                randStr = num2str(rand);
-                randStr(1:2)=[];
-                logsDir = [logsDir '-' randStr];
-            end
+            %if exist(logsDir, 'dir')
+            %    randStr = num2str(rand);
+            %    randStr(1:2)=[];
+            %    logsDir = [logsDir '-' randStr];
+            %end
             
             resultados = [logsDir filesep 'Results'];
             mkdir(logsDir);
