@@ -22,8 +22,7 @@ tests_dir = ['tests' filesep 'cvtests-1-holdout'];
 files = dir(tests_dir);
 
 % Delete .. and .
-files(1)=[];
-files(1)=[];
+tests_dir(1:2) = [];
 
 for i=1:length(files)
     exp_dir = Utilities.runExperiments([tests_dir filesep  files(i).name], false);
