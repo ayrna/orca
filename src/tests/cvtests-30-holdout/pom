@@ -1,0 +1,16 @@
+% ----------------------------------------------------------
+% Names of experiments should be unique for each script file
+% ----------------------------------------------------------
+new experiment
+name
+pom-tests
+dir
+../exampledata/30-holdout/
+datasets
+toy
+algorithm
+POM
+standarize
+1
+end experiment
+
