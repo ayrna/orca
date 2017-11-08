@@ -3,25 +3,24 @@
 % ----------------------------------------------------------
 new experiment
 name
-cssvc-mae-real
+elmor-real
 dir
-../exampledata
+../exampledata/1-holdout
 datasets
 toy
 algorithm
-CSSVC
+ELMOP
 num fold
 5
 standarize
 1
 crossval
 mae
-parameter C
-10.^(-3:1:3)
-parameter k
-10.^(-3:1:3)
-kernel
-rbf
+parameter hiddenN
+5,10,20,30,40,50,60,70,80,90,100
+ActivationFunction
+sig
 seed
 1
 end experiment
+

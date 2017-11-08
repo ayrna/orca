@@ -7,7 +7,7 @@ new experiment
 name
 orboostall-real
 dir
-../exampledata
+../exampledata/1-holdout
 datasets
 toy
 algorithm

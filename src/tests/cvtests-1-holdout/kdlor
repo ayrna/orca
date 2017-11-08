@@ -3,14 +3,28 @@
 % ----------------------------------------------------------
 new experiment
 name
-pom-tests
+kdlor-real
 dir
-../exampledata/
+../exampledata/1-holdout
 datasets
 toy
 algorithm
-POM
+KDLOR
+num fold
+5
 standarize
+1
+crossval
+mae
+parameter C
+10.^(-1:1:1)
+parameter k
+10.^(-3:1:3)
+parameter u 
+0.01,0.001,0.0001,0.00001,0.000001
+kernel
+rbf
+seed
 1
 end experiment
 

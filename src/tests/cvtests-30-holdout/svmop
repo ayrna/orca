@@ -3,13 +3,13 @@
 % ----------------------------------------------------------
 new experiment
 name
-svorex-real
+svc1vaord-mae-real
 dir
-../exampledata
+../exampledata/30-holdout
 datasets
 toy
 algorithm
-SVOREX
+SVMOP
 num fold
 5
 standarize

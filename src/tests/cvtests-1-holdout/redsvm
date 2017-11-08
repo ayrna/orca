@@ -3,23 +3,25 @@
 % ----------------------------------------------------------
 new experiment
 name
-elmor-real
+redsvm-real
 dir
-../exampledata
+../exampledata/1-holdout
 datasets
 toy
 algorithm
-ELMOP
+REDSVM
 num fold
 5
 standarize
 1
 crossval
 mae
-parameter hiddenN
-5,10,20,30,40,50,60,70,80,90,100
-ActivationFunction
-sig
+parameter C
+10.^(-3:1:3)
+parameter k
+10.^(-3:1:3)
+kernel
+rbf
 seed
 1
 end experiment

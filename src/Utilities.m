@@ -52,7 +52,7 @@ classdef Utilities < handle
         %
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         
-        function runExperiments(ficheroExperimentos, varargin)
+        function [logsDir] = runExperiments(ficheroExperimentos, varargin)
             
             parallel = 0;
             num_cores = 0;
@@ -72,13 +72,15 @@ classdef Utilities < handle
                 end                    
             end
             
-            c = clock;
             addpath('Measures');
             addpath('Algorithms');
-            dirSuffix = [num2str(c(1)) '-' num2str(c(2)) '-'  num2str(c(3)) '-' num2str(c(4)) '-' num2str(c(5)) '-' num2str(uint8(c(6)))];
-            disp('Setting up experiments...');
-            logsDir = Utilities.configureExperiment(ficheroExperimentos,dirSuffix);
             
+            disp('Setting up experiments...');
+
+            % TODO: move ID generation to configureExperiment?
+            c = clock;
+            dirSuffix = [num2str(c(1)) '-' num2str(c(2)) '-'  num2str(c(3)) '-' num2str(c(4)) '-' num2str(c(5)) '-' num2str(uint8(c(6)))];            
+            logsDir = Utilities.configureExperiment(ficheroExperimentos,dirSuffix);            
             ficheros_experimentos = dir([logsDir filesep 'exp-*']);
             
             if parallel
@@ -394,6 +396,14 @@ classdef Utilities < handle
             end
             
             logsDir = ['Experiments' filesep 'exp-' dirSuffix];
+            % Prevent to overwrite log dir of parallel or fast experiments
+            % with same ID
+            %if exist(logsDir, 'dir')
+            %    randStr = num2str(rand);
+            %    randStr(1:2)=[];
+            %    logsDir = [logsDir '-' randStr];
+            %end
+            
             resultados = [logsDir filesep 'Results'];
             mkdir(logsDir);
             mkdir(resultados);

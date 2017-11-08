@@ -3,13 +3,13 @@
 % ----------------------------------------------------------
 new experiment
 name
-redsvm-real
+svorim-real
 dir
-../exampledata
+../exampledata/30-holdout
 datasets
 toy
 algorithm
-REDSVM
+SVORIM
 num fold
 5
 standarize

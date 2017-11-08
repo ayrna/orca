@@ -3,13 +3,13 @@
 % ----------------------------------------------------------
 new experiment
 name
-svr-real
+cssvc-mae-real
 dir
-../exampledata
+../exampledata/30-holdout
 datasets
 toy
 algorithm
-SVR
+CSSVC
 num fold
 5
 standarize
@@ -20,11 +20,8 @@ parameter C
 10.^(-3:1:3)
 parameter k
 10.^(-3:1:3)
-parameter e
-10.^(-3:1:0)
 kernel
 rbf
 seed
 1
 end experiment
-
