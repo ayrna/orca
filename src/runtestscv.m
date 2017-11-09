@@ -42,4 +42,7 @@ for i=1:length(files)
         error('Test FAILED for "%s". Unable to open CSV results file', files(i).name)
     end
     
+    % This avoids colisions in logs dir names with fast methods (i.e.
+    % elm...)
+    pause(1);    
 end
