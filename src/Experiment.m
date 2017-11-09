@@ -299,7 +299,11 @@ classdef Experiment < handle
             
             % Use the seed
             s = RandStream.create('mt19937ar','seed',obj.seed);
-            RandStream.setGlobalStream(s);
+            if verLessThan('matlab','8.0')
+                RandStream.setDefaultStream(s);
+            else
+                RandStream.setGlobalStream(s);
+            end
             
             CVO = cvpartition(train.targets,'k',nOfFolds);
 
