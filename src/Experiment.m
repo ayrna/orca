@@ -281,7 +281,7 @@ classdef Experiment < handle
                     aux1 = combinations;
                 end
                 aux2 = getfield(parameters, par{i+1});
-                combinations = combvec(aux1,aux2);
+                combinations = allcomb(aux1,aux2);
             end
             
             % Avoid problems with very low number of patterns for some
