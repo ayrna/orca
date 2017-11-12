@@ -36,14 +36,14 @@ classdef Metric < handle
     
     properties
 	
-	name = ''
+	name = '';
         
     end
     
     
-    methods(Abstract)
-            calculateMetric()
-    end
+%    methods(Abstract)
+%            calculateMetric()
+%    end
             
     
 end

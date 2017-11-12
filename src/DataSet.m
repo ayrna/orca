@@ -37,19 +37,19 @@ classdef DataSet < handle
     
     properties
 
-        directory = ''
+        directory = '';
         
-        train = ''
+        train = '';
        
-        test = ''
+        test = '';
         
-        standarize = true
+        standarize = true;
         
-        dataname = ''
+        dataname = '';
         
-        nOfFolds = 5
+        nOfFolds = 5;
 
-        repeatFold = 1
+        repeatFold = 1;
 
     end
     
