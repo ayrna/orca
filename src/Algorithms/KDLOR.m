@@ -265,7 +265,7 @@ classdef KDLOR < Algorithm
 
              [ms,me,t,m] = regexp( version,'R(\d+)\w*');
 
-             if exist ("OCTAVE_VERSION", "builtin") > 0
+             if exist ('OCTAVE_VERSION', 'builtin') > 0
                  options = optimset('Display','off');
              elseif strcmp(m,'R2009a') || strcmp(m,'R2008a')
                  options = optimset('Algorithm','interior-point','LargeScale','off','Display','off');

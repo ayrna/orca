@@ -274,7 +274,7 @@ classdef Experiment < handle
             
             
             combinations = getfield(parameters,par{1});
-            if exist ("OCTAVE_VERSION", "builtin") > 0
+            if exist ('OCTAVE_VERSION', 'builtin') > 0
               for i=1:(numel(par)-1),
                   if i==1,
                       aux1 = getfield(parameters, par{i});
@@ -312,7 +312,7 @@ classdef Experiment < handle
             end
             
             % Use the seed
-            if (exist ("OCTAVE_VERSION", "builtin") > 0)
+            if (exist ('OCTAVE_VERSION', 'builtin') > 0)
               rand('seed',obj.seed);
             else
               s = RandStream.create('mt19937ar','seed',obj.seed);
@@ -323,7 +323,7 @@ classdef Experiment < handle
               end
             end
             
-            if (exist ("OCTAVE_VERSION", "builtin") > 0)
+            if (exist ('OCTAVE_VERSION', 'builtin') > 0)
               CVO = cvpartition(train.targets,'KFold',nOfFolds);
               numTests = get(CVO,'NumTestSets');
             else
@@ -335,7 +335,7 @@ classdef Experiment < handle
             % Foreach fold
             for ff = 1:numTests,
                 % Build fold dataset
-                if (exist ("OCTAVE_VERSION", "builtin") > 0)
+                if (exist ('OCTAVE_VERSION', 'builtin') > 0)
                   trIdx = training(CVO,ff);
                   teIdx = test(CVO,ff);
                 else

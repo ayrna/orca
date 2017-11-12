@@ -139,7 +139,7 @@ classdef POM < Algorithm
         function [model]= train( obj,train)
                     
                     nOfClasses = numel(unique(train.targets));
-                    if exist ("OCTAVE_VERSION", "builtin") > 0
+                    if exist ('OCTAVE_VERSION', 'builtin') > 0
                       [model.thresholds, model.projection] = logistic_regression(train.targets, train.patterns);
                     else
                       % Obtain coefficients of the ordinal regression model

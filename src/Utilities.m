@@ -57,7 +57,7 @@ classdef Utilities < handle
             parallel = 0;
             num_cores = 0;
             maximum_ncores = 0;
-            if (exist ("OCTAVE_VERSION", "builtin") > 0)
+            if (exist ('OCTAVE_VERSION', 'builtin') > 0)
               maximum_ncores = nproc;
             else
               maximum_ncores = feature('numCores');
@@ -195,7 +195,7 @@ classdef Utilities < handle
                     %basescript = ['exp-' auxscript(matchend+2:end) '-' dataset '-'];
 
                     % Discard "." and ".."
-                    if ~(exist ("OCTAVE_VERSION", "builtin") > 0)
+                    if ~(exist ('OCTAVE_VERSION', 'builtin') > 0)
                       time_files = time_files(3:numel(time_files));
                       hyp_files = hyp_files(3:numel(hyp_files));
                     end
@@ -237,7 +237,7 @@ classdef Utilities < handle
                         end
                     end
 
-                    if exist ("OCTAVE_VERSION", "builtin") > 0
+                    if exist ('OCTAVE_VERSION', 'builtin') > 0
                       accs = cell2mat(cellfun(@(varargin) CCR.calculateMetric(varargin{:}), act, pred, 'UniformOutput', false)) * 100;
                       gms = cell2mat(cellfun(@(varargin) GM.calculateMetric(varargin{:}), act, pred, 'UniformOutput', false)) * 100;
                       mss = cell2mat(cellfun(@(varargin) MS.calculateMetric(varargin{:}), act, pred, 'UniformOutput', false)) * 100;

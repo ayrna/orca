@@ -60,7 +60,7 @@ classdef Tkendall < Metric
                 [ argum1, argum2 ] = calculaEtiquetasViaCM( argum1 );
             end
 
-            if exist ("OCTAVE_VERSION", "builtin") > 0
+            if exist ('OCTAVE_VERSION', 'builtin') > 0
               [tkendall] = kendall(argum1, argum2);
             else
               [tkendall] = corr(argum1, argum2, 'type', 'Kendall');
