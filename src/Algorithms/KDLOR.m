@@ -49,11 +49,11 @@ classdef KDLOR < Algorithm
     
     properties
         
-        optimizationMethod = 'quadprog'
+        optimizationMethod = 'quadprog';
 
-        name_parameters = {'C','k','u'}
+        name_parameters = {'C','k','u'};
 
-        parameters
+        parameters;
     end
     
     methods
@@ -262,9 +262,12 @@ classdef KDLOR < Algorithm
              vub = Inf*ones(numClasses-1,1); %                 alphas and betas <= Inf
              x0 = zeros(numClasses-1,1);     % The starting point is [0 0 0 0]
 
+
              [ms,me,t,m] = regexp( version,'R(\d+)\w*');
 
-             if strcmp(m,'R2009a') || strcmp(m,'R2008a')
+             if exist ("OCTAVE_VERSION", "builtin") > 0
+                 options = optimset('Display','off');
+             elseif strcmp(m,'R2009a') || strcmp(m,'R2008a')
                  options = optimset('Algorithm','interior-point','LargeScale','off','Display','off');
              else
                  options = optimset('Algorithm','interior-point-convex','LargeScale','off','Display','off');

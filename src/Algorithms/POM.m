@@ -54,9 +54,9 @@ classdef POM < Algorithm
         % Description: No parameters for this algorithm
         %
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        parameters = []
+        parameters = [];
 
-        name_parameters = {}
+        name_parameters = {};
     end
     
     methods
@@ -139,12 +139,16 @@ classdef POM < Algorithm
         function [model]= train( obj,train)
                     
                     nOfClasses = numel(unique(train.targets));
-
-                    % Obtain coefficients of the ordinal regression model
-                    betaHatOrd = mnrfit(train.patterns,train.targets,'model','ordinal','interactions','off');
+                    if exist ("OCTAVE_VERSION", "builtin") > 0
+                      [model.thresholds, model.projection] = logistic_regression(train.targets, train.patterns);
+                    else
+                      % Obtain coefficients of the ordinal regression model
+                      betaHatOrd = mnrfit(train.patterns,train.targets,'model','ordinal','interactions','off');
                     
-                    model.thresholds = betaHatOrd(1:nOfClasses-1);
-                    model.projection = -betaHatOrd(nOfClasses:end);
+                      model.thresholds = betaHatOrd(1:nOfClasses-1);
+                      model.projection = -betaHatOrd(nOfClasses:end);
+                    end
+
                     model.algorithm = 'POM';
                     % Estimated Probabilities
                     %pHatOrd = mnrval(betaHatOrd,trainPatterns,'model','ordinal','interactions','off');
