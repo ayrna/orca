@@ -15,7 +15,7 @@ MEX_OPTION = CC="$(CXX)" CXX="$(CXX)" CFLAGS="$(CFLAGS)" CXXFLAGS="$(CFLAGS)"
 MEX_OPTION += -largeArrayDims
 MEX_EXT = $(shell $(MATLABDIR)/bin/mexext)
 
-OCTAVEDIR ?= /usr/include/octave
+OCTAVEDIR ?= /usr/include/octave-4.0.3/octave
 OCTAVE_MEX = env CC=$(CXX) mkoctfile
 OCTAVE_MEX_OPTION = --mex
 OCTAVE_MEX_EXT = mex
