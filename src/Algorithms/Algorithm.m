@@ -38,7 +38,7 @@ classdef Algorithm < handle
     
     properties
         
-        kernelType = 'rbf'
+        kernelType = 'rbf';
         name
         
     end
@@ -62,56 +62,56 @@ classdef Algorithm < handle
         
     end
     
-    methods(Abstract)
-
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        %
-        % Function: runAlgorithm(Public)
-        % Description: function to run the algorithm (train and test partitions)
-        % Type: Void
-        % Arguments:
-        %           No arguments
-        %
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        
-        runAlgorithm(obj);
-        
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        %
-        % Function: defaultParameters(Public)
-        % Description: function for setting the default parameters
-        % Type: Void
-        % Arguments:
-        %           No arguments
-        %
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        
-        defaultParameters(obj);
-        
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        %
-        % Function: train(Public)
-        % Description: function for training the model
-        % Type: Void
-        % Arguments:
-        %           No arguments
-        %
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        
-        train(obj);
-        
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        %
-        % Function: test(Public)
-        % Description: function for testing the model
-        % Type: Void
-        % Arguments:
-        %           No arguments
-        %
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        
-        test(obj);
-    end
+%    methods(Abstract)
+%
+%        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%        %
+%        % Function: runAlgorithm(Public)
+%        % Description: function to run the algorithm (train and test partitions)
+%        % Type: Void
+%        % Arguments:
+%        %           No arguments
+%        %
+%        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%        
+%        runAlgorithm(obj);
+%        
+%        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%        %
+%        % Function: defaultParameters(Public)
+%        % Description: function for setting the default parameters
+%        % Type: Void
+%        % Arguments:
+%        %           No arguments
+%        %
+%        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%        
+%        defaultParameters(obj);
+%        
+%        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%        %
+%        % Function: train(Public)
+%        % Description: function for training the model
+%        % Type: Void
+%        % Arguments:
+%        %           No arguments
+%        %
+%        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%        
+%        train(obj);
+%        
+%        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%        %
+%        % Function: test(Public)
+%        % Description: function for testing the model
+%        % Type: Void
+%        % Arguments:
+%        %           No arguments
+%        %
+%        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%        
+%        test(obj);
+%    end
     
     
 end

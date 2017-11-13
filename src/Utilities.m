@@ -56,18 +56,23 @@ classdef Utilities < handle
             
             parallel = 0;
             num_cores = 0;
-            
+            maximum_ncores = 0;
+            if (exist ('OCTAVE_VERSION', 'builtin') > 0)
+              maximum_ncores = nproc;
+            else
+              maximum_ncores = feature('numCores');
+            end
             optargin = size(varargin,2);
             if optargin == 1
                 parallel = varargin{1};
-                num_cores = feature('numCores'); 
+                num_cores = maximum_ncores; 
             else
                 if optargin == 2
                     parallel = varargin{1};
                     num_cores = varargin{2}; 
-                    if num_cores > feature('numCores')
+                    if num_cores > maximum_ncores
                         disp(['Number of cores was too high and was set up to the maximum available: ' num2str(feature('numCores')) ])
-                        num_cores = feature('numCores');
+                        num_cores = maximum_ncores;
                     end
                 end                    
             end
@@ -155,14 +160,13 @@ classdef Utilities < handle
             elseif nargin == 1
                 train = train;
             end
-                        
-            experimentos = dir([experiment_folder filesep '*-*']);
+            experimentos = dir(experiment_folder);
 
             %idx=strfind(experiment_folder,'Results');
             %scriptpath = [experiment_folder(1:idx-1)];
    
             for i=1:numel(experimentos)
-                if experimentos(i).isdir
+                if ~(any(strcmp(experimentos(i).name, {'.', '..'}))) && experimentos(i).isdir
                     disp([experiment_folder filesep experimentos(i).name filesep 'dataset'])
                     fid = fopen([experiment_folder filesep experimentos(i).name filesep 'dataset'],'r');
                     ruta_dataset = fgetl(fid);
@@ -191,8 +195,10 @@ classdef Utilities < handle
                     %basescript = ['exp-' auxscript(matchend+2:end) '-' dataset '-'];
 
                     % Discard "." and ".."
-                    time_files = time_files(3:numel(time_files));
-                    hyp_files = hyp_files(3:numel(hyp_files));
+                    if ~(exist ('OCTAVE_VERSION', 'builtin') > 0)
+                      time_files = time_files(3:numel(time_files));
+                      hyp_files = hyp_files(3:numel(hyp_files));
+                    end
                     
                     if train == 1
                         real_files = dir([ruta_dataset filesep 'train_*']);
@@ -204,13 +210,14 @@ classdef Utilities < handle
                     pred = cell(1, numel(predicted_files));
                     proj = cell(1, numel(guess_files));
 
-                    times = [];
+                    times = zeros(3,numel(predicted_files));
                     param = [];
-
+                    
                     for j=1:numel(predicted_files)
                         pred{j} = importdata([experiment_folder filesep experimentos(i).name filesep 'Predictions' filesep predicted_files(j).name]);
                         times(:,j) = importdata([experiment_folder filesep experimentos(i).name filesep 'Times' filesep time_files(j).name]);
                         proj{j} = importdata([experiment_folder filesep experimentos(i).name filesep 'Guess' filesep guess_files(j).name]);
+                        
                         if length(hyp_files)~=0
                             struct_hyperparams(j) = importdata([experiment_folder filesep experimentos(i).name filesep 'OptHyperparams' filesep hyp_files(j).name],',');
                             for z = 1:numel(struct_hyperparams(j).data)
@@ -230,15 +237,28 @@ classdef Utilities < handle
                         end
                     end
 
-                    accs = cell2mat(cellfun(@CCR.calculateMetric, act, pred, 'UniformOutput', false)) * 100;
-                    gms = cell2mat(cellfun(@GM.calculateMetric, act, pred, 'UniformOutput', false)) * 100;
-                    mss = cell2mat(cellfun(@MS.calculateMetric, act, pred, 'UniformOutput', false)) * 100;
-                    maes = cell2mat(cellfun(@MAE.calculateMetric, act, pred, 'UniformOutput', false));
-                    amaes = cell2mat(cellfun(@AMAE.calculateMetric, act, pred, 'UniformOutput', false));
-                    maxmaes = cell2mat(cellfun(@MMAE.calculateMetric, act, pred, 'UniformOutput', false));
-                    spearmans = cell2mat(cellfun(@Spearman.calculateMetric, act, pred, 'UniformOutput', false));
-                    kendalls = cell2mat(cellfun(@Tkendall.calculateMetric, act, pred, 'UniformOutput', false));
-                    wkappas = cell2mat(cellfun(@Wkappa.calculateMetric, act, pred, 'UniformOutput', false));
+                    if exist ('OCTAVE_VERSION', 'builtin') > 0
+                      accs = cell2mat(cellfun(@(varargin) CCR.calculateMetric(varargin{:}), act, pred, 'UniformOutput', false)) * 100;
+                      gms = cell2mat(cellfun(@(varargin) GM.calculateMetric(varargin{:}), act, pred, 'UniformOutput', false)) * 100;
+                      mss = cell2mat(cellfun(@(varargin) MS.calculateMetric(varargin{:}), act, pred, 'UniformOutput', false)) * 100;
+                      maes = cell2mat(cellfun(@(varargin) MAE.calculateMetric(varargin{:}), act, pred, 'UniformOutput', false));
+                      amaes = cell2mat(cellfun(@(varargin) AMAE.calculateMetric(varargin{:}), act, pred, 'UniformOutput', false));
+                      maxmaes = cell2mat(cellfun(@(varargin) MMAE.calculateMetric(varargin{:}), act, pred, 'UniformOutput', false));
+                      spearmans = cell2mat(cellfun(@(varargin) Spearman.calculateMetric(varargin{:}), act, pred, 'UniformOutput', false));
+                      kendalls = cell2mat(cellfun(@(varargin) Tkendall.calculateMetric(varargin{:}), act, pred, 'UniformOutput', false));
+                      wkappas = cell2mat(cellfun(@(varargin) Wkappa.calculateMetric(varargin{:}), act, pred, 'UniformOutput', false));
+                    else
+                      accs = cell2mat(cellfun(@CCR.calculateMetric, act, pred, 'UniformOutput', false)) * 100;
+                      gms = cell2mat(cellfun(@GM.calculateMetric, act, pred, 'UniformOutput', false)) * 100;
+                      mss = cell2mat(cellfun(@MS.calculateMetric, act, pred, 'UniformOutput', false)) * 100;
+                      maes = cell2mat(cellfun(@MAE.calculateMetric, act, pred, 'UniformOutput', false));
+                      amaes = cell2mat(cellfun(@AMAE.calculateMetric, act, pred, 'UniformOutput', false));
+                      maxmaes = cell2mat(cellfun(@MMAE.calculateMetric, act, pred, 'UniformOutput', false));
+                      spearmans = cell2mat(cellfun(@Spearman.calculateMetric, act, pred, 'UniformOutput', false));
+                      kendalls = cell2mat(cellfun(@Tkendall.calculateMetric, act, pred, 'UniformOutput', false));
+                      wkappas = cell2mat(cellfun(@Wkappa.calculateMetric, act, pred, 'UniformOutput', false));
+                    end
+                    
                     results_matrix = [accs; gms; mss; maes; amaes; maxmaes; spearmans; kendalls; wkappas; times(1,:); times(2,:); times(3,:)];
                     if length(hyp_files)~=0
                         for j=1:numel(struct_hyperparams(1).textdata),
@@ -405,6 +425,7 @@ classdef Utilities < handle
             %end
             
             resultados = [logsDir filesep 'Results'];
+            mkdir('Experiments');
             mkdir(logsDir);
             mkdir(resultados);
             fid = fopen(ficheroExperimentos,'r+');
@@ -491,6 +512,8 @@ classdef Utilities < handle
             validDataSets = 1;
             
             if strcmpi(dataSetNames{1}, 'all')
+                trainFileNames = cell(size(dbs,1));
+                testFileNames = cell(size(dbs,1));
                 for dd=1:size(dbs,1)
                     % get directory
                     if dbs(dd).isdir,
@@ -503,6 +526,8 @@ classdef Utilities < handle
                     
                 end
             else
+                trainFileNames = cell(numel(dataSetNames));
+                testFileNames = cell(numel(dataSetNames));
                 for j=1:numel(dataSetNames),
                     isdirectory = [directory filesep dataSetNames{j}];
                     if(isdir(isdirectory)),

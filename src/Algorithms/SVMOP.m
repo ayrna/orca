@@ -57,9 +57,9 @@ classdef SVMOP < Algorithm
     
     properties
 
-        name_parameters = {'C','k'}
+        name_parameters = {'C','k'};
 
-        parameters
+        parameters;
 
         weights = true;
     end

@@ -1,0 +1,7 @@
+- Paquetes necesarios: optim, struct, statistics.
+- KDLOR solo usa quadprog de momento.
+- No tengo claro si confusionmat funciona siempre igual.
+- Comprobar vectores de los modelos.
+- Para octave hay que compilar con "make octave" desde terminal o con "make" desde octave.
+- cell de más longitud en Utilities processDirectory
+- en los csv, no salen los valores de los hiperparámetros

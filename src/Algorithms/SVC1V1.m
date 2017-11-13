@@ -50,9 +50,9 @@ classdef SVC1V1 < Algorithm
     
     properties
        
-        name_parameters = {'C','k'}
+        name_parameters = {'C','k'};
        
-        parameters
+        parameters;
     end
     
     methods

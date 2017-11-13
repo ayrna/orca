@@ -54,9 +54,9 @@ classdef ORBoost < Algorithm
     
     properties
       
-        parameters = []
+        parameters = [];
         
-	name_parameters = {}
+	name_parameters = {};
 
         weights = true;
     end
@@ -127,7 +127,7 @@ classdef ORBoost < Algorithm
                 model_information.testTime = etime(c2,c1);
                 
                 fid = fopen(modelFile);
-                if verLessThan('matlab','8.4')
+                if ~(exist ('OCTAVE_VERSION', 'builtin') > 0) && verLessThan('matlab','8.4')
                     s = textscan(fid,'%s','Delimiter','\n','bufsize', 2^18-1);
                 else
                     s = textscan(fid,'%s','Delimiter','\n');

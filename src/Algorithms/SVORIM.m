@@ -49,9 +49,9 @@ classdef SVORIM < Algorithm
     
     properties
         
-        parameters
+        parameters;
         
-	name_parameters = {'C', 'k'}
+	name_parameters = {'C', 'k'};
     end
     
     methods

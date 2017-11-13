@@ -49,9 +49,9 @@ classdef SVORLin < Algorithm
     
     properties
         
-        parameters
+        parameters;
 
-        name_parameters = {'C'}
+        name_parameters = {'C'};
     end
     
     methods

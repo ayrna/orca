@@ -49,9 +49,9 @@ classdef SVR < Algorithm
     
     properties
         
-        name_parameters = {'C','k','e'}
+        name_parameters = {'C','k','e'};
         
-	parameters
+	parameters;
     end
     
     methods

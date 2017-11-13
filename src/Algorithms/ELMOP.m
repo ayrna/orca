@@ -57,7 +57,7 @@ classdef ELMOP < Algorithm
        
         parameters
 
-        name_parameters = {'hiddenN'}
+        name_parameters = {'hiddenN'};
     end
 
     
