@@ -142,6 +142,7 @@ classdef KDLOR < Algorithm
                 param.C = parameters(1);
                 param.k = parameters(2);
                 
+                
                 if strcmp(obj.kernelType, 'sigmoid'),
                     param.k = [parameters(2),parameters(3)];
                     if numel(parameters)>3,
@@ -263,20 +264,22 @@ classdef KDLOR < Algorithm
              x0 = zeros(numClasses-1,1);     % The starting point is [0 0 0 0]
 
 
-             [ms,me,t,m] = regexp( version,'R(\d+)\w*');
 
-             if exist ('OCTAVE_VERSION', 'builtin') > 0
-                 options = optimset('Display','off');
-             elseif strcmp(m,'R2009a') || strcmp(m,'R2008a')
-                 options = optimset('Algorithm','interior-point','LargeScale','off','Display','off');
-             else
-                 options = optimset('Algorithm','interior-point-convex','LargeScale','off','Display','off');
-             end
              
              % Choice the optimization method
                 switch upper(obj.optimizationMethod)
                     case 'QUADPROG'
-                        [alpha, fval, how] = quadprog(Q,c,A,b,E,d,vlb,vub,x0,options);
+                         [ms,me,t,m] = regexp( version,'R(\d+)\w*');
+
+                         if exist ('OCTAVE_VERSION', 'builtin') > 0
+                             options = optimset('Display','off');
+                             pkg load optim;
+                         elseif strcmp(m,'R2009a') || strcmp(m,'R2008a')
+                             options = optimset('Algorithm','interior-point','LargeScale','off','Display','off');
+                         else
+                             options = optimset('Algorithm','interior-point-convex','LargeScale','off','Display','off');
+                         end
+                         [alpha, fval, how] = quadprog(Q,c,A,b,E,d,vlb,vub,x0,options);
                     case 'CVX'
 %                         rmpath ../cvx/sets
 %                         rmpath ../cvx/keywords
