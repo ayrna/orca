@@ -1,5 +1,5 @@
 all: untar
-	make -e -C orensemble
+	mingw32-make -e -C orensemble
 	mv orensemble/boostrank-predict .
 	mv orensemble/boostrank-train .
 

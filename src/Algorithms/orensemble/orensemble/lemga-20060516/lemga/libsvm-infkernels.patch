@@ -1,0 +1,211 @@
+diff -ru libsvm-2.6.orig/svm.cpp libsvm-2.6/svm.cpp
+--- libsvm-2.6.orig/svm.cpp	2004-03-30 18:34:04.000000000 -0800
++++ libsvm-2.6/svm.cpp	2005-11-13 01:17:25.000000000 -0800
+@@ -199,6 +199,8 @@
+ 	const double coef0;
+ 
+ 	static double dot(const svm_node *px, const svm_node *py);
++	static double norm_1(const svm_node *, const svm_node *);
++	static double norm_2(const svm_node *, const svm_node *);
+ 	double kernel_linear(int i, int j) const
+ 	{
+ 		return dot(x[i],x[j]);
+@@ -215,6 +217,15 @@
+ 	{
+ 		return tanh(gamma*dot(x[i],x[j])+coef0);
+ 	}
++	double kernel_stump(int i, int j) const
++	{
++		return -norm_1(x[i],x[j]);
++	}
++	double kernel_perceptron(int i, int j) const
++	{
++		double n2 = x_square[i]+x_square[j]-2*dot(x[i],x[j]);
++		return (n2>0)? -sqrt(n2) : 0;
++	}
+ };
+ 
+ Kernel::Kernel(int l, svm_node * const * x_, const svm_parameter& param)
+@@ -235,11 +246,17 @@
+ 		case SIGMOID:
+ 			kernel_function = &Kernel::kernel_sigmoid;
+ 			break;
++		case STUMP:
++			kernel_function = &Kernel::kernel_stump;
++			break;
++		case PERCEPTRON:
++			kernel_function = &Kernel::kernel_perceptron;
++			break;
+ 	}
+ 
+ 	clone(x,x_,l);
+ 
+-	if(kernel_type == RBF)
++	if(kernel_type == RBF || kernel_type == PERCEPTRON)
+ 	{
+ 		x_square = new double[l];
+ 		for(int i=0;i<l;i++)
+@@ -277,6 +294,77 @@
+ 	return sum;
+ }
+ 
++double Kernel::norm_1(const svm_node *x, const svm_node *y)
++{
++	double sum = 0;
++	while (x->index != -1 && y->index != -1)
++	{
++		if (x->index == y->index)
++		{
++			sum += fabs(x->value - y->value);
++			++x;
++			++y;
++		}
++		else if (x->index > y->index)
++		{
++			sum += fabs(y->value);
++			++y;
++		}
++		else
++		{
++			sum += fabs(x->value);
++			++x;
++		}
++	}
++	while (x->index != -1)
++	{
++		sum += fabs(x->value);
++		++x;
++	}
++	while (y->index != -1)
++	{
++		sum += fabs(y->value);
++		++y;
++	}
++	return sum;
++}
++
++double Kernel::norm_2(const svm_node *x, const svm_node *y)
++{
++	double sum = 0;
++	while (x->index != -1 && y->index !=-1)
++	{
++		if (x->index == y->index)
++		{
++			double d = x->value - y->value;
++			sum += d*d;
++			++x;
++			++y;
++		}
++		else if (x->index > y->index)
++		{	
++			sum += y->value * y->value;
++			++y;
++		}
++		else
++		{
++			sum += x->value * x->value;
++			++x;
++		}
++	}
++	while (x->index != -1)
++	{
++		sum += x->value * x->value;
++		++x;
++	}
++	while (y->index != -1)
++	{
++		sum += y->value * y->value;
++		++y;
++	}
++	return sum;
++}
++
+ double Kernel::k_function(const svm_node *x, const svm_node *y,
+ 			  const svm_parameter& param)
+ {
+@@ -287,48 +375,13 @@
+ 		case POLY:
+ 			return pow(param.gamma*dot(x,y)+param.coef0,param.degree);
+ 		case RBF:
+-		{
+-			double sum = 0;
+-			while(x->index != -1 && y->index !=-1)
+-			{
+-				if(x->index == y->index)
+-				{
+-					double d = x->value - y->value;
+-					sum += d*d;
+-					++x;
+-					++y;
+-				}
+-				else
+-				{
+-					if(x->index > y->index)
+-					{	
+-						sum += y->value * y->value;
+-						++y;
+-					}
+-					else
+-					{
+-						sum += x->value * x->value;
+-						++x;
+-					}
+-				}
+-			}
+-
+-			while(x->index != -1)
+-			{
+-				sum += x->value * x->value;
+-				++x;
+-			}
+-
+-			while(y->index != -1)
+-			{
+-				sum += y->value * y->value;
+-				++y;
+-			}
+-			
+-			return exp(-param.gamma*sum);
+-		}
++			return exp(-param.gamma*norm_2(x,y));
+ 		case SIGMOID:
+ 			return tanh(param.gamma*dot(x,y)+param.coef0);
++		case STUMP:
++			return -norm_1(x,y);
++		case PERCEPTRON:
++			return -sqrt(norm_2(x,y));
+ 		default:
+ 			return 0;	/* Unreachable */
+ 	}
+@@ -2350,7 +2403,7 @@
+ 
+ const char *kernel_type_table[]=
+ {
+-	"linear","polynomial","rbf","sigmoid",NULL
++	"linear","polynomial","rbf","sigmoid","stump","perceptron",NULL
+ };
+ 
+ int svm_save_model(const char *model_file_name, const svm_model *model)
+@@ -2666,7 +2719,9 @@
+ 	if(kernel_type != LINEAR &&
+ 	   kernel_type != POLY &&
+ 	   kernel_type != RBF &&
+-	   kernel_type != SIGMOID)
++	   kernel_type != SIGMOID &&
++	   kernel_type != STUMP &&
++	   kernel_type != PERCEPTRON)
+ 		return "unknown kernel type";
+ 
+ 	// cache_size,eps,C,nu,p,shrinking
+diff -ru libsvm-2.6.orig/svm.h libsvm-2.6/svm.h
+--- libsvm-2.6.orig/svm.h	2004-03-05 23:07:17.000000000 -0800
++++ libsvm-2.6/svm.h	2005-11-13 01:17:25.000000000 -0800
+@@ -19,7 +19,7 @@
+ };
+ 
+ enum { C_SVC, NU_SVC, ONE_CLASS, EPSILON_SVR, NU_SVR };	/* svm_type */
+-enum { LINEAR, POLY, RBF, SIGMOID };	/* kernel_type */
++enum { LINEAR, POLY, RBF, SIGMOID, STUMP, PERCEPTRON };	/* kernel_type */
+ 
+ struct svm_parameter
+ {
