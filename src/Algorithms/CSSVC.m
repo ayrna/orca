@@ -107,7 +107,7 @@ classdef CSSVC < Algorithm
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
         function [model_information] = runAlgorithm(obj,train, test, parameters)
-            	addpath(fullfile('Algorithms','libsvm-weights-3.12','matlab'));
+            	addpath(fullfile(pwd,'Algorithms','libsvm-weights-3.12','matlab'));
                 param.C = parameters(1);
                 param.k = parameters(2);
                 
@@ -126,7 +126,7 @@ classdef CSSVC < Algorithm
                 model.parameters = param;
                 model_information.model = model;
 
-            	rmpath(fullfile('Algorithms','libsvm-weights-3.12','matlab'));
+                rmpath(fullfile(pwd,'Algorithms','libsvm-weights-3.12','matlab'));
 
         end
         

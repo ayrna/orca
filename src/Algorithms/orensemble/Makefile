@@ -6,7 +6,7 @@ all: untar
 octave: all
 
 untar:
-	tar xzf orensemble.tar.gz
+	#tar xzf orensemble.tar.gz
 
 clean:
-	rm -Rf orensemble
+	#rm -Rf orensemble

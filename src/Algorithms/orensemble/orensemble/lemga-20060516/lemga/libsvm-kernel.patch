@@ -1,0 +1,28 @@
+diff -ru libsvm-2.6.orig/svm.cpp libsvm-2.6/svm.cpp
+--- libsvm-2.6.orig/svm.cpp	2004-03-30 18:34:04.000000000 -0800
++++ libsvm-2.6/svm.cpp	2005-05-30 14:53:30.557366028 -0700
+@@ -277,6 +277,12 @@
+ 	return sum;
+ }
+ 
++double svm_kernel(const svm_node *x, const svm_node *y,
++		  const svm_parameter& param)
++{
++	return Kernel::k_function(x, y, param);
++}
++
+ double Kernel::k_function(const svm_node *x, const svm_node *y,
+ 			  const svm_parameter& param)
+ {
+diff -ru libsvm-2.6.orig/svm.h libsvm-2.6/svm.h
+--- libsvm-2.6.orig/svm.h	2004-03-05 23:07:17.000000000 -0800
++++ libsvm-2.6/svm.h	2005-05-30 14:53:30.558365983 -0700
+@@ -63,6 +63,8 @@
+ const char *svm_check_parameter(const struct svm_problem *prob, const struct svm_parameter *param);
+ int svm_check_probability_model(const struct svm_model *model);
+ 
++double svm_kernel(const svm_node *, const svm_node *, const svm_parameter&);
++
+ #ifdef __cplusplus
+ }
+ #endif

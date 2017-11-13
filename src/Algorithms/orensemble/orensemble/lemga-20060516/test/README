@@ -1,0 +1,20 @@
+README for lemga/test
+=====================
+
+Files here are meant to demonstrate the usage of Lemga.
+
+ adabst.cpp  AdaBoost and arc-gv using pulse functions
+    bag.cpp  Bagging using decision stumps
+  lpbst.cpp  Both AdaBoost and LPBoost with decision stumps
+  multi.cpp  Multiclass classification with AdaBoost-perceptrons.
+   nnet.cpp  Neural networks
+ showlm.cpp  A model file loader/checker
+testsvm.cpp  SVM classification with several kernels + cross-validation
+
+To compile all modules with "release" and "debug" settings, type
+    make test debug
+
+To compile a single module with "debug" setting, type
+    make "module name appended by 'd'"
+For example,
+    make nnetd
