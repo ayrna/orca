@@ -22,6 +22,7 @@ test.targets = test_toy(:,end);
 
 for i=1:length(files)
     cmd = files(i).name;
+    fprintf('Processing %s...\n', cmd);
     eval(cmd(1:end-2))
 end
 

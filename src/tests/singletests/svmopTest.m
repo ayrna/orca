@@ -1,5 +1,11 @@
 % Reference performance
-accTestRef = 0.960000;
+% We have to expected values depending of the OS 
+% (see https://github.com/ayrna/orca/issues/19)
+if ispc
+    accTestRef = 0.920000;
+else
+    accTestRef = 0.960000;
+end
 allowedError = 0.001;
 method = 'SVMOP';
 
