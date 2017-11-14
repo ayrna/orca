@@ -294,10 +294,17 @@ classdef Experiment < handle
                       aux1 = combinations;
                   end
                   aux2 = getfield(parameters, par{i+1});
-                  combinations = allcomb(aux1,aux2);
+                  
+                  dimensions = cellfun(@numel, {aux1,aux2});
+                  [i1,i2] = ind2sub(dimensions, 1:prod(dimensions));
+                  combinations = [aux1(i1); aux2(i2)]';
+                  
+                  
+                  %combinations = combvec(aux1,aux2);
+                  %combinations = allcomb(aux1,aux2);
                   % Transpose, allcomb returns matrix with different shape 
                   % than combvec
-                  combinations = combinations';
+                  %combinations = combinations';
               end
             end
             
