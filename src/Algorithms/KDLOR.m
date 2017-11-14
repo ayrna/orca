@@ -279,7 +279,7 @@ obj.optimizationMethod = 'qp'
                          else
                              options = optimset('Algorithm','interior-point-convex','LargeScale','off','Display','off');
                          end
-                         [alpha, fval, how] = quadprog(Q,c,A,b,E,d,vlb,vub,x0,options);
+                         [alpha, fval, how] = quadprog(Q,c,A,b,E,d,vlb,vub,x0,options); 
                     case 'CVX'
 %                         rmpath ../cvx/sets
 %                         rmpath ../cvx/keywords
