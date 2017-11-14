@@ -282,10 +282,17 @@ classdef Experiment < handle
                       aux1 = combinations;
                   end
                   aux2 = getfield(parameters, par{i+1});
-                  dimensions = cellfun(@numel, {aux1,aux2});
+                  dimensions = cellfun(@length, {aux1,aux2});
                   [i1,i2] = ind2sub(dimensions, 1:prod(dimensions));
-                  combinations = [aux1(i1); aux2(i2)]';
-              end              
+                  if i==1,
+                    combinations = [aux1(i1); aux2(i2)]';
+                  else
+                    combinations = [aux1(i1,:) aux2(i2)'];
+                  end;
+              end
+              if numel(par) ~= 1
+                combinations = combinations';
+              end
             else
               for i=1:(numel(par)-1),
                   if i==1,
