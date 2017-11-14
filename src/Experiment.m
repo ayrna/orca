@@ -295,6 +295,9 @@ classdef Experiment < handle
                   end
                   aux2 = getfield(parameters, par{i+1});
                   combinations = allcomb(aux1,aux2);
+                  % Transpose, allcomb returns matrix with different shape 
+                  % than combvec
+                  combinations = combinations';
               end
             end
             
