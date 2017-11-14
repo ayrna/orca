@@ -3,6 +3,8 @@ all: untar
 	mv orensemble/boostrank-predict .
 	mv orensemble/boostrank-train .
 
+octave: all
+
 untar:
 	#tar xzf orensemble.tar.gz
 
