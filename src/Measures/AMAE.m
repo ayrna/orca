@@ -67,7 +67,14 @@ classdef AMAE < Metric
             for i=0:n-1
                 mae(i+1) = sum(cost(1+(i*n):(i*n)+n).*cmt(1+(i*n):(i*n)+n)) / sum(cmt(1+(i*n):(i*n)+n));
             end
+            
+            if (exist ('OCTAVE_VERSION', 'builtin') > 0)
+              pkg load statistics;
+            end
             amae = nanmean(mae);
+            if (exist ('OCTAVE_VERSION', 'builtin') > 0)
+              pkg unload statistics;
+            end
         end
 
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
