@@ -19,7 +19,7 @@ OCTAVEDIR ?= /usr/include/octave-4.0.3/octave
 OCTAVE_MEX = env CC=$(CXX) mkoctfile
 OCTAVE_MEX_OPTION = --mex
 OCTAVE_MEX_EXT = mex
-OCTAVE_CFLAGS = -Wall -O3 -fPIC -I$(OCTAVEDIR) -I..
+OCTAVE_CFLAGS ?= -Wall -O3 -fPIC -I$(OCTAVEDIR) -I..
 
 all:	matlab
 

@@ -18,7 +18,7 @@ OCTAVEDIR ?= /usr/include/octave-4.0.3/octave
 OCTAVE_MEX = env CC=$(CXX) mkoctfile
 OCTAVE_MEX_OPTION = --mex
 OCTAVE_MEX_EXT = mex
-OCTAVE_CFLAGS = -Wall -O3 -fPIC -I$(OCTAVEDIR) -I..
+OCTAVE_CFLAGS ?= -Wall -O3 -fPIC -I$(OCTAVEDIR) -I..
 
 objects = alphas.o cachelist.o datalist.o def_settings.o kcv.o loadfile.o main.o ordinal_takestep.o setandfi.o smo_kernel.o smo_routine.o smo_settings.o smo_timer.o svc_predict.o
 
