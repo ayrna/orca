@@ -324,8 +324,10 @@ classdef Experiment < handle
             end
             
             if (exist ('OCTAVE_VERSION', 'builtin') > 0)
+              pkg load statistics;
               CVO = cvpartition(train.targets,'KFold',nOfFolds);
               numTests = get(CVO,'NumTestSets');
+              pkg unload statistics;
             else
               CVO = cvpartition(train.targets,'k',nOfFolds);
               numTests = CVO.NumTestSets;
