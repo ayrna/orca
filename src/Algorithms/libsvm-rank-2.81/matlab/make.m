@@ -3,7 +3,12 @@ function make()
 try
 	% This part is for OCTAVE
 	if (exist ('OCTAVE_VERSION', 'builtin'))
-    setenv('CFLAGS','-std=c99 -O3 -fstack-protector-strong -Wformat -Werror=format-security') 
+    if ispc
+      setenv('CFLAGS','-std=c99 -O3') 
+      setenv('CC','gcc') 
+    else
+      setenv('CFLAGS','-std=c99 -O3 -fstack-protector-strong -Wformat -Werror=format-security') 
+    end
 		mex libsvmread.c
 		mex libsvmwrite.c
 		mex -I.. svmtrain.c ../svm.cpp svm_model_matlab.c
