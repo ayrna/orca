@@ -272,38 +272,11 @@ classdef Experiment < handle
             parameters = obj.method.parameters;
             par = fieldnames(parameters);
             
-            
-            combinations = getfield(parameters,par{1});
-            if exist ('OCTAVE_VERSION', 'builtin') > 0
-              for i=1:(numel(par)-1),
-                  if i==1,
-                      aux1 = getfield(parameters, par{i});
-                  else
-                      aux1 = combinations;
-                  end
-                  aux2 = getfield(parameters, par{i+1});
-                  dimensions = cellfun(@length, {aux1,aux2});
-                  [i1,i2] = ind2sub(dimensions, 1:prod(dimensions));
-                  if i==1,
-                    combinations = [aux1(i1); aux2(i2)]';
-                  else
-                    combinations = [aux1(i1,:) aux2(i2)'];
-                  end;
-              end
-              if numel(par) ~= 1
-                combinations = combinations';
-              end
-            else
-              for i=1:(numel(par)-1),
-                  if i==1,
-                      aux1 = getfield(parameters, par{i});
-                  else
-                      aux1 = combinations;
-                  end
-                  aux2 = getfield(parameters, par{i+1});
-                  combinations = allcomb(aux1,aux2);
-              end
-            end
+            sets = struct2cell(parameters);
+            c = cell(1, numel(sets));
+            [c{:}] = ndgrid( sets{:} );
+            combinations = cell2mat( cellfun(@(v)v(:), c, 'UniformOutput',false) );
+            combinations = combinations';
             
             % Avoid problems with very low number of patterns for some
             % classes
