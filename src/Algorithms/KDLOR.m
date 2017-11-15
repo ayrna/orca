@@ -263,8 +263,6 @@ classdef KDLOR < Algorithm
              vub = Inf*ones(numClasses-1,1); %                 alphas and betas <= Inf
              x0 = zeros(numClasses-1,1);     % The starting point is [0 0 0 0]
 
-
-
              
              % Choice the optimization method
                 switch upper(obj.optimizationMethod)
@@ -279,7 +277,10 @@ classdef KDLOR < Algorithm
                          else
                              options = optimset('Algorithm','interior-point-convex','LargeScale','off','Display','off');
                          end
-                         [alpha, fval, how] = quadprog(Q,c,A,b,E,d,vlb,vub,x0,options);
+                         [alpha, fval, how] = quadprog(Q,c,A,b,E,d,vlb,vub,x0,options); 
+                         if exist ('OCTAVE_VERSION', 'builtin') > 0
+                             pkg unload optim;
+                         end
                     case 'CVX'
 %                         rmpath ../cvx/sets
 %                         rmpath ../cvx/keywords
@@ -299,7 +300,11 @@ classdef KDLOR < Algorithm
                             alpha >= 0;
                         cvx_end
                     case 'QP'
-                        alpha = qp(Q, c, E, d, vlb, vub,x0,1,0);
+                         if exist ('OCTAVE_VERSION', 'builtin') > 0
+                          alpha = qp(x0, Q, c, E, d, vlb, vub);
+                         else
+                          alpha = qp(Q, c, E, d, vlb, vub,x0,1,0);
+                         end
                     otherwise
                         error('Invalid value for optimizer\n');
                 end

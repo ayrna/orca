@@ -3,17 +3,17 @@
 % María Pérez Ortiz (i82perom at uco dot es)
 % Javier Sánchez Monedero (jsanchezm at uco dot es)
 %
-% This file implements the code for executing different experiments in the present framework (data loading, cross-validation and computation of results), presented in the paper Ordinal regression methods: survey and experimental study published in the IEEE Transactions on Knowledge and Data Engineering. 
-% 
+% This file implements the code for executing different experiments in the present framework (data loading, cross-validation and computation of results), presented in the paper Ordinal regression methods: survey and experimental study published in the IEEE Transactions on Knowledge and Data Engineering.
+%
 % The code has been tested with Ubuntu 12.04 x86_64, Debian Wheezy 8, Matlab R2009a and Matlab 2011
-% 
+%
 % If you use this code, please cite the associated paper
 % Code updates and citing information:
 % http://www.uco.es/grupos/ayrna/orreview
 % https://github.com/ayrna/orca
-% 
+%
 % AYRNA Research group's website:
-% http://www.uco.es/ayrna 
+% http://www.uco.es/ayrna
 %
 % This program is free software; you can redistribute it and/or
 % modify it under the terms of the GNU General Public License
@@ -27,40 +27,40 @@
 %
 % You should have received a copy of the GNU General Public License
 % along with this program; if not, write to the Free Software
-% Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA. 
+% Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 % Licence available at: http://www.gnu.org/licenses/gpl-3.0.html
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 classdef Experiment < handle
     % Experiment class
     % This class describes the different methods for running a given experiment in the framework
-    
+
     properties
-        
+
         data = DataSet;
-        
+
         method = KDLOR;
-        
+
         cvCriteria = MAE;
-        
+
         resultsDir = '';
-        
+
         seed = 1;
-        
+
         crossvalide = 0;
-        
+
         kernel_alignment = 0;
-                
+
     end
-    
+
     properties (SetAccess = private)
-        
+
         logsDir
     end
-    
+
     methods
-        
-        
+
+
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         %
         % Function: launch (Public)
@@ -76,9 +76,9 @@ classdef Experiment < handle
             obj.run();
         end
     end
-    
+
     methods(Access = private)
-        
+
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         %
         % Function: runFolder (private)
@@ -90,12 +90,12 @@ classdef Experiment < handle
         %          No arguments
         %
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        
+
         function obj = run(obj)
             [train,test] = obj.data.preProcessData();
-            
+
             if obj.crossvalide,
-                c1 = clock;      
+                c1 = clock;
                 Optimals = obj.crossValide(train);
                 c2 = clock;
                 crossvaltime = etime(c2,c1);
@@ -105,8 +105,8 @@ classdef Experiment < handle
                 totalResults = obj.method.runAlgorithm(train, test);
             end
 
-	    obj.saveResults(totalResults);    
-            
+	    obj.saveResults(totalResults);
+
         end
 
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -118,17 +118,17 @@ classdef Experiment < handle
         %          fichero: file containing the experiment to proccess
         %
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        
+
         function obj = process(obj,fichero)
 
             fid = fopen(fichero,'r+');
-            
+
             fprintf('Processing %s\n', fichero)
-            
+
             while ~feof(fid),
                 nueva_linea = fgetl(fid);
                 nueva_linea = regexprep(nueva_linea, ' ', '');
-                
+
                 if strncmpi('directory',nueva_linea,3),
                     obj.data.directory = fgetl(fid);
                 elseif strcmpi('train', nueva_linea),
@@ -182,9 +182,9 @@ classdef Experiment < handle
                 else
                     error(['Error reading: ' nueva_linea]);
                 end
-                
+
             end
-            
+
             % jsanchez
             if(obj.crossvalide == 0 && numel(obj.method.name_parameters)~=0 ...
                     && ~strcmpi(obj.method.name_parameters,'dummy')),
@@ -192,11 +192,11 @@ classdef Experiment < handle
                 obj.method.defaultParameters();
                 disp('No parameter info found - setting up default parameters.')
             end
-            
+
             fclose(fid);
-            
+
         end
-        
+
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         %
         % Function: saveResults (private)
@@ -207,23 +207,23 @@ classdef Experiment < handle
         %           TotalResults--> Results of the experiment
         %
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        
+
         function obj = saveResults(obj,TotalResults)
 
             if numel(obj.method.name_parameters)~=0
                 outputFile = [obj.resultsDir filesep 'OptHyperparams' filesep obj.data.dataname ];
                 fid = fopen(outputFile,'w');
-                
+
                 par = fieldnames(TotalResults.model.parameters);
-                
+
                 for i=1:(numel(par)),
                     value = getfield(TotalResults.model.parameters,par{i});
                     fprintf(fid,'%s,%f\n', par{i},value);
                 end
-                
+
                 fclose(fid);
             end
-            
+
             outputFile = [obj.resultsDir filesep 'Times' filesep obj.data.dataname ];
             fid = fopen(outputFile,'w');
             if obj.crossvalide,
@@ -232,27 +232,27 @@ classdef Experiment < handle
                 fprintf(fid, '%f\n%f\n%f', TotalResults.trainTime, TotalResults.testTime, 0);
             end
             fclose(fid);
-            
-            
+
+
             outputFile = [obj.resultsDir filesep 'Predictions' filesep obj.data.train ];
             dlmwrite(outputFile, TotalResults.predictedTrain);
             outputFile = [obj.resultsDir filesep 'Predictions' filesep obj.data.test ];
             dlmwrite(outputFile, TotalResults.predictedTest);
-            
+
             modelo = TotalResults.model;
             % Write complete model
             outputFile = [obj.resultsDir filesep 'Models' filesep obj.data.dataname '.mat'];
             save(outputFile, 'modelo');
-            
+
             outputFile = [obj.resultsDir filesep 'Guess' filesep obj.data.train ];
             dlmwrite(outputFile, TotalResults.projectedTrain, 'precision', '%.15f');
-            
+
             outputFile = [obj.resultsDir filesep 'Guess' filesep obj.data.test ];
             dlmwrite(outputFile, TotalResults.projectedTest, 'precision', '%.15f');
-            
+
         end
-        
-             
+
+
 
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         %
@@ -265,49 +265,19 @@ classdef Experiment < handle
         %           -train--> train patterns
         %
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        
-        
+
+
         function optimals = crossValide(obj,train)
             nOfFolds = obj.data.nOfFolds;
             parameters = obj.method.parameters;
             par = fieldnames(parameters);
-            
-            
-            combinations = getfield(parameters,par{1});
-            if exist ('OCTAVE_VERSION', 'builtin') > 0
-              for i=1:(numel(par)-1),
-                  if i==1,
-                      aux1 = getfield(parameters, par{i});
-                  else
-                      aux1 = combinations;
-                  end
-                  aux2 = getfield(parameters, par{i+1});
-                  dimensions = cellfun(@numel, {aux1,aux2});
-                  [i1,i2] = ind2sub(dimensions, 1:prod(dimensions));
-                  combinations = [aux1(i1); aux2(i2)]';
-              end              
-            else
-              for i=1:(numel(par)-1),
-                  if i==1,
-                      aux1 = getfield(parameters, par{i});
-                  else
-                      aux1 = combinations;
-                  end
-                  aux2 = getfield(parameters, par{i+1});
-                  
-                  dimensions = cellfun(@numel, {aux1,aux2});
-                  [i1,i2] = ind2sub(dimensions, 1:prod(dimensions));
-                  combinations = [aux1(i1); aux2(i2)]';
-                  
-                  
-                  %combinations = combvec(aux1,aux2);
-                  %combinations = allcomb(aux1,aux2);
-                  % Transpose, allcomb returns matrix with different shape 
-                  % than combvec
-                  %combinations = combinations';
-              end
-            end
-            
+
+            sets = struct2cell(parameters);
+            c = cell(1, numel(sets));
+            [c{:}] = ndgrid( sets{:} );
+            combinations = cell2mat( cellfun(@(v)v(:), c, 'UniformOutput',false) );
+            combinations = combinations';
+
             % Avoid problems with very low number of patterns for some
             % classes
             uniqueTargets = unique(train.targets);
@@ -320,7 +290,7 @@ classdef Experiment < handle
                     train.patterns = train.patterns(idx,:);
                 end
             end
-            
+
             % Use the seed
             if (exist ('OCTAVE_VERSION', 'builtin') > 0)
               rand('seed',obj.seed);
@@ -332,8 +302,9 @@ classdef Experiment < handle
                   RandStream.setGlobalStream(s);
               end
             end
-            
+
             if (exist ('OCTAVE_VERSION', 'builtin') > 0)
+              pkg load statistics;
               CVO = cvpartition(train.targets,'KFold',nOfFolds);
               numTests = get(CVO,'NumTestSets');
             else
@@ -341,7 +312,7 @@ classdef Experiment < handle
               numTests = CVO.NumTestSets;
             end
             result = zeros(numTests,size(combinations,2));
-            
+
             % Foreach fold
             for ff = 1:numTests,
                 % Build fold dataset
@@ -352,7 +323,7 @@ classdef Experiment < handle
                   trIdx = CVO.training(ff);
                   teIdx = CVO.test(ff);
                 end
-                
+
                 auxTrain.targets = train.targets(trIdx,:);
                 auxTrain.patterns = train.patterns(trIdx,:);
                 auxTest.targets = train.targets(teIdx,:);
@@ -360,23 +331,25 @@ classdef Experiment < handle
                 for i=1:size(combinations,2),
                     % Extract the combination of parameters
                     currentCombination = combinations(:,i);
-                    model = obj.method.runAlgorithm(auxTrain, auxTest, currentCombination);           
+                    model = obj.method.runAlgorithm(auxTrain, auxTest, currentCombination);
                     if strcmp(obj.cvCriteria.name,'Area under curve')
-                        result(ff,i) = obj.cvCriteria.calculateCrossvalMetric(auxTest.targets, model.projectedTest);                        
+                        result(ff,i) = obj.cvCriteria.calculateCrossvalMetric(auxTest.targets, model.projectedTest);
                     else
                         result(ff,i) = obj.cvCriteria.calculateCrossvalMetric(auxTest.targets, model.predictedTest);
-                    end         
+                    end
                 end
 
-            end  
+            end
+            if (exist ('OCTAVE_VERSION', 'builtin') > 0)
+              pkg unload statistics;
+            end
 
             [bestValue,bestIdx] = min(mean(result));
             optimals = combinations(:,bestIdx);
-            
-        end
-        
-    end
-    
-    
-end
 
+        end
+
+    end
+
+
+end
