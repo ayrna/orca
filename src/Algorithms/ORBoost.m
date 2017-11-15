@@ -141,11 +141,9 @@ classdef ORBoost < Algorithm
                 model.weights = obj.weights;
                 model_information.model = model;
                 
-                system(['rm ' trainFile]);
-                system(['rm ' testFile]);
-                system(['rm ' modelFile]);
-                 
-
+                delete(trainFile);
+                delete(testFile);
+                delete(modelFile);
         end
         
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -205,9 +203,7 @@ classdef ORBoost < Algorithm
                 all = load(predictFile);
                 testTargets = all(:,1);
                 projected = all(:,2);
-                system(['rm ' predictFile]);
-                
-
+                delete(predictFile);
         end  
             
     end

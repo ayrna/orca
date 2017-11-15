@@ -1,34 +1,27 @@
-% TODO: Port ORBoost to Windows
-if ispc
-    fprintf('**************************************************************\n')
-    fprintf('ORBoost is not available for Windows. Skiping test for ORBoost\n')
-    fprintf('**************************************************************\n')
+% Reference performance
+accTestRef = 0.893333;
+allowedError = 0.001;
+method = 'ORBoost';
+
+% Create the algorithm object
+algorithmObj = ORBoost();
+
+% Running the algorithm
+info = algorithmObj.runAlgorithm(train,test);
+
+trainCM = confusionmat(info.predictedTrain,train.targets);
+testCM = confusionmat(info.predictedTest,test.targets);
+
+accTrain = CCR.calculateMetric(trainCM);
+accTest  = CCR.calculateMetric(testCM);
+
+% Reporting accuracy
+fprintf('.........................\n');
+fprintf('Performing test for %s\n', method);
+fprintf('Accuracy Train %f, Accuracy Test %f\n',accTrain,accTest);
+
+if abs(accTestRef-accTest)<allowedError
+    fprintf('Test accuracy matchs reference accuracy\n');
 else
-    % Reference performance
-    accTestRef = 0.893333;
-    allowedError = 0.001;
-    method = 'ORBoost';
-
-    % Create the algorithm object
-    algorithmObj = ORBoost();
-
-    % Running the algorithm
-    info = algorithmObj.runAlgorithm(train,test);
-
-    trainCM = confusionmat(info.predictedTrain,train.targets);
-    testCM = confusionmat(info.predictedTest,test.targets);
-
-    accTrain = CCR.calculateMetric(trainCM);
-    accTest  = CCR.calculateMetric(testCM);
-
-    % Reporting accuracy
-    fprintf('.........................\n');
-    fprintf('Performing test for %s\n', method);
-    fprintf('Accuracy Train %f, Accuracy Test %f\n',accTrain,accTest);
-
-    if abs(accTestRef-accTest)<allowedError
-        fprintf('Test accuracy matchs reference accuracy\n');
-    else
-        error('Test accuracy does NOT match reference accuracy');
-    end
+    error('Test accuracy does NOT match reference accuracy');
 end
