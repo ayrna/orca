@@ -26,6 +26,8 @@ for i=1:length(files)
     eval(cmd(1:end-2))
 end
 
+% error is called in individual tests, so if code reach this point all the
+% tests have been run successfully
 fprintf('\nAll tests ended successfully\n')
 
 rmpath Algorithms
