@@ -1,4 +1,4 @@
-% Make file for MATLAB and OCTAVE that processes make() in all the subfolders 
+% make function for MATLAB and OCTAVE that processes make() in all the subfolders 
 % with C/C++ code. 
 % Options are: 
 % - 'make' build all targets
@@ -42,7 +42,7 @@ elseif nargin == 1
         make(opt)
         cd ..
         cd orensemble
-        make
+        make(opt)
         cd ..
     catch err
         fprintf('Error: %s failed (line %d)\n', err.stack(1).file, err.stack(1).line);

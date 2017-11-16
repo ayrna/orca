@@ -9,5 +9,4 @@ untar:
 	#tar xzf orensemble.tar.gz
 
 clean:
-	echo "Cleaning orensemble..."
 	rm -f orensemble/*~ orensemble/*.o orensemble/*.obj
