@@ -1,6 +1,7 @@
 *.o
 *.mex
 *.mexa64
+*.mexw64
 *.exe
 src/Experiments
 src/Algorithms/orensemble/boostrank-*
