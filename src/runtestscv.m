@@ -46,3 +46,5 @@ for i=1:length(files)
     % elm...)
     pause(1);    
 end
+
+fprintf('\nAll tests ended successfully\n')

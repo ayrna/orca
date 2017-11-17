@@ -1,4 +1,5 @@
 *.o
+*.mex
 *.mexa64
 *.exe
 src/Experiments

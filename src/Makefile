@@ -1,4 +1,9 @@
-SUBDIRS = libsvm-rank-2.81/matlab libsvm-weights-3.12/matlab orensemble SVORIM SVOREX
+SUBDIRS = Algorithms
+
+# Matlabi/Octave instalation dir
+export MATLABDIR = /usr/local/MATLAB/R2017b
+export OCTAVEDIR = /usr/include/octave-4.0.0/octave
+
 
 # Uncomment for newer versions of Octave
 export OCTAVE_CFLAGS = -std=c++98 -Wall -O3 -fPIC -I$(OCTAVEDIR) -I..
