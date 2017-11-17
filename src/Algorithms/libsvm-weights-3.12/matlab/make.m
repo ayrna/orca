@@ -5,10 +5,10 @@ if nargin < 1
         % This part is for OCTAVE
         if (exist ('OCTAVE_VERSION', 'builtin'))
             if ispc
-                setenv('CFLAGS','-std=c99 -O3')
+                setenv('CFLAGS','-std=gnu99 -O3')
                 setenv('CC','gcc')
             else
-                setenv('CFLAGS','-std=c99 -O3 -fstack-protector-strong -Wformat -Werror=format-security') 
+                setenv('CFLAGS','-std=gnu99 -O3 -fstack-protector-strong -Wformat -Werror=format-security')
             end
             mex libsvmread.c
             mex libsvmwrite.c
@@ -46,3 +46,4 @@ elseif nargin == 1
             error('make option "%s" not recognized', opt)
     end
 end
+    

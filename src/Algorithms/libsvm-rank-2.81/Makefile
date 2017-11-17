@@ -1,5 +1,5 @@
 #CXX = g++-4.1
-CXX ?= g++
+CXX = g++
 CFLAGS = -Wall -Wconversion -O3 -fPIC
 SHVER = 2
 OS = $(shell uname)
