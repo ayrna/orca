@@ -1,10 +1,7 @@
-all: untar
+all:
 	mingw32-make -e -C orensemble
-	mv orensemble/boostrank-predict .
-	mv orensemble/boostrank-train .
-
-untar:
-	#tar xzf orensemble.tar.gz
-
-clean:
-	#rm -Rf orensemble
+	move orensemble\boostrank-predict.exe .
+	move orensemble\boostrank-train.exe .
+	copy "orensemble\libgcc_s_seh-1.dll" .
+	copy "orensemble\libstdc++-6.dll" .
+	copy "orensemble\libwinpthread-1.dll" .

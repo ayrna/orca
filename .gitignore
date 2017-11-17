@@ -3,6 +3,7 @@
 *.mexa64
 *.mexw64
 *.exe
+*.dll
 src/Experiments
 src/Algorithms/orensemble/boostrank-*
 *~
