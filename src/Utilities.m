@@ -510,35 +510,36 @@ classdef Utilities < handle
             dbs(2) = [];
             dbs(1) = [];
             validDataSets = 1;
-            
-            if strcmpi(dataSetNames{1}, 'all')
-                trainFileNames = cell(size(dbs,1));
-                testFileNames = cell(size(dbs,1));
-                for dd=1:size(dbs,1)
-                    % get directory
-                    if dbs(dd).isdir,
-                        ejemplo = [directory '/' dbs(dd).name '/' 'matlab' '/' 'train_' dbs(dd).name '.*'];
-                        trainFileNames{validDataSets, :} = dir(ejemplo);
-                        ejemplo = [directory '/' dbs(dd).name '/' 'matlab' '/' 'test_' dbs(dd).name '.*'];
-                        testFileNames{validDataSets, :} = dir(ejemplo);
-                        validDataSets = validDataSets + 1;
-                    end
-                    
-                end
-            else
-                trainFileNames = cell(numel(dataSetNames));
-                testFileNames = cell(numel(dataSetNames));
+			            
+			% Currently, 'all' is not working
+            %if strcmpi(dataSetNames{1}, 'all')
+            %    trainFileNames = cell(size(dbs,1),1);
+            %    testFileNames = cell(size(dbs,1),1);
+            %    for dd=1:size(dbs,1)
+            %        % get directory
+            %        if dbs(dd).isdir,
+            %            ejemplo = [directory '/' dbs(dd).name '/' 'matlab' '/' 'train_' dbs(dd).name '.*'];
+            %            trainFileNames{validDataSets} = dir(ejemplo);
+            %            ejemplo = [directory '/' dbs(dd).name '/' 'matlab' '/' 'test_' dbs(dd).name '.*'];
+            %            testFileNames{validDataSets} = dir(ejemplo);
+            %            validDataSets = validDataSets + 1;
+            %        end
+            %        
+            %    end
+            %else
+                trainFileNames = cell(numel(dataSetNames),1);
+                testFileNames = cell(numel(dataSetNames),1);
                 for j=1:numel(dataSetNames),
                     isdirectory = [directory '/' dataSetNames{j}];
                     if(isdir(isdirectory)),
                         ejemplo = [isdirectory '/' 'matlab' '/' 'train_' dataSetNames{j} '.*'];
-                        trainFileNames{validDataSets, :} = dir(ejemplo);
+                        trainFileNames{validDataSets} = dir(ejemplo);
                         ejemplo = [isdirectory '/' 'matlab' '/' 'test_' dataSetNames{j} '.*'];
-                        testFileNames{validDataSets, :} = dir(ejemplo);
+                        testFileNames{validDataSets} = dir(ejemplo);
                         validDataSets = validDataSets + 1;
                     end
                 end
-            end
+            %end
         end
         
      	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
