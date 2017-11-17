@@ -6,7 +6,7 @@ MATLABDIR ?= /usr/local/matlab/
 # for Mac
 # MATLABDIR ?= /opt/local/matlab
 
-CXX ?= g++
+CXX ?= gcc
 
 CFLAGS = -Wall -Wconversion -O3 -fPIC -I$(MATLABDIR)/extern/include -I..
 MEX = $(MATLABDIR)/bin/mex
