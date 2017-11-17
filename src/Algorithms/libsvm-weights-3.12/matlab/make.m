@@ -4,7 +4,7 @@ if nargin < 1
     try
         % This part is for OCTAVE
         if (exist ('OCTAVE_VERSION', 'builtin'))
-            setenv('CFLAGS','-std=c99 -O3 -fstack-protector-strong -Wformat -Werror=format-security') 
+            setenv('CFLAGS','-std=gnu99 -O3 -fstack-protector-strong -Wformat -Werror=format-security') 
             mex libsvmread.c
             mex libsvmwrite.c
             mex -I.. svmtrain.c ../svm.cpp svm_model_matlab.c
