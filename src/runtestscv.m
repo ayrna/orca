@@ -27,9 +27,7 @@ files(1:2) = [];
 for i=1:length(files)
     exp_dir = Utilities.runExperiments([tests_dir '/'  files(i).name], false);
     try 
-        %result_csv = csvread(['Experiments' filesep exp_dir filesep 'Results' filesep 'mean-results_test.csv'], 1,1);
         csv_result = [exp_dir filesep 'Results' filesep 'mean-results_test.csv'];
-        %results = csvread(csv_result, 1,0);
         results = csvread(csv_result, 1,1);
         
         % Check we have some numerical results. 
