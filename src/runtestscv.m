@@ -16,7 +16,7 @@
 % Utilities.runExperiments('tests/cvtests-30-holdout/<script>')
 
 % Fast test
-tests_dir = ['tests' filesep 'cvtests-1-holdout'];
+tests_dir = 'tests/cvtests-1-holdout';
 % Long test 
 % tests_dir = ['tests' filesep 'cvtests-30-holdout'];
 files = dir(tests_dir);
@@ -25,11 +25,9 @@ files = dir(tests_dir);
 files(1:2) = [];
 
 for i=1:length(files)
-    exp_dir = Utilities.runExperiments([tests_dir filesep  files(i).name], false);
+    exp_dir = Utilities.runExperiments([tests_dir '/'  files(i).name], false);
     try 
-        %result_csv = csvread(['Experiments' filesep exp_dir filesep 'Results' filesep 'mean-results_test.csv'], 1,1);
         csv_result = [exp_dir filesep 'Results' filesep 'mean-results_test.csv'];
-        %results = csvread(csv_result, 1,0);
         results = csvread(csv_result, 1,1);
         
         % Check we have some numerical results. 
@@ -46,3 +44,5 @@ for i=1:length(files)
     % elm...)
     pause(1);    
 end
+
+fprintf('\nAll tests ended successfully\n')

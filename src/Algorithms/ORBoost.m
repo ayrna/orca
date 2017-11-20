@@ -43,7 +43,7 @@ classdef ORBoost < Algorithm
     %                       Engineering. Vol. Accepted 
     %                     * H.-T. Lin and L. Li, “Large-margin thresholded
     %                       ensembles for ordinal regression: Theory and
-    %                       practice,” in Proc. of the 17th Algorithmic
+    %                       practice,�? in Proc. of the 17th Algorithmic
     %                       Learning Theory International Conference, ser.
     %                       Lecture Notes in Artificial Intelligence
     %                       (LNAI), J. L. Balcazar, P. M. Long, and F.
@@ -141,11 +141,9 @@ classdef ORBoost < Algorithm
                 model.weights = obj.weights;
                 model_information.model = model;
                 
-                system(['rm ' trainFile]);
-                system(['rm ' testFile]);
-                system(['rm ' modelFile]);
-                 
-
+                delete(trainFile);
+                delete(testFile);
+                delete(modelFile);
         end
         
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -162,8 +160,16 @@ classdef ORBoost < Algorithm
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
         
         function train( obj,train,trainFile, modelFile )
-            execute_train = sprintf('./Algorithms/orensemble/hack.sh ./Algorithms/orensemble/boostrank-train %s %d %d %d1 204 %d 2000 %s',trainFile,size(train.patterns,1),size(train.patterns,2),(3+obj.weights),max(unique(train.targets)),modelFile);
-            system(execute_train);
+            if ispc
+                bin_train = fullfile('Algorithms','orensemble', 'boostrank-train.exe');
+                execute_train = sprintf('%s %s %d %d %d1 204 %d 2000 %s',...
+                                bin_train, trainFile,size(train.patterns,1),size(train.patterns,2),(3+obj.weights),max(unique(train.targets)),modelFile);
+                system(execute_train);
+            else
+                execute_train = sprintf('./Algorithms/orensemble/hack.sh ./Algorithms/orensemble/boostrank-train %s %d %d %d1 204 %d 2000 %s',...
+                                trainFile,size(train.patterns,1),size(train.patterns,2),(3+obj.weights),max(unique(train.targets)),modelFile);
+                system(execute_train);
+            end
         end
 
 
@@ -182,15 +188,22 @@ classdef ORBoost < Algorithm
         
         function [projected, testTargets]= test( obj,test,testFile,modelFile )
                 predictFile = tempname();
-                execute_test = sprintf('./Algorithms/orensemble/hack.sh ./Algorithms/orensemble/boostrank-predict %s %d %d %s 2000 %s',testFile,size(test.patterns,1),size(test.patterns,2),modelFile,predictFile);
+                if ispc
+                    bin_predict = fullfile('Algorithms','orensemble', 'boostrank-predict.exe');
+                    execute_test = sprintf('%s %s %d %d %s 2000 %s',...
+                                    bin_predict,testFile,size(test.patterns,1),...
+                                    size(test.patterns,2),modelFile,predictFile);
+                else
+                    execute_test = ...
+                        sprintf('./Algorithms/orensemble/hack.sh ./Algorithms/orensemble/boostrank-predict %s %d %d %s 2000 %s',...
+                            testFile,size(test.patterns,1),size(test.patterns,2),modelFile,predictFile);
+                end
 
                 system(execute_test);
                 all = load(predictFile);
                 testTargets = all(:,1);
                 projected = all(:,2);
-                system(['rm ' predictFile]);
-                
-
+                delete(predictFile);
         end  
             
     end

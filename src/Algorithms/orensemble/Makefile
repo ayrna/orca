@@ -3,8 +3,10 @@ all: untar
 	mv orensemble/boostrank-predict .
 	mv orensemble/boostrank-train .
 
+octave: all
+
 untar:
-	tar xzf orensemble.tar.gz
+	#tar xzf orensemble.tar.gz
 
 clean:
-	rm -Rf orensemble
+	rm -f orensemble/*~ orensemble/*.o orensemble/*.obj

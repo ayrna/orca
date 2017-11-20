@@ -6,20 +6,20 @@ MATLABDIR ?= /usr/local/matlab
 
 #CXX ?= g++
 #CXX = gcc-4.1
-CXX = g++
+CXX = gcc
 CFLAGS = -Wall -Wconversion -O3 -fPIC -I$(MATLABDIR)/extern/include -I..
 
 MEX = $(MATLABDIR)/bin/mex
 MEX_OPTION = CC="$(CXX)" CXX="$(CXX)" CFLAGS="$(CFLAGS)" CXXFLAGS="$(CFLAGS)"
 # comment the following line if you use MATLAB on 32-bit computer
 MEX_OPTION += -largeArrayDims
-MEX_EXT = $(shell $(MATLABDIR)/bin/mexext)
+MEX_EXT = $(shell $(MATLABDIR)/bin/mexext 2> /dev/null)
 
 OCTAVEDIR ?= /usr/include/octave-4.0.3/octave
 OCTAVE_MEX = env CC=$(CXX) mkoctfile
 OCTAVE_MEX_OPTION = --mex
 OCTAVE_MEX_EXT = mex
-OCTAVE_CFLAGS = -Wall -O3 -fPIC -I$(OCTAVEDIR) -I..
+OCTAVE_CFLAGS ?= -Wall -O3 -fPIC -I$(OCTAVEDIR) -I..
 
 all:	matlab
 

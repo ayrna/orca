@@ -217,14 +217,16 @@ void predict(mxArray *plhs[], const mxArray *prhs[], struct svm_model *model, co
 				for(i=0;i<nr_class;i++)
 					vote[i] = 0;
 				int pos=0;
-				for(i=0;i<nr_class;i++)
-					for(int j=i+1;j<nr_class;j++)
+				for(i=0;i<nr_class;i++){
+					int j;
+					for(j=i+1;j<nr_class;j++)
 					{
 						if(dec_values[pos++] > 0)
 							++vote[i];
 						else
 							++vote[j];
 					}
+				}
 
 				int vote_max_idx = 0;
 				for(i=1;i<nr_class;i++)

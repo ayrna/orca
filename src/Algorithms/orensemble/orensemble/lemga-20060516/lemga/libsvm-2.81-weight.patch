@@ -1,0 +1,356 @@
+diff -ru libsvm-2.81.orig/svm.cpp libsvm-2.81/svm.cpp
+--- libsvm-2.81.orig/svm.cpp	2005-10-10 20:17:45.000000000 -0700
++++ libsvm-2.81/svm.cpp	2005-12-13 22:35:53.000000000 -0800
+@@ -376,6 +376,11 @@
+ 		double r;	// for Solver_NU
+ 	};
+ 
++	/** the solver with different C_i */
++	void Solve(int l, const QMatrix& Q, const double *b_, const schar *y_,
++		   double *alpha_, const double *C_, double eps,
++		   SolutionInfo* si, int shrinking);
++
+ 	void Solve(int l, const QMatrix& Q, const double *b_, const schar *y_,
+ 		   double *alpha_, double Cp, double Cn, double eps,
+ 		   SolutionInfo* si, int shrinking);
+@@ -383,13 +388,21 @@
+ 	int active_size;
+ 	schar *y;
+ 	double *G;		// gradient of objective function
++
++	/** the enum is removed to allow examples to be both at
++	    the upper bound and at the lower bound (if C = 0)
+ 	enum { LOWER_BOUND, UPPER_BOUND, FREE };
++	*/
++	static const char FREE = 0;
++	static const char LOWER_BOUND = 1; // bit 1
++	static const char UPPER_BOUND = 2; // bit 2
++
+ 	char *alpha_status;	// LOWER_BOUND, UPPER_BOUND, FREE
+ 	double *alpha;
+ 	const QMatrix *Q;
+ 	const Qfloat *QD;
+ 	double eps;
+-	double Cp,Cn;
++	double *C; // the weighted C_i
+ 	double *b;
+ 	int *active_set;
+ 	double *G_bar;		// gradient, if we treat free variables as 0
+@@ -398,18 +411,19 @@
+ 
+ 	double get_C(int i)
+ 	{
+-		return (y[i] > 0)? Cp : Cn;
++		return C[i];
+ 	}
++	/** the following modification is for maintaining the alpha_status */
+ 	void update_alpha_status(int i)
+ 	{
+-		if(alpha[i] >= get_C(i))
+-			alpha_status[i] = UPPER_BOUND;
+-		else if(alpha[i] <= 0)
+-			alpha_status[i] = LOWER_BOUND;
+-		else alpha_status[i] = FREE;
++		alpha_status[i] = FREE;
++		if (alpha[i] <= 0)
++			alpha_status[i] |= LOWER_BOUND;
++		if (alpha[i] >= get_C(i))
++			alpha_status[i] |= UPPER_BOUND;
+ 	}
+-	bool is_upper_bound(int i) { return alpha_status[i] == UPPER_BOUND; }
+-	bool is_lower_bound(int i) { return alpha_status[i] == LOWER_BOUND; }
++	bool is_upper_bound(int i) { return alpha_status[i] & UPPER_BOUND; }
++	bool is_lower_bound(int i) { return alpha_status[i] & LOWER_BOUND; }
+ 	bool is_free(int i) { return alpha_status[i] == FREE; }
+ 	void swap_index(int i, int j);
+ 	void reconstruct_gradient();
+@@ -429,6 +443,7 @@
+ 	swap(b[i],b[j]);
+ 	swap(active_set[i],active_set[j]);
+ 	swap(G_bar[i],G_bar[j]);
++	swap(C[i], C[j]);
+ }
+ 
+ void Solver::reconstruct_gradient()
+@@ -452,7 +467,7 @@
+ }
+ 
+ void Solver::Solve(int l, const QMatrix& Q, const double *b_, const schar *y_,
+-		   double *alpha_, double Cp, double Cn, double eps,
++		   double *alpha_, const double* C_, double eps,
+ 		   SolutionInfo* si, int shrinking)
+ {
+ 	this->l = l;
+@@ -461,8 +476,7 @@
+ 	clone(b, b_,l);
+ 	clone(y, y_,l);
+ 	clone(alpha,alpha_,l);
+-	this->Cp = Cp;
+-	this->Cn = Cn;
++	clone(C, C_, l);
+ 	this->eps = eps;
+ 	unshrinked = false;
+ 
+@@ -705,13 +719,11 @@
+ 				// or Q.swap_index(i,active_set[i]);
+ 	}*/
+ 
+-	si->upper_bound_p = Cp;
+-	si->upper_bound_n = Cn;
+-
+ 	info("\noptimization finished, #iter = %d\n",iter);
+ 
+ 	delete[] b;
+ 	delete[] y;
++	delete[] C;
+ 	delete[] alpha;
+ 	delete[] alpha_status;
+ 	delete[] active_set;
+@@ -719,6 +731,19 @@
+ 	delete[] G_bar;
+ }
+ 
++void Solver::Solve(int l, const QMatrix& Q, const double *b_, const schar *y_,
++		   double *alpha_, double Cp, double Cn, double eps,
++		   SolutionInfo* si, int shrinking)
++{
++	double* C_ = new double[l];
++	for (int i = 0; i < l; ++i)
++		C_[i] = (y_[i] > 0 ? Cp : Cn);
++	Solve(l, Q, b_, y_, alpha_, C_, eps, si, shrinking);
++	si->upper_bound_p = Cp;
++	si->upper_bound_n = Cn;
++	delete[] C_;
++}
++
+ // return 1 if already optimal, return 0 otherwise
+ int Solver::select_working_set(int &out_i, int &out_j)
+ {
+@@ -1444,7 +1469,7 @@
+ //
+ static void solve_c_svc(
+ 	const svm_problem *prob, const svm_parameter* param,
+-	double *alpha, Solver::SolutionInfo* si, double Cp, double Cn)
++	double *alpha, Solver::SolutionInfo* si, const double *C_)
+ {
+ 	int l = prob->l;
+ 	double *minus_ones = new double[l];
+@@ -1461,14 +1486,7 @@
+ 
+ 	Solver s;
+ 	s.Solve(l, SVC_Q(*prob,*param,y), minus_ones, y,
+-		alpha, Cp, Cn, param->eps, si, param->shrinking);
+-
+-	double sum_alpha=0;
+-	for(i=0;i<l;i++)
+-		sum_alpha += alpha[i];
+-
+-	if (Cp==Cn)
+-		info("nu = %f\n", sum_alpha/(Cp*prob->l));
++		alpha, C_, param->eps, si, param->shrinking);
+ 
+ 	for(i=0;i<l;i++)
+ 		alpha[i] *= y[i];
+@@ -1566,11 +1584,12 @@
+ 
+ static void solve_epsilon_svr(
+ 	const svm_problem *prob, const svm_parameter *param,
+-	double *alpha, Solver::SolutionInfo* si)
++	double *alpha, Solver::SolutionInfo* si, const double *C_)
+ {
+ 	int l = prob->l;
+ 	double *alpha2 = new double[2*l];
+ 	double *linear_term = new double[2*l];
++	double *C2 = new double[2*l];
+ 	schar *y = new schar[2*l];
+ 	int i;
+ 
+@@ -1579,26 +1598,24 @@
+ 		alpha2[i] = 0;
+ 		linear_term[i] = param->p - prob->y[i];
+ 		y[i] = 1;
++		C2[i] = C_[i];
+ 
+ 		alpha2[i+l] = 0;
+ 		linear_term[i+l] = param->p + prob->y[i];
+ 		y[i+l] = -1;
++		C2[i+l] = C_[i];
+ 	}
+ 
+ 	Solver s;
+ 	s.Solve(2*l, SVR_Q(*prob,*param), linear_term, y,
+-		alpha2, param->C, param->C, param->eps, si, param->shrinking);
++		alpha2, C2, param->eps, si, param->shrinking);
+ 
+-	double sum_alpha = 0;
+ 	for(i=0;i<l;i++)
+-	{
+ 		alpha[i] = alpha2[i] - alpha2[i+l];
+-		sum_alpha += fabs(alpha[i]);
+-	}
+-	info("nu = %f\n",sum_alpha/(param->C*l));
+ 
+ 	delete[] alpha2;
+ 	delete[] linear_term;
++	delete[] C2;
+ 	delete[] y;
+ }
+ 
+@@ -1655,21 +1672,39 @@
+ {
+ 	double *alpha = Malloc(double,prob->l);
+ 	Solver::SolutionInfo si;
++	double *C_ = NULL;
++
++	if (prob->W){
++		C_ = new double[prob->l];
++		for(int i=0;i<prob->l;i++) C_[i] = prob->W[i] * param->C;
++	}
++	else if (param->svm_type == C_SVC){
++		C_ = new double[prob->l];
++		for(int i=0;i<prob->l;i++) C_[i] = (prob->y[i] > 0 ? Cp : Cn);
++	}
++	else if (param->svm_type == EPSILON_SVR){
++		C_ = new double[prob->l];
++		for(int i=0;i<prob->l;i++) C_[i] = param->C;
++	}
++
+ 	switch(param->svm_type)
+ 	{
+ 		case C_SVC:
+-			solve_c_svc(prob,param,alpha,&si,Cp,Cn);
++			solve_c_svc(prob,param,alpha,&si,C_);
+ 			break;
+ 		case NU_SVC:
++			info("Warning!! weighted mode not supported for NU_SVC");
+ 			solve_nu_svc(prob,param,alpha,&si);
+ 			break;
+ 		case ONE_CLASS:
++			info("Warning!! weighted mode not supported for ONE_CLASS");
+ 			solve_one_class(prob,param,alpha,&si);
+ 			break;
+ 		case EPSILON_SVR:
+-			solve_epsilon_svr(prob,param,alpha,&si);
++			solve_epsilon_svr(prob,param,alpha,&si,C_);
+ 			break;
+ 		case NU_SVR:
++			info("Warning!! weighted mode not supported for NU_SVR");
+ 			solve_nu_svr(prob,param,alpha,&si);
+ 			break;
+ 	}
+@@ -1685,7 +1720,11 @@
+ 		if(fabs(alpha[i]) > 0)
+ 		{
+ 			++nSV;
+-			if(prob->y[i] > 0)
++			if(C_){
++				if(fabs(alpha[i]) >= C_[i])
++					++nBSV;
++			}
++			else if(prob->y[i] > 0)
+ 			{
+ 				if(fabs(alpha[i]) >= si.upper_bound_p)
+ 					++nBSV;
+@@ -1698,6 +1737,7 @@
+ 		}
+ 	}
+ 
++	if (C_) delete[] C_;
+ 	info("nSV = %d, nBSV = %d\n",nSV,nBSV);
+ 
+ 	decision_function f;
+@@ -2159,9 +2199,14 @@
+ 		// group training data of the same class
+ 		svm_group_classes(prob,&nr_class,&label,&start,&count,perm);		
+ 		svm_node **x = Malloc(svm_node *,l);
++		double *W = NULL;
++		if (prob->W) W = Malloc(double, l);
++
+ 		int i;
+-		for(i=0;i<l;i++)
++		for(i=0;i<l;i++){
+ 			x[i] = prob->x[perm[i]];
++			if (prob->W) W[i] = prob->W[perm[i]];
++		}
+ 
+ 		// calculate weighted C
+ 
+@@ -2204,16 +2249,20 @@
+ 				sub_prob.l = ci+cj;
+ 				sub_prob.x = Malloc(svm_node *,sub_prob.l);
+ 				sub_prob.y = Malloc(double,sub_prob.l);
++				if (W) sub_prob.W = Malloc(double, sub_prob.l);
++				else sub_prob.W = NULL;
+ 				int k;
+ 				for(k=0;k<ci;k++)
+ 				{
+ 					sub_prob.x[k] = x[si+k];
+ 					sub_prob.y[k] = +1;
++					if (sub_prob.W) sub_prob.W[k] = W[si+k];
+ 				}
+ 				for(k=0;k<cj;k++)
+ 				{
+ 					sub_prob.x[ci+k] = x[sj+k];
+ 					sub_prob.y[ci+k] = -1;
++					if (sub_prob.W) sub_prob.W[ci+k] = W[sj+k];
+ 				}
+ 
+ 				if(param->probability)
+@@ -2228,6 +2277,7 @@
+ 						nonzero[sj+k] = true;
+ 				free(sub_prob.x);
+ 				free(sub_prob.y);
++				if (sub_prob.W) free(sub_prob.W);
+ 				++p;
+ 			}
+ 
+@@ -2323,6 +2373,7 @@
+ 		free(count);
+ 		free(perm);
+ 		free(start);
++		if (W) free(W);
+ 		free(x);
+ 		free(weighted_C);
+ 		free(nonzero);
+@@ -2417,18 +2468,21 @@
+ 		subprob.l = l-(end-begin);
+ 		subprob.x = Malloc(struct svm_node*,subprob.l);
+ 		subprob.y = Malloc(double,subprob.l);
+-			
++		if (prob->W) subprob.W = Malloc(double,subprob.l);
++		else subprob.W = NULL;
+ 		k=0;
+ 		for(j=0;j<begin;j++)
+ 		{
+ 			subprob.x[k] = prob->x[perm[j]];
+ 			subprob.y[k] = prob->y[perm[j]];
++			if (subprob.W) subprob.W[k] = prob->W[perm[j]];
+ 			++k;
+ 		}
+ 		for(j=end;j<l;j++)
+ 		{
+ 			subprob.x[k] = prob->x[perm[j]];
+ 			subprob.y[k] = prob->y[perm[j]];
++			if (subprob.W) subprob.W[k] = prob->W[perm[j]];
+ 			++k;
+ 		}
+ 		struct svm_model *submodel = svm_train(&subprob,param);
+@@ -2446,6 +2500,7 @@
+ 		svm_destroy_model(submodel);
+ 		free(subprob.x);
+ 		free(subprob.y);
++		if (subprob.W) free(subprob.W);
+ 	}		
+ 	free(fold_start);
+ 	free(perm);	
+diff -ru libsvm-2.81.orig/svm.h libsvm-2.81/svm.h
+--- libsvm-2.81.orig/svm.h	2004-03-05 23:06:42.000000000 -0800
++++ libsvm-2.81/svm.h	2005-12-13 22:40:27.000000000 -0800
+@@ -16,6 +16,7 @@
+ 	int l;
+ 	double *y;
+ 	struct svm_node **x;
++	double *W;
+ };
+ 
+ enum { C_SVC, NU_SVC, ONE_CLASS, EPSILON_SVR, NU_SVR };	/* svm_type */

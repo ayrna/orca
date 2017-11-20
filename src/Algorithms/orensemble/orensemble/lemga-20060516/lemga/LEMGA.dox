@@ -1,0 +1,39 @@
+/** @mainpage
+ *  @section intro Introduction
+ *  LEMGA stands for ``Learning Models and Generic Algorithms.''
+ *
+ *  It was rewritten from an old implementation and is still under
+ *  development and test.
+ *
+ *  [<A href="../index.html">Go back</A>]
+ */
+
+
+/** @namespace lemga
+ *  @brief Learning models and generic algorithms
+ *
+ *  The idea is to separate the learning model and optimization techniques.
+ *
+ *  Using vectorop.h for default vector operation
+ *  @todo documentation: basic idea, ...
+ */
+
+/** @namespace lemga::cost
+ *  @brief Cost functions and their derivatives.
+ *
+ *  Boosting can be applied to optimize different cost functions, as long
+ *  as the derivative exists, and line-search is deployed.
+ */
+
+/** @namespace lemga::kernel
+ *  @brief Kernels (inner product in some space)
+ *
+ *  Currently kernels also pass parameters to LIBSVM, which is used as
+ *  the underlying implementation of SVM.
+ */
+
+/** @namespace lemga::op
+ *  @brief Operators used in optimization
+ *
+ *  @todo documentation
+ */
