@@ -1,5 +1,7 @@
 # orca
-![ORCA logo](doc/orca_small.png) ORCA (Ordinal Regression and Classification Algorithms) is a MATLAB framework including a wide set of ordinal regression methods associated to the paper ["Ordinal regression methods: survey and experimental study"](http://dx.doi.org/10.1109/TKDE.2015.2457911) published in IEEE Transactions on Knowledge and Data Engineering. If you use this framework please cite the following work:
+![ORCA logo](doc/orca_small.png) ORCA (Ordinal Regression and Classification Algorithms) is a MATLAB framework including a wide set of ordinal regression methods associated to the paper ["Ordinal regression methods: survey and experimental study"](http://dx.doi.org/10.1109/TKDE.2015.2457911) published in *IEEE Transactions on Knowledge and Data Engineering*. ORCA provides implementation and integration of ordinal classification algorithms and performance metrics for ordinal regression. In addition, it helps to accelerate classifiers experimental comparison with automatic folds execution and performance reports.
+
+If you use this framework please cite the following work:
 
 ```
 P.A. Gutiérrez, M. Pérez-Ortiz, J. Sánchez-Monedero, F. Fernández-Navarro and C. Hervás-Martínez (2016), "Ordinal regression methods: survey and experimental study", IEEE Transactions on Knowledge and Data Engineering. Vol. 28. Issue 1
@@ -23,7 +25,8 @@ For more information about the paper and the ordinal datasets used please visit 
 For more information about our research group please visit [Learning and Artificial Neural Networks (AYRNA) website](http://www.uco.es/grupos/ayrna/index.php/en) at [University of Córdoba](http://www.uco.es/) (Spain).
 
 The code is mainly composed of the following folders and files:
-- [doc](doc): Folder containing the documentation. 
+- [doc](doc): Folder containing the documentation.
+  - [Installing ORCA](doc/orca-install.md) .
   - [How to tutorial](doc/orca-tutorial.md) to get started with ORCA.
   - [Use ORCA with HTCondor](doc/orca-condor.md).
   - [Paralelize ORCA experiments](doc/orca-parallel.md).
@@ -86,6 +89,6 @@ Apart from the authors of the paper and the authors of the implementations refer
 - [7] W. Chu and S. S. Keerthi, “Support Vector Ordinal Regression,” Neural Computation, vol. 19, no. 3, pp. 792–815, 2007.
 - [8] B.-Y. Sun, J. Li, D. D. Wu, X.-M. Zhang, and W.-B. Li, “Kernel discriminant learning for ordinal regression,” IEEE Transactions on Knowledge and Data Engineering, vol. 22, no. 6, pp. 906–910, 2010.
 - [9] H.-T. Lin and L. Li, “Reduction from cost-sensitive ordinal ranking to weighted binary classification,” Neural Computation, vol. 24, no. 5, pp. 1329–1367, 2012.
-- [10] H.-T. Lin and L. Li, “Large-margin thresholded ensembles for ordinal regression: Theory and practice,” in Proc. of the 17th Algorithmic Learning Theory International Conference, ser. Lecture Notes in Artificial Intelligence (LNAI), J. L. Balcazar, P. M. Long, and F. Stephan, Eds., vol. 4264. Springer-Verlag, October 2006, pp. 319–333. 
+- [10] H.-T. Lin and L. Li, “Large-margin thresholded ensembles for ordinal regression: Theory and practice,” in Proc. of the 17th Algorithmic Learning Theory International Conference, ser. Lecture Notes in Artificial Intelligence (LNAI), J. L. Balcazar, P. M. Long, and F. Stephan, Eds., vol. 4264. Springer-Verlag, October 2006, pp. 319–333.
 - [11] M. Cruz-Ramírez, C. Hervás-Martínez, J. Sánchez-Monedero and P. A. Gutiérrez. “Metrics to guide a multi-objective evolutionary algorithm for ordinal classification,” Neurocomputing, Vol. 135, July, 2014, pp. 21-31.
 - [12] J. C. Fernandez-Caballero, F. J. Martínez-Estudillo, C. Hervás-Martínez and P. A. Gutiérrez. “Sensitivity Versus Accuracy in Multiclass Problems Using Memetic Pareto Evolutionary Neural Networks,” IEEE Transacctions on Neural Networks, Vol. 21. 2010, pp. 750-770.
