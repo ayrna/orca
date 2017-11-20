@@ -86,10 +86,10 @@ classdef DataSet < handle
         
         function [trainSet, testSet] = preProcessData(obj)
             
-                 if(exist([obj.directory filesep obj.train], 'file') && exist([obj.directory filesep obj.test], 'file')) 
+                 if(exist([obj.directory '/' obj.train], 'file') && exist([obj.directory '/' obj.test], 'file')) 
                         obj.dataname = strrep(obj.train, 'train_', '');
-                        rawTrain=load([obj.directory filesep obj.train]);
-                        rawTest=load([obj.directory filesep obj.test]);
+                        rawTrain=load([obj.directory '/' obj.train]);
+                        rawTest=load([obj.directory '/' obj.test]);
 
                         trainSet.targets = rawTrain(:,end);
                         trainSet.patterns = rawTrain(:,1:end-1);
@@ -105,12 +105,12 @@ classdef DataSet < handle
                         end
                       
  
-                          datasetname=[obj.directory filesep obj.train];
-                          [matchstart,matchend] = regexpi(datasetname,filesep);
+                          datasetname=[obj.directory '/' obj.train];
+                          [matchstart,matchend] = regexpi(datasetname,'/');
                           trainSet.name = datasetname(matchend(end)+1:end);
                           
-                          datasetname=[obj.directory filesep obj.test];
-                          [matchstart,matchend] = regexpi(datasetname,filesep);
+                          datasetname=[obj.directory '/' obj.test];
+                          [matchstart,matchend] = regexpi(datasetname,'/');
                           testSet.name = datasetname(matchend(end)+1:end);
                  else
                      error('Can not find the files');
