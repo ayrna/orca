@@ -4,7 +4,7 @@ if nargin < 1
     try
         % This part is for OCTAVE
         if (exist ('OCTAVE_VERSION', 'builtin'))
-			# Use -std=c++11 for newer versions of Octave
+			% Use -std=c++11 for newer versions of Octave
 						if ispc
 							setenv('CFLAGS','-std=gnu99 -O3')
 							setenv('CC','gcc')
