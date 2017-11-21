@@ -425,7 +425,9 @@ classdef Utilities < handle
             %end
             
             resultados = [logsDir '/' 'Results'];
-            mkdir('Experiments');
+            if ~exist('Experiments','dir')
+                mkdir('Experiments');
+            end
             mkdir(logsDir);
             mkdir(resultados);
             fid = fopen(ficheroExperimentos,'r+');
@@ -444,6 +446,9 @@ classdef Utilities < handle
                     id_experiment = [fgetl(fid) num2str(num_experiment)];
                 elseif strcmpi('dir', nueva_linea),
                     directory = fgetl(fid);
+                    if ~(exist(directory,'dir'))
+                        error('Datasets directory "%s" does not exist', directory)
+                    end
                 elseif strcmpi('datasets', nueva_linea),
                     datasets = fgetl(fid);
                 elseif strcmpi('folds', nueva_linea),
@@ -451,10 +456,9 @@ classdef Utilities < handle
                 elseif strcmpi('end experiment', nueva_linea),
                     fichero_ini = [logsDir '/' 'exp-' id_experiment];
                     [matchstart,matchend,tokenindices,matchstring,tokenstring,tokenname,splitstring] = regexpi(datasets,',');
-                    if( ~(exist(directory,'dir')))
-                        fprintf('The directory %s does not exist\n',directory);
-                        return;
-                    end
+                    % Check that all datasets partitions are accesible
+                    % The method checkDatasets calls error
+                    Utilities.checkDatasets(directory, datasets);
                     [train, test] = Utilities.processDirectory(directory,splitstring);
                     for i=1:numel(train)
                         aux_directory = [resultados '/' splitstring{i} '-' id_experiment];
@@ -564,11 +568,60 @@ classdef Utilities < handle
             
         end
         
-        
+                
+     	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        %
+        % Function: checkDatasets (static)
+        % Description: Test datasets are accessible and with expected
+        % names. Launch error in case a dataset is not found. 
+        % Type: void
+        % Arguments: 
+        %   - basedir: base directory containing all the datasets
+        %   - datasets: colon separaded list of datasets. keyword 'all'
+        %   test all datasets in basedir
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        function checkDatasets(basedir, datasets)
+            if ~exist(basedir,'dir')
+                error('Datasets directory "%s" does not exist', basedir)
+            end
+            
+            if strcmpi(datasets, 'all')
+                dsdirs = ls(basedir);
+                dsdirsCell = regexp(dsdirs, '((\w|-|_)+(\t*)(\w*))','tokens');
+            else
+                dsdirsCell = regexp(datasets, '((\w|-|_)+(\w*))','tokens');
+            end
+            for i=1:length(dsdirsCell) % skip . and ..
+                dsName = dsdirsCell{i};
+                dsName = dsName{:};
+                if ~exist([basedir '/' dsName],'dir')
+                    error('Dataset directory "%s" does not exist', dsName)
+                end
+                
+                dsTrainFiles = dir([basedir '/' dsName '/matlab/train*']);
+                
+                % Test every train file has a test file
+                for f=1:length(dsTrainFiles)
+                    
+                    trainName = [basedir '/' dsName '/matlab/' dsTrainFiles(f).name];
+                    testName = strrep(trainName, 'train', 'test');
+                    
+                    try 
+                        trainData = load(trainName);
+                        testData = load(testName);
+                    catch
+                        error('Cannot read train and test files "%s", "%s"', trainName, testName)
+                    end
+                    
+                    if size(trainData,2) ~= size(testData,2)
+                        error('Train and test data dimensions do not agree for dataset "%s"', dsName)
+                    end
+                    
+                end                
+            end
+            
+        end
     end
-    
-    
-    
 end
 
 
