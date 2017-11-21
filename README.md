@@ -4,8 +4,8 @@
 If you use this framework please cite the following work:
 
 ```
-P.A. Gutiérrez, M. Pérez-Ortiz, J. Sánchez-Monedero, F. Fernández-Navarro and C. Hervás-Martínez (2016), 
-"Ordinal regression methods: survey and experimental study", 
+P.A. Gutiérrez, M. Pérez-Ortiz, J. Sánchez-Monedero, F. Fernández-Navarro and C. Hervás-Martínez (2016),
+"Ordinal regression methods: survey and experimental study",
 IEEE Transactions on Knowledge and Data Engineering. Vol. 28. Issue 1
 ```
 
@@ -23,12 +23,12 @@ Bibtex entry:
 }
 ```
 
-For more information about the paper and the ordinal datasets used please visit the associated webpage: [http://www.uco.es/grupos/ayrna/orreview](http://www.uco.es/grupos/ayrna/orreview)
+For more information about the paper and the ordinal datasets used please visit the associated website: [http://www.uco.es/grupos/ayrna/orreview](http://www.uco.es/grupos/ayrna/orreview)
 For more information about our research group please visit [Learning and Artificial Neural Networks (AYRNA) website](http://www.uco.es/grupos/ayrna/index.php/en) at [University of Córdoba](http://www.uco.es/) (Spain).
 
 The code is mainly composed of the following folders and files:
 - [doc](doc): Folder containing the documentation.
-  - [Installing ORCA](doc/orca-install.md) .
+  - [Quick install of ORCA](doc/orca-quick-install.md) and [build troubleshooting](doc/orca-install.md).
   - [How to tutorial](doc/orca-tutorial.md) to get started with ORCA.
   - [Use ORCA with HTCondor](doc/orca-condor.md).
   - [Paralelize ORCA experiments](doc/orca-parallel.md).

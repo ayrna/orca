@@ -1,76 +1,10 @@
-# Installing ORCA
+# ORCA detailed build and troubleshooting
 
-## Installation requirements
+This a detailed install guide. If you have not done yet, please try the [Quick Install steps](orca-quick-install.md) before continuing.
 
-In order to use ORCA you need:
+## Build from GNU/Linux terminal
 
-* `gcc` and `g++`
-* MATLAB/Octave, including `mex`.
-
-## Download and compile ORCA dependencies
-
-To download ORCA you can simply clone this GitHub repository by using the following commands:
-```bash
-$ git clone https://github.com/ayrna/orca
-```
-All the contents of the repository can also be downloaded from the GitHub site by using the "Download ZIP" button.
-
-ORCA is programmed in MATLAB, but many of the classification algorithms are implemented in C/C++. Because of this, these methods have to be compiled and/or packaged into the corresponding `mex` files.
-
-## Quick install from the MATLAB/Octave console
-
-In Windows and GNU/Linux, you can build ORCA directly from the MATLAB/Octave console. Just enter in the `scr` directory and type `make`.
-```MATLAB
->> cd src/Algorithms
->> make
-```
-After building, you can clean the objects files with `make clean`:
-```MATLAB
->> make clean
-```
-
-### Instalation testing
-
-We provide a set of basic tests to for checking that all the algorithms work, both using ORCA's API and experiment scripts (see [tutorial](orca-tutorial.md) for more information).
-
-The way to run the tests checking the API is the following (running time is ~12 seconds):
-
-```MATLAB
->> cd src/
->> runtestssingle
-...
-.........................
-Performing test for SVORLin
-Accuracy Train 0.262222, Accuracy Test 0.266667
-Test accuracy matchs reference accuracy
-Processing svrTest.m...
-.........................
-Performing test for SVR
-Accuracy Train 0.995556, Accuracy Test 0.973333
-Test accuracy matchs reference accuracy
-All tests ended successfully
-```
-
-To run the tests checking the experiment scripts (running time is ~123 seconds):
-
-```MATLAB
->> cd src/
->> runtestscv
-...
-Running experiment exp-svr-real1-toy-1
-Processing Experiments/exp-2017-11-16-13-59-1/exp-svr-real1-toy-1
-Calculating results...
-Experiments/exp-2017-11-16-13-59-1/Results/toy-svr-real1/dataset
-Experiments/exp-2017-11-16-13-59-1/Results/toy-svr-real1/dataset
-Test passed for svr
-All tests ended successfully
-```
-
-## Detailed build and troubleshooting
-
-### Build from GNU/Linux terminal
-
-Under GNU/Linux, the simplest way to compile all the algorithms is to use the [Makefile](../src/Makefile) included in ORCA. This will compile all the algorithms and clean intermediate object files. 
+Under GNU/Linux, the simplest way to compile all the algorithms is to use the [Makefile](../src/Makefile) included in ORCA. This will compile all the algorithms and clean intermediate object files.
 
 For building the mex files in MATLAB, you need to properly configure the MATLABDIR variable of [Makefile](../src/Makefile), in order to point out to the MATLAB installation directory (for instance `MATLABDIR = /usr/local/MATLAB/R2017b`). Then, from the `bash` terminal:
 ```bash
@@ -84,7 +18,7 @@ $ cd src/
 $ make octave
 ```
 
-### Windows build
+## Windows build
 
 **Octave** installation in Windows:
 
@@ -113,7 +47,7 @@ set PATH=C:\Program Files\mingw-w64\x86_64-7.2.0-posix-seh-rt_v5-rev0\mingw64\bi
 1. Move to directory `orca\src\Algorithms\orensemble\orensemble`.
 1. Run `mingw32-make.exe Makefile.win all`.
 
-### Fixing compilation errors
+## Fixing compilation errors
 
 If the command fails, please edit the files `src/Algorithms/libsvm-rank-2.81/matlab/Makefile`, `src/Algorithms/libsvm-weights-3.12/matlab/Makefile`, `src/Algorithms/SVOREX/Makefile` and `src/Algorithms/SVORIM/Makefile`. Make sure that the variable `MATLABDIR` and `OCTAVEDIR` are correctly pointing to the folders. For MATLAB, you can also make a symbolic link to your current Matlab installation folder:
 ```bash
@@ -121,7 +55,7 @@ $ sudo ln -s /path/to/matlab /usr/local/matlab
 ```
 The following subsections provides individual instructions for compiling each of the dependencies in case the global [Makefile](../src/Algorithms/Makefile) still fails or for those which are working in other operating systems.
 
-#### libsvm-weights-3.12
+### libsvm-weights-3.12
 
 These instructions are adapted from the corresponding README of `libsvm`. First, you should open MATLAB/Octave console and then `cd` to the directory `src/Algorithms/libsvm-weights-3.12/matlab`. After that, try to compile the `MEX` files using `make.m` (from the MATLAB/Octave console):
 ```MATLAB
@@ -133,7 +67,7 @@ These commands could fail (especially for Windows) if the compiler is not correc
 
 On GNU/Linux systems, if neither `make.m` nor `mex -setup` works, please use `Makefile`, typing `make` in a command window. Please change MATLABDIR in Makefile to point the directory of Matlab (usually `/usr/local/matlab`).
 
-#### libsvm-rank-2.81
+### libsvm-rank-2.81
 
 To compile this dependency, the instructions are similar to those of `libsvm-weights-3.12` (from the MATLAB/Octave console):
 ```MATLAB
@@ -141,7 +75,7 @@ To compile this dependency, the instructions are similar to those of `libsvm-wei
 >> make
 ```
 
-#### SVOREX and SVORIM
+### SVOREX and SVORIM
 
 For both algorithms, please use the `make.m` file included in them (from the MATLAB/Octave console):
 ```MATLAB
@@ -152,7 +86,7 @@ For both algorithms, please use the `make.m` file included in them (from the MAT
 >> make
 ```
 
-#### orensemble
+### orensemble
 
 We have not prepared a proper MEX interface for ORBoost, so the binary files of this algorithm should be compiled and are then invoked directly from Matlab. For compiling the ORBoost algorithm, you should uncompress the file `orsemble.tar.gz` and compile the corresponding source code. In GNU/Linux, this can be done by (from the `bash` console):
 ```bash
