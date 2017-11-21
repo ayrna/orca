@@ -17,20 +17,23 @@ All the contents of the repository can also be downloaded from the GitHub site b
 
 ORCA is programmed in MATLAB, but many of the classification algorithms are implemented in C/C++. Because of this, these methods have to be compiled and/or packaged into the corresponding `mex` files.
 
-## Quick install from MATLAB/Octave console
+## Quick install from the MATLAB/Octave console
 
-In Windows and GNU/Linux you can build ORCA directly from MATLAB/Octave console. Just enter in `scr` directory and type `make`. Alternatively you can clean the objects files with `make clean`
-
+In Windows and GNU/Linux, you can build ORCA directly from the MATLAB/Octave console. Just enter in the `scr` directory and type `make`.
 ```MATLAB
 >> cd src/Algorithms
 >> make
 ```
+After building, you can clean the objects files with `make clean`:
+```MATLAB
+>> make clean
+```
 
 ### Instalation testing
 
-We provide basic tests to test all the algorithms both using ORCA's API and experiments scripts to run experiments.
+We provide a set of basic tests to for checking that all the algorithms work, both using ORCA's API and experiment scripts (see [tutorial](orca-tutorial.md) for more information).
 
-To run basic tests (running time is ~12 seconds):
+The way to run the tests checking the API is the following (running time is ~12 seconds):
 
 ```MATLAB
 >> cd src/
@@ -48,7 +51,7 @@ Test accuracy matchs reference accuracy
 All tests ended successfully
 ```
 
-To run script tests (running time is ~123 seconds):
+To run the tests checking the experiment scripts (running time is ~123 seconds):
 
 ```MATLAB
 >> cd src/
@@ -67,13 +70,15 @@ All tests ended successfully
 
 ### Build from GNU/Linux terminal
 
-Under GNU/Linux, the simplest way to compile all the algorithms is to use the [Makefile](../src/Makefile) included in ORCA. This will compile all the algorithms and clean intermediate object files. You need to properly setup MATLABDIR variable inside [Makefile](../src/Makefile) to point out to MATLAB installation directory (for instance `MATLABDIR = /usr/local/MATLAB/R2017b`):
+Under GNU/Linux, the simplest way to compile all the algorithms is to use the [Makefile](../src/Makefile) included in ORCA. This will compile all the algorithms and clean intermediate object files. 
 
+For building the mex files in MATLAB, you need to properly configure the MATLABDIR variable of [Makefile](../src/Makefile), in order to point out to the MATLAB installation directory (for instance `MATLABDIR = /usr/local/MATLAB/R2017b`). Then, from the `bash` terminal:
 ```bash
 $ cd src/
 $ make
 ```
-To build ORCA for Octave the setup OCTAVEDIR to point out to Octave heather files (for instance `OCTAVEDIR = /usr/include/octave-4.0.0/octave/`) and type:
+
+For building the mex files in Octave, you will need to configure the OCTAVEDIR variable in the [Makefile](../src/Makefile). This variable has to point out to the Octave heather files (for instance, `OCTAVEDIR = /usr/include/octave-4.0.0/octave/`). Then, from the `bash` terminal:
 ```bash
 $ cd src/
 $ make octave
@@ -94,13 +99,13 @@ Default Octave installation provides `mex` command pre-configured with `MinGW`.
 1. Install a [supported compiler](https://es.mathworks.com/support/compilers.html). The easier way is to use the "Add-ons" assistant to download
 and install [MinGW](http://es.mathworks.com/help/matlab/matlab_external/install-mingw-support-package.html).
 1. Test [basic C example](https://es.mathworks.com/matlabcentral/fileexchange/52848-matlab-support-for-mingw-w64-c-c++-compiler) to ensure `mex` is propertly working.
-1. Inside MATLAB's console, run `make` in folder `src\Algorithms`
-1. From `src` run `runtestssingle` to check the instalation.
+1. From the MATLAB's console, run `make` in `src\Algorithms`.
+1. Then run `runtestssingle` in `src` to check the instalation.
 
-We provide binaries and *dlls* for 'ORBoost' to avoid the *complex* build task in Windows. Make will unpak all the binary files. If you need to compile your own binaries, these are the steeps.
+We provide binaries and *dlls* for 'ORBoost', because building this method in Windows can be very *complex*. Make will unpak all the binary files. If you need to compile your own binaries, these are the steps:
 
 1. Install [w64-mingw32](https://mingw-w64.org).
-1. Open a terminal by presing Windows key and type `cmd.exe`.
+1. Open a terminal by presing Windows ico and type `cmd.exe`.
 1. Set Windows path to your `w64-mingw32` installation binaries dir, for instance:
 ```
 set PATH=C:\Program Files\mingw-w64\x86_64-7.2.0-posix-seh-rt_v5-rev0\mingw64\bin;"%PATH%"
@@ -110,15 +115,15 @@ set PATH=C:\Program Files\mingw-w64\x86_64-7.2.0-posix-seh-rt_v5-rev0\mingw64\bi
 
 ### Fixing compilation errors
 
-If the command fails, please edit the files `src/Algorithms/libsvm-rank-2.81/matlab/Makefile`, `src/Algorithms/libsvm-weights-3.12/matlab/Makefile`, `src/Algorithms/SVOREX/Makefile` and `src/Algorithms/SVORIM/Makefile`. Make sure that the variable `MATLABDIR` is correctly pointing to the folder of your Matlab installation (by default, `/usr/local/matlab`). You can also make a symbolic link to your current Matlab installation folder:
+If the command fails, please edit the files `src/Algorithms/libsvm-rank-2.81/matlab/Makefile`, `src/Algorithms/libsvm-weights-3.12/matlab/Makefile`, `src/Algorithms/SVOREX/Makefile` and `src/Algorithms/SVORIM/Makefile`. Make sure that the variable `MATLABDIR` and `OCTAVEDIR` are correctly pointing to the folders. For MATLAB, you can also make a symbolic link to your current Matlab installation folder:
 ```bash
 $ sudo ln -s /path/to/matlab /usr/local/matlab
 ```
-The following subsections provides individual instructions for compiling each of the dependencies in case the [Makefile](../src/Algorithms/Makefile) still fails or for those which are working in other operating systems.
+The following subsections provides individual instructions for compiling each of the dependencies in case the global [Makefile](../src/Algorithms/Makefile) still fails or for those which are working in other operating systems.
 
 #### libsvm-weights-3.12
 
-These instructions are adapted from the corresponding README of `libsvm`. First, you should open MATLAB console and then `cd` to the directory `src/Algorithms/libsvm-weights-3.12/matlab`. After that, try to compile the `MEX` files using `make.m` (from the Matlab console):
+These instructions are adapted from the corresponding README of `libsvm`. First, you should open MATLAB/Octave console and then `cd` to the directory `src/Algorithms/libsvm-weights-3.12/matlab`. After that, try to compile the `MEX` files using `make.m` (from the MATLAB/Octave console):
 ```MATLAB
 >> cd src/Algorithms/libsvm-weights-3.12/matlab
 >> make
@@ -130,7 +135,7 @@ On GNU/Linux systems, if neither `make.m` nor `mex -setup` works, please use `Ma
 
 #### libsvm-rank-2.81
 
-To compile this dependency, the instructions are similar to those of `libsvm-weights-3.12` (from the Matlab console):
+To compile this dependency, the instructions are similar to those of `libsvm-weights-3.12` (from the MATLAB/Octave console):
 ```MATLAB
 >> cd src/Algorithms/libsvm-rank-2.81/matlab
 >> make
@@ -138,7 +143,7 @@ To compile this dependency, the instructions are similar to those of `libsvm-wei
 
 #### SVOREX and SVORIM
 
-For both algorithms, please use the `make.m` file included in them (from the Matlab console):
+For both algorithms, please use the `make.m` file included in them (from the MATLAB/Octave console):
 ```MATLAB
 >> cd src/Algorithms/SVOREX
 >> make
