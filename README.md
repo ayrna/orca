@@ -4,7 +4,9 @@
 If you use this framework please cite the following work:
 
 ```
-P.A. Gutiérrez, M. Pérez-Ortiz, J. Sánchez-Monedero, F. Fernández-Navarro and C. Hervás-Martínez (2016), "Ordinal regression methods: survey and experimental study", IEEE Transactions on Knowledge and Data Engineering. Vol. 28. Issue 1
+P.A. Gutiérrez, M. Pérez-Ortiz, J. Sánchez-Monedero, F. Fernández-Navarro and C. Hervás-Martínez (2016), 
+"Ordinal regression methods: survey and experimental study", 
+IEEE Transactions on Knowledge and Data Engineering. Vol. 28. Issue 1
 ```
 
 Bibtex entry:
