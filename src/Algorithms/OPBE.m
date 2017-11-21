@@ -37,8 +37,8 @@ classdef OPBE < Algorithm
     %   probabilities).
     % Further details in: * María Pérez-Ortiz, Pedro Antonio Gutiérrez 
     %                          and César Hervás-Martínez (2013), 
-    %                       "Ordinal regression methods: survey and
-    %                       experimental study",  
+    %                       "Projection based ensemble learning for 
+    %                        ordinal regression",  
     %                       IEEE Transactions on Cybernetics. Vol. 44 (5) 
     % Dependencies: this class uses
     % - svorim implementation: http://www.gatsby.ucl.ac.uk/~chuwei/svor.htm
