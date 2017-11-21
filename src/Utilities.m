@@ -1,7 +1,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Copyright (C) Pedro Antonio Gutiérrez (pagutierrez at uco dot es)
-% María Pérez Ortiz (i82perom at uco dot es)
-% Javier Sánchez Monedero (jsanchezm at uco dot es)
+% Copyright (C) Pedro Antonio Guti??rrez (pagutierrez at uco dot es)
+% Mar??a P??rez Ortiz (i82perom at uco dot es)
+% Javier S??nchez Monedero (jsanchezm at uco dot es)
 %
 % This file contains the class that configures and executes the experiments, presented in the paper Ordinal regression methods: survey and experimental study published in the IEEE Transactions on Knowledge and Data Engineering. 
 % 
@@ -29,7 +29,7 @@
 % along with this program; if not, write to the Free Software
 % Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA. 
 % Licence available at: http://www.gnu.org/licenses/gpl-3.0.html
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%﻿
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%???
 
 classdef Utilities < handle
     % Utilities class
@@ -177,6 +177,14 @@ classdef Utilities < handle
                     else
                         predicted_files = dir([experiment_folder '/' experimentos(i).name '/' 'Predictions' '/' 'test_*']);
                     end
+                    % Check if we have a missing fold experiment. 
+                    % -2 is to compensate . and ..
+                    predicted_files_train = dir([experiment_folder '/' experimentos(i).name '/' 'Predictions' '/' 'train_*']);
+                    predicted_files_test = dir([experiment_folder '/' experimentos(i).name '/' 'Predictions' '/' 'test_*']);
+                    
+                    if (numel(predicted_files_train)+numel(predicted_files_test)) ~= numel(dir(ruta_dataset)) -2 
+                        warning(sprintf('\n *********** \n The execution of some folds failed. Number of experiments differs from number of train-test files. \n *********** \n'))
+                    end
                     time_files = dir([experiment_folder '/' experimentos(i).name '/' 'Times' '/' '*.*']);
                     hyp_files = dir([experiment_folder '/' experimentos(i).name '/' 'OptHyperparams' '/' '*.*']);
                     
@@ -226,7 +234,6 @@ classdef Utilities < handle
                         end
                         actual = importdata([ruta_dataset '/' real_files(j).name]);
                         act{j} = actual(:,end);
-
                     end
 
                     names = {'Dataset', 'Acc', 'GM', 'MS', 'MAE', 'AMAE', 'MMAE','RSpearman', 'Tkendall', 'Wkappa', 'TrainTime', 'TestTime', 'CrossvalTime'};
