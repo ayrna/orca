@@ -7,10 +7,10 @@
 function make(opt)
 if nargin < 1
     try
-        cd libsvm-weights-3.12/matlab/
+        cd 'libsvm-weights-3.12/matlab/'
         make
         cd ../..
-        cd libsvm-rank-2.81/matlab/
+        cd 'libsvm-rank-2.81/matlab/'
         make
         cd ../..
         cd SVOREX
@@ -29,10 +29,10 @@ if nargin < 1
     end
 elseif nargin == 1
     try
-        cd libsvm-weights-3.12/matlab/
+        cd 'libsvm-weights-3.12/matlab/'
         make(opt)
         cd ../..
-        cd libsvm-rank-2.81/matlab/
+        cd 'libsvm-rank-2.81/matlab/'
         make(opt)
         cd ../..
         cd SVOREX
