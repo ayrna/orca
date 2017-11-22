@@ -1,1 +1,5 @@
 src/Algorithms/orensemble/* linguist-vendored
+src/Algorithms/libsvm-rank-2.81/* linguist-vendored
+src/Algorithms/libsvm-weights-3.12/* linguist-vendored
+src/Algorithms/SVOREX/* linguist-vendored
+src/Algorithms/SVORIM/* linguist-vendored
