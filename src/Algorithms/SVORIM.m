@@ -4,16 +4,16 @@
 % Javier Sánchez Monedero (jsanchezm at uco dot es)
 %
 % This file implements the code for the SVORIM method.
-% 
+%
 % The code has been tested with Ubuntu 12.04 x86_64, Debian Wheezy 8, Matlab R2009a and Matlab 2011
-% 
+%
 % If you use this code, please cite the associated paper
 % Code updates and citing information:
 % http://www.uco.es/grupos/ayrna/orreview
 % https://github.com/ayrna/orca
-% 
+%
 % AYRNA Research group's website:
-% http://www.uco.es/ayrna 
+% http://www.uco.es/ayrna
 %
 % This program is free software; you can redistribute it and/or
 % modify it under the terms of the GNU General Public License
@@ -27,7 +27,7 @@
 %
 % You should have received a copy of the GNU General Public License
 % along with this program; if not, write to the Free Software
-% Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA. 
+% Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 % Licence available at: http://www.gnu.org/licenses/gpl-3.0.html
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -35,15 +35,15 @@ classdef SVORIM < Algorithm
     % SVOR Support Vector for Ordinal Regression (Implicit constraints)
     %   This class derives from the Algorithm Class and implements the
     %   SVORIM method.
-    % Further details in: * P.A. Gutiérrez, M. Pérez-Ortiz, J. Sánchez-Monedero, 
-    %                       F. Fernández-Navarro and C. Hervás-Martínez (2015), 
+    % Further details in: * P.A. Gutiérrez, M. Pérez-Ortiz, J. Sánchez-Monedero,
+    %                       F. Fernández-Navarro and C. Hervás-Martínez (2015),
     %                       "Ordinal regression methods: survey and
-    %                       experimental study",  
+    %                       experimental study",
     %                       IEEE Transactions on Knowledge and Data
-    %                       Engineering. Vol. Accepted 
+    %                       Engineering. Vol. Accepted
     %                     * W. Chu and S. S. Keerthi, “Support Vector
     %                       Ordinal Regression,” Neural Computation, vol.
-    %                       19, no. 3, pp. 792–815, 2007.   
+    %                       19, no. 3, pp. 792–815, 2007.
     % Dependencies: this class uses
     % - svorim implementation: http://www.gatsby.ucl.ac.uk/~chuwei/svor.htm
     
@@ -51,7 +51,7 @@ classdef SVORIM < Algorithm
         
         parameters;
         
-	name_parameters = {'C', 'k'};
+        name_parameters = {'C', 'k'};
     end
     
     methods
@@ -97,14 +97,14 @@ classdef SVORIM < Algorithm
         %
         % Function: runAlgorithm (Public)
         % Description: This function runs the corresponding
-        %               algorithm, fitting the model and 
+        %               algorithm, fitting the model and
         %               testing it in a dataset.
-        % Type: It returns the model (Struct) 
-        % Arguments: 
+        % Type: It returns the model (Struct)
+        % Arguments:
         %           Train --> Training data for fitting the model
         %           Test --> Test data for validation
         %           parameters --> vector with the parameter information
-        % 
+        %
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         
         function [model_information] = runAlgorithm(obj,train, test, parameters)
@@ -116,40 +116,40 @@ classdef SVORIM < Algorithm
             c1 = clock;
             [model,model_information.projectedTest,model_information.projectedTrain, model_information.trainTime, model_information.testTime] = obj.train([train.patterns train.targets],[test.patterns test.targets],param);
             c2 = clock;
-	    model_information.trainTime = etime(c2,c1);
-
-            c1 = clock; 
+            model_information.trainTime = etime(c2,c1);
+            
+            c1 = clock;
             model_information.predictedTrain = obj.test(model_information.projectedTrain, model);
             model_information.predictedTest = obj.test(model_information.projectedTest, model);
             c2 = clock;
             model_information.testTime = etime(c2,c1);
             model_information.model = model;
-
+            
             rmpath(fullfile('Algorithms','SVORIM'));
             
         end
-
+        
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         %
         % Function: train (Public)
         % Description: This function train the model for
         %               the SVORIM algorithm.
         % Type: It returns the model, the projected test patterns,
-	%	the projected train patterns and the time information.
-        % Arguments: 
+        %	the projected train patterns and the time information.
+        % Arguments:
         %           train --> Train struct
-	%	    test --> Test struct
+        %	    test --> Test struct
         %           parameters--> struct with the parameter information
-        % 
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%        
+        %
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         
         function [model, projectedTest, projectedTrain, trainTime, testTime] = train(obj, train,test, parameters)
             
-                 [projectedTest, alpha, thresholds, projectedTrain, trainTime, testTime] = svorim(train,test,parameters.k,parameters.C,0,0,0);
-                  model.projection = alpha;
-                  model.thresholds = thresholds; 
-                  model.parameters = parameters;
-                  model.algorithm = 'SVORIM';
+            [projectedTest, alpha, thresholds, projectedTrain, trainTime, testTime] = svorim(train,test,parameters.k,parameters.C,0,0,0);
+            model.projection = alpha;
+            model.thresholds = thresholds;
+            model.parameters = parameters;
+            model.algorithm = 'SVORIM';
         end
         
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -158,10 +158,10 @@ classdef SVORIM < Algorithm
         % Description: This function test a model given in
         %               a set of test patterns.
         % Outputs: Array of predicted patterns
-        % Arguments: 
+        % Arguments:
         %           project --> projected patterns
         %           model --> struct with the model information
-        % 
+        %
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         
         function [targets] = test(obj, project, model)

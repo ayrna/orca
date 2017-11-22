@@ -1,4 +1,4 @@
-% This script runs single tests using the ORCA API. The toy dataset is used 
+% This script runs single tests using the ORCA API. The toy dataset is used
 % with a 1 -hold-out experimental. Reference performance is compared. To
 % add an script just place it in the test/singletests folder following
 % other examples

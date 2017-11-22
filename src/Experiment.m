@@ -34,33 +34,33 @@
 classdef Experiment < handle
     % Experiment class
     % This class describes the different methods for running a given experiment in the framework
-
+    
     properties
-
+        
         data = DataSet;
-
+        
         method = KDLOR;
-
+        
         cvCriteria = MAE;
-
+        
         resultsDir = '';
-
+        
         seed = 1;
-
+        
         crossvalide = 0;
-
+        
         kernel_alignment = 0;
-
+        
     end
-
+    
     properties (SetAccess = private)
-
+        
         logsDir
     end
-
+    
     methods
-
-
+        
+        
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         %
         % Function: launch (Public)
@@ -70,15 +70,15 @@ classdef Experiment < handle
         %          No arguments
         %
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+        
         function obj = launch(obj,fichero)
             obj.process(fichero);
             obj.run();
         end
     end
-
+    
     methods(Access = private)
-
+        
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         %
         % Function: runFolder (private)
@@ -90,11 +90,11 @@ classdef Experiment < handle
         %          No arguments
         %
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+        
         function obj = run(obj)
             [train,test] = obj.data.preProcessData();
-
-            if obj.crossvalide,
+            
+            if obj.crossvalide
                 c1 = clock;
                 Optimals = obj.crossValide(train);
                 c2 = clock;
@@ -104,11 +104,11 @@ classdef Experiment < handle
             else
                 totalResults = obj.method.runAlgorithm(train, test);
             end
-
-	    obj.saveResults(totalResults);
-
+            
+            obj.saveResults(totalResults);
+            
         end
-
+        
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         %
         % Function: process (private)
@@ -118,40 +118,40 @@ classdef Experiment < handle
         %          fichero: file containing the experiment to proccess
         %
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+        
         function obj = process(obj,fichero)
-
+            
             fid = fopen(fichero,'r+');
-
+            
             fprintf('Processing %s\n', fichero)
-
-            while ~feof(fid),
+            
+            while ~feof(fid)
                 nueva_linea = fgetl(fid);
                 nueva_linea = regexprep(nueva_linea, ' ', '');
-
-                if strncmpi('directory',nueva_linea,3),
+                
+                if strncmpi('directory',nueva_linea,3)
                     obj.data.directory = fgetl(fid);
-                elseif strcmpi('train', nueva_linea),
+                elseif strcmpi('train', nueva_linea)
                     obj.data.train = fgetl(fid);
-                elseif strcmpi('test', nueva_linea),
+                elseif strcmpi('test', nueva_linea)
                     obj.data.test = fgetl(fid);
-                elseif strncmpi('results', nueva_linea, 6),
+                elseif strncmpi('results', nueva_linea, 6)
                     obj.resultsDir = fgetl(fid);
-                elseif strncmpi('algorithm',nueva_linea, 3),
+                elseif strncmpi('algorithm',nueva_linea, 3)
                     alg = fgetl(fid);
                     eval(['obj.method = ' alg ';']);
                     obj.method.defaultParameters();
-                elseif strncmpi('numfold', nueva_linea, 4),
+                elseif strncmpi('numfold', nueva_linea, 4)
                     obj.data.nOfFolds = str2num(fgetl(fid));
-                elseif strncmpi('standarize', nueva_linea, 5),
+                elseif strncmpi('standarize', nueva_linea, 5)
                     obj.data.standarize = str2num(fgetl(fid));
-                elseif strncmpi('weights', nueva_linea, 7),
+                elseif strncmpi('weights', nueva_linea, 7)
                     wei = fgetl(fid);
                     eval(['obj.method.weights = ' wei ';']);
-                elseif strncmpi('crossval', nueva_linea, 8),
+                elseif strncmpi('crossval', nueva_linea, 8)
                     met = upper(fgetl(fid));
                     eval(['obj.cvCriteria = ' met ';']);
-                elseif strncmpi('parameter', nueva_linea, 5),
+                elseif strncmpi('parameter', nueva_linea, 5)
                     nameparameter = sscanf(nueva_linea, 'parameter %s');
                     val = fgetl(fid);
                     if sum(strcmp(nameparameter,obj.method.name_parameters))
@@ -160,43 +160,43 @@ classdef Experiment < handle
                     else
                         error('Wrong parameter name - not found');
                     end
-                elseif strcmpi('kernel', nueva_linea),
+                elseif strcmpi('kernel', nueva_linea)
                     obj.method.kernelType = fgetl(fid);
-                elseif strcmpi('itermax', nueva_linea),
+                elseif strcmpi('itermax', nueva_linea)
                     obj.method.itermax = str2num(fgetl(fid));
-                elseif strcmpi('activationFunction', nueva_linea),
+                elseif strcmpi('activationFunction', nueva_linea)
                     obj.method.activationFunction = fgetl(fid);
-                elseif strcmpi('classifier', nueva_linea),
+                elseif strcmpi('classifier', nueva_linea)
                     val = lower(fgetl(fid));
                     eval(['obj.method.classifier = ' val ';']);
-                elseif strcmpi('base_algorithm', nueva_linea),
+                elseif strcmpi('base_algorithm', nueva_linea)
                     val = fgetl(fid);
                     eval(['obj.method.base_algorithm = ' val ';']);
-                elseif strcmpi('seed', nueva_linea),
+                elseif strcmpi('seed', nueva_linea)
                     obj.seed = str2num(fgetl(fid));
-                elseif strcmpi('modelsdir', nueva_linea),
+                elseif strcmpi('modelsdir', nueva_linea)
                     obj.method.modelsdir = fgetl(fid);
-                elseif strcmpi('epsilon', nueva_linea),
+                elseif strcmpi('epsilon', nueva_linea)
                     % Numerical value
                     eval(['obj.method.epsilon = ' (fgetl(fid)) ';']);
                 else
                     error(['Error reading: ' nueva_linea]);
                 end
-
+                
             end
-
+            
             % jsanchez
             if(obj.crossvalide == 0 && numel(obj.method.name_parameters)~=0 ...
-                    && ~strcmpi(obj.method.name_parameters,'dummy')),
+                    && ~strcmpi(obj.method.name_parameters,'dummy'))
                 obj.crossvalide = 1;
                 obj.method.defaultParameters();
                 disp('No parameter info found - setting up default parameters.')
             end
-
+            
             fclose(fid);
-
+            
         end
-
+        
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         %
         % Function: saveResults (private)
@@ -207,53 +207,53 @@ classdef Experiment < handle
         %           TotalResults--> Results of the experiment
         %
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+        
         function obj = saveResults(obj,TotalResults)
-
+            
             if numel(obj.method.name_parameters)~=0
                 outputFile = [obj.resultsDir filesep 'OptHyperparams' filesep obj.data.dataname ];
                 fid = fopen(outputFile,'w');
-
+                
                 par = fieldnames(TotalResults.model.parameters);
-
-                for i=1:(numel(par)),
+                
+                for i=1:(numel(par))
                     value = getfield(TotalResults.model.parameters,par{i});
                     fprintf(fid,'%s,%f\n', par{i},value);
                 end
-
+                
                 fclose(fid);
             end
-
+            
             outputFile = [obj.resultsDir filesep 'Times' filesep obj.data.dataname ];
             fid = fopen(outputFile,'w');
-            if obj.crossvalide,
+            if obj.crossvalide
                 fprintf(fid, '%f\n%f\n%f', TotalResults.trainTime, TotalResults.testTime, TotalResults.crossvaltime);
             else
                 fprintf(fid, '%f\n%f\n%f', TotalResults.trainTime, TotalResults.testTime, 0);
             end
             fclose(fid);
-
-
+            
+            
             outputFile = [obj.resultsDir filesep 'Predictions' filesep obj.data.train ];
             dlmwrite(outputFile, TotalResults.predictedTrain);
             outputFile = [obj.resultsDir filesep 'Predictions' filesep obj.data.test ];
             dlmwrite(outputFile, TotalResults.predictedTest);
-
+            
             modelo = TotalResults.model;
             % Write complete model
             outputFile = [obj.resultsDir filesep 'Models' filesep obj.data.dataname '.mat'];
             save(outputFile, 'modelo');
-
+            
             outputFile = [obj.resultsDir filesep 'Guess' filesep obj.data.train ];
             dlmwrite(outputFile, TotalResults.projectedTrain, 'precision', '%.15f');
-
+            
             outputFile = [obj.resultsDir filesep 'Guess' filesep obj.data.test ];
             dlmwrite(outputFile, TotalResults.projectedTest, 'precision', '%.15f');
-
+            
         end
-
-
-
+        
+        
+        
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         %
         % Function: crossValide (private)
@@ -265,24 +265,24 @@ classdef Experiment < handle
         %           -train--> train patterns
         %
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
+        
+        
         function optimals = crossValide(obj,train)
             nOfFolds = obj.data.nOfFolds;
             parameters = obj.method.parameters;
             par = fieldnames(parameters);
-
+            
             sets = struct2cell(parameters);
             c = cell(1, numel(sets));
             [c{:}] = ndgrid( sets{:} );
             combinations = cell2mat( cellfun(@(v)v(:), c, 'UniformOutput',false) );
             combinations = combinations';
-
+            
             % Avoid problems with very low number of patterns for some
             % classes
             uniqueTargets = unique(train.targets);
             nOfPattPerClass = sum(repmat(train.targets,1,size(uniqueTargets,1))==repmat(uniqueTargets',size(train.targets,1),1));
-            for i=1:size(uniqueTargets,1),
+            for i=1:size(uniqueTargets,1)
                 if(nOfPattPerClass(i)==1)
                     train.patterns = [train.patterns; train.patterns(train.targets==uniqueTargets(i),:)];
                     train.targets = [train.targets; train.targets(train.targets==uniqueTargets(i),:)];
@@ -290,45 +290,45 @@ classdef Experiment < handle
                     train.patterns = train.patterns(idx,:);
                 end
             end
-
+            
             % Use the seed
             if (exist ('OCTAVE_VERSION', 'builtin') > 0)
-              rand('seed',obj.seed);
+                rand('seed',obj.seed);
             else
-              s = RandStream.create('mt19937ar','seed',obj.seed);
-              if verLessThan('matlab','8.0')
-                  RandStream.setDefaultStream(s);
-              else
-                  RandStream.setGlobalStream(s);
-              end
+                s = RandStream.create('mt19937ar','seed',obj.seed);
+                if verLessThan('matlab','8.0')
+                    RandStream.setDefaultStream(s);
+                else
+                    RandStream.setGlobalStream(s);
+                end
             end
-
+            
             if (exist ('OCTAVE_VERSION', 'builtin') > 0)
-              pkg load statistics;
-              CVO = cvpartition(train.targets,'KFold',nOfFolds);
-              numTests = get(CVO,'NumTestSets');
+                pkg load statistics;
+                CVO = cvpartition(train.targets,'KFold',nOfFolds);
+                numTests = get(CVO,'NumTestSets');
             else
-              CVO = cvpartition(train.targets,'k',nOfFolds);
-              numTests = CVO.NumTestSets;
+                CVO = cvpartition(train.targets,'k',nOfFolds);
+                numTests = CVO.NumTestSets;
             end
             result = zeros(numTests,size(combinations,2));
-
+            
             % Foreach fold
-            for ff = 1:numTests,
+            for ff = 1:numTests
                 % Build fold dataset
                 if (exist ('OCTAVE_VERSION', 'builtin') > 0)
-                  trIdx = training(CVO,ff);
-                  teIdx = test(CVO,ff);
+                    trIdx = training(CVO,ff);
+                    teIdx = test(CVO,ff);
                 else
-                  trIdx = CVO.training(ff);
-                  teIdx = CVO.test(ff);
+                    trIdx = CVO.training(ff);
+                    teIdx = CVO.test(ff);
                 end
-
+                
                 auxTrain.targets = train.targets(trIdx,:);
                 auxTrain.patterns = train.patterns(trIdx,:);
                 auxTest.targets = train.targets(teIdx,:);
                 auxTest.patterns = train.patterns(teIdx,:);
-                for i=1:size(combinations,2),
+                for i=1:size(combinations,2)
                     % Extract the combination of parameters
                     currentCombination = combinations(:,i);
                     model = obj.method.runAlgorithm(auxTrain, auxTest, currentCombination);
@@ -338,18 +338,18 @@ classdef Experiment < handle
                         result(ff,i) = obj.cvCriteria.calculateCrossvalMetric(auxTest.targets, model.predictedTest);
                     end
                 end
-
+                
             end
             if (exist ('OCTAVE_VERSION', 'builtin') > 0)
-              pkg unload statistics;
+                pkg unload statistics;
             end
-
+            
             [bestValue,bestIdx] = min(mean(result));
             optimals = combinations(:,bestIdx);
-
+            
         end
-
+        
     end
-
-
+    
+    
 end

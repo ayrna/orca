@@ -4,16 +4,16 @@
 % Javier Sánchez Monedero (jsanchezm at uco dot es)
 %
 % This file implements the code for computing different kernel functions.
-% 
+%
 % The code has been tested with Ubuntu 12.04 x86_64, Debian Wheezy 8, Matlab R2009a and Matlab 2011
-% 
+%
 % If you use this code, please cite the associated paper
 % Code updates and citing information:
 % http://www.uco.es/grupos/ayrna/orreview
 % https://github.com/ayrna/orca
-% 
+%
 % AYRNA Research group's website:
-% http://www.uco.es/ayrna 
+% http://www.uco.es/ayrna
 %
 % This program is free software; you can redistribute it and/or
 % modify it under the terms of the GNU General Public License
@@ -27,7 +27,7 @@
 %
 % You should have received a copy of the GNU General Public License
 % along with this program; if not, write to the Free Software
-% Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA. 
+% Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 % Licence available at: http://www.gnu.org/licenses/gpl-3.0.html
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -44,38 +44,38 @@ Nf1             = size(patterns1, 2);
 Nf2             = size(patterns2, 2);
 kernelMatrix   = zeros(Nf1, Nf2);
 
-switch upper(kernelType),
-    case {'GAUSS','GAUSSIAN','RBF'},
-
-            for i = 1:Nf2,
-                kernelMatrix(:,i)  = exp(-kernelParam*sum((patterns1-patterns2(:,i)*ones(1,Nf1)).^2)');
-
-            end
-   
+switch upper(kernelType)
+    case {'GAUSS','GAUSSIAN','RBF'}
+        
+        for i = 1:Nf2
+            kernelMatrix(:,i)  = exp(-kernelParam*sum((patterns1-patterns2(:,i)*ones(1,Nf1)).^2)');
+            
+        end
+        
     case {'QUICKRBF'}
         d = pdistalt(patterns1,patterns2,'euclidean');
         kernelMatrix = exp(-kernelParam*d.^2);
-   
+        
     case {'POLYNOMIAL', 'POLY', 'LINEAR'}
-        if strcmp(upper(kernelType), 'LINEAR')
+        if strcmpi(kernelType, 'LINEAR')
             kernelParam = 1;
             bias = 0;
         else
             bias = 1;
         end
         kernelMatrix = (patterns1' * patterns2 + bias).^kernelParam;
-
+        
     case 'SIGMOID'
-
+        
         if (length(kernelParam) ~= 2)
             error('This kernel needs two parameters to operate!')
         end
-
+        
         kernelMatrix   = zeros(Nf1, Nf2);
-        for i = 1:Nf2,
+        for i = 1:Nf2
             kernelMatrix(:,i)  = tanh(patterns1'*patterns2(:,i)*kernelParam(1)+kernelParam(2));
         end
-    
+        
     otherwise
         error('Unknown kernel. Can be Gauss, Linear, Quickrbf, Poly, or Sigmoid.')
         

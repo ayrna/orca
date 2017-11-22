@@ -4,16 +4,16 @@
 % Javier Sánchez Monedero (jsanchezm at uco dot es)
 %
 % This file implements the code for the SVMOP method.
-% 
+%
 % The code has been tested with Ubuntu 12.04 x86_64, Debian Wheezy 8, Matlab R2009a and Matlab 2011
-% 
+%
 % If you use this code, please cite the associated paper
 % Code updates and citing information:
 % http://www.uco.es/grupos/ayrna/orreview
 % https://github.com/ayrna/orca
-% 
+%
 % AYRNA Research group's website:
-% http://www.uco.es/ayrna 
+% http://www.uco.es/ayrna
 %
 % This program is free software; you can redistribute it and/or
 % modify it under the terms of the GNU General Public License
@@ -27,7 +27,7 @@
 %
 % You should have received a copy of the GNU General Public License
 % along with this program; if not, write to the Free Software
-% Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA. 
+% Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 % Licence available at: http://www.gnu.org/licenses/gpl-3.0.html
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -36,31 +36,31 @@ classdef SVMOP < Algorithm
     % regression (by binary decomposition)
     %   This class derives from the Algorithm Class and implements the
     %   SVMOP method.
-    % Further details in: * P.A. Gutiérrez, M. Pérez-Ortiz, J. Sánchez-Monedero, 
-    %                       F. Fernández-Navarro and C. Hervás-Martínez (2015), 
+    % Further details in: * P.A. Gutiérrez, M. Pérez-Ortiz, J. Sánchez-Monedero,
+    %                       F. Fernández-Navarro and C. Hervás-Martínez (2015),
     %                       "Ordinal regression methods: survey and
-    %                       experimental study",  
+    %                       experimental study",
     %                       IEEE Transactions on Knowledge and Data
-    %                       Engineering. Vol. Accepted 
+    %                       Engineering. Vol. Accepted
     %                     * E. Frank and M. Hall, “A simple approach to
     %                       ordinal classification,” in Proceedings of the
     %                       12th European Conference on Machine Learning,
     %                       ser. EMCL ’01. London, UK: Springer-Verlag,
-    %                       2001, pp. 145–156.    
+    %                       2001, pp. 145–156.
     %                     * W. Waegeman and L. Boullart, “An ensemble of
     %                       weighted support vector machines for ordinal
     %                       regression,” International Journal of Computer
     %                       Systems Science and Engineering, vol. 3, no. 1,
-    %                       pp. 47–51, 2009.    
+    %                       pp. 47–51, 2009.
     % Dependencies: this class uses
     % - libsvm-weights-3.12 for SVM training: https://www.csie.ntu.edu.tw/~cjlin/libsvm
     
     properties
-
+        
         name_parameters = {'C','k'};
-
+        
         parameters;
-
+        
         weights = true;
     end
     
@@ -101,7 +101,7 @@ classdef SVMOP < Algorithm
         
         function obj = defaultParameters(obj)
             obj.parameters.C = 10.^(-3:1:3);
-	    % kernel width
+            % kernel width
             obj.parameters.k = 10.^(-3:1:3);
         end
         
@@ -109,14 +109,14 @@ classdef SVMOP < Algorithm
         %
         % Function: runAlgorithm (Public)
         % Description: This function runs the corresponding
-        %               algorithm, fitting the model and 
+        %               algorithm, fitting the model and
         %               testing it in a dataset.
-        % Type: It returns the model (Struct) 
-        % Arguments: 
+        % Type: It returns the model (Struct)
+        % Arguments:
         %           Train --> Training data for fitting the model
         %           Test --> Test data for validation
         %           parameters --> vector with the parameter information
-        % 
+        %
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         
         function [model_information] = runAlgorithm(obj,train, test, parameters)
@@ -150,18 +150,18 @@ classdef SVMOP < Algorithm
             rmpath(fullfile('Algorithms','libsvm-weights-3.12','matlab'));
         end
         
-
+        
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         %
         % Function: train (Public)
         % Description: This function train the model for
         %               the SVMOP algorithm.
         % Type: It returns the model (struct)
-        % Arguments: 
+        % Arguments:
         %           train --> Train struct
-	%	    nOfClasses --> number of classes for the dataset
+        %	    nOfClasses --> number of classes for the dataset
         %           parameters --> struct with the parameter information
-        % 
+        %
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         
         function [models]= train( obj,train,nOfClasses,parameters)
@@ -197,18 +197,18 @@ classdef SVMOP < Algorithm
             
             
         end
-
+        
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         %
         % Function: test (Public)
         % Description: This function test a model given in
         %               a set of test patterns.
         % Outputs: Two arrays (probabilities and predicted targets)
-        % Arguments: 
+        % Arguments:
         %           test --> Test struct data
         %           models --> struct with the models
-	%	    nOfClasses --> number of classes for the dataset
-        % 
+        %	    nOfClasses --> number of classes for the dataset
+        %
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         
         function [probTest,clasetest] = test(obj,test,models,nOfClasses)
@@ -216,7 +216,7 @@ classdef SVMOP < Algorithm
             for i = 2:nOfClasses,
                 etiquetas_test = [ ones(size(test.targets(test.targets<i))) ;  ones(size(test.targets(test.targets>=i)))*2];
                 [pr, acc, probTs] = svmpredict(etiquetas_test,test.patterns,models{i},'-b 1');
-
+                
                 probTest(i-1,:) = probTs(:,2)';
             end
             probts(1,:) = ones(size(probTest(1,:))) - probTest(1,:);
@@ -232,13 +232,13 @@ classdef SVMOP < Algorithm
         %
         % Function: computeWeights (Public)
         % Description: compute the weights to apply to the set of training patterns
-        % Outputs: array with the weigths 
-        % Arguments: 
-        %           p --> scalar corresponding to the indexes 
-	%	          of the classes being considered 
-	%		(all classes whose index is lower or equal than p)	
-	%	    targets --> training targets
-        % 
+        % Outputs: array with the weigths
+        % Arguments:
+        %           p --> scalar corresponding to the indexes
+        %	          of the classes being considered
+        %		(all classes whose index is lower or equal than p)
+        %	    targets --> training targets
+        %
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         
         function [weights] = computeWeights(obj, p, targets)

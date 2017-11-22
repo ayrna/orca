@@ -1,6 +1,6 @@
-% make function for MATLAB and OCTAVE that processes make() in all the subfolders 
-% with C/C++ code. 
-% Options are: 
+% make function for MATLAB and OCTAVE that processes make() in all the subfolders
+% with C/C++ code.
+% Options are:
 % - 'make' build all targets
 % - 'make clean' clean objects
 % - 'make cleanall' clean objects, executables and mex files.
