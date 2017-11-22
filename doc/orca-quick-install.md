@@ -32,7 +32,7 @@ After building, you can clean the objects files with `make clean`:
 >> make clean
 ```
 
-## Instalation testing
+## Installation testing
 
 We provide a set of basic tests to for checking that all the algorithms work, both using ORCA's API and experiment scripts (see [tutorial](orca-tutorial.md) for more information).
 
