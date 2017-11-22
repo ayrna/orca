@@ -1,10 +1,12 @@
 # ORCA detailed build and troubleshooting
 
-This a detailed install guide. If you have not done yet, please try the [Quick Install steps](orca-quick-install.md) before continuing.
+This a detailed install guide. If you have not done yet, please try the [Quick Install steps](orca-quick-install.md) before continuing. After this, if you are here, that means that there have been some errors when building the `mex` files.
 
-## Build from GNU/Linux terminal
+## Building `mex` files from the GNU/Linux terminal
 
 Under GNU/Linux, the simplest way to compile all the algorithms is to use the [Makefile](../src/Makefile) included in ORCA. This will compile all the algorithms and clean intermediate object files.
+
+### Matlab
 
 For building the mex files in MATLAB, you need to properly configure the MATLABDIR variable of [Makefile](../src/Makefile), in order to point out to the MATLAB installation directory (for instance `MATLABDIR = /usr/local/MATLAB/R2017b`). Then, from the `bash` terminal:
 ```bash
@@ -12,13 +14,14 @@ $ cd src/
 $ make
 ```
 
+### Octave
 For building the mex files in Octave, you will need to configure the OCTAVEDIR variable in the [Makefile](../src/Makefile). This variable has to point out to the Octave heather files (for instance, `OCTAVEDIR = /usr/include/octave-4.0.0/octave/`). Then, from the `bash` terminal:
 ```bash
 $ cd src/
 $ make octave
 ```
 
-## Windows build
+## Building `mex` files in Windows
 
 **Octave** installation in Windows:
 
