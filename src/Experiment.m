@@ -1,56 +1,38 @@
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Copyright (C) Pedro Antonio Gutiérrez (pagutierrez at uco dot es)
-% María Pérez Ortiz (i82perom at uco dot es)
-% Javier Sánchez Monedero (jsanchezm at uco dot es)
-%
-% This file implements the code for executing different experiments in the present framework (data loading, cross-validation and computation of results), presented in the paper Ordinal regression methods: survey and experimental study published in the IEEE Transactions on Knowledge and Data Engineering.
-%
-% The code has been tested with Ubuntu 12.04 x86_64, Debian Wheezy 8, Matlab R2009a and Matlab 2011
-%
-% If you use this code, please cite the associated paper
-% Code updates and citing information:
-% http://www.uco.es/grupos/ayrna/orreview
-% https://github.com/ayrna/orca
-%
-% AYRNA Research group's website:
-% http://www.uco.es/ayrna
-%
-% This program is free software; you can redistribute it and/or
-% modify it under the terms of the GNU General Public License
-% as published by the Free Software Foundation; either version 3
-% of the License, or (at your option) any later version.
-%
-% This program is distributed in the hope that it will be useful,
-% but WITHOUT ANY WARRANTY; without even the implied warranty of
-% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-% GNU General Public License for more details.
-%
-% You should have received a copy of the GNU General Public License
-% along with this program; if not, write to the Free Software
-% Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-% Licence available at: http://www.gnu.org/licenses/gpl-3.0.html
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 classdef Experiment < handle
-    % Experiment class
-    % This class describes the different methods for running a given experiment in the framework
+    %EXPERIMENT creates an experiment to run an ORCA's experiment which
+    %   consist on optimising and running a method in fold (a pair of train-test 
+    %   dataset partition). Theexperiment is described by a configuration file. 
+    %   This class is used by Utilities to launch a set of experiments
+    %
+    %   EXPERIMENT properties:
+    %      data               - DataSet object to store the train/test data
+    %      method             - Method to learn and classify data
+    %      cvCriteria         - Metric to guide the grid search for parameters optimisation
+    %      resultsDir         - Directory to store performance reports and learned models
+    %      seed               - Seed to be used for random number generation
+    %      crossvalide        - Activate corssvalidation
+    %
+    %   EXPERIMENT methods:
+    %      launch             - Launch experiment described in file
+    %
+    %   This file is part of ORCA: https://github.com/ayrna/orca
+    %   Original authors: Pedro Antonio Gutiérrez, María Pérez Ortiz, Javier Sánchez Monedero
+    %   Citation: If you use this code, please cite the associated paper http://www.uco.es/grupos/ayrna/orreview
+    %   Copyright:
+    %       This software is released under the The GNU General Public License v3.0 licence
+    %       available at http://www.gnu.org/licenses/gpl-3.0.html
+    %
     
+
     properties
         
         data = DataSet;
-        
         method = KDLOR;
-        
         cvCriteria = MAE;
-        
-        resultsDir = '';
-        
-        seed = 1;
-        
         crossvalide = 0;
-        
-        kernel_alignment = 0;
-        
+        resultsDir = '';
+        seed = 1;      
+                
     end
     
     properties (SetAccess = private)
@@ -58,45 +40,32 @@ classdef Experiment < handle
         logsDir
     end
     
-    methods
-        
-        
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        %
-        % Function: launch (Public)
-        % Description: This function launches the selected experiment.
-        % Type: Void
-        % Arguments:
-        %          No arguments
-        %
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        
-        function obj = launch(obj,fichero)
-            obj.process(fichero);
+    methods        
+        function obj = launch(obj,expFile)
+        % LAUNCH Launch experiment described in file. 
+        %   EXPOBJ = LAUNCH(EXPFILE) parses EXPFILE and run the experiment
+        %   described on it. It performs the following steps:
+        %   # Preprocess data cleaning and standardization (option need to be actived in configuration file)
+        %   # Optimize parameters by performing a grid search (if selected
+        %   in configuration file)
+        %   # Run algorithm with optimal parameters (if crossvalidation was
+        %   selected)
+        %   # Save experiment results for the fold
+            obj.process(expFile);
             obj.run();
         end
     end
     
     methods(Access = private)
-        
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        %
-        % Function: runFolder (private)
-        % Description: Function for preprocessing the data, the
-        % crossvalidation for each fold and the execution of the method
-        % with the optimal parameters.
-        % Type: void
-        % Arguments:
-        %          No arguments
-        %
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        
+                
         function obj = run(obj)
+        % RUN do experiment steps: data cleaning and standardization, parameters 
+        %   optimization and save results
             [train,test] = obj.data.preProcessData();
             
             if obj.crossvalide
                 c1 = clock;
-                Optimals = obj.crossValide(train);
+                Optimals = obj.crossValideParams(train);
                 c2 = clock;
                 crossvaltime = etime(c2,c1);
                 totalResults = obj.method.runAlgorithm(train, test, Optimals);
@@ -109,17 +78,8 @@ classdef Experiment < handle
             
         end
         
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        %
-        % Function: process (private)
-        % Description: Process the information in the experiment file
-        % Type: void
-        % Arguments:
-        %          fichero: file containing the experiment to proccess
-        %
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        
         function obj = process(obj,fname)
+        % PROCESS parses experiment described in FNAME 
             
             fid = fopen(fname,'r+');
             
@@ -197,18 +157,9 @@ classdef Experiment < handle
             
         end
         
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        %
-        % Function: saveResults (private)
-        % Description: This file saves the results of the experiment and
-        % the best hyperparameters.
-        % Type: Void
-        % Arguments:
-        %           TotalResults--> Results of the experiment
-        %
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        
         function obj = saveResults(obj,TotalResults)
+        % SAVERESULTS saves the results of the experiment and
+        % the best hyperparameters.
             
             if numel(obj.method.name_parameters)~=0
                 outputFile = [obj.resultsDir filesep 'OptHyperparams' filesep obj.data.dataname ];
@@ -253,21 +204,12 @@ classdef Experiment < handle
         end
         
         
-        
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        function optimals = crossValideParams(obj,train)
+        % CROSSVALIDE Function for performing the crossvalidation in a specific train partition. 
         %
-        % Function: crossValide (private)
-        % Description: Function for performing the crossvalidation in a
-        %               specific partition. It divides each partition
-        %               in k-folds and then adjust the parameters.
-        % Type: It returns the optimal parameters.
-        % Arguments:
-        %           -train--> train patterns
-        %
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        
-        
-        function optimals = crossValide(obj,train)
+        %   OPTIMALS = CROSSVALIDEPARAMS(TRAIN) Divides each the data in k-folds
+        %   (k defined by 'num fold' in configuration file). Returns vector OPTIMALS
+        %   with optimal parameter(s)
             nOfFolds = obj.data.nOfFolds;
             parameters = obj.method.parameters;
             par = fieldnames(parameters);

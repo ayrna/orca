@@ -104,10 +104,10 @@ classdef Utilities < handle
                 
                 parfor i=1:numel(expFiles)
                     if ~strcmp(expFiles(i).name(end), '~')
-                        auxiliar = Experiment;
+                        myExperiment = Experiment;
                         
                         disp(['Running experiment ', expFiles(i).name]);
-                        auxiliar.launch([logsDir '/' expFiles(i).name]);
+                        myExperiment.launch([logsDir '/' expFiles(i).name]);
                     end
                 end
                 
@@ -120,10 +120,10 @@ classdef Utilities < handle
             else
                 for i=1:numel(expFiles)
                     if ~strcmp(expFiles(i).name(end), '~')
-                        auxiliar = Experiment;
+                        myExperiment = Experiment;
                         
                         disp(['Running experiment ', expFiles(i).name]);
-                        auxiliar.launch([logsDir '/' expFiles(i).name]);
+                        myExperiment.launch([logsDir '/' expFiles(i).name]);
                     end
                 end
             end
