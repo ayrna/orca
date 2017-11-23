@@ -119,40 +119,40 @@ classdef Experiment < handle
         %
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         
-        function obj = process(obj,fichero)
+        function obj = process(obj,fname)
             
-            fid = fopen(fichero,'r+');
+            fid = fopen(fname,'r+');
             
-            fprintf('Processing %s\n', fichero)
+            fprintf('Processing %s\n', fname)
             
             while ~feof(fid)
-                nueva_linea = fgetl(fid);
-                nueva_linea = regexprep(nueva_linea, ' ', '');
+                new_line = fgetl(fid);
+                new_line = regexprep(new_line, ' ', '');
                 
-                if strncmpi('directory',nueva_linea,3)
+                if strncmpi('directory',new_line,3)
                     obj.data.directory = fgetl(fid);
-                elseif strcmpi('train', nueva_linea)
+                elseif strcmpi('train', new_line)
                     obj.data.train = fgetl(fid);
-                elseif strcmpi('test', nueva_linea)
+                elseif strcmpi('test', new_line)
                     obj.data.test = fgetl(fid);
-                elseif strncmpi('results', nueva_linea, 6)
+                elseif strncmpi('results', new_line, 6)
                     obj.resultsDir = fgetl(fid);
-                elseif strncmpi('algorithm',nueva_linea, 3)
+                elseif strncmpi('algorithm',new_line, 3)
                     alg = fgetl(fid);
                     eval(['obj.method = ' alg ';']);
                     obj.method.defaultParameters();
-                elseif strncmpi('numfold', nueva_linea, 4)
+                elseif strncmpi('numfold', new_line, 4)
                     obj.data.nOfFolds = str2num(fgetl(fid));
-                elseif strncmpi('standarize', nueva_linea, 5)
+                elseif strncmpi('standarize', new_line, 5)
                     obj.data.standarize = str2num(fgetl(fid));
-                elseif strncmpi('weights', nueva_linea, 7)
+                elseif strncmpi('weights', new_line, 7)
                     wei = fgetl(fid);
                     eval(['obj.method.weights = ' wei ';']);
-                elseif strncmpi('crossval', nueva_linea, 8)
+                elseif strncmpi('crossval', new_line, 8)
                     met = upper(fgetl(fid));
                     eval(['obj.cvCriteria = ' met ';']);
-                elseif strncmpi('parameter', nueva_linea, 5)
-                    nameparameter = sscanf(nueva_linea, 'parameter %s');
+                elseif strncmpi('parameter', new_line, 5)
+                    nameparameter = sscanf(new_line, 'parameter %s');
                     val = fgetl(fid);
                     if sum(strcmp(nameparameter,obj.method.name_parameters))
                         eval(['obj.method.parameters.' nameparameter ' = [' val '];']);
@@ -160,27 +160,27 @@ classdef Experiment < handle
                     else
                         error('Wrong parameter name - not found');
                     end
-                elseif strcmpi('kernel', nueva_linea)
+                elseif strcmpi('kernel', new_line)
                     obj.method.kernelType = fgetl(fid);
-                elseif strcmpi('itermax', nueva_linea)
+                elseif strcmpi('itermax', new_line)
                     obj.method.itermax = str2num(fgetl(fid));
-                elseif strcmpi('activationFunction', nueva_linea)
+                elseif strcmpi('activationFunction', new_line)
                     obj.method.activationFunction = fgetl(fid);
-                elseif strcmpi('classifier', nueva_linea)
+                elseif strcmpi('classifier', new_line)
                     val = lower(fgetl(fid));
                     eval(['obj.method.classifier = ' val ';']);
-                elseif strcmpi('base_algorithm', nueva_linea)
+                elseif strcmpi('base_algorithm', new_line)
                     val = fgetl(fid);
                     eval(['obj.method.base_algorithm = ' val ';']);
-                elseif strcmpi('seed', nueva_linea)
+                elseif strcmpi('seed', new_line)
                     obj.seed = str2num(fgetl(fid));
-                elseif strcmpi('modelsdir', nueva_linea)
+                elseif strcmpi('modelsdir', new_line)
                     obj.method.modelsdir = fgetl(fid);
-                elseif strcmpi('epsilon', nueva_linea)
+                elseif strcmpi('epsilon', new_line)
                     % Numerical value
                     eval(['obj.method.epsilon = ' (fgetl(fid)) ';']);
                 else
-                    error(['Error reading: ' nueva_linea]);
+                    error(['Error reading: ' new_line]);
                 end
                 
             end
@@ -239,10 +239,10 @@ classdef Experiment < handle
             outputFile = [obj.resultsDir filesep 'Predictions' filesep obj.data.test ];
             dlmwrite(outputFile, TotalResults.predictedTest);
             
-            modelo = TotalResults.model;
+            model = TotalResults.model;
             % Write complete model
             outputFile = [obj.resultsDir filesep 'Models' filesep obj.data.dataname '.mat'];
-            save(outputFile, 'modelo');
+            save(outputFile, 'model');
             
             outputFile = [obj.resultsDir filesep 'Guess' filesep obj.data.train ];
             dlmwrite(outputFile, TotalResults.projectedTrain, 'precision', '%.15f');

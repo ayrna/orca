@@ -166,25 +166,25 @@ classdef SVMOP < Algorithm
         
         function [models]= train( obj,train,nOfClasses,parameters)
             
-            patrones = train.patterns(train.targets==1,:);
-            etiq = train.targets(train.targets == 1);
+            patterns = train.patterns(train.targets==1,:);
+            labels = train.targets(train.targets == 1);
             
-            for i = 2:nOfClasses,
-                patrones = [patrones ; train.patterns(train.targets==i,:)];
-                etiq = [etiq ; train.targets(train.targets == i)];
+            for i = 2:nOfClasses
+                patterns = [patterns ; train.patterns(train.targets==i,:)];
+                labels = [labels ; train.targets(train.targets == i)];
             end
             
-            train.targets = etiq;
-            train.patterns = patrones';
+            train.targets = labels;
+            train.patterns = patterns';
             
             models = cell(1, nOfClasses-1);
-            for i = 2:nOfClasses,
+            for i = 2:nOfClasses
                 
                 etiquetas_train = [ ones(size(train.targets(train.targets<i))) ;  ones(size(train.targets(train.targets>=i)))*2];
                 
                 % Train
                 options = ['-b 1 -t 2 -c ' num2str(parameters.C) ' -g ' num2str(parameters.k) ' -q'];
-                if obj.weights,
+                if obj.weights
                     weightsTrain = obj.computeWeights(i-1,train.targets);
                 else
                     weightsTrain = ones(size(train.targets));
@@ -213,14 +213,14 @@ classdef SVMOP < Algorithm
         
         function [probTest,clasetest] = test(obj,test,models,nOfClasses)
             probTest = zeros(nOfClasses, size(test.patterns,1));
-            for i = 2:nOfClasses,
-                etiquetas_test = [ ones(size(test.targets(test.targets<i))) ;  ones(size(test.targets(test.targets>=i)))*2];
-                [pr, acc, probTs] = svmpredict(etiquetas_test,test.patterns,models{i},'-b 1');
+            for i = 2:nOfClasses
+                testLabels = [ ones(size(test.targets(test.targets<i))) ;  ones(size(test.targets(test.targets>=i)))*2];
+                [pr, acc, probTs] = svmpredict(testLabels,test.patterns,models{i},'-b 1');
                 
                 probTest(i-1,:) = probTs(:,2)';
             end
             probts(1,:) = ones(size(probTest(1,:))) - probTest(1,:);
-            for i=2:nOfClasses,
+            for i=2:nOfClasses
                 probts(i,:) =  probTest(i-1,:) -  probTest(i,:);
             end
             probts(nOfClasses,:) =  probTest(nOfClasses-1,:);

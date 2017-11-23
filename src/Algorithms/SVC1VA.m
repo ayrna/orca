@@ -153,9 +153,9 @@ classdef SVC1VA < Algorithm
             models = cell(labelSetSize,1);
             
             for i=1:labelSetSize
-                etiquetas = double(train.targets == labelSet(i));
-                weights = ones(size(etiquetas));
-                models{i} = svmtrain(weights,etiquetas, train.patterns, options);
+                labels = double(train.targets == labelSet(i));
+                weights = ones(size(labels));
+                models{i} = svmtrain(weights,labels, train.patterns, options);
             end
             
             model = struct('models', {models}, 'labelSet', labelSet);
@@ -182,8 +182,8 @@ classdef SVC1VA < Algorithm
             decv= zeros(size(test.targets, 1), labelSetSize);
             
             for i=1:labelSetSize
-                etiquetas = double(test.targets == labelSet(i));
-                [l,a,d] = svmpredict(etiquetas, test.patterns, models{i});
+                labels = double(test.targets == labelSet(i));
+                [l,a,d] = svmpredict(labels, test.patterns, models{i});
                 decv(:, i) = d * (2 * models{i}.Label(1) - 1);
             end
             

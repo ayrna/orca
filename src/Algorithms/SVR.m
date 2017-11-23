@@ -186,10 +186,10 @@ classdef SVR < Algorithm
             
             [projected err] = svmpredict(test.targets, test.patterns, model);
             
-            pertenencia_clase = repmat(projected, 1,numel(classes));
-            pertenencia_clase = abs(pertenencia_clase -  ones(size(pertenencia_clase,1),1)*classes);
+            classMembership = repmat(projected, 1,numel(classes));
+            classMembership = abs(classMembership -  ones(size(classMembership,1),1)*classes);
             
-            [m,predicted]=min(pertenencia_clase,[],2);
+            [m,predicted]=min(classMembership,[],2);
             
         end
         

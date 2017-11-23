@@ -317,8 +317,8 @@ classdef OPBE < Algorithm
         
         function [y] = cummulativeProb(obj, x, beta)
             y =  1 ./ (1+exp((x-beta))); %Logit
-            %    y =  1-exp(-exp(beta-x)); %log log complementario
-            %    y = exp(-exp(x-beta)); %log log negativo
+            %    y =  1-exp(-exp(beta-x)); %complementary log log
+            %    y = exp(-exp(x-beta)); %negative log log
             %    y = normcdf(beta-x); %probit
             %    y = atan(beta-x)/pi + 0.5; % cauchit
         end
@@ -341,11 +341,11 @@ classdef OPBE < Algorithm
             % Numerical fix
             nOfClasses = numel(thresholds)+1;
             if (numel(thresholds)==2)
-                deseada=4.0;
+                desired=4.0;
                 actual=abs(thresholds(2) - thresholds(1));
                 if actual<4
-                    projected = projected*(deseada/actual);
-                    thresholds = thresholds*(deseada/actual);
+                    projected = projected*(desired/actual);
+                    thresholds = thresholds*(desired/actual);
                 end
             end
             

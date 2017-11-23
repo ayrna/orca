@@ -1,9 +1,9 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Copyright (C) Pedro Antonio Guti??rrez (pagutierrez at uco dot es)
-% Mar??a P??rez Ortiz (i82perom at uco dot es)
-% Javier S??nchez Monedero (jsanchezm at uco dot es)
+% Copyright (C) Pedro Antonio Gutiérrez (pagutierrez at uco dot es)
+% María Pérez Ortiz (i82perom at uco dot es)
+% Javier Sánchez Monedero (jsanchezm at uco dot es)
 %
-% This file contains the class that configures and executes the experiments, presented in the paper Ordinal regression methods: survey and experimental study published in the IEEE Transactions on Knowledge and Data Engineering.
+% This file contains the abstract class that implements the different metrics for evaluation a classifier, presented in the paper Ordinal regression methods: survey and experimental study published in the IEEE Transactions on Knowledge and Data Engineering.
 %
 % The code has been tested with Ubuntu 12.04 x86_64, Debian Wheezy 8, Matlab R2009a and Matlab 2011
 %
@@ -29,7 +29,7 @@
 % along with this program; if not, write to the Free Software
 % Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 % Licence available at: http://www.gnu.org/licenses/gpl-3.0.html
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%???
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 classdef Utilities < handle
     % Utilities class
@@ -52,7 +52,7 @@ classdef Utilities < handle
         %
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         
-        function [logsDir] = runExperiments(ficheroExperimentos, varargin)
+        function [logsDir] = runExperiments(expFile, varargin)
             
             parallel = 0;
             num_cores = 0;
@@ -85,8 +85,8 @@ classdef Utilities < handle
             % TODO: move ID generation to configureExperiment?
             c = clock;
             dirSuffix = [num2str(c(1)) '-' num2str(c(2)) '-'  num2str(c(3)) '-' num2str(c(4)) '-' num2str(c(5)) '-' num2str(uint8(c(6)))];
-            logsDir = Utilities.configureExperiment(ficheroExperimentos,dirSuffix);
-            ficheros_experimentos = dir([logsDir '/' 'exp-*']);
+            logsDir = Utilities.configureExperiment(expFile,dirSuffix);
+            expFiles = dir([logsDir '/' 'exp-*']);
             
             if parallel
                 
@@ -102,12 +102,12 @@ classdef Utilities < handle
                     matlabpool(num_cores)
                 end
                 
-                parfor i=1:numel(ficheros_experimentos)
-                    if ~strcmp(ficheros_experimentos(i).name(end), '~')
+                parfor i=1:numel(expFiles)
+                    if ~strcmp(expFiles(i).name(end), '~')
                         auxiliar = Experiment;
                         
-                        disp(['Running experiment ', ficheros_experimentos(i).name]);
-                        auxiliar.launch([logsDir '/' ficheros_experimentos(i).name]);
+                        disp(['Running experiment ', expFiles(i).name]);
+                        auxiliar.launch([logsDir '/' expFiles(i).name]);
                     end
                 end
                 
@@ -118,12 +118,12 @@ classdef Utilities < handle
                 
                 
             else
-                for i=1:numel(ficheros_experimentos)
-                    if ~strcmp(ficheros_experimentos(i).name(end), '~')
+                for i=1:numel(expFiles)
+                    if ~strcmp(expFiles(i).name(end), '~')
                         auxiliar = Experiment;
                         
-                        disp(['Running experiment ', ficheros_experimentos(i).name]);
-                        auxiliar.launch([logsDir '/' ficheros_experimentos(i).name]);
+                        disp(['Running experiment ', expFiles(i).name]);
+                        auxiliar.launch([logsDir '/' expFiles(i).name]);
                     end
                 end
             end
@@ -160,38 +160,38 @@ classdef Utilities < handle
             elseif nargin == 1
                 train = train;
             end
-            experimentos = dir(experiment_folder);
+            experiments = dir(experiment_folder);
             
             %idx=strfind(experiment_folder,'Results');
             %scriptpath = [experiment_folder(1:idx-1)];
             
-            for i=1:numel(experimentos)
-                if ~(any(strcmp(experimentos(i).name, {'.', '..'}))) && experimentos(i).isdir
-                    disp([experiment_folder '/' experimentos(i).name '/' 'dataset'])
-                    fid = fopen([experiment_folder '/' experimentos(i).name '/' 'dataset'],'r');
-                    ruta_dataset = fgetl(fid);
+            for i=1:numel(experiments)
+                if ~(any(strcmp(experiments(i).name, {'.', '..'}))) && experiments(i).isdir
+                    disp([experiment_folder '/' experiments(i).name '/' 'dataset'])
+                    fid = fopen([experiment_folder '/' experiments(i).name '/' 'dataset'],'r');
+                    datasetPath = fgetl(fid);
                     fclose(fid);
                     
                     if train == 1
-                        predicted_files = dir([experiment_folder '/' experimentos(i).name '/' 'Predictions' '/' 'train_*']);
+                        predicted_files = dir([experiment_folder '/' experiments(i).name '/' 'Predictions' '/' 'train_*']);
                     else
-                        predicted_files = dir([experiment_folder '/' experimentos(i).name '/' 'Predictions' '/' 'test_*']);
+                        predicted_files = dir([experiment_folder '/' experiments(i).name '/' 'Predictions' '/' 'test_*']);
                     end
                     % Check if we have a missing fold experiment.
                     % -2 is to compensate . and ..
-                    predicted_files_train = dir([experiment_folder '/' experimentos(i).name '/' 'Predictions' '/' 'train_*']);
-                    predicted_files_test = dir([experiment_folder '/' experimentos(i).name '/' 'Predictions' '/' 'test_*']);
+                    predicted_files_train = dir([experiment_folder '/' experiments(i).name '/' 'Predictions' '/' 'train_*']);
+                    predicted_files_test = dir([experiment_folder '/' experiments(i).name '/' 'Predictions' '/' 'test_*']);
                     
-                    if (numel(predicted_files_train)+numel(predicted_files_test)) ~= numel(dir(ruta_dataset)) -2
+                    if (numel(predicted_files_train)+numel(predicted_files_test)) ~= numel(dir(datasetPath)) -2
                         warning(sprintf('\n *********** \n The execution of some folds failed. Number of experiments differs from number of train-test files. \n *********** \n'))
                     end
-                    time_files = dir([experiment_folder '/' experimentos(i).name '/' 'Times' '/' '*.*']);
-                    hyp_files = dir([experiment_folder '/' experimentos(i).name '/' 'OptHyperparams' '/' '*.*']);
+                    time_files = dir([experiment_folder '/' experiments(i).name '/' 'Times' '/' '*.*']);
+                    hyp_files = dir([experiment_folder '/' experiments(i).name '/' 'OptHyperparams' '/' '*.*']);
                     
                     if train == 1
-                        guess_files = dir([experiment_folder '/' experimentos(i).name '/' 'Guess' '/' 'train_*']);
+                        guess_files = dir([experiment_folder '/' experiments(i).name '/' 'Guess' '/' 'train_*']);
                     else
-                        guess_files = dir([experiment_folder '/' experimentos(i).name '/' 'Guess' '/' 'test_*']);
+                        guess_files = dir([experiment_folder '/' experiments(i).name '/' 'Guess' '/' 'test_*']);
                     end
                     
                     %str=predicted_files(1).name;
@@ -209,9 +209,9 @@ classdef Utilities < handle
                     end
                     
                     if train == 1
-                        real_files = dir([ruta_dataset '/' 'train_*']);
+                        real_files = dir([datasetPath '/' 'train_*']);
                     else
-                        real_files = dir([ruta_dataset '/' 'test_*']);
+                        real_files = dir([datasetPath '/' 'test_*']);
                     end
                     
                     act = cell(1, numel(predicted_files));
@@ -222,17 +222,17 @@ classdef Utilities < handle
                     param = [];
                     
                     for j=1:numel(predicted_files)
-                        pred{j} = importdata([experiment_folder '/' experimentos(i).name '/' 'Predictions' '/' predicted_files(j).name]);
-                        times(:,j) = importdata([experiment_folder '/' experimentos(i).name '/' 'Times' '/' time_files(j).name]);
-                        proj{j} = importdata([experiment_folder '/' experimentos(i).name '/' 'Guess' '/' guess_files(j).name]);
+                        pred{j} = importdata([experiment_folder '/' experiments(i).name '/' 'Predictions' '/' predicted_files(j).name]);
+                        times(:,j) = importdata([experiment_folder '/' experiments(i).name '/' 'Times' '/' time_files(j).name]);
+                        proj{j} = importdata([experiment_folder '/' experiments(i).name '/' 'Guess' '/' guess_files(j).name]);
                         
                         if ~isempty(hyp_files)
-                            struct_hyperparams(j) = importdata([experiment_folder '/' experimentos(i).name '/' 'OptHyperparams' '/' hyp_files(j).name],',');
+                            struct_hyperparams(j) = importdata([experiment_folder '/' experiments(i).name '/' 'OptHyperparams' '/' hyp_files(j).name],',');
                             for z = 1:numel(struct_hyperparams(j).data)
                                 param(z,j) = struct_hyperparams(j).data(z);
                             end
                         end
-                        actual = importdata([ruta_dataset '/' real_files(j).name]);
+                        actual = importdata([datasetPath '/' real_files(j).name]);
                         act{j} = actual(:,end);
                     end
                     
@@ -277,9 +277,9 @@ classdef Utilities < handle
                     
                     % Results for the independent dataset
                     if train == 1
-                        fid = fopen([experiment_folder '/' experimentos(i).name '/' 'results_train.csv'],'w');
+                        fid = fopen([experiment_folder '/' experiments(i).name '/' 'results_train.csv'],'w');
                     else
-                        fid = fopen([experiment_folder '/' experimentos(i).name '/' 'results_test.csv'],'w');
+                        fid = fopen([experiment_folder '/' experiments(i).name '/' 'results_test.csv'],'w');
                     end
                     
                     for h = 1:numel(names)
@@ -298,9 +298,9 @@ classdef Utilities < handle
                     
                     % Confusion matrices and sum of confusion matrices
                     if train == 1
-                        fid = fopen([experiment_folder '/' experimentos(i).name '/' 'matrices_train.txt'],'w');
+                        fid = fopen([experiment_folder '/' experiments(i).name '/' 'matrices_train.txt'],'w');
                     else
-                        fid = fopen([experiment_folder '/' experimentos(i).name '/' 'matrices_test.txt'],'w');
+                        fid = fopen([experiment_folder '/' experiments(i).name '/' 'matrices_test.txt'],'w');
                     end
                     
                     J = length(unique(act{1}));
@@ -333,7 +333,7 @@ classdef Utilities < handle
                     results_matrix_sum = results_matrix_sum';
                     
                     
-                    medias = mean(results_matrix,1);
+                    means = mean(results_matrix,1);
                     stdev = std(results_matrix,0,1);
                     
                     if train == 1
@@ -364,9 +364,9 @@ classdef Utilities < handle
                     
                     
                     
-                    fprintf(fid, '%s,', experimentos(i).name);
-                    for h = 1:numel(medias)
-                        fprintf(fid, '%f,%f,', medias(h), stdev(h));
+                    fprintf(fid, '%s,', experiments(i).name);
+                    for h = 1:numel(means)
+                        fprintf(fid, '%f,%f,', means(h), stdev(h));
                     end
                     fprintf(fid,'\n');
                     fclose(fid);
@@ -387,7 +387,7 @@ classdef Utilities < handle
                         fprintf(fid,'\n');
                     end
                     
-                    fprintf(fid, '%s,', experimentos(i).name);
+                    fprintf(fid, '%s,', experiments(i).name);
                     for h = 1:numel(results_matrix_sum)
                         fprintf(fid, '%f,', results_matrix_sum(h));
                     end
@@ -415,57 +415,49 @@ classdef Utilities < handle
         %
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         
-        function logsDir = configureExperiment(ficheroExperimentos,dirSuffix)
+        function logsDir = configureExperiment(expFile,dirSuffix)
             
-            if( ~(exist(ficheroExperimentos,'file')))
-                fprintf('The file %s does not exist\n',ficheroExperimentos);
+            if( ~(exist(expFile,'file')))
+                fprintf('The file %s does not exist\n',expFile);
                 return;
             end
             
-            logsDir = ['Experiments' '/' 'exp-' dirSuffix];
-            % Prevent to overwrite log dir of parallel or fast experiments
-            % with same ID
-            %if exist(logsDir, 'dir')
-            %    randStr = num2str(rand);
-            %    randStr(1:2)=[];
-            %    logsDir = [logsDir '-' randStr];
-            %end
-            
-            resultados = [logsDir '/' 'Results'];
+            logsDir = ['Experiments' '/' 'exp-' dirSuffix];            
+            resultsDir = [logsDir '/' 'Results'];
             if ~exist('Experiments','dir')
                 mkdir('Experiments');
             end
             mkdir(logsDir);
-            mkdir(resultados);
-            fid = fopen(ficheroExperimentos,'r+');
+            mkdir(resultsDir);
+            fid = fopen(expFile,'r+');
             num_experiment = 0;
             
             while ~feof(fid)
-                nueva_linea = fgetl(fid);
-                if strncmpi(nueva_linea,'%',1)
-                    %Doing nothing!
-                elseif strcmpi('new experiment', nueva_linea)
+                new_line = fgetl(fid);
+                if strncmpi(new_line,'%',1)
+                    %Do nothing!
+                elseif strcmpi('new experiment', new_line)
                     num_experiment = num_experiment + 1;
                     id_experiment = num2str(num_experiment);
                     auxiliar = '';
-                elseif strcmpi('name', nueva_linea)
+                elseif strcmpi('name', new_line)
                     id_experiment = [fgetl(fid) num2str(num_experiment)];
-                elseif strcmpi('dir', nueva_linea)
+                elseif strcmpi('dir', new_line)
                     directory = fgetl(fid);
                     if ~(exist(directory,'dir'))
                         error('Datasets directory "%s" does not exist', directory)
                     end
-                elseif strcmpi('datasets', nueva_linea)
+                elseif strcmpi('datasets', new_line)
                     datasets = fgetl(fid);
-                elseif strcmpi('end experiment', nueva_linea)
-                    fichero_ini = [logsDir '/' 'exp-' id_experiment];
+                elseif strcmpi('end experiment', new_line)
+                    conf_file = [logsDir '/' 'exp-' id_experiment];
                     [matchstart,matchend,tokenindices,matchstring,tokenstring,tokenname,splitstring] = regexpi(datasets,',');
                     % Check that all datasets partitions are accesible
                     % The method checkDatasets calls error
                     Utilities.checkDatasets(directory, datasets);
                     [train, test] = Utilities.processDirectory(directory,splitstring);
                     for i=1:numel(train)
-                        aux_directory = [resultados '/' splitstring{i} '-' id_experiment];
+                        aux_directory = [resultsDir '/' splitstring{i} '-' id_experiment];
                         mkdir(aux_directory);
                         
                         mkdir([aux_directory '/' 'OptHyperparams']);
@@ -474,26 +466,26 @@ classdef Utilities < handle
                         mkdir([aux_directory '/' 'Predictions']);
                         mkdir([aux_directory '/' 'Guess']);
                         
-                        fichero = [resultados '/' splitstring{i} '-' id_experiment '/' 'dataset'];
-                        fich = fopen(fichero,'w');
+                        file = [resultsDir '/' splitstring{i} '-' id_experiment '/' 'dataset'];
+                        fich = fopen(file,'w');
                         fprintf(fich, [directory '/' splitstring{i} '/' 'matlab']);
                         fclose(fich);
                         
                         runfolds = numel(train{i});
                         
                         for j=1:runfolds
-                            fichero = [fichero_ini '-' splitstring{i} '-' num2str(j)];
-                            fich = fopen(fichero,'w');
+                            file = [conf_file '-' splitstring{i} '-' num2str(j)];
+                            fich = fopen(file,'w');
                             fprintf(fich, ['directory\n' directory '/' splitstring{i} '/' 'matlab' '\n']);
                             fprintf(fich, ['train\n' train{i}(j).name '\n']);
                             fprintf(fich, ['test\n' test{i}(j).name '\n']);
-                            fprintf(fich, ['results\n' resultados '/' splitstring{i} '-' id_experiment '\n']);
+                            fprintf(fich, ['results\n' resultsDir '/' splitstring{i} '-' id_experiment '\n']);
                             fprintf(fich, auxiliar);
                             fclose(fich);
                         end
                     end
                 else
-                    auxiliar = [auxiliar nueva_linea '\n'];
+                    auxiliar = [auxiliar new_line '\n'];
                 end
                 
             end
@@ -538,12 +530,12 @@ classdef Utilities < handle
             trainFileNames = cell(numel(dataSetNames),1);
             testFileNames = cell(numel(dataSetNames),1);
             for j=1:numel(dataSetNames)
-                isdirectory = [directory '/' dataSetNames{j}];
-                if(isdir(isdirectory))
-                    ejemplo = [isdirectory '/' 'matlab' '/' 'train_' dataSetNames{j} '.*'];
-                    trainFileNames{validDataSets} = dir(ejemplo);
-                    ejemplo = [isdirectory '/' 'matlab' '/' 'test_' dataSetNames{j} '.*'];
-                    testFileNames{validDataSets} = dir(ejemplo);
+                dsdirectory = [directory '/' dataSetNames{j}];
+                if(isdir(dsdirectory))
+                    file_expr = [dsdirectory '/' 'matlab' '/' 'train_' dataSetNames{j} '.*'];
+                    trainFileNames{validDataSets} = dir(file_expr);
+                    file_expr = [dsdirectory '/' 'matlab' '/' 'test_' dataSetNames{j} '.*'];
+                    testFileNames{validDataSets} = dir(file_expr);
                     validDataSets = validDataSets + 1;
                 end
             end
