@@ -1,39 +1,20 @@
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Copyright (C) Pedro Antonio Gutiérrez (pagutierrez at uco dot es)
-% María Pérez Ortiz (i82perom at uco dot es)
-% Javier Sánchez Monedero (jsanchezm at uco dot es)
-%
-% This file contains the abstract class that implements the different metrics for evaluation a classifier, presented in the paper Ordinal regression methods: survey and experimental study published in the IEEE Transactions on Knowledge and Data Engineering.
-%
-% The code has been tested with Ubuntu 12.04 x86_64, Debian Wheezy 8, Matlab R2009a and Matlab 2011
-%
-% If you use this code, please cite the associated paper
-% Code updates and citing information:
-% http://www.uco.es/grupos/ayrna/orreview
-% https://github.com/ayrna/orca
-%
-% AYRNA Research group's website:
-% http://www.uco.es/ayrna
-%
-% This program is free software; you can redistribute it and/or
-% modify it under the terms of the GNU General Public License
-% as published by the Free Software Foundation; either version 3
-% of the License, or (at your option) any later version.
-%
-% This program is distributed in the hope that it will be useful,
-% but WITHOUT ANY WARRANTY; without even the implied warranty of
-% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-% GNU General Public License for more details.
-%
-% You should have received a copy of the GNU General Public License
-% along with this program; if not, write to the Free Software
-% Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-% Licence available at: http://www.gnu.org/licenses/gpl-3.0.html
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 classdef Utilities < handle
-    % Utilities class
-    % Class that contains several methods for configurating and running the experiments
+    %UTILITIES Static class that contains several methods for configurating
+    %   and running the experiments. Examples of integration with HTCondor
+    %   are provided src/condor folder.
+    %
+    %   UTILITIES methods:
+    %      runExperiments             - setting and running experiments
+    %      runExperiment              - Launchs a single experiment
+    %      configureExperiment        - sets configuration of the several experiments
+    %      results                    - creates experiments reports
+    %
+    %   This file is part of ORCA: https://github.com/ayrna/orca
+    %   Original authors: Pedro Antonio Gutiérrez, María Pérez Ortiz, Javier Sánchez Monedero
+    %   Citation: If you use this code, please cite the associated paper http://www.uco.es/grupos/ayrna/orreview
+    %   Copyright:
+    %       This software is released under the The GNU General Public License v3.0 licence
+    %       available at http://www.gnu.org/licenses/gpl-3.0.html
     
     properties
         
@@ -41,18 +22,19 @@ classdef Utilities < handle
     
     
     methods (Static = true)
-        
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        %
-        % Function: runExperiments (static)
-        % Description: Function for setting and running the experiments
-        % Type: void
-        % Arguments:
-        %           -ficheroExperimentos: Name for the current experiment file
-        %
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        
         function [logsDir] = runExperiments(expFile, varargin)
+            % RUNEXPERIMENTS Function for setting and running the experiments
+            %   [LOGSDIR] = RUNEXPERIMENTS(EXPFILE) runs
+            %   experiments described in EXPFILE and returns the folder
+            %   name LOGSDIR that stores all the results. LOGSDIR is
+            %   generated based on the date and time of the system.
+            %
+            %   [LOGSDIR] = RUNEXPERIMENTS(EXPFILE, PARALLEL) runs
+            %   experiments described in EXPFILE and returns the folder
+            %   name LOGSDIR that stores all the results. PARALLEL is a
+            %   boolean variable that activates CPU parallel processing of
+            %   databases's folds.
+            %
             
             parallel = 0;
             num_cores = 0;
@@ -138,19 +120,28 @@ classdef Utilities < handle
             
         end
         
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        %
-        % Function: results (static)
-        % Description: Function for computing the results
-        % Type: void
-        % Arguments:
-        %           -experiment_folder: folder where the information
-        %				about the experiment is contained
-        %	    -train: train set structure
-        %
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        
         function results(experiment_folder,train)
+            % RUNEXPERIMENTS Function for computing the results
+            %   RESULTS(EXPERIMENT_FOLDER) computes results of predictions
+            %   stored in EXPERIMENT_FOLDER. It generates CSV files with
+            %   several performance metrics of the testing (generalization)
+            %   predictions.
+            %       * |mean-results_test.csv|: CSV file with datasets in files
+            %       and performance metrics in columns. For each metric two columns
+            %       are created (mean and standard deviation considering the _k_ folds
+            %       of the experiment).
+            %       * |mean-results_matrices_sum_test.csv|: CSV file with
+            %       performance metrics calculated using the sum of all the
+            %       confussion matrices of the _k_ experiments (as Weka does). Each column
+            %       presents the performance of this single matrix.
+            %
+            %   RESULTS(EXPERIMENT_FOLDER,TRAIN) same as
+            %   RESULTS(EXPERIMENT_FOLDER) but calculates performance in train
+            %   data. It can be usefull to evaluate overfitting.
+            %
+            %   See also MEASURES/MZE, MEASURES/MAE, MEASURES/AMAE, MEASURES/CCR,
+            %   MEASURES/MMAE, MEASURES/GM, MEASURES/MS, MEASURES/Spearman,
+            %   MEASURES/Tkendall, MEASURES/Wkappa
             
             addpath('Measures');
             addpath('Algorithms');
@@ -403,26 +394,21 @@ classdef Utilities < handle
             
         end
         
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        %
-        % Function: configureExperiment (static)
-        % Description: Function for setting the configuration of the
-        % 	different experiments
-        % Output: -logsDir: Folder where the logs are contained
-        % Arguments:
-        %           -ficheroExperimentos: Name for the current experiment file
-        %	    -dirSuffix: experiment directory identifier
-        %
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        
         function logsDir = configureExperiment(expFile,dirSuffix)
+        % CONFIGUREEXPERIMENT Function for setting the configuration of the
+        % 	different experiments.
+        %   LOGSDIR = CONFIGUREEXPERIMENT(EXPFILE,DIRSUFFIX) parses EXPFILE and
+        %       generates single experiment files describing individual experiment 
+        %       of each fold. It also creates folders to store predictions
+        %       and models for all the partitions. All the resources are
+        %       created int exp-DIRSUFFIX folder. 
             
             if( ~(exist(expFile,'file')))
                 fprintf('The file %s does not exist\n',expFile);
                 return;
             end
             
-            logsDir = ['Experiments' '/' 'exp-' dirSuffix];            
+            logsDir = ['Experiments' '/' 'exp-' dirSuffix];
             resultsDir = [logsDir '/' 'Results'];
             if ~exist('Experiments','dir')
                 mkdir('Experiments');
@@ -493,19 +479,33 @@ classdef Utilities < handle
             
         end
         
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        %
-        % Function: processDirectory (static)
-        % Description: Function for processing the dataset
-        % Output:  -trainFileNames: Files for the different training folds
-        %	   -testFileNames: Files for the different test folds
-        % Arguments:
-        %           -directory: Name for the current experiment file
-        %	    -dataSetNames: experiment directory identifier
-        %
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        function runExperiment(confFile)
+        % RUNEXPERIMENT(CONFFILE) launch a single experiment described in
+        %   file CONFFILE
+            addpath('Measures');
+            addpath('Algorithms');
+            
+            auxiliar = Experiment;
+            auxiliar.launch(confFile);
+            
+            rmpath('Measures');
+            rmpath('Algorithms');
+            
+        end
+    end
+    
+    methods(Static = true, Access = private)
         
         function [trainFileNames, testFileNames] = processDirectory(directory, dataSetNames)
+        % PROCESSDIRECTORY Function to get all the train and test pair of
+        %   files of dataset's folds
+        %   [TRAINFILENAMES, TESTFILENAMES] = PROCESSDIRECTORY(DIRECTORY, DATASETNAMES) 
+        %   process comma separated list of datasets names in DATASETNAMES.
+        %   All the dataset's folders need to be stored in DIRECTORY.
+        %   Returns all the pairs of train-test files in TRAINFILENAMES and
+        %   TESTFILENAMES. 
+        %   [TRAINFILENAMES, TESTFILENAMES] = PROCESSDIRECTORY(DIRECTORY,
+        %   'all') process all datasets in DIRECTORY.
             dbs = dir(directory);
             dbs(2) = [];
             dbs(1) = [];
@@ -542,41 +542,13 @@ classdef Utilities < handle
             %end
         end
         
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        %
-        % Function: runExperiment (static)
-        % Description: Simple function for launching the experiments
-        % Type: void
-        % Arguments:
-        %           No arguments
-        %
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        
-        function runExperiment(fichero)
-            addpath('Measures');
-            addpath('Algorithms');
-            
-            auxiliar = Experiment;
-            auxiliar.launch(fichero);
-            
-            rmpath('Measures');
-            rmpath('Algorithms');
-            
-        end
-        
-        
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        %
-        % Function: checkDatasets (static)
-        % Description: Test datasets are accessible and with expected
-        % names. Launch error in case a dataset is not found.
-        % Type: void
-        % Arguments:
-        %   - basedir: base directory containing all the datasets
-        %   - datasets: colon separaded list of datasets. keyword 'all'
-        %   test all datasets in basedir
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         function checkDatasets(basedir, datasets)
+        % CHECKDATASETS Test datasets are accessible and with expected
+        % names. Launch error in case a dataset is not found.
+        %   CHECKDATASETS(BASEDIR, DATASETS) tests all DATASETS (comma 
+        %   separated list of datasets) in directory BASEDIR. 
+        %   CHECKDATASETS(BASEDIR, 'all') tests all DATASETS in BASEDIR
+
             if ~exist(basedir,'dir')
                 error('Datasets directory "%s" does not exist', basedir)
             end

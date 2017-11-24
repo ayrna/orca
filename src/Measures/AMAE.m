@@ -1,62 +1,46 @@
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Copyright (C) Pedro Antonio Gutiérrez (pagutierrez at uco dot es)
-% María Pérez Ortiz (i82perom at uco dot es)
-% Javier Sánchez Monedero (jsanchezm at uco dot es)
-%
-% This file implements the code for the Average Mean Absolute Error (AMAE).
-% 
-% The code has been tested with Ubuntu 12.04 x86_64, Debian Wheezy 8, Matlab R2009a and Matlab 2011
-% 
-% If you use this code, please cite the associated paper
-% Code updates and citing information:
-% http://www.uco.es/grupos/ayrna/orreview
-% https://github.com/ayrna/orca
-% 
-% AYRNA Research group's website:
-% http://www.uco.es/ayrna 
-%
-% This program is free software; you can redistribute it and/or
-% modify it under the terms of the GNU General Public License
-% as published by the Free Software Foundation; either version 3
-% of the License, or (at your option) any later version.
-%
-% This program is distributed in the hope that it will be useful,
-% but WITHOUT ANY WARRANTY; without even the implied warranty of
-% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-% GNU General Public License for more details.
-%
-% You should have received a copy of the GNU General Public License
-% along with this program; if not, write to the Free Software
-% Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA. 
-% Licence available at: http://www.gnu.org/licenses/gpl-3.0.html
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 classdef AMAE < Metric
-
+    %AMAE static class to calculate average mean absolute error (MAE). The average
+    %   MAE is the mean of the MAE classification errors across classes and was proposed
+    %   by Baccianella et al. [1] to mitigate the effect of imbalanced
+    %   class distributions. Values range from 0 to J-1, where J is the
+    %   number of classes.
+    %
+    %   AMAE methods:
+    %      CALCULATEMETRIC            - Computes the evaluation metric
+    %      CALCULATECROSSVALMETRIC    - Computes the evaluation metric as an error
+    %
+    %   References:
+    %     [1] S. Baccianella, A. Esuli, F. Sebastiani,
+    %         Evaluation measures for ordinal regression
+    %         Proceedings of the Ninth International Conference on Intelligent
+    %         Systems Design and Applications, ISDA′09, 2009, pp. 283–287.
+    %         https://doi.org/10.1109/ISDA.2009.230
+    %     [2] M. Cruz-Ramírez, C. Hervás-Martínez, J. Sánchez-Monedero and
+    %         P. A. Gutiérrez Metrics to guide a multi-objective evolutionary
+    %         algorithm for ordinal classification, Neurocomputing, Vol. 135, July, 2014, pp. 21-31.
+    %         https://doi.org/10.1016/j.neucom.2013.05.058
+    %
+    %   This file is part of ORCA: https://github.com/ayrna/orca
+    %   Original authors: Pedro Antonio Gutiérrez, María Pérez Ortiz, Javier Sánchez Monedero
+    %   Citation: If you use this code, please cite the associated paper http://www.uco.es/grupos/ayrna/orreview
+    %   Copyright:
+    %       This software is released under the The GNU General Public License v3.0 licence
+    %       available at http://www.gnu.org/licenses/gpl-3.0.html
     methods
         function obj = AMAE()
-                obj.name = 'Average Mean Absolute Error';
+            obj.name = 'Average Mean Absolute Error';
         end
     end
     
     methods(Static = true)
-	    
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        %
-        % Function: calculateMetric (static)
-        % Description: Computes the evaluation metric
-        % Outputs: metric results
-        % Arguments:
-        %           argum1--> First argument (confusion matrix or predictions)
-	%	    argum2--> Second argument (true labels)
-	% 	    If there is only one argument, the results are computed
-	%	    using the confusion matrix. In other case, with the
-	%	    predictions and true labels.
-        %
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+        
         function amae = calculateMetric(argum1,argum2)
-            if nargin == 2,
+            %CALCULATEMETRIC Computes the evaluation metric
+            %   METRIC = CALCULATEMETRIC(CM) returns calculated metric from confussion
+            %   matrix CM
+            %   METRIC = CALCULATEMETRIC(actual, pred) returns calculated metric from
+            %   real labels (ACTUAL) labels and predicted labels (PRED)
+            if nargin == 2
                 argum1 = confusionmat(argum1,argum2);
             end
             n=size(argum1,1);
@@ -69,30 +53,21 @@ classdef AMAE < Metric
             end
             
             if (exist ('OCTAVE_VERSION', 'builtin') > 0)
-              pkg load statistics;
+                pkg load statistics;
             end
             amae = nanmean(mae);
             if (exist ('OCTAVE_VERSION', 'builtin') > 0)
-              pkg unload statistics;
+                pkg unload statistics;
             end
         end
-
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        %
-        % Function: calculateCrossvalMetric (static)
-        % Description: Computes the evaluation metric for crossvalidation
-        % Outputs: metric results
-        % Arguments:
-        %           argum1--> First argument (confusion matrix or predictions)
-	%	    argum2--> Second argument (true labels)
-	% 	    If there is only one argument, the results are computed
-	%	    using the confusion matrix. In other case, with the
-	%	    predictions and true labels.
-        %
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-	function value = calculateCrossvalMetric(argum1,argum2)
-            if nargin == 2,
+        
+        function value = calculateCrossvalMetric(argum1,argum2)
+            %CALCULATEMETRIC Computes the evaluation metric
+            %   METRIC = CALCULATEMETRIC(CM) returns calculated metric from confussion
+            %   matrix CM
+            %   METRIC = CALCULATEMETRIC(actual, pred) returns calculated metric from
+            %   real labels (ACTUAL) labels and predicted labels (PRED)
+            if nargin == 2
                 value = AMAE.calculateMetric(argum1,argum2);
             else
                 value = AMAE.calculateMetric(argum1);
@@ -100,6 +75,6 @@ classdef AMAE < Metric
         end
         
     end
-            
+    
     
 end

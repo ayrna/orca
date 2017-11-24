@@ -1,62 +1,23 @@
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Copyright (C) Pedro Antonio Gutiérrez (pagutierrez at uco dot es)
-% María Pérez Ortiz (i82perom at uco dot es)
-% Javier Sánchez Monedero (jsanchezm at uco dot es)
-%
-% This file implements the code for handling the different data partitions (mainly preprocessing steps), presented in the paper Ordinal regression methods: survey and experimental study published in the IEEE Transactions on Knowledge and Data Engineering.
-%
-% The code has been tested with Ubuntu 12.04 x86_64, Debian Wheezy 8, Matlab R2009a and Matlab 2011
-%
-% If you use this code, please cite the associated paper
-% Code updates and citing information:
-% http://www.uco.es/grupos/ayrna/orreview
-% https://github.com/ayrna/orca
-%
-% AYRNA Research group's website:
-% http://www.uco.es/ayrna
-%
-% This program is free software; you can redistribute it and/or
-% modify it under the terms of the GNU General Public License
-% as published by the Free Software Foundation; either version 3
-% of the License, or (at your option) any later version.
-%
-% This program is distributed in the hope that it will be useful,
-% but WITHOUT ANY WARRANTY; without even the implied warranty of
-% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-% GNU General Public License for more details.
-%
-% You should have received a copy of the GNU General Public License
-% along with this program; if not, write to the Free Software
-% Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-% Licence available at: http://www.gnu.org/licenses/gpl-3.0.html
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 classdef DataSet < handle
-    % DataSet
-    % Class to specify the name of the datasets and preprocess them.
+    %DATASET Class to specify the name of the datasets and perform data preprocessing
+    %
+    %   This file is part of ORCA: https://github.com/ayrna/orca
+    %   Original authors: Pedro Antonio Gutiérrez, María Pérez Ortiz, Javier Sánchez Monedero
+    %   Citation: If you use this code, please cite the associated paper http://www.uco.es/grupos/ayrna/orreview
+    %   Copyright:
+    %       This software is released under the The GNU General Public License v3.0 licence
+    %       available at http://www.gnu.org/licenses/gpl-3.0.html
     
     properties
-        
         directory = '';
-        
         train = '';
-        
         test = '';
-        
         standarize = true;
-        
         dataname = '';
-        
         nOfFolds = 5;
-        
-        repeatFold = 1;
-        
     end
     
-    
     methods
-        
-        
         function obj = dataSet(direct)
             if(nargin ~= 0)
                 obj.directory = direct;
@@ -71,20 +32,13 @@ classdef DataSet < handle
                 error('%s --> Not a directory', direc);
             end
         end
-        
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        %
-        % Function: preProcessData (Public)
-        % Description: This funciton preprocess a data partition,
-        %               deletes the constant and non numerical atributes
-        % 		and standarize the data.
-        % Type: It returns the patterns loaded from the file (trainSet and testSet)
-        % Arguments:
-        %           No arguments
-        %
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        
+                
         function [trainSet, testSet] = preProcessData(obj)
+        % PREPROCESSDATA preprocess a data partition, i.e., deletes the constant 
+        %   and non numerical atributes and standarize the data. Test set
+        %   is standardised using train mean and standard error. 
+        %   [TRAINSET, TESTSET] = PREPROCESSDATA() preprocess dataset and
+        %   returns the preprocessed patterns in TRAINSET and TESTSET.
             
             if(exist([obj.directory '/' obj.train], 'file') && exist([obj.directory '/' obj.test], 'file'))
                 obj.dataname = strrep(obj.train, 'train_', '');
@@ -124,8 +78,7 @@ classdef DataSet < handle
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         %
         % Function: standarizeData (static)
-        % Description: standarize a set of training and testing
-        %               patterns.
+        % Description: 
         % Type: It returns the standarized patterns (train and test)
         % Arguments:
         %           trainSet--> Array of training patterns
@@ -134,11 +87,37 @@ classdef DataSet < handle
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         
         function [trainSet, testSet] = standarizeData(trainSet,testSet)
+        % STANDARIZEDATA standarizes a set of training and testing patterns.
+        %   [TRAINSET, TESTSET] = STANDARIZEDATA(TRAINSET,TESTSET)
+        %   standarizes TRAINSET and TESTSET with TRAINSET mean and std. 
             [trainSet.patterns, trainMeans, trainStds] = DataSet.standarizeFunction(trainSet.patterns);
             testSet.patterns = DataSet.standarizeFunction(testSet.patterns,trainMeans,trainStds);
         end
+                
+        function [XN, XMeans, XStds] = standarizeFunction(X,XMeans,XStds)
+        % STANDARIZEFUNCTION standardises data with patterns stored in rows.
+        %   [XN, XMeans, XStds] = standarizeFunction(X) standardises X
+        %   using X mean and std. Returns normalised data in XN and
+        %   calculated mean and std in XMEANS and XSTDS respectively
+        %   [XN, XMeans, XStds] = standarizeFunction(X,XMeans,XStds) standardises X
+        %   using XMeans as mean and XStds as std. 
+            
+            if (nargin<3)
+                XStds = std(X);
+            end
+            if (nargin<2)
+                XMeans = mean(X);
+            end
+            XN = zeros(size(X));
+            for i=1:size(X,2)
+                XN(:,i) = (X(:,i) - XMeans(i)) / XStds(i);
+            end
+        end
         
         function [trainSet, testSet] = scaleData(trainSet,testSet)
+        % SCALEDATA scales a set of training and testing patterns.
+        %   [TRAINSET, TESTSET] = SCALEDATA(TRAINSET,TESTSET)
+        %   scales TRAINSET and TESTSET. 
             for i = 1:size(trainSet.patterns,1)
                 for j = 1:size(trainSet.patterns,2)
                     trainSet.patterns(i,j) = 1/(1+exp(-trainSet.patterns(i,j)));
@@ -150,21 +129,13 @@ classdef DataSet < handle
                 end
             end
         end
-        
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        %
-        % Function: deleteNonNumericalValues (static)
-        % Description: This function deletes non numerical
-        %               values in the data, as NaN or Inf.
-        % Type: It returns the patterns without non numerical
-        %               values (train and test)
-        % Arguments:
-        %           trainSet--> Array of training patterns
-        %           testSet--> Array of testing patterns
-        %
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        
+                
         function [trainSet, testSet] = deleteNonNumericValues(trainSet,testSet)
+        % DELETENONNUMERICVALUES This function deletes non numerical values 
+        %   in the data, as NaN or Inf.
+        %   [TRAINSET, TESTSET] = DELETENONNUMERICVALUES(TRAINSET,TESTSET)
+        %   performs data cleaning on arrays of patterns TRAINSET and TESTSET. Returns
+        %   processed matrices. 
             
             [fils,cols]=find(isnan(trainSet.patterns) | isinf(trainSet.patterns));
             cols = unique(cols);
@@ -192,19 +163,11 @@ classdef DataSet < handle
             
         end
         
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        %
-        % Function: deleteConstantAtributes (static)
-        % Description: This function deletes constant
-        %               atributes.
-        % Type: It returns the patterns without this constant attributes
-        % Arguments:
-        %           trainSet--> Array of training patterns
-        %           testSet--> Array of testing patterns
-        %
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        
         function [trainSet,testSet] = deleteConstantAtributes(trainSet, testSet)
+        % DELETECONSTANTATRIBUTES This function deletes constant variables
+        %   [TRAINSET, TESTSET] = DELETECONSTANTATRIBUTES(TRAINSET,TESTSET)
+        %   performs data cleaning on arrays of patterns TRAINSET and TESTSET. Returns
+        %   processed matrices. 
             
             all = [trainSet.patterns ; testSet.patterns];
             
@@ -229,32 +192,7 @@ classdef DataSet < handle
             end
         end
         
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        %
-        % Function: standarizeFunction (static)
-        % Description: Function for data standarization.
-        % Type: It returns the standardized patterns (XN),
-        %	the mean (Xmeans) and the standard deviation (XStds)
-        % Arguments:
-        %           X--> data
-        %           XMeans--> Data mean (optional)
-        %	    XStds --> Standard deviation for the data (optional)
-        %
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        
-        function [XN, XMeans, XStds] = standarizeFunction(X,XMeans,XStds)
-            
-            if (nargin<3)
-                XStds = std(X);
-            end
-            if (nargin<2)
-                XMeans = mean(X);
-            end
-            XN = zeros(size(X));
-            for i=1:size(X,2)
-                XN(:,i) = (X(:,i) - XMeans(i)) / XStds(i);
-            end
-        end
+
     end
 end
 
