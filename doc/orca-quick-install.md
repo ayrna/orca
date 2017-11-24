@@ -7,7 +7,7 @@ This is a **quick install** guide. If you experiment problems, please read the [
 In order to use ORCA you need:
 
 * `gcc` and `g++`
-* MATLAB/Octave, including `mex`.
+* MATLAB/Octave (Octave >= 4.0), including `mex`.
 
 ## Download ORCA
 
