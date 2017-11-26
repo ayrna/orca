@@ -1,7 +1,7 @@
 classdef SVR < Algorithm
     %SVR implements Support Vector Regression to perform ordinal
     %classification by predicting class labels as a regression problem.
-    %Uses libSVM weights SVM implementation. 
+    %It uses libSVM-weight SVM implementation. 
     %
     %   SVR methods:
     %      runAlgorithm               - runs the corresponding algorithm, 
@@ -61,8 +61,8 @@ classdef SVR < Algorithm
         function mInf = runAlgorithm(obj,train, test, parameters)
             %RUNALGORITHM runs the corresponding algorithm, fitting the
             %model and testing it in a dataset.
-            %   mInf = RUNALGORITHM(OBJ,TRAIN, TEST, PARAMETERS) learns a
-            %   model with TRAIN data and PARAMETERS as hyper-parameters 
+            %   mInf = RUNALGORITHM(OBJ, TRAIN, TEST, PARAMETERS) learns a
+            %   model with TRAIN data and PARAMETERS as hyper-parameter 
             %   values for the method. Test the generalization performance 
             %   with TRAIN and TEST data and returns predictions and model
             %   in mInf structure. 
@@ -115,7 +115,7 @@ classdef SVR < Algorithm
         end
         
         
-        % TODO: remove classes parameters. Avoid using test.targets
+        % TODO: remove class parameters. Avoid using test.targets
         function [projected, predicted]= test(obj, test, model,classes)
             %TEST predict labels of TEST patterns labels using MODEL. 
             
