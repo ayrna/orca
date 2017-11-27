@@ -1,10 +1,17 @@
-% make function for MATLAB and OCTAVE that processes make() in all the subfolders
-% with C/C++ code.
+function make(opt)
+%MAKE function for MATLAB and OCTAVE that processes make() in all the subfolders
+%with C/C++ code.
 % Options are:
 % - 'make' build all targets
 % - 'make clean' clean objects
 % - 'make cleanall' clean objects, executables and mex files.
-function make(opt)
+%
+%   This file is part of ORCA: https://github.com/ayrna/orca
+%   Original authors: Pedro Antonio Gutiérrez, María Pérez Ortiz, Javier Sánchez Monedero
+%   Citation: If you use this code, please cite the associated paper http://www.uco.es/grupos/ayrna/orreview
+%   Copyright:
+%       This software is released under the The GNU General Public License v3.0 licence
+%       available at http://www.gnu.org/licenses/gpl-3.0.html
 if nargin < 1
     try
         cd 'libsvm-weights-3.12/matlab/'

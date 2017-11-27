@@ -1,54 +1,44 @@
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Copyright (C) Pedro Antonio Gutiérrez (pagutierrez at uco dot es)
-% María Pérez Ortiz (i82perom at uco dot es)
-% Javier Sánchez Monedero (jsanchezm at uco dot es)
-%
-% This file implements the code for the ELMOP method.
-%
-% The code has been tested with Ubuntu 12.04 x86_64, Debian Wheezy 8, Matlab R2009a and Matlab 2011
-%
-% If you use this code, please cite the associated paper
-% Code updates and citing information:
-% http://www.uco.es/grupos/ayrna/orreview
-% https://github.com/ayrna/orca
-%
-% AYRNA Research group's website:
-% http://www.uco.es/ayrna
-%
-% This program is free software; you can redistribute it and/or
-% modify it under the terms of the GNU General Public License
-% as published by the Free Software Foundation; either version 3
-% of the License, or (at your option) any later version.
-%
-% This program is distributed in the hope that it will be useful,
-% but WITHOUT ANY WARRANTY; without even the implied warranty of
-% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-% GNU General Public License for more details.
-%
-% You should have received a copy of the GNU General Public License
-% along with this program; if not, write to the Free Software
-% Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-% Licence available at: http://www.gnu.org/licenses/gpl-3.0.html
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 classdef ELMOP < Algorithm
-    %ELM Extreme Learning Machine for Ordinal Regression
-    %   This class derives from the Algorithm Class and implements the
-    %   ELMOP method
-    % Further details in: * P.A. Gutiérrez, M. Pérez-Ortiz, J. Sánchez-Monedero,
-    %                       F. Fernández-Navarro and C. Hervás-Martínez (2015),
-    %                       "Ordinal regression methods: survey and
-    %                       experimental study",
-    %                       IEEE Transactions on Knowledge and Data
-    %                       Engineering. Vol. Accepted
-    %                     * W.-Y. Deng, Q.-H. Zheng, S. Lian, L. Chen, and
-    %                       X. Wang, “Ordinal extreme learning machine,”
-    %                       Neurocomputing, vol. 74, no. 1–3, pp. 447– 456,
-    %                       2010.
-    % This class is an extended version of the source code provided by
-    % Guang-Bin Huang (http://www.ntu.edu.sg/home/egbhuang/)
+    %ELMOP Extreme Learning Machine for Ordinal Regression (ELMOP). This
+    %class is an extended version of the source code provided by Guang-Bin
+    %Huang (http://www.ntu.edu.sg/home/egbhuang/)
+    %
+    %   ELMOP methods:
+    %      runAlgorithm               - runs the corresponding algorithm,
+    %                                   fitting the model and testing it in a dataset.
+    %      train                      - Learns a model from data
+    %      test                       - Performs label prediction
+    %
+    %   ELMOP properties:
+    %      activationFunction         - Activation function, default
+    %                                   sigmoid. Available options are 'sig,
+    %                                   'sin', 'hardlim','tribas', 'radbas',
+    %                                   'up','rbf'/'krbf', 'grbf'
+    %                                   fitting the model and testing it in a dataset.
+    %      parameters.hiddenN         - parameters.hiddenN is a vector of
+    %                                   the number of hidden neural networks
+    %                                   to validate.
+    %
+    %   References:
+    %     [1] W.-Y. Deng, Q.-H. Zheng, S. Lian, L. Chen, and X. Wang,
+    %         Ordinal extreme learning machine, Neurocomputing, vol. 74,
+    %         no. 1-3, pp. 447-456, 2010.
+    %         http://dx.doi.org/10.1016/j.neucom.2010.08.022
+    %     [2] P.A. Gutiérrez, M. Pérez-Ortiz, J. Sánchez-Monedero,
+    %         F. Fernández-Navarro and C. Hervás-Martínez
+    %         Ordinal regression methods: survey and experimental study
+    %         IEEE Transactions on Knowledge and Data Engineering, Vol. 28.
+    %         Issue 1, 2016
+    %         http://dx.doi.org/10.1109/TKDE.2015.2457911
+    %
+    %   This file is part of ORCA: https://github.com/ayrna/orca
+    %   Original authors: Pedro Antonio Gutiérrez, María Pérez Ortiz, Javier Sánchez Monedero
+    %   Citation: If you use this code, please cite the associated paper http://www.uco.es/grupos/ayrna/orreview
+    %   Copyright:
+    %       This software is released under the The GNU General Public License v3.0 licence
+    %       available at http://www.gnu.org/licenses/gpl-3.0.html
+    
     properties
-        
         activationFunction = 'sig';
         
         % Input Weights range
@@ -56,25 +46,16 @@ classdef ELMOP < Algorithm
         wMax = 1;
         
         parameters
-        
         name_parameters = {'hiddenN'};
     end
     
     
     methods
         
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        %
-        % Function: ELMOP (Public Constructor)
-        % Description: It constructs an object of the class
-        %               ELM and sets its characteristics.
-        % Type: Void
-        % Arguments:
-        %           activationFunction
-        %
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         
         function obj = ELMOP(activationFunction)
+            %ELMOP constructs an object of the class ELMOP and sets its default
+            %   characteristics
             obj.name = 'Extreme Learning Machine for Ordinal Regression';
             if(nargin ~= 0)
                 obj.activationFunction = activationFunction;
@@ -83,36 +64,19 @@ classdef ELMOP < Algorithm
             end
         end
         
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        %
-        % Function: defaultParameters (Public)
-        % Description: It assigns the parameters of the
-        %               algorithm to a default value.
-        % Type: Void
-        % Arguments:
-        %           No arguments for this function.
-        %
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         
         function obj = defaultParameters(obj)
             obj.parameters.hiddenN = {5,10,20,30,40,50,60,70,80,90,100};
         end
         
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        %
-        % Function: runAlgorithm (Public)
-        % Description: This function runs the corresponding
-        %               algorithm, fitting the model and
-        %               testing it in a dataset.
-        % Type: It returns the model (Struct)
-        % Arguments:
-        %           Train --> Training data for fitting the model
-        %           Test --> Test data for validation
-        %           parameters --> vector with the parameter information
-        %
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        
-        function [model_information] = runAlgorithm(obj,train, test, parameters)
+        function [mInf] = runAlgorithm(obj,train, test, parameters)
+            %RUNALGORITHM runs the corresponding algorithm, fitting the
+            %model and testing it in a dataset.
+            %   mInf = RUNALGORITHM(OBJ, TRAIN, TEST, PARAMETERS) learns a
+            %   model with TRAIN data and PARAMETERS as hyper-parameter
+            %   values for the method. Test the generalization performance
+            %   with TRAIN and TEST data and returns predictions and model
+            %   in mInf structure.
             
             train.uniqueTargets = unique([test.targets ;train.targets]);
             test.uniqueTargets = train.uniqueTargets;
@@ -135,32 +99,22 @@ classdef ELMOP < Algorithm
             model = obj.train( train, param);
             c2 = clock;
             % time information for testing
-            model_information.trainTime = etime(c2,c1);
+            mInf.trainTime = etime(c2,c1);
             
             c1 = clock;
-            [model_information.projectedTrain, model_information.predictedTrain] = obj.test( train,model );
-            [model_information.projectedTest, model_information.predictedTest] = obj.test( test,model );
+            [mInf.projectedTrain, mInf.predictedTrain] = obj.test( train,model );
+            [mInf.projectedTest, mInf.predictedTest] = obj.test( test,model );
             c2 = clock;
             % time information for testing
-            model_information.testTime = etime(c2,c1);
+            mInf.testTime = etime(c2,c1);
             
-            model_information.model = model;
+            mInf.model = model;
             
         end
         
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        %
-        % Function: train (Public)
-        % Description: This function train the model for
-        %               the ELMOP algorithm.
-        % Type: model structure
-        % Arguments:
-        %           train --> Train structure
-        %           parameters --> parameters for the model
-        %
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        
         function model = train( obj,train, parameters)
+        %TRAIN trains the model for the SVR method with TRAIN data and
+            %vector of parameters PARAMETERS. Return the learned model. 
             
             if( strcmp(obj.activationFunction,'rbf') && parameters.hiddenN > train.nOfPatterns)
                 %disp(['User''s number of hidden neurons ' num2str(parameters.hiddenN) ...
@@ -171,10 +125,7 @@ classdef ELMOP < Algorithm
             end
             
             P = train.patterns';
-            
-            
             T = train.targetsOrelm;
-            
             T = T';
             
             %%%%%%%%%%% Calculate weights & biases
@@ -299,7 +250,7 @@ classdef ELMOP < Algorithm
             end
             %COMENTADO clear P;
             
-            clear tempH;                                        %   Release the temnormMinrary array for calculation of hidden neuron output matrix H
+            clear tempH;%   Release the temnormMinrary array for calculation of hidden neuron output matrix H
             
             
             %%%%%%%%%%% Calculate output weights OutputWeight (beta_i)
@@ -326,22 +277,9 @@ classdef ELMOP < Algorithm
             model.parameters = parameters;
             
         end
-        
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        %
-        % Function: test (Public)
-        % Description: This function test the model in
-        %               a set of test patterns.
-        % Type: Two arrays (projected patterns and predicted labels)
-        % Arguments:
-        %           test --> Test structure
-        %           model --> model structure
-        %
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        
+       
         function [TY, TestPredictedY]= test(obj, test, model)
-            
-            
+            %TEST predict labels of TEST patterns labels using MODEL. 
             TV.P = test.patterns';
             
             %------Perform log(P) calculation once for UP
@@ -417,16 +355,12 @@ classdef ELMOP < Algorithm
                     H_test = exp(-(numerator./denominator_extended));
             end
             
-            clear TV.P;             %   Release input of testing data
+            clear TV.P;             %   Release input of testing data            
             
-            
-            TY=(H_test' * model.OutputWeight)';                       %   TY: the actual output of the testing data
-            
+            TY=(H_test' * model.OutputWeight)';                       %   TY: the actual output of the testing data            
             clear H_test;
             
             TestPredictedY = obj.orelmToLabel(TY', test.uniqueTargetsOrelm);
-            
-            
             TestPredictedY = TestPredictedY';
             
         end
@@ -434,44 +368,29 @@ classdef ELMOP < Algorithm
     end
     
     methods(Access = private)
-        
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        %
-        % Function: orelmToLabel (Private)
-        % Description: Compute the exponential loss and the final prediction
-        % Type: It returns the final prediction and the losses
-        % Arguments:
-        %           predictions--> Array of predictions
-        %           uniqueNewTargets--> Array of unique labels
-        %
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        
-        function [finalOutput,expLosses] = orelmToLabel(obj,predictions,uniqueNewTargets)
-            
+        function [predL,eLosses] = orelmToLabel(obj,predictions,labelSet)
+            %ORELMTOLABEL computes the exponential loss and the final prediction
+            %   [PREDL,ELOSSES] = ORELMTOLABEL(OBJ,PREDICTIONS,LABELSSET)
+            %   return final label prediction PREDL and exponential loss 
+            %   ELOSSES of PREDICTIONS matrix. PREDICTIONS is the set of
+            %   output for each output neuron. LABELSSET is the set of
+            %   labels in the classification problem. 
             
             % Minimal Exponential Loss
-            expLosses=zeros(size(predictions));
+            eLosses=zeros(size(predictions));
             
             for i=1:size(predictions,2)
-                expLosses(:,i) = sum(exp(-predictions.*repmat(uniqueNewTargets(i,:),size(predictions,1),1)),2);
+                eLosses(:,i) = sum(exp(-predictions.*repmat(labelSet(i,:),size(predictions,1),1)),2);
             end
             
-            [minVal,finalOutput] = min(expLosses,[],2);
-            finalOutput = finalOutput';
+            [minVal,predL] = min(eLosses,[],2);
+            predL = predL';
         end
         
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        %
-        % Function: labelToOrelm (Private)
-        % Description: Compute the labels to the ordinal format
-        % Type: It returns the two pattern structures (train and test)
-        % Arguments:
-        %           trainSet--> train structure
-        %           testSet--> test structure
-        %
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        
+        %TODO: This method should work only with a dataset partition. 
         function [trainSet, testSet] = labelToOrelm(obj,trainSet,testSet)
+            %LABELTOORELM Compute the labels to the ordinal format. It 
+            %returns the two pattern structures (train and test)
             
             trainSet.targetsOrelm = ones(trainSet.nOfPatterns,trainSet.nOfClasses);
             testSet.targetsOrelm = ones(testSet.nOfPatterns,trainSet.nOfClasses);
@@ -480,11 +399,7 @@ classdef ELMOP < Algorithm
                 trainSet.targetsOrelm(trainSet.targets<trainSet.uniqueTargets(i),i) = -1;
                 testSet.targetsOrelm(testSet.targets<trainSet.uniqueTargets(i),i) = -1;
             end
-            
         end
-        
-        
     end
-    
 end
 

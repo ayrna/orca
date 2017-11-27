@@ -1,115 +1,63 @@
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Copyright (C) Pedro Antonio Gutiérrez (pagutierrez at uco dot es)
-% María Pérez Ortiz (i82perom at uco dot es)
-% Javier Sánchez Monedero (jsanchezm at uco dot es)
-%
-% This file implements the code for the ORBoost method.
-%
-% The code has been tested with Ubuntu 12.04 x86_64, Debian Wheezy 8, Matlab R2009a and Matlab 2011
-%
-% If you use this code, please cite the associated paper
-% Code updates and citing information:
-% http://www.uco.es/grupos/ayrna/orreview
-% https://github.com/ayrna/orca
-%
-% AYRNA Research group's website:
-% http://www.uco.es/ayrna
-%
-% This program is free software; you can redistribute it and/or
-% modify it under the terms of the GNU General Public License
-% as published by the Free Software Foundation; either version 3
-% of the License, or (at your option) any later version.
-%
-% This program is distributed in the hope that it will be useful,
-% but WITHOUT ANY WARRANTY; without even the implied warranty of
-% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-% GNU General Public License for more details.
-%
-% You should have received a copy of the GNU General Public License
-% along with this program; if not, write to the Free Software
-% Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-% Licence available at: http://www.gnu.org/licenses/gpl-3.0.html
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 classdef ORBoost < Algorithm
-    %ORBoost Boosting ensemble for Ordinal Regression
-    %   This class derives from the Algorithm Class and implements the
-    %   ORBoost method.
-    % Further details in: * P.A. Gutiérrez, M. Pérez-Ortiz, J. Sánchez-Monedero,
-    %                       F. Fernández-Navarro and C. Hervás-Martínez (2015),
-    %                       "Ordinal regression methods: survey and
-    %                       experimental study",
-    %                       IEEE Transactions on Knowledge and Data
-    %                       Engineering. Vol. Accepted
-    %                     * H.-T. Lin and L. Li, “Large-margin thresholded
-    %                       ensembles for ordinal regression: Theory and
-    %                       practice,�? in Proc. of the 17th Algorithmic
-    %                       Learning Theory International Conference, ser.
-    %                       Lecture Notes in Artificial Intelligence
-    %                       (LNAI), J. L. Balcazar, P. M. Long, and F.
-    %                       Stephan, Eds., vol. 4264. Springer-Verlag,
-    %                       October 2006, pp. 319–333.
-    % Dependencies: this class uses
-    % - orensemble implementation http://www.work.caltech.edu/~htlin/program/orensemble/
-    
+    %ORBoost ORBoost Boosting ensemble for Ordinal Regression [1]. This class
+    %uses orensemble implementation at http://www.work.caltech.edu/~htlin/program/orensemble/
+    %
+    %   ORBoost methods:
+    %      runAlgorithm               - runs the corresponding algorithm,
+    %                                   fitting the model and testing it in a dataset.
+    %      train                      - Learns a model from data
+    %      test                       - Performs label prediction
+    %
+    %   References:
+    %
+    %     [1] H.-T. Lin and L. Li, Large-margin thresholded ensembles for
+    %         ordinal regression: Theory and practice, in Proc. of the 17th
+    %         Algorithmic Learning Theory International Conference, ser.
+    %         Lecture Notes in Artificial Intelligence (LNAI), J. L. Balcazar,
+    %         P. M. Long, and F. Stephan, Eds., vol. 4264. Springer-Verlag,
+    %         October 2006, pp. 319-333.
+    %     [1] P.A. Gutiérrez, M. Pérez-Ortiz, J. Sánchez-Monedero,
+    %         F. Fernández-Navarro and C. Hervás-Martínez
+    %         Ordinal regression methods: survey and experimental study
+    %         IEEE Transactions on Knowledge and Data Engineering, Vol. 28. Issue 1
+    %         2016
+    %         http://dx.doi.org/10.1109/TKDE.2015.2457911
+    %
+    %   This file is part of ORCA: https://github.com/ayrna/orca
+    %   Original authors: Pedro Antonio Gutiérrez, María Pérez Ortiz, Javier Sánchez Monedero
+    %   Citation: If you use this code, please cite the associated paper http://www.uco.es/grupos/ayrna/orreview
+    %   Copyright:
+    %       This software is released under the The GNU General Public License v3.0 licence
+    %       available at http://www.gnu.org/licenses/gpl-3.0.html
     properties
-        
         parameters = [];
-        
         name_parameters = {};
-        
         weights = true;
     end
     
     methods
         
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        %
-        % Function: ORBoost (Public Constructor)
-        % Description: It constructs an object of the class
-        %               ORBoost and sets its characteristics.
-        % Type: Void
-        % Arguments:
-        %		-No arguments
-        %
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        
         function obj = ORBoost()
+            %ORBoost constructs an object of the class ORBoost and sets its default
+            %   characteristics
+            %   OBJ = ORBoost() builds ORBoost object
             obj.name = 'OR Ensemble with perceptrons';
-            
         end
         
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        %
-        % Function: defaultParameters (Public)
-        % Description: It assigns the parameters of the
-        %               algorithm to a default value.
-        % Type: Void
-        % Arguments:
-        %           No arguments for this function.
-        %
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        
         function obj = defaultParameters(obj)
+            %DEFAULTPARAMETERS dummy implementation to satisfy abstract
+            %class API requirements
             obj.parameters = [];
         end
         
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        %
-        % Function: runAlgorithm (Public)
-        % Description: This function runs the corresponding
-        %               algorithm, fitting the model, and
-        %               testing it in a dataset. It also
-        %               calculates some statistics as CCR,
-        %               Confusion Matrix, and others.
-        % Type: It returns a set of statistics (Struct)
-        % Arguments:
-        %           Train --> Trainning data for fitting the model
-        %           Test --> Test data for validation
-        %
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        
-        function [model_information] = runAlgorithm(obj,train, test)
+        function [mInf] = runAlgorithm(obj,train, test)
+            %RUNALGORITHM runs the corresponding algorithm, fitting the
+            %model and testing it in a dataset.
+            %   mInf = RUNALGORITHM(OBJ, TRAIN, TEST, PARAMETERS) learns a
+            %   model with TRAIN data and PARAMETERS as hyper-parameter
+            %   values for the method. Test the generalization performance
+            %   with TRAIN and TEST data and returns predictions and model
+            %   in mInf structure.
             trainFile = tempname();
             dlmwrite(trainFile,[train.patterns train.targets],'delimiter',' ','precision',10);
             testFile = tempname();
@@ -119,12 +67,12 @@ classdef ORBoost < Algorithm
             c1 = clock;
             obj.train( train,trainFile, modelFile);
             c2 = clock;
-            model_information.trainTime = etime(c2,c1);
+            mInf.trainTime = etime(c2,c1);
             c1 = clock;
-            [model_information.projectedTrain,model_information.predictedTrain] = obj.test(train,trainFile,modelFile);
-            [model_information.projectedTest,model_information.predictedTest] = obj.test(test,testFile,modelFile);
+            [mInf.projectedTrain,mInf.predictedTrain] = obj.test(train,trainFile,modelFile);
+            [mInf.projectedTest,mInf.predictedTest] = obj.test(test,testFile,modelFile);
             c2 = clock;
-            model_information.testTime = etime(c2,c1);
+            mInf.testTime = etime(c2,c1);
             
             fid = fopen(modelFile);
             if ~(exist ('OCTAVE_VERSION', 'builtin') > 0) && verLessThan('matlab','8.4')
@@ -139,27 +87,16 @@ classdef ORBoost < Algorithm
             model.algorithm = 'OREnsemble';
             model.textInformation = s;
             model.weights = obj.weights;
-            model_information.model = model;
+            mInf.model = model;
             
             delete(trainFile);
             delete(testFile);
             delete(modelFile);
         end
         
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        %
-        % Function: train (Public)
-        % Description: This function train the model for
-        %               the ORBoost algorithm.
-        % Type: void
-        % Arguments:
-        %           train --> Train struct
-        %	    trainFile --> Path to the training file
-        %           modelFile--> Path to the file where the model is to be saved
-        %
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        
         function train( obj,train,trainFile, modelFile )
+            %TRAIN trains the model for the SVR method with TRAIN data and
+            %vector of parameters PARAMETERS. Return the learned model.
             if ispc
                 bin_train = fullfile('Algorithms','orensemble', 'boostrank-train.exe');
                 execute_train = sprintf('%s %s %d %d %d1 204 %d 2000 %s',...
@@ -172,21 +109,8 @@ classdef ORBoost < Algorithm
             end
         end
         
-        
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        %
-        % Function: test (Public)
-        % Description: This function test a model given in
-        %               a set of test patterns.
-        % Outputs: Two arrays (projected patterns and predicted targets)
-        % Arguments:
-        %           test --> Test struct
-        %	    testFile --> Path to the test file
-        %           modelFile--> Path to the file where the model is to be saved
-        %
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        
         function [projected, testTargets]= test( obj,test,testFile,modelFile )
+            %TEST predict labels of TEST patterns labels using MODEL.
             predictFile = tempname();
             if ispc
                 bin_predict = fullfile('Algorithms','orensemble', 'boostrank-predict.exe');

@@ -28,7 +28,6 @@ classdef SVR < Algorithm
     %   Copyright:
     %       This software is released under the The GNU General Public License v3.0 licence
     %       available at http://www.gnu.org/licenses/gpl-3.0.html
-    
     properties
         name_parameters = {'C','k','e'};
         parameters;
@@ -51,6 +50,8 @@ classdef SVR < Algorithm
         function obj = defaultParameters(obj)
             %DEFAULTPARAMETERS It assigns the parameters of the algorithm 
             %   to a default value.
+            
+            % cost
             obj.parameters.C = 10.^(3:-1:-3);
             % kernel width
             obj.parameters.k = 10.^(3:-1:-3);
@@ -105,31 +106,24 @@ classdef SVR < Algorithm
         function model = train(obj,train, parameters)
             %TRAIN trains the model for the SVR method with TRAIN data and
             %vector of parameters PARAMETERS. Return the learned model. 
-            
             svrParameters = ...
                 ['-s 3 -t 2 -c ' num2str(parameters.C) ' -p ' num2str(parameters.e) ' -g '  num2str(parameters.k) ' -q'];
             
             weights = ones(size(train.targets));
             model = svmtrain(weights, train.targets, train.patterns, svrParameters);
-            
         end
-        
-        
+
         % TODO: remove class parameters. Avoid using test.targets
         function [projected, predicted]= test(obj, test, model,classes)
             %TEST predict labels of TEST patterns labels using MODEL. 
-            
             [projected err] = svmpredict(test.targets, test.patterns, model);
             
             classMembership = repmat(projected, 1,numel(classes));
             classMembership = abs(classMembership -  ones(size(classMembership,1),1)*classes);
             
             [m,predicted]=min(classMembership,[],2);
-            
         end
         
     end
-    
-    
 end
 
