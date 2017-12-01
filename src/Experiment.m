@@ -1,7 +1,7 @@
 classdef Experiment < handle
     %EXPERIMENT creates an experiment to run an ORCA's experiment which
-    %   consist on optimising and running a method in fold (a pair of train-test 
-    %   dataset partition). Theexperiment is described by a configuration file. 
+    %   consist on optimising and running a method in fold (a pair of train-test
+    %   dataset partition). Theexperiment is described by a configuration file.
     %   This class is used by Utilities to launch a set of experiments
     %
     %   EXPERIMENT properties:
@@ -22,8 +22,6 @@ classdef Experiment < handle
     %       This software is released under the The GNU General Public License v3.0 licence
     %       available at http://www.gnu.org/licenses/gpl-3.0.html
     %
-    
-
     properties
         
         data = DataSet;
@@ -31,8 +29,8 @@ classdef Experiment < handle
         cvCriteria = MAE;
         crossvalide = 0;
         resultsDir = '';
-        seed = 1;      
-                
+        seed = 1;
+        
     end
     
     properties (SetAccess = private)
@@ -40,27 +38,27 @@ classdef Experiment < handle
         logsDir
     end
     
-    methods        
+    methods
         function obj = launch(obj,expFile)
-        % LAUNCH Launch experiment described in file. 
-        %   EXPOBJ = LAUNCH(EXPFILE) parses EXPFILE and run the experiment
-        %   described on it. It performs the following steps:
-        %   # Preprocess data cleaning and standardization (option need to be actived in configuration file)
-        %   # Optimize parameters by performing a grid search (if selected
-        %   in configuration file)
-        %   # Run algorithm with optimal parameters (if crossvalidation was
-        %   selected)
-        %   # Save experiment results for the fold
+            % LAUNCH Launch experiment described in file.
+            %   EXPOBJ = LAUNCH(EXPFILE) parses EXPFILE and run the experiment
+            %   described on it. It performs the following steps:
+            %   # Preprocess data cleaning and standardization (option need to be actived in configuration file)
+            %   # Optimize parameters by performing a grid search (if selected
+            %   in configuration file)
+            %   # Run algorithm with optimal parameters (if crossvalidation was
+            %   selected)
+            %   # Save experiment results for the fold
             obj.process(expFile);
             obj.run();
         end
     end
     
     methods(Access = private)
-                
+        
         function obj = run(obj)
-        % RUN do experiment steps: data cleaning and standardization, parameters 
-        %   optimization and save results
+            % RUN do experiment steps: data cleaning and standardization, parameters
+            %   optimization and save results
             [train,test] = obj.data.preProcessData();
             
             if obj.crossvalide
@@ -79,73 +77,91 @@ classdef Experiment < handle
         end
         
         function obj = process(obj,fname)
-        % PROCESS parses experiment described in FNAME 
-            
-            fid = fopen(fname,'r+');
-            
-            fprintf('Processing %s\n', fname)
-            
-            while ~feof(fid)
-                new_line = fgetl(fid);
-                new_line = regexprep(new_line, ' ', '');
-                
-                if strncmpi('directory',new_line,3)
-                    obj.data.directory = fgetl(fid);
-                elseif strcmpi('train', new_line)
-                    obj.data.train = fgetl(fid);
-                elseif strcmpi('test', new_line)
-                    obj.data.test = fgetl(fid);
-                elseif strncmpi('results', new_line, 6)
-                    obj.resultsDir = fgetl(fid);
-                elseif strncmpi('algorithm',new_line, 3)
-                    alg = fgetl(fid);
-                    eval(['obj.method = ' alg ';']);
-                    obj.method.defaultParameters();
-                elseif strncmpi('numfold', new_line, 4)
-                    obj.data.nOfFolds = str2num(fgetl(fid));
-                elseif strncmpi('standarize', new_line, 5)
-                    obj.data.standarize = str2num(fgetl(fid));
-                elseif strncmpi('weights', new_line, 7)
-                    wei = fgetl(fid);
-                    eval(['obj.method.weights = ' wei ';']);
-                elseif strncmpi('crossval', new_line, 8)
-                    met = upper(fgetl(fid));
-                    eval(['obj.cvCriteria = ' met ';']);
-                elseif strncmpi('parameter', new_line, 5)
-                    nameparameter = sscanf(new_line, 'parameter %s');
-                    val = fgetl(fid);
-                    if sum(strcmp(nameparameter,obj.method.name_parameters))
-                        eval(['obj.method.parameters.' nameparameter ' = [' val '];']);
-                        obj.crossvalide = 1;
-                    else
-                        error('Wrong parameter name - not found');
-                    end
-                elseif strcmpi('kernel', new_line)
-                    obj.method.kernelType = fgetl(fid);
-                elseif strcmpi('itermax', new_line)
-                    obj.method.itermax = str2num(fgetl(fid));
-                elseif strcmpi('activationFunction', new_line)
-                    obj.method.activationFunction = fgetl(fid);
-                elseif strcmpi('classifier', new_line)
-                    val = lower(fgetl(fid));
-                    eval(['obj.method.classifier = ' val ';']);
-                elseif strcmpi('base_algorithm', new_line)
-                    val = fgetl(fid);
-                    eval(['obj.method.base_algorithm = ' val ';']);
-                elseif strcmpi('seed', new_line)
-                    obj.seed = str2num(fgetl(fid));
-                elseif strcmpi('modelsdir', new_line)
-                    obj.method.modelsdir = fgetl(fid);
-                elseif strcmpi('epsilon', new_line)
-                    % Numerical value
-                    eval(['obj.method.epsilon = ' (fgetl(fid)) ';']);
-                else
-                    error(['Error reading: ' new_line]);
-                end
-                
+            % PROCESS parses experiment described in FNAME
+            try
+                [keys,sections,subsections] = inifile(fname,'readall');
+            catch ME
+                error('Cannot read or parse %s. \nError: %s', confFile, ME.identifier)
             end
             
-            % jsanchez
+            % Extract keys for each experiment
+            %experiment = keys(strcmp(keys(:, 1), sections{i}), :);
+            valueSet = keys(:,4);
+            keySet = keys(:,3);
+            mapObj = containers.Map(keySet,valueSet);
+            
+            % Copy ini values to corresponding object properties
+            try
+                obj.data.directory = mapObj('general-conf@directory');
+                obj.data.train = mapObj('general-conf@train');
+                obj.data.test = mapObj('general-conf@test');
+                obj.resultsDir = mapObj('general-conf@results');
+                obj.data.nOfFolds = str2num(mapObj('general-conf@num_fold'));
+                obj.data.standarize = str2num(mapObj('general-conf@standarize'));
+                met = upper(mapObj('general-conf@crossval'));
+                eval(['obj.cvCriteria = ' met ';']);
+                obj.seed = str2num(mapObj('general-conf@seed'));
+            catch ME
+                error('Configuration file %s does not have mininum fields. Exception %s', fname, ME.identifier)
+            end
+            
+            alg = mapObj('algorithm-parameters@algorithm');
+            try
+                eval(['obj.method = ' alg ';']);
+                obj.method.defaultParameters();
+            catch
+                error('Unknown algorithm')
+            end
+                
+            % TODO: These parameters loading should be moved to Algorithms classes
+            % Those classes should check they have necessary parameters
+            % description to be created and provide default values
+            % otherwise. There, it would be easier to generalize the
+            % code
+            if mapObj.isKey('algorithm-parameters@weights')
+                wei = mapObj('algorithm-parameters@weights');
+                eval(['obj.method.weights = ' wei ';']);
+            end
+            if mapObj.isKey('algorithm-parameters@kernel')
+                obj.method.kernelType = mapObj('algorithm-parameters@kernel');
+            end
+            if mapObj.isKey('algorithm-parameters@activationFunction')
+                obj.method.activationFunction = mapObj('algorithm-parameters@activationFunction');
+            end
+            
+            % Parameters to optimize
+            % Extract keys of parameters to optimize
+            keysc = mapObj.keys;
+            keysc(cellfun('isempty', keysc)) = {''};
+            logicalArray = ~cellfun('isempty', strfind(keysc, 'algorithm-hyper-parameters-to-cv'));
+            keysOpt = keysc(logicalArray);
+            for keysc=1:length(keysOpt)
+                nameparameter = regexp(keysOpt{keysc}, '\w*@(\w*)', 'tokens');
+                nameparameter = nameparameter{:};
+                nameparameter = nameparameter{:};
+                %TODO: ALL IN LOWERCASE nameparameter = lower(nameparameter{:});
+                eval(['obj.method.parameters.' nameparameter ' = [' mapObj(keysOpt{keysc}) '];']);
+                obj.crossvalide = 1;
+            end
+            %
+            %                 elseif strncmpi('parameter', new_line, 5)
+            %                     %TODO
+            %                     nameparameter = sscanf(new_line, 'parameter %s');
+            %                     val = fgetl(fid);
+            %                     if sum(strcmp(nameparameter,obj.method.name_parameters))
+            %                         eval(['obj.method.parameters.' nameparameter ' = [' val '];']);
+            %                         obj.crossvalide = 1;
+            %                     else
+            %                         error('Wrong parameter name - not found');
+            %                     end
+            %
+            %
+            %
+            %
+            %                 end
+            
+            
+            % Fix user bad configuration
             if(obj.crossvalide == 0 && numel(obj.method.name_parameters)~=0 ...
                     && ~strcmpi(obj.method.name_parameters,'dummy'))
                 obj.crossvalide = 1;
@@ -153,13 +169,11 @@ classdef Experiment < handle
                 disp('No parameter info found - setting up default parameters.')
             end
             
-            fclose(fid);
-            
         end
         
         function obj = saveResults(obj,TotalResults)
-        % SAVERESULTS saves the results of the experiment and
-        % the best hyperparameters.
+            % SAVERESULTS saves the results of the experiment and
+            % the best hyperparameters.
             
             if numel(obj.method.name_parameters)~=0
                 outputFile = [obj.resultsDir filesep 'OptHyperparams' filesep obj.data.dataname ];
@@ -205,11 +219,11 @@ classdef Experiment < handle
         
         
         function optimals = crossValideParams(obj,train)
-        % CROSSVALIDE Function for performing the crossvalidation in a specific train partition. 
-        %
-        %   OPTIMALS = CROSSVALIDEPARAMS(TRAIN) Divides each the data in k-folds
-        %   (k defined by 'num fold' in configuration file). Returns vector OPTIMALS
-        %   with optimal parameter(s)
+            % CROSSVALIDE Function for performing the crossvalidation in a specific train partition.
+            %
+            %   OPTIMALS = CROSSVALIDEPARAMS(TRAIN) Divides each the data in k-folds
+            %   (k defined by 'num fold' in configuration file). Returns vector OPTIMALS
+            %   with optimal parameter(s)
             nOfFolds = obj.data.nOfFolds;
             parameters = obj.method.parameters;
             par = fieldnames(parameters);

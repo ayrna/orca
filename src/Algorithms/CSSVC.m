@@ -24,7 +24,7 @@ classdef CSSVC < Algorithm
     %       This software is released under the The GNU General Public License v3.0 licence
     %       available at http://www.gnu.org/licenses/gpl-3.0.html
     properties
-        name_parameters = {'C','k'};
+        name_parameters = {'c','k'};
         parameters;
     end
     
@@ -47,7 +47,7 @@ classdef CSSVC < Algorithm
             %to a default value.
             
             % cost
-            obj.parameters.C = 10.^(-3:1:3);
+            obj.parameters.c = 10.^(-3:1:3);
             % kernel width
             obj.parameters.k = 10.^(-3:1:3);
         end
