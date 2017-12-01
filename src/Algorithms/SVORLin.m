@@ -59,7 +59,7 @@ classdef SVORLin < Algorithm
             %   in mInf structure.
             nParam = numel(obj.name_parameters);
             parameters = reshape(parameters,[1,nParam]);
-            param = cell2struct(num2cell(parameters(1:nParam)),obj.name_parameters,nParam);
+            param = cell2struct(num2cell(parameters(1:nParam)),obj.name_parameters,2);
             
             c1 = clock;
             [model,mInf.projectedTrain, mInf.predictedTrain] = obj.train(train,param);            
