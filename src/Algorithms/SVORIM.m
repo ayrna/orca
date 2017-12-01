@@ -30,6 +30,7 @@ classdef SVORIM < Algorithm
     properties
         parameters;
         name_parameters = {'C', 'k'};
+        algorithmMexPath = fullfile('Algorithms','SVORIM');
     end
     
     methods
@@ -83,7 +84,9 @@ classdef SVORIM < Algorithm
         function [model,projectedTrain,predictedTrain] = train(obj, train, parameters)
             %TRAIN trains the model for the SVORIM method with TRAIN data and
             %vector of parameters PARAMETERS. Return the learned model.
-            addpath(fullfile('Algorithms','SVORIM'));
+            if isempty(strfind(path,obj.algorithmMexPath))
+                addpath(obj.algorithmMexPath);
+            end
             [alpha, thresholds, projectedTrain] = svorim([train.patterns train.targets],parameters.k,parameters.C,0,0,0);
             predictedTrain = obj.assignLabels(projectedTrain, thresholds);
             model.projection = alpha;
@@ -91,7 +94,9 @@ classdef SVORIM < Algorithm
             model.parameters = parameters;
             model.algorithm = 'SVORIM';
             model.train = train.patterns;
-            rmpath(fullfile('Algorithms','SVORIM'));
+            if ~isempty(strfind(path,obj.algorithmMexPath))
+                rmpath(obj.algorithmMexPath);
+            end
         end
         
         function [projected, predicted] = test(obj, test, model)

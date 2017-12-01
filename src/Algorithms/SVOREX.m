@@ -29,10 +29,9 @@ classdef SVOREX < Algorithm
     %       available at http://www.gnu.org/licenses/gpl-3.0.html
     
     properties
-        
-        parameters;
-        
+        parameters;        
         name_parameters = {'C', 'k'};
+        algorithmMexPath = fullfile('Algorithms','SVOREX');
     end
     
     methods
@@ -75,7 +74,6 @@ classdef SVOREX < Algorithm
             c2 = clock;
             mInf.trainTime = etime(c2,c1);
             
-            
             c1 = clock;
             [mInf.projectedTest, mInf.predictedTest] = obj.test(test.patterns, model);
             c2 = clock;
@@ -87,7 +85,9 @@ classdef SVOREX < Algorithm
         function [model, projectedTrain, predictedTrain] = train(obj,train,parameters)
             %TRAIN trains the model for the SVOREX method with TRAIN data and
             %vector of parameters PARAMETERS. Return the learned model.
-            addpath(fullfile('Algorithms','SVOREX'));
+            if isempty(strfind(path,obj.algorithmMexPath))
+                addpath(obj.algorithmMexPath);
+            end
             [alpha, thresholds, projectedTrain] = svorex([train.patterns train.targets],parameters.k,parameters.C,0,0,0);
             predictedTrain = obj.assignLabels(projectedTrain, thresholds);
             model.projection = alpha;
@@ -95,7 +95,9 @@ classdef SVOREX < Algorithm
             model.parameters = parameters;
             model.algorithm = 'SVOREX';
             model.train = train.patterns;
-            rmpath(fullfile('Algorithms','SVOREX'));
+            if ~isempty(strfind(path,obj.algorithmMexPath))
+                rmpath(obj.algorithmMexPath);
+            end
             
         end
         
