@@ -25,10 +25,10 @@ if nargin < 1
                 mex COMPFLAGS="\$COMPFLAGS -std=c++98 -O3" -I.. -largeArrayDims svmtrain.c ../svm.cpp svm_model_matlab.c
                 mex COMPFLAGS="\$COMPFLAGS -std=c++98 -O3" -I.. -largeArrayDims svmpredict.c ../svm.cpp svm_model_matlab.c
             else
-                mex CFLAGS="\$CFLAGS -std=c++98 -O3" -largeArrayDims libsvmread.c
-                mex CFLAGS="\$CFLAGS -std=c++98 -O3" -largeArrayDims libsvmwrite.c
-                mex CFLAGS="\$CFLAGS -std=c++98 -O3" -I.. -largeArrayDims svmtrain.c ../svm.cpp svm_model_matlab.c
-                mex CFLAGS="\$CFLAGS -std=c++98 -O3" -I.. -largeArrayDims svmpredict.c ../svm.cpp svm_model_matlab.c
+                mex CFLAGS="\$CFLAGS -std=gnu99 -O3" -largeArrayDims libsvmread.c
+                mex CFLAGS="\$CFLAGS -std=gnu99 -O3" -largeArrayDims libsvmwrite.c
+                mex CFLAGS="\$CFLAGS -std=gnu99 -O3" -I.. -largeArrayDims svmtrain.c ../svm.cpp svm_model_matlab.c
+                mex CFLAGS="\$CFLAGS -std=gnu99 -O3" -I.. -largeArrayDims svmpredict.c ../svm.cpp svm_model_matlab.c
             end
         end
     catch err
