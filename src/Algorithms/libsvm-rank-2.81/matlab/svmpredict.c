@@ -24,7 +24,7 @@ void read_sparse_instance(const mxArray *prhs, int index, struct svm_node *x)
 	jc = mxGetJc(prhs);
 	samples = mxGetPr(prhs);
 
-	// each column is one instance
+	/* each column is one instance*/
 	j = 0;
 	low = (int)jc[index], high = (int)jc[index+1];
 	for(i=low;i<high;i++)
@@ -51,7 +51,7 @@ void predict(mxArray *plhs[], const mxArray *prhs[], struct svm_model *model, co
 	double *ptr_instance, *ptr_label, *ptr_predict_label; 
 	double *ptr_prob_estimates, *ptr_dec_values, *ptr;
 	struct svm_node *x;
-	mxArray *pplhs[1]; // transposed instance sparse matrix
+	mxArray *pplhs[1]; /* transposed instance sparse matrix*/
 
 	int correct = 0;
 	int total = 0;
@@ -62,7 +62,7 @@ void predict(mxArray *plhs[], const mxArray *prhs[], struct svm_model *model, co
 	int nr_class=svm_get_nr_class(model);
 	double *prob_estimates=NULL;
 
-	// prhs[1] = testing instance matrix
+	/* prhs[1] = testing instance matrix*/
 	feature_number = (int)mxGetN(prhs[1]);
 	testing_instance_number = (int)mxGetM(prhs[1]);
 	label_vector_row_num = (int)mxGetM(prhs[0]);
@@ -84,12 +84,12 @@ void predict(mxArray *plhs[], const mxArray *prhs[], struct svm_model *model, co
 	ptr_instance = mxGetPr(prhs[1]);
 	ptr_label    = mxGetPr(prhs[0]);
 
-	// transpose instance matrix
+	/* transpose instance matrix*/
 	if(mxIsSparse(prhs[1]))
 	{
 		if(model->param.kernel_type == PRECOMPUTED)
 		{
-			// precomputed kernel requires dense matrix, so we make one
+			/* precomputed kernel requires dense matrix, so we make one*/
 			mxArray *rhs[1], *lhs[1];
 			rhs[0] = mxDuplicateArray(prhs[1]);
 			if(mexCallMATLAB(1, lhs, 1, rhs, "full"))
@@ -125,7 +125,7 @@ void predict(mxArray *plhs[], const mxArray *prhs[], struct svm_model *model, co
 	plhs[0] = mxCreateDoubleMatrix(testing_instance_number, 1, mxREAL);
 	if(predict_probability)
 	{
-		// prob estimates are in plhs[2]
+		/* prob estimates are in plhs[2]*/
 		if(svm_type==C_SVC || svm_type==NU_SVC)
 			plhs[2] = mxCreateDoubleMatrix(testing_instance_number, nr_class, mxREAL);
 		else
@@ -133,13 +133,13 @@ void predict(mxArray *plhs[], const mxArray *prhs[], struct svm_model *model, co
 	}
 	else
 	{
-		// decision values are in plhs[2]
+		/* decision values are in plhs[2]*/
 		if(svm_type == ONE_CLASS ||
 		   svm_type == C_RNK ||
 		   svm_type == SVORIM ||
 		   svm_type == EPSILON_SVR ||
 		   svm_type == NU_SVR ||
-		   nr_class == 1) // if only one class in training data, decision values are still returned.
+		   nr_class == 1) /* if only one class in training data, decision values are still returned.*/
 			plhs[2] = mxCreateDoubleMatrix(testing_instance_number, 1, mxREAL);
 		else
 			plhs[2] = mxCreateDoubleMatrix(testing_instance_number, nr_class*(nr_class-1)/2, mxREAL);
@@ -156,7 +156,7 @@ void predict(mxArray *plhs[], const mxArray *prhs[], struct svm_model *model, co
 
 		target_label = ptr_label[instance_index];
 
-		if(mxIsSparse(prhs[1]) && model->param.kernel_type != PRECOMPUTED) // prhs[1]^T is still sparse
+		if(mxIsSparse(prhs[1]) && model->param.kernel_type != PRECOMPUTED) /* prhs[1]^T is still sparse*/
 			read_sparse_instance(pplhs[0], instance_index, x);
 		else
 		{
@@ -255,19 +255,19 @@ void predict(mxArray *plhs[], const mxArray *prhs[], struct svm_model *model, co
 		sumpt += predict_label*target_label;
 		++total;
 	}
-//	if(svm_type==NU_SVR || svm_type==EPSILON_SVR)
-//	{
-//		mexPrintf("Mean squared error = %g (regression)\n",error/total);
-//		mexPrintf("Squared correlation coefficient = %g (regression)\n",
-//			((total*sumpt-sump*sumt)*(total*sumpt-sump*sumt))/
-//			((total*sumpp-sump*sump)*(total*sumtt-sumt*sumt))
-//			);
-//	}
-//	else
-//		mexPrintf("Accuracy = %g%% (%d/%d) (classification)\n",
-//			(double)correct/total*100,correct,total);
+	/*if(svm_type==NU_SVR || svm_type==EPSILON_SVR)
+	{
+		mexPrintf("Mean squared error = %g (regression)\n",error/total);
+		mexPrintf("Squared correlation coefficient = %g (regression)\n",
+			((total*sumpt-sump*sumt)*(total*sumpt-sump*sumt))/
+			((total*sumpp-sump*sump)*(total*sumtt-sumt*sumt))
+			);
+	}
+	else
+		mexPrintf("Accuracy = %g%% (%d/%d) (classification)\n",
+			(double)correct/total*100,correct,total);*/
 
-	// return accuracy, mean squared error, squared correlation coefficient
+	/* return accuracy, mean squared error, squared correlation coefficient*/
 	plhs[1] = mxCreateDoubleMatrix(3, 1, mxREAL);
 	ptr = mxGetPr(plhs[1]);
 	ptr[0] = (double)correct/total*100;
@@ -318,13 +318,13 @@ void mexFunction( int nlhs, mxArray *plhs[],
 	{
 		const char *error_msg;
 
-		// parse options
+		/* parse options*/
 		if(nrhs==4)
 		{
 			int i, argc = 1;
 			char cmd[CMD_LEN], *argv[CMD_LEN/2];
 
-			// put options in argv[]
+			/* put options in argv[]*/
 			mxGetString(prhs[3], cmd,  mxGetN(prhs[3]) + 1);
 			if((argv[argc] = strtok(cmd, " ")) != NULL)
 				while((argv[++argc] = strtok(NULL, " ")) != NULL)
@@ -378,7 +378,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
 		}
 
 		predict(plhs, prhs, model, prob_estimate_flag);
-		// destroy model
+		/* destroy model*/
 		svm_free_and_destroy_model(&model);
 	}
 	else

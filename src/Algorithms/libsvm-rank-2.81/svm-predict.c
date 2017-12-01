@@ -58,7 +58,7 @@ void predict(FILE *input, FILE *output)
 					goto show;
 	
 				c = fgetc(input);
-				//read in consecutive spaces until the last one or newline
+				/*read in consecutive spaces until the last one or newline*/
 				while (isspace(c) && c != '\n'){
 					int cnext = fgetc(input);
 					if (!isspace(cnext)){
@@ -68,7 +68,7 @@ void predict(FILE *input, FILE *output)
 					c = cnext;				
 				}
 
-				//newline indicates label
+				/*newline indicates label*/
 				if (c == '\n' || c == EOF){
 					target = tmp;
 					x[i++].index = -1;
@@ -76,7 +76,7 @@ void predict(FILE *input, FILE *output)
 				}
 				else if (isspace(c)){
 					if (tmp != 0){
-						if(i>=max_nr_attr-1)	// need one more for index = -1
+						if(i>=max_nr_attr-1)	/* need one more for index = -1*/
 						{
 							max_nr_attr *= 2;
 							x = (struct svm_node *) realloc(x,max_nr_attr*sizeof(struct svm_node));
@@ -102,7 +102,7 @@ void predict(FILE *input, FILE *output)
 	
 			while(1)
 			{
-				if(i>=max_nr_attr-1)	// need one more for index = -1
+				if(i>=max_nr_attr-1)	/* need one more for index = -1*/
 				{
 					max_nr_attr *= 2;
 					x = (struct svm_node *) realloc(x,max_nr_attr*sizeof(struct svm_node));
@@ -176,7 +176,7 @@ int main(int argc, char **argv)
 	FILE *input, *output;
 	int i;
 
-	// parse options
+	/* parse options*/
 	for(i=1;i<argc;i++)
 	{
 		if(argv[i][0] != '-') break;
