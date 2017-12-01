@@ -63,16 +63,14 @@ classdef SVORIM < Algorithm
             %   values for the method. Test the generalization performance
             %   with TRAIN and TEST data and returns predictions and model
             %   in mInf structure.
-            addpath(fullfile('Algorithms','SVORIM'));
-            
-            param.C = parameters(1);
-            param.k = parameters(2);
+            nParam = numel(obj.name_parameters);
+            parameters = reshape(parameters,[1,nParam]);
+            param = cell2struct(num2cell(parameters(1:nParam)),obj.name_parameters,nParam);
             
             c1 = clock;
-            [model,mInf.projectedTest,mInf.projectedTrain, mInf.trainTime, mInf.testTime] = obj.train(train,test,param);
+            [model,mInf.projectedTrain, mInf.predictedTrain] = obj.train(train,param);
             c2 = clock;
             mInf.trainTime = etime(c2,c1);
-            mInf.predictedTrain = obj.assignLabels(mInf.projectedTrain, model.thresholds);
             
             c1 = clock;
             [mInf.projectedTest, mInf.predictedTest] = obj.test(test.patterns, model);
@@ -80,27 +78,28 @@ classdef SVORIM < Algorithm
             mInf.testTime = etime(c2,c1);
             mInf.model = model;
             
-            rmpath(fullfile('Algorithms','SVORIM'));
-            
         end
         
-        function [model, projectedTest, projectedTrain, trainTime, testTime] = train(obj, train,test, parameters)
+        function [model,projectedTrain,predictedTrain] = train(obj, train, parameters)
             %TRAIN trains the model for the SVORIM method with TRAIN data and
             %vector of parameters PARAMETERS. Return the learned model.
-            [projectedTest, alpha, thresholds, projectedTrain, trainTime, testTime] = svorim([train.patterns train.targets],[test.patterns test.targets],parameters.k,parameters.C,0,0,0);
+            addpath(fullfile('Algorithms','SVORIM'));
+            [alpha, thresholds, projectedTrain] = svorim([train.patterns train.targets],parameters.k,parameters.C,0,0,0);
+            predictedTrain = obj.assignLabels(projectedTrain, thresholds);
             model.projection = alpha;
             model.thresholds = thresholds;
             model.parameters = parameters;
             model.algorithm = 'SVORIM';
             model.train = train.patterns;
+            rmpath(fullfile('Algorithms','SVORIM'));
         end
         
         function [projected, predicted] = test(obj, test, model)
-            %TEST predict labels of TEST patterns labels using MODEL.            
+            %TEST predict labels of TEST patterns labels using MODEL.       
             kernelMatrix = computeKernelMatrix(model.train',test','rbf',model.parameters.k);
             projected = model.projection*kernelMatrix;
             
-            predicted = assignLabels(obj, projected, model.thresholds);            
+            predicted = assignLabels(obj, projected, model.thresholds);      
         end
         
         function predicted = assignLabels(obj, projected, thresholds)            
