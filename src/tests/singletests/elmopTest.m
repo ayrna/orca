@@ -7,6 +7,9 @@ method = 'ELMOP';
 % Create the algorithm object
 algorithmObj = ELMOP();
 
+% Clear parameter struct
+clear param;
+
 % Parameter hiddenN (Number of neurons in the hidden layer)
 param(1) = 50;
 

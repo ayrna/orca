@@ -6,6 +6,9 @@ method = 'SVORIM';
 % Create the algorithm object
 algorithmObj = SVORIM();
 
+% Clear parameter struct
+clear param;
+
 % Parameter C (Cost)
 param(1) = 10;
 

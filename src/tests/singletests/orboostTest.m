@@ -6,6 +6,9 @@ method = 'ORBoost';
 % Create the algorithm object
 algorithmObj = ORBoost();
 
+% Clear parameter struct
+clear param;
+
 % Running the algorithm
 info = algorithmObj.runAlgorithm(train,test);
 
