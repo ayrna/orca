@@ -63,7 +63,7 @@ classdef OPBE < Algorithm
             mInf.trainTime = etime(c2,c1);
             
             c1 = clock;
-            [mInf.projectedTest, mInf.predictedTest] = obj.test( test, train, model);
+            [mInf.projectedTest, mInf.predictedTest] = obj.test( test, model);
             c2 = clock;
             
             mInf.testTime = etime(c2,c1);
@@ -171,10 +171,10 @@ classdef OPBE < Algorithm
             
         end
         
-        function [projected, testTargets] = test(obj, test, train, models)
+        function [projected, testTargets] = test(obj, test, models)
             %TEST predict labels of TEST patterns labels using model in MODEL.
-            classes = unique(train.targets);
-            nOfClasses = numel(classes);
+            nOfClasses = size(models,2);
+            classes = 1:nOfClasses;
             weights = zeros(nOfClasses,1);
             classBelongingProbTest = ones(nOfClasses, size(test.patterns,1));
             

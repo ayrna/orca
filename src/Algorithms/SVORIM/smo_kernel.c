@@ -19,6 +19,7 @@
 #include <sys/types.h> 
 #include <sys/timeb.h>
 #include "smo.h"
+//#include "mex.h"
 
 
 double Calculate_Kernel( double * pi, double * pj, smo_Settings * settings )
@@ -98,6 +99,14 @@ double Calculate_Kernel( double * pi, double * pj, smo_Settings * settings )
 			}
 		}
 	}
+	/*for ( dimen = 0; dimen < dimension; dimen ++ )	
+			mexPrintf("%f ", pi[dimen]);
+	mexPrintf(" /// ");
+	for ( dimen = 0; dimen < dimension; dimen ++ )	
+			mexPrintf("%f ", pj[dimen]);
+	for ( dimen = 0; dimen < dimension; dimen ++ )	
+			mexPrintf("%f ",settings->ard[dimen]);
+	mexPrintf(" --> %f\n", kernel);*/
 	if (pi==pj)
 		return kernel + 0.001 ;
 	else

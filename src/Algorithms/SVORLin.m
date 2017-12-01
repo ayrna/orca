@@ -60,35 +60,45 @@ classdef SVORLin < Algorithm
             param.C = parameters(1);
             
             c1 = clock;
-            [model,mInf.projectedTest,mInf.projectedTrain, mInf.trainTime, mInf.testTime] = obj.train([train.patterns train.targets],[test.patterns test.targets],param);
+            [model,mInf.projectedTest,mInf.projectedTrain, mInf.trainTime, mInf.testTime] = obj.train(train,test,param);
             
             c2 = clock;
             mInf.trainTime = etime(c2,c1);
+            mInf.predictedTrain = obj.assignLabels(mInf.projectedTrain, model.thresholds);
             
             c1 = clock;
-            mInf.predictedTrain = obj.test(mInf.projectedTrain, model);
-            mInf.predictedTest = obj.test(mInf.projectedTest, model);
+            [mInf.projectedTest, mInf.predictedTest] = obj.test(test.patterns, model);
             c2 = clock;
             mInf.testTime = etime(c2,c1);
             mInf.model = model;
+            
             rmpath(fullfile('Algorithms','SVORIM'));
         end
         
         function [model, projectedTest, projectedTrain, trainTime, testTime] = train(obj, train,test, parameters)
             %TRAIN trains the model for the SVR method with TRAIN data and
             %vector of parameters PARAMETERS. Return the learned model.
-            [projectedTest, alpha, thresholds, projectedTrain, trainTime, testTime] = svorim(train,test,1,parameters.C,0,0,1);
+            [projectedTest, alpha, thresholds, projectedTrain, trainTime, testTime] = svorim([train.patterns train.targets],[test.patterns test.targets],1,parameters.C,0,0,1);
             model.projection = alpha;
             model.thresholds = thresholds;
             model.parameters = parameters;
             model.algorithm = 'SVORLin';
+            model.train = train.patterns;
         end
         
-        function [targets] = test(obj, project, model)
-            %TEST predict labels of TEST patterns labels using MODEL.
-            numClasses = size(model.thresholds,2)+1;
-            project2 = repmat(project, numClasses-1,1);
-            project2 = project2 - model.thresholds'*ones(1,size(project2,2));
+        function [projected, predicted] = test(obj, test, model)
+            %TEST predict labels of TEST patterns labels using MODEL.            
+            kernelMatrix = computeKernelMatrix(model.train',test','linear',1);
+            projected = model.projection*kernelMatrix;
+            
+            predicted = assignLabels(obj, projected, model.thresholds);            
+        end
+        
+        function predicted = assignLabels(obj, projected, thresholds)            
+            numClasses = size(thresholds,2)+1;
+            %TEST assign the labels from projections and thresholds
+            project2 = repmat(projected, numClasses-1,1);
+            project2 = project2 - thresholds'*ones(1,size(project2,2));
             
             % Asignation of the class
             % f(x) = max {Wx-bk<0} or Wx - b_(K-1) > 0
@@ -99,14 +109,13 @@ classdef SVORLin < Algorithm
             wx(wx(:,:)>0)=NaN;
             
             % Then, we choose the biggest one.
-            [maximum,targets]=max(wx,[],1);
+            [maximum,predicted]=max(wx,[],1);
             
             % If a max is equal to NaN is because Wx-bk for all k is >0, so this
             % pattern belongs to the last class.
-            targets(isnan(maximum(:,:)))=numClasses;
+            predicted(isnan(maximum(:,:)))=numClasses;
             
-            targets = targets';
-            
+            predicted = predicted';
         end
         
         
