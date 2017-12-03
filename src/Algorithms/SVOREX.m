@@ -66,8 +66,12 @@ classdef SVOREX < Algorithm
             %   with TRAIN and TEST data and returns predictions and model
             %   in mInf structure.
             nParam = numel(obj.name_parameters);
-            parameters = reshape(parameters,[1,nParam]);
-            param = cell2struct(num2cell(parameters(1:nParam)),obj.name_parameters,2);
+            if nParam~= 0
+                parameters = reshape(parameters,[1,nParam]);
+                param = cell2struct(num2cell(parameters(1:nParam)),obj.name_parameters,2);
+            else
+                param = [];
+            end
             
             c1 = clock;
             [model,mInf.projectedTrain, mInf.predictedTrain] = obj.train(train,param);
