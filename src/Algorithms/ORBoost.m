@@ -50,84 +50,117 @@ classdef ORBoost < Algorithm
             obj.parameters = [];
         end
         
-        function [mInf] = runAlgorithm(obj,train, test)
+        function [mInf] = runAlgorithm(obj, train, test, parameters)
             %RUNALGORITHM runs the corresponding algorithm, fitting the
             %model and testing it in a dataset.
             %   mInf = RUNALGORITHM(OBJ, TRAIN, TEST, PARAMETERS) learns a
             %   model with TRAIN data and PARAMETERS as hyper-parameter
             %   values for the method. Test the generalization performance
             %   with TRAIN and TEST data and returns predictions and model
-            %   in mInf structure.
-            trainFile = tempname();
-            dlmwrite(trainFile,[train.patterns train.targets],'delimiter',' ','precision',10);
-            testFile = tempname();
-            dlmwrite(testFile,[test.patterns test.targets],'delimiter',' ','precision',10);
-            modelFile = tempname();
+            %   in mInf structure.            
+            nParam = numel(obj.name_parameters);
+            if nParam~= 0
+                parameters = reshape(parameters,[1,nParam]);
+                param = cell2struct(num2cell(parameters(1:nParam)),obj.name_parameters,2);
+            else
+                param = [];
+            end
             
             c1 = clock;
-            obj.train( train,trainFile, modelFile);
+            [model,mInf.projectedTrain, mInf.predictedTrain] = obj.train(train,param);
             c2 = clock;
             mInf.trainTime = etime(c2,c1);
+            
             c1 = clock;
-            [mInf.projectedTrain,mInf.predictedTrain] = obj.test(train,trainFile,modelFile);
-            [mInf.projectedTest,mInf.predictedTest] = obj.test(test,testFile,modelFile);
+            [mInf.projectedTest, mInf.predictedTest] = obj.test(test.patterns, model);
             c2 = clock;
             mInf.testTime = etime(c2,c1);
+            mInf.model = model;
             
+            
+        end
+        
+        function [model, projectedTrain, predictedTrain] = train(obj,train,parameters)
+            %TRAIN trains the model for the SVR method with TRAIN data and
+            %vector of parameters PARAMETERS. Return the learned model.
+            
+            % Output model file
+            modelFile = tempname();
+            % Write train file
+            trainFile = tempname();
+            dlmwrite(trainFile,[train.patterns train.targets],'delimiter',' ','precision',10);
+            
+            % Prepare command line
+            if ispc
+                bin_train = fullfile('Algorithms','orensemble', 'boostrank-train.exe');
+                execute_train = sprintf('%s %s %d %d %d1 204 %d 2000 %s',...
+                    bin_train, trainFile,size(train.patterns,1),size(train.patterns,2),(3+obj.weights),max(unique(train.targets)),modelFile);
+            else
+                execute_train = sprintf('./Algorithms/orensemble/hack.sh ./Algorithms/orensemble/boostrank-train %s %d %d %d1 204 %d 2000 %s',...
+                    trainFile,size(train.patterns,1),size(train.patterns,2),(3+obj.weights),max(unique(train.targets)),modelFile);
+            end
+            
+            % Execute train
+            system(execute_train);
+            
+            % Extract contents of model file
             fid = fopen(modelFile);
             if ~(exist ('OCTAVE_VERSION', 'builtin') > 0) && verLessThan('matlab','8.4')
                 s = textscan(fid,'%s','Delimiter','\n','bufsize', 2^18-1);
             else
                 s = textscan(fid,'%s','Delimiter','\n');
-            end
-            
+            end            
             s = s{1};
             fclose(fid);
             
             model.algorithm = 'OREnsemble';
             model.textInformation = s;
             model.weights = obj.weights;
-            mInf.model = model;
-            
+            [projectedTrain,predictedTrain] = obj.test(train.patterns,model);
+            % Delete temp files
             delete(trainFile);
-            delete(testFile);
             delete(modelFile);
         end
         
-        function train( obj,train,trainFile, modelFile )
-            %TRAIN trains the model for the SVR method with TRAIN data and
-            %vector of parameters PARAMETERS. Return the learned model.
-            if ispc
-                bin_train = fullfile('Algorithms','orensemble', 'boostrank-train.exe');
-                execute_train = sprintf('%s %s %d %d %d1 204 %d 2000 %s',...
-                    bin_train, trainFile,size(train.patterns,1),size(train.patterns,2),(3+obj.weights),max(unique(train.targets)),modelFile);
-                system(execute_train);
-            else
-                execute_train = sprintf('./Algorithms/orensemble/hack.sh ./Algorithms/orensemble/boostrank-train %s %d %d %d1 204 %d 2000 %s',...
-                    trainFile,size(train.patterns,1),size(train.patterns,2),(3+obj.weights),max(unique(train.targets)),modelFile);
-                system(execute_train);
-            end
-        end
-        
-        function [projected, testTargets]= test( obj,test,testFile,modelFile )
+        function [projected, predicted]= test( obj,test,model)
             %TEST predict labels of TEST patterns labels using MODEL.
+            
+            % Write test file
+            testFile = tempname();
+            dlmwrite(testFile,[test ones(size(test,1),1)],'delimiter',' ','precision',10);
+            % Write model file
+            modelFile = tempname();
+            fid = fopen(modelFile,'w');
+            nLines = size(model.textInformation,1);
+            for iLine = 1:nLines
+                fprintf(fid,'%s\n',model.textInformation{iLine});
+            end
+            fclose(fid);
+            % Name of prediction file
             predictFile = tempname();
+            
+            % Prepare command line
             if ispc
                 bin_predict = fullfile('Algorithms','orensemble', 'boostrank-predict.exe');
                 execute_test = sprintf('%s %s %d %d %s 2000 %s',...
-                    bin_predict,testFile,size(test.patterns,1),...
-                    size(test.patterns,2),modelFile,predictFile);
+                    bin_predict,testFile,size(test,1),...
+                    size(test,2),modelFile,predictFile);
             else
                 execute_test = ...
                     sprintf('./Algorithms/orensemble/hack.sh ./Algorithms/orensemble/boostrank-predict %s %d %d %s 2000 %s',...
-                    testFile,size(test.patterns,1),size(test.patterns,2),modelFile,predictFile);
+                    testFile,size(test,1),size(test,2),modelFile,predictFile);
             end
             
+            % Execute test
             system(execute_test);
+            % Extract predictions (targets and projections)
             all = load(predictFile);
-            testTargets = all(:,1);
+            predicted = all(:,1);
             projected = all(:,2);
+            % Delete temp files
             delete(predictFile);
+            delete(testFile);
+            delete(modelFile);
         end
         
     end
