@@ -79,35 +79,6 @@ classdef KDLOR < Algorithm
             obj.parameters.u = [0.01,0.001,0.0001,0.00001,0.000001];
         end
         
-        function [mInf] = runAlgorithm(obj,train, test, parameters)
-            %RUNALGORITHM runs the corresponding algorithm, fitting the
-            %model and testing it in a dataset.
-            %   mInf = RUNALGORITHM(OBJ, TRAIN, TEST, PARAMETERS) learns a
-            %   model with TRAIN data and PARAMETERS as hyper-parameter
-            %   values for the method. Test the generalization performance
-            %   with TRAIN and TEST data and returns predictions and model
-            %   in mInf structure.
-            nParam = numel(obj.name_parameters);
-            if nParam~= 0
-                parameters = reshape(parameters,[1,nParam]);
-                param = cell2struct(num2cell(parameters(1:nParam)),obj.name_parameters,2);
-            else
-                param = [];
-            end
-            
-            c1 = clock;
-            [model,mInf.projectedTrain, mInf.predictedTrain] = obj.train(train,param);
-            c2 = clock;
-            mInf.trainTime = etime(c2,c1);
-            
-            c1 = clock;
-            [mInf.projectedTest, mInf.predictedTest] = obj.test(test.patterns, model);
-            c2 = clock;
-            mInf.testTime = etime(c2,c1);
-            mInf.model = model;     
-            
-        end
-        
         % TODO: Fix to receibe data structure as unique parameter
         function [model, projectedTrain, predictedTrain]= train( obj, train, parameters)
             %TRAIN trains the model for the KDLOR method with TRAIN data and
