@@ -434,9 +434,9 @@ classdef Utilities < handle
                 % Check that all datasets partitions are accesible
                 % The method checkDatasets calls error
                 Utilities.checkDatasets(directory, datasets);
-                %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
                 [train, test] = Utilities.processDirectory(directory,datasetsList);
-                %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
                 % Generate one config file and corresponding directories
                 % for each fold.
                 for i=1:numel(train)
@@ -454,14 +454,7 @@ classdef Utilities < handle
                     fprintf(fich, [directory '/' datasetsList{i} '/' 'matlab']);
                     fclose(fich);
                     
-                    runfolds = numel(train{i});
-                    % Map for the dataset. Need to explicitly create a new
-                    % object
-%                     mapObjDS = containers.Map(expObj.keys, expObj.values);
-%                     mapObjDS.remove('general-conf@dir');
-%                     mapObjDS.remove('exp-id');
-%                     mapObjDS.remove('general-conf@datasets');
-                    
+                    runfolds = numel(train{i});                    
                     for j=1:runfolds
                         iniFile = [conf_file '-' datasetsList{i} '-' num2str(j) '.ini'];
                         
@@ -471,14 +464,6 @@ classdef Utilities < handle
                         expObj.general('results') = [resultsDir '/' datasetsList{i} '-' id_experiment];
                         
                         expObj.writeIni(iniFile);
-%                         emptyStr = cell(1,1);
-%                         emptyStr{1,1} = '';
-%                         idAsCell = cell(1,1);
-%                         idAsCell{1,1} = expObj('exp-id');
-%                         writeKeys = [repmat(idAsCell,mapObjDS.Count, 1) ...
-%                             repmat(emptyStr, mapObjDS.Count, 1)...
-%                             mapObjDS.keys' mapObjDS.values'];
-%                         inifile(file,'write',writeKeys,'plain');
                     end
                 end
             end
