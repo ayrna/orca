@@ -78,35 +78,25 @@ classdef Experiment < handle
         
         function obj = process(obj,fname)
             % PROCESS parses experiment described in FNAME
-            try
-                [keys,sections,subsections] = inifile(fname,'readall');
-            catch ME
-                error('Cannot read or parse %s. \nError: %s', confFile, ME.identifier)
-            end
-            
-            % Extract keys for each experiment
-            %experiment = keys(strcmp(keys(:, 1), sections{i}), :);
-            valueSet = keys(:,4);
-            keySet = keys(:,3);
-            mapObj = containers.Map(keySet,valueSet);
-            
+            cObj = Config(fname);
+            expObj = cObj.exps{:};
             % Copy ini values to corresponding object properties
             try
-                obj.data.directory = mapObj('general-conf@directory');
-                obj.data.train = mapObj('general-conf@train');
-                obj.data.test = mapObj('general-conf@test');
-                obj.resultsDir = mapObj('general-conf@results');
-                obj.data.nOfFolds = str2num(mapObj('general-conf@num_fold'));
-                obj.data.standarize = str2num(mapObj('general-conf@standarize'));
-                met = upper(mapObj('general-conf@crossval'));
+                obj.data.directory = expObj.general('directory');
+                obj.data.train = expObj.general('train');
+                obj.data.test = expObj.general('test');
+                obj.resultsDir = expObj.general('results');
+                obj.data.nOfFolds = str2num(expObj.general('num_folds'));
+                obj.data.standarize = str2num(expObj.general('standarize'));
+                met = upper(expObj.general('cvmetric'));
                 eval(['obj.cvCriteria = ' met ';']);
-                obj.seed = str2num(mapObj('general-conf@seed'));
+                obj.seed = str2num(expObj.general('seed'));
             catch ME
                 error('Configuration file %s does not have mininum fields. Exception %s', fname, ME.identifier)
             end
             
-            alg = mapObj('algorithm-parameters@algorithm');
             try
+                alg = expObj.algorithm('algorithm');
                 eval(['obj.method = ' alg ';']);
                 obj.method.defaultParameters();
             catch
@@ -118,57 +108,22 @@ classdef Experiment < handle
             % description to be created and provide default values
             % otherwise. There, it would be easier to generalize the
             % code
-            if mapObj.isKey('algorithm-parameters@weights')
-                wei = mapObj('algorithm-parameters@weights');
+            if expObj.algorithm.isKey('weights')
+                wei = expObj.algorithm('weights');
                 eval(['obj.method.weights = ' wei ';']);
             end
-            if mapObj.isKey('algorithm-parameters@kernel')
-                obj.method.kernelType = mapObj('algorithm-parameters@kernel');
+            if expObj.algorithm.isKey('kernel')
+                obj.method.kernelType = expObj.algorithm('kernel');
             end
-            if mapObj.isKey('algorithm-parameters@activationFunction')
-                obj.method.activationFunction = mapObj('algorithm-parameters@activationFunction');
+            if expObj.algorithm.isKey('activationFunction')
+                obj.method.activationFunction = expObj.algorithm('activationFunction');
             end
             
-            % Parameters to optimize
-            % Extract keys of parameters to optimize
-            keysc = mapObj.keys;
-            keysc(cellfun('isempty', keysc)) = {''};
-            logicalArray = ~cellfun('isempty', strfind(keysc, 'algorithm-hyper-parameters-to-cv'));
-            keysOpt = keysc(logicalArray);
-            for keysc=1:length(keysOpt)
-                nameparameter = regexp(keysOpt{keysc}, '\w*@(\w*)', 'tokens');
-                nameparameter = nameparameter{:};
-                nameparameter = nameparameter{:};
-                %TODO: ALL IN LOWERCASE nameparameter = lower(nameparameter{:});
-                eval(['obj.method.parameters.' nameparameter ' = [' mapObj(keysOpt{keysc}) '];']);
+            pkeys = expObj.params.keys;
+            for p=1:expObj.params.Count
+                eval(['obj.method.parameters.' pkeys{p} ' = [' expObj.params(pkeys{p}) '];']);
                 obj.crossvalide = 1;
             end
-            %
-            %                 elseif strncmpi('parameter', new_line, 5)
-            %                     %TODO
-            %                     nameparameter = sscanf(new_line, 'parameter %s');
-            %                     val = fgetl(fid);
-            %                     if sum(strcmp(nameparameter,obj.method.name_parameters))
-            %                         eval(['obj.method.parameters.' nameparameter ' = [' val '];']);
-            %                         obj.crossvalide = 1;
-            %                     else
-            %                         error('Wrong parameter name - not found');
-            %                     end
-            %
-            %
-            %
-            %
-            %                 end
-            
-            
-            % Fix user bad configuration
-            if(obj.crossvalide == 0 && numel(obj.method.name_parameters)~=0 ...
-                    && ~strcmpi(obj.method.name_parameters,'dummy'))
-                obj.crossvalide = 1;
-                obj.method.defaultParameters();
-                disp('No parameter info found - setting up default parameters.')
-            end
-            
         end
         
         function obj = saveResults(obj,TotalResults)

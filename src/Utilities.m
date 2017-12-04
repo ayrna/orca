@@ -394,7 +394,7 @@ classdef Utilities < handle
             
         end
         
-        function logsDir = configureExperimentIni(expFile,dirSuffix)
+        function logsDir = configureExperiment(expFile,dirSuffix)
             % CONFIGUREEXPERIMENT Function for setting the configuration of the
             % 	different experiments.
             %   LOGSDIR = CONFIGUREEXPERIMENT(EXPFILE,DIRSUFFIX) parses EXPFILE and
@@ -415,23 +415,20 @@ classdef Utilities < handle
             mkdir(logsDir);
             mkdir(resultsDir);
             
-            exps = Utilities.parseconfig(expFile);
-            % TODO: Update to final syntax
-%             if ~Utilities.validateconfig(exps )
-%                 error('Invalid config file %s',expFile);
-%             end
+            % Load and parse conf file
+            cObj = Config(expFile);
             
-            num_experiment = numel(exps);
+            num_experiment = numel(cObj.exps);
             for e = 1:num_experiment
-                mapObj = exps{e};
+                expObj = cObj.exps{e};
                 
-                id_experiment = mapObj('exp-id');
-                directory = mapObj('general-conf@dir');
+                id_experiment = expObj.expId;
+                directory = expObj.general('basedir');
                 if ~(exist(directory,'dir'))
                     error('Datasets directory "%s" does not exist', directory)
                 end
                 
-                datasets = mapObj('general-conf@datasets');
+                datasets = expObj.general('datasets');
                 conf_file = [logsDir '/' 'exp-' id_experiment];
                 [matchstart,matchend,tokenindices,matchstring,tokenstring,tokenname,datasetsList] = regexpi(datasets,',');
                 % Check that all datasets partitions are accesible
@@ -440,6 +437,8 @@ classdef Utilities < handle
                 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
                 [train, test] = Utilities.processDirectory(directory,datasetsList);
                 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                % Generate one config file and corresponding directories
+                % for each fold.
                 for i=1:numel(train)
                     aux_directory = [resultsDir '/' datasetsList{i} '-' id_experiment];
                     mkdir(aux_directory);
@@ -456,119 +455,33 @@ classdef Utilities < handle
                     fclose(fich);
                     
                     runfolds = numel(train{i});
-                    % Map for the dataset
-                    mapObjDS = containers.Map(mapObj.keys, mapObj.values);
-                    mapObjDS.remove('general-conf@dir');
-                    mapObjDS.remove('exp-id');
-                    mapObjDS.remove('general-conf@datasets');
+                    % Map for the dataset. Need to explicitly create a new
+                    % object
+%                     mapObjDS = containers.Map(expObj.keys, expObj.values);
+%                     mapObjDS.remove('general-conf@dir');
+%                     mapObjDS.remove('exp-id');
+%                     mapObjDS.remove('general-conf@datasets');
                     
                     for j=1:runfolds
-                        file = [conf_file '-' datasetsList{i} '-' num2str(j)];
+                        iniFile = [conf_file '-' datasetsList{i} '-' num2str(j) '.ini'];
                         
-                        mapObjDS('general-conf@directory') = [directory '/' datasetsList{i} '/' 'matlab'];
-                        mapObjDS('general-conf@train') = train{i}(j).name;
-                        mapObjDS('general-conf@test') = test{i}(j).name ;
-                        mapObjDS('general-conf@results') = [resultsDir '/' datasetsList{i} '-' id_experiment];
+                        expObj.general('directory') = [directory '/' datasetsList{i} '/' 'matlab'];
+                        expObj.general('train') = train{i}(j).name;
+                        expObj.general('test') = test{i}(j).name ;
+                        expObj.general('results') = [resultsDir '/' datasetsList{i} '-' id_experiment];
                         
-                        emptyStr = cell(1,1);
-                        emptyStr{1,1} = '';
-                        idAsCell = cell(1,1);
-                        idAsCell{1,1} = mapObj('exp-id');
-                        writeKeys = [repmat(idAsCell,mapObjDS.Count, 1) ...
-                            repmat(emptyStr, mapObjDS.Count, 1)...
-                            mapObjDS.keys' mapObjDS.values'];
-                        inifile(file,'write',writeKeys,'plain');
+                        expObj.writeIni(iniFile);
+%                         emptyStr = cell(1,1);
+%                         emptyStr{1,1} = '';
+%                         idAsCell = cell(1,1);
+%                         idAsCell{1,1} = expObj('exp-id');
+%                         writeKeys = [repmat(idAsCell,mapObjDS.Count, 1) ...
+%                             repmat(emptyStr, mapObjDS.Count, 1)...
+%                             mapObjDS.keys' mapObjDS.values'];
+%                         inifile(file,'write',writeKeys,'plain');
                     end
                 end
             end
-        end
-        
-        function logsDir = configureExperiment(expFile,dirSuffix)
-            % CONFIGUREEXPERIMENT Function for setting the configuration of the
-            % 	different experiments.
-            %   LOGSDIR = CONFIGUREEXPERIMENT(EXPFILE,DIRSUFFIX) parses EXPFILE and
-            %       generates single experiment files describing individual experiment
-            %       of each fold. It also creates folders to store predictions
-            %       and models for all the partitions. All the resources are
-            %       created int exp-DIRSUFFIX folder.
-            
-            if( ~(exist(expFile,'file')))
-                fprintf('The file %s does not exist\n',expFile);
-                return;
-            end
-            
-            logsDir = ['Experiments' '/' 'exp-' dirSuffix];
-            resultsDir = [logsDir '/' 'Results'];
-            if ~exist('Experiments','dir')
-                mkdir('Experiments');
-            end
-            mkdir(logsDir);
-            mkdir(resultsDir);
-            
-            % REEMPLAZAR DESDE AQUÍ
-            fid = fopen(expFile,'r+');
-            num_experiment = 0;
-            
-            while ~feof(fid)
-                new_line = fgetl(fid);
-                if strncmpi(new_line,'%',1)
-                    %Do nothing!
-                elseif strcmpi('new experiment', new_line)
-                    num_experiment = num_experiment + 1;
-                    id_experiment = num2str(num_experiment);
-                    auxiliar = '';
-                elseif strcmpi('name', new_line)
-                    id_experiment = [fgetl(fid) num2str(num_experiment)];
-                elseif strcmpi('dir', new_line)
-                    directory = fgetl(fid);
-                    if ~(exist(directory,'dir'))
-                        error('Datasets directory "%s" does not exist', directory)
-                    end
-                elseif strcmpi('datasets', new_line)
-                    datasets = fgetl(fid);
-                elseif strcmpi('end experiment', new_line)
-                    conf_file = [logsDir '/' 'exp-' id_experiment];
-                    [matchstart,matchend,tokenindices,matchstring,tokenstring,tokenname,splitstring] = regexpi(datasets,',');
-                    % Check that all datasets partitions are accesible
-                    % The method checkDatasets calls error
-                    Utilities.checkDatasets(directory, datasets);
-                    [train, test] = Utilities.processDirectory(directory,splitstring);
-                    for i=1:numel(train)
-                        aux_directory = [resultsDir '/' splitstring{i} '-' id_experiment];
-                        mkdir(aux_directory);
-                        
-                        mkdir([aux_directory '/' 'OptHyperparams']);
-                        mkdir([aux_directory '/' 'Times']);
-                        mkdir([aux_directory '/' 'Models']);
-                        mkdir([aux_directory '/' 'Predictions']);
-                        mkdir([aux_directory '/' 'Guess']);
-                        
-                        file = [resultsDir '/' splitstring{i} '-' id_experiment '/' 'dataset'];
-                        fich = fopen(file,'w');
-                        fprintf(fich, [directory '/' splitstring{i} '/' 'matlab']);
-                        fclose(fich);
-                        
-                        runfolds = numel(train{i});
-                        
-                        for j=1:runfolds
-                            file = [conf_file '-' splitstring{i} '-' num2str(j)];
-                            fich = fopen(file,'w');
-                            fprintf(fich, ['directory\n' directory '/' splitstring{i} '/' 'matlab' '\n']);
-                            fprintf(fich, ['train\n' train{i}(j).name '\n']);
-                            fprintf(fich, ['test\n' test{i}(j).name '\n']);
-                            fprintf(fich, ['results\n' resultsDir '/' splitstring{i} '-' id_experiment '\n']);
-                            fprintf(fich, auxiliar);
-                            fclose(fich);
-                        end
-                    end
-                else
-                    auxiliar = [auxiliar new_line '\n'];
-                end
-                
-            end
-            fclose(fid);
-            % FIN CÓDIGO ANTIGUO
-            
         end
         
         function runExperiment(confFile)
@@ -587,52 +500,6 @@ classdef Utilities < handle
     end
     
     methods(Static = true, Access = private)
-        
-        function exps = parseconfig(confFile)
-        %PARSECONFIG parses INI file and returns a cell of Map
-            exps = cell(1);
-            try
-                [keys,sections,subsections] = inifile(confFile,'readall');
-            catch ME
-                error('Cannot read or parse %s. \nError: %s', confFile, ME.identifier)
-            end
-            
-            if isempty(keys) || isempty(keys{1,1})
-                error('File %s does not contain valid experiments descriptions', confFile)
-            end
-            
-            %for each section build a mapObj
-            for i=1:numel(sections)
-                % Extract keys for each experiment
-                expKeys = keys(strcmp(keys(:, 1), sections{i}), :);
-                expSubsections = expKeys(strcmp(expKeys(:, 1), sections{i}), 2);
-                
-                expSubKeys = strcat(expKeys(:,2), repmat(cellstr('@'), length(expKeys(:,3)), 1),expKeys(:,3));
-                valueSet = expKeys(:,4);
-                %keySet = expKeys(:,3);
-                mapObj = containers.Map(expSubKeys ,valueSet);
-                % add experiment ID as Key
-                mapObj('exp-id') = sections{i};
-                exps{i}=mapObj;
-            end
-        end
-        
-        function valid = validateconfig(exps)
-            %VALIDATECONFIG Validates set of experiment Maps
-            keySet = {'algorithm','datasets','dir'};
-            valid = false;
-            for i=1:numel(exps)
-                mapObj = exps{i};
-                
-                keys = isKey(mapObj, keySet);
-                if sum(keys) == numel(keySet)
-                    valid = true;
-                else
-                    valid = false;
-                    return
-                end
-            end
-        end
         
         function [trainFileNames, testFileNames] = processDirectory(directory, dataSetNames)
             % PROCESSDIRECTORY Function to get all the train and test pair of
