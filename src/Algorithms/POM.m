@@ -57,7 +57,7 @@ classdef POM < Algorithm
         end
         
         
-        function mInf = runAlgorithm(obj,train, test)
+        function mInf = runAlgorithm(obj,train, test, parameters)
             %RUNALGORITHM runs the corresponding algorithm, fitting the
             %model and testing it in a dataset.
             %   mInf = RUNALGORITHM(OBJ, TRAIN, TEST, PARAMETERS) learns a
@@ -65,24 +65,28 @@ classdef POM < Algorithm
             %   values for the method. Test the generalization performance
             %   with TRAIN and TEST data and returns predictions and model
             %   in mInf structure.
+            nParam = numel(obj.name_parameters);
+            if nParam~= 0
+                parameters = reshape(parameters,[1,nParam]);
+                param = cell2struct(num2cell(parameters(1:nParam)),obj.name_parameters,2);
+            else
+                param = [];
+            end
+            
             c1 = clock;
-            [model]= obj.train( train );
-            % Time information for training
+            [model,mInf.projectedTrain, mInf.predictedTrain] = obj.train(train,param);
             c2 = clock;
             mInf.trainTime = etime(c2,c1);
             
             c1 = clock;
-            [mInf.projectedTrain,mInf.predictedTrain] = obj.test( train.patterns, model);
-            [mInf.projectedTest,mInf.predictedTest] = obj.test( test.patterns, model);
+            [mInf.projectedTest, mInf.predictedTest] = obj.test(test.patterns, model);
             c2 = clock;
-            % time information for testing
             mInf.testTime = etime(c2,c1);
-            
             mInf.model = model;
             
         end
         
-        function [model]= train( obj,train)
+        function [model, projectedTrain, predictedTrain]= train( obj,train,parameters)
             %TRAIN trains the model for the SVR method with TRAIN data and
             %vector of parameters PARAMETERS. Return the learned model.
             nOfClasses = numel(unique(train.targets));
@@ -96,12 +100,11 @@ classdef POM < Algorithm
                 model.projection = -betaHatOrd(nOfClasses:end);
             end
             
+            [projectedTrain, predictedTrain] = obj.test(train.patterns, model);
             model.algorithm = 'POM';
-            % Estimated Probabilities
-            %pHatOrd = mnrval(betaHatOrd,trainPatterns,'model','ordinal','interactions','off');
         end
         
-        function [ projected,testTargets ] = test( obj, testPatterns, model)
+        function [ projected, predicted ] = test( obj, testPatterns, model)
             %TEST predict labels of TEST patterns labels using MODEL.
             numClasses = size(model.thresholds,1)+1;
             projected = model.projection' * testPatterns';
@@ -121,13 +124,13 @@ classdef POM < Algorithm
             wx(wx(:,:)>0)=NaN;
             
             % Then, we choose the biggest one.
-            [maximum,testTargets]=max(wx,[],1);
+            [maximum,predicted]=max(wx,[],1);
             
             % If a max is equal to NaN is because Wx-bk for all k is >0, so this
             % pattern belongs to the last class.
-            testTargets(isnan(maximum(:,:)))=numClasses;
+            predicted(isnan(maximum(:,:)))=numClasses;
             
-            testTargets = testTargets';
+            predicted = predicted';
             
         end
     end

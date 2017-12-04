@@ -31,6 +31,7 @@ classdef SVC1VA < Algorithm
     properties
         name_parameters = {'C','k'};
         parameters;
+        algorithmMexPath = fullfile('Algorithms','libsvm-weights-3.12','matlab');
     end
     
     methods
@@ -65,32 +66,33 @@ classdef SVC1VA < Algorithm
             %   values for the method. Test the generalization performance
             %   with TRAIN and TEST data and returns predictions and model
             %   in mInf structure.
-            addpath(fullfile('Algorithms','libsvm-weights-3.12','matlab'));
-            param.C = parameters(1);
-            param.k = parameters(2);
+            nParam = numel(obj.name_parameters);
+            if nParam~= 0
+                parameters = reshape(parameters,[1,nParam]);
+                param = cell2struct(num2cell(parameters(1:nParam)),obj.name_parameters,2);
+            else
+                param = [];
+            end
             
             c1 = clock;
-            model = obj.train(train, param);
+            [model,mInf.projectedTrain, mInf.predictedTrain] = obj.train(train,param);
             c2 = clock;
             mInf.trainTime = etime(c2,c1);
             
             c1 = clock;
-            [mInf.projectedTrain, mInf.predictedTrain] = obj.test(train,model);
-            [mInf.projectedTest,mInf.predictedTest ] = obj.test(test,model);
+            [mInf.projectedTest, mInf.predictedTest] = obj.test(test.patterns, model);
             c2 = clock;
             mInf.testTime = etime(c2,c1);
-            
-            model.algorithm = 'SVC1VA';
-            model.parameters = param;
             mInf.model = model;
-            
-            rmpath(fullfile('Algorithms','libsvm-weights-3.12','matlab'));
             
         end
         
-        function [model]= train( obj, train, param)
+        function [model, projectedTrain, predictedTrain]= train( obj, train, param)
             %TRAIN trains the model for the SVR method with TRAIN data and
             %vector of parameters PARAMETERS. Return the learned model.
+            if isempty(strfind(path,obj.algorithmMexPath))
+                addpath(obj.algorithmMexPath);
+            end
             
             options = ['-t 2 -c ' num2str(param.C) ' -g ' num2str(param.k) ' -q'];
             
@@ -105,24 +107,35 @@ classdef SVC1VA < Algorithm
             end
             
             model = struct('models', {models}, 'labelSet', labelSet);
+            model.algorithm = 'SVC1VA';
+            model.parameters = param;
+            [projectedTrain, predictedTrain] = obj.test(train.patterns,model);
+            if ~isempty(strfind(path,obj.algorithmMexPath))
+                rmpath(obj.algorithmMexPath);
+            end
             
         end
         
-        function [decv, pred]= test(obj, test, model)
+        function [projected, predicted]= test(obj, test, model)
             %TEST predict labels of TEST patterns labels using MODEL.
+            if isempty(strfind(path,obj.algorithmMexPath))
+                addpath(obj.algorithmMexPath);
+            end
             labelSet = model.labelSet;
             labelSetSize = length(labelSet);
             models = model.models;
-            decv= zeros(size(test.targets, 1), labelSetSize);
+            projected= zeros(size(test, 1), labelSetSize);
             
             for i=1:labelSetSize
-                labels = double(test.targets == labelSet(i));
-                [l,a,d] = svmpredict(labels, test.patterns, models{i});
-                decv(:, i) = d * (2 * models{i}.Label(1) - 1);
+                [l,a,d] = svmpredict(zeros(size(test,1),1), test, models{i});
+                projected(:, i) = d * (2 * models{i}.Label(1) - 1);
             end
             
-            [tmp,pred] = max(decv, [], 2);
-            pred = labelSet(pred);
+            [tmp,predicted] = max(projected, [], 2);
+            predicted = labelSet(predicted);
+            if ~isempty(strfind(path,obj.algorithmMexPath))
+                rmpath(obj.algorithmMexPath);
+            end
             
         end
     end

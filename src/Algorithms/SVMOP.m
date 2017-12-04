@@ -35,6 +35,7 @@ classdef SVMOP < Algorithm
         name_parameters = {'C','k'};
         parameters;
         weights = true;
+        algorithmMexPath = fullfile(pwd,'Algorithms','libsvm-weights-3.12','matlab');
     end
     
     methods
@@ -68,40 +69,35 @@ classdef SVMOP < Algorithm
             %   values for the method. Test the generalization performance
             %   with TRAIN and TEST data and returns predictions and model
             %   in mInf structure
-            addpath(fullfile('Algorithms','libsvm-weights-3.12','matlab'));
-            
-            param.C = parameters(1);
-            param.k = parameters(2);
-            
+            nParam = numel(obj.name_parameters);
+            if nParam~= 0
+                parameters = reshape(parameters,[1,nParam]);
+                param = cell2struct(num2cell(parameters(1:nParam)),obj.name_parameters,2);
+            else
+                param = [];
+            end
             
             c1 = clock;
-            classes = unique(train.targets);
-            nOfClasses = numel(classes);
-            [models] = obj.train(train,nOfClasses,param);
+            [model,mInf.projectedTrain, mInf.predictedTrain] = obj.train(train,param);
             c2 = clock;
             mInf.trainTime = etime(c2,c1);
             
             c1 = clock;
-            % Probabilities are included as ProjectedTrain and
-            % ProjectedTest
-            [mInf.projectedTrain,mInf.predictedTrain] = obj.test(train,models,nOfClasses);
-            [mInf.projectedTest,mInf.predictedTest] = obj.test(test,models,nOfClasses);
+            [mInf.projectedTest, mInf.predictedTest] = obj.test(test.patterns, model);
             c2 = clock;
             mInf.testTime = etime(c2,c1);
-            
-            model.models=models;
-            model.algorithm = 'SVMOP';
-            model.parameters = param;
-            model.weights = obj.weights;
-            mInf.model = model;
-            
-            rmpath(fullfile('Algorithms','libsvm-weights-3.12','matlab'));
+            mInf.model = model; 
         end
         
         
-        function [models]= train( obj,train,nOfClasses,parameters)
+        function [model, projectedTrain, predictedTrain] = train( obj, train, param)
             %TRAIN trains the model for the SVR method with TRAIN data and
             %vector of parameters PARAMETERS. Return the learned model.
+            if isempty(strfind(path,obj.algorithmMexPath))
+                addpath(obj.algorithmMexPath);
+            end
+            classes = unique(train.targets);
+            nOfClasses = numel(classes);
             patterns = train.patterns(train.targets==1,:);
             labels = train.targets(train.targets == 1);
             
@@ -110,46 +106,60 @@ classdef SVMOP < Algorithm
                 labels = [labels ; train.targets(train.targets == i)];
             end
             
-            train.targets = labels;
-            train.patterns = patterns';
+            trainTargets = labels;
             
             models = cell(1, nOfClasses-1);
             for i = 2:nOfClasses
                 
-                etiquetas_train = [ ones(size(train.targets(train.targets<i))) ;  ones(size(train.targets(train.targets>=i)))*2];
+                etiquetas_train = [ ones(size(trainTargets(trainTargets<i))) ;  ones(size(trainTargets(trainTargets>=i)))*2];
                 
                 % Train
-                options = ['-b 1 -t 2 -c ' num2str(parameters.C) ' -g ' num2str(parameters.k) ' -q'];
+                options = ['-b 1 -t 2 -c ' num2str(param.C) ' -g ' num2str(param.k) ' -q'];
                 if obj.weights
-                    weightsTrain = obj.computeWeights(i-1,train.targets);
+                    weightsTrain = obj.computeWeights(i-1,trainTargets);
                 else
-                    weightsTrain = ones(size(train.targets));
+                    weightsTrain = ones(size(trainTargets));
                 end
-                models{i} = svmtrain(weightsTrain, etiquetas_train, train.patterns', options);
+                models{i} = svmtrain(weightsTrain, etiquetas_train, train.patterns, options);
                 if(numel(models{i}.SVs)==0)
                     disp('Something went wrong. Please check the training patterns.')
                 end
             end
             
+            model.models=models;
+            model.algorithm = 'SVMOP';
+            model.parameters = param;
+            model.weights = obj.weights;
+            model.nOfClasses = nOfClasses;
+            [projectedTrain, predictedTrain] = obj.test(train.patterns,model);
+            
+            if ~isempty(strfind(path,obj.algorithmMexPath))
+                rmpath(obj.algorithmMexPath);
+            end
             
         end
         
-        function [probTest,clasetest] = test(obj,test,models,nOfClasses)
+        function [projected,predicted] = test(obj,test,model)
             %TEST predict labels of TEST patterns labels using MODEL.
-            probTest = zeros(nOfClasses, size(test.patterns,1));
-            for i = 2:nOfClasses
-                testLabels = [ ones(size(test.targets(test.targets<i))) ;  ones(size(test.targets(test.targets>=i)))*2];
-                [pr, acc, probTs] = svmpredict(testLabels,test.patterns,models{i},'-b 1');
+            if isempty(strfind(path,obj.algorithmMexPath))
+                addpath(obj.algorithmMexPath);
+            end
+            projected = zeros(model.nOfClasses, size(test,1));
+            for i = 2:model.nOfClasses
+                [pr, acc, probTs] = svmpredict(zeros(size(test,1),1),test,model.models{i},'-b 1');
                 
-                probTest(i-1,:) = probTs(:,2)';
+                projected(i-1,:) = probTs(:,2)';
             end
-            probts(1,:) = ones(size(probTest(1,:))) - probTest(1,:);
-            for i=2:nOfClasses
-                probts(i,:) =  probTest(i-1,:) -  probTest(i,:);
+            probts(1,:) = ones(size(projected(1,:))) - projected(1,:);
+            for i=2:model.nOfClasses
+                probts(i,:) =  projected(i-1,:) -  projected(i,:);
             end
-            probts(nOfClasses,:) =  probTest(nOfClasses-1,:);
-            [aux, clasetest] = max(probts);
-            clasetest = clasetest';
+            probts(model.nOfClasses,:) =  projected(model.nOfClasses-1,:);
+            [aux, predicted] = max(probts);
+            predicted = predicted';
+            if ~isempty(strfind(path,obj.algorithmMexPath))
+                rmpath(obj.algorithmMexPath);
+            end
         end
         
         function [weights] = computeWeights(obj, p, targets)
