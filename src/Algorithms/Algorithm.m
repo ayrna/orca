@@ -23,10 +23,10 @@ classdef Algorithm < handle
             %RUNALGORITHM runs the corresponding algorithm, fitting the
             %model and testing it in a dataset.
             %   mInf = RUNALGORITHM(OBJ, TRAIN, TEST, PARAMETERS) learns a
-            %   model with TRAIN data and PARAMETERS as hyper-parameter 
-            %   values for the method. Test the generalization performance 
+            %   model with TRAIN data and PARAMETERS as hyper-parameter
+            %   values for the method. Test the generalization performance
             %   with TRAIN and TEST data and returns predictions and model
-            %   in mInf structure. 
+            %   in mInf structure.
             nParam = numel(obj.name_parameters);
             if nParam~= 0
                 parameters = reshape(parameters,[1,nParam]);
@@ -44,61 +44,29 @@ classdef Algorithm < handle
             [mInf.projectedTest, mInf.predictedTest] = obj.test(test.patterns, model);
             c2 = clock;
             mInf.testTime = etime(c2,c1);
-            mInf.model = model; 
+            mInf.model = model;
         end
+        
+        % Abstract methods: they have been implementes in this way to
+        % ensure compatibility with Octave
+        %DEFAULTPARAMETERS It assigns the parameters of the algorithm
+        %to a default value.
+        function obj = defaultParameters(obj)
+            error('defaultParameters method should be implemented in all subclasses');
+        end
+        
+        %TRAIN trains the model for the SVR method with TRAIN data and
+        %vector of parameters PARAMETERS. Return the learned model.
+        function [model, projectedTrain, predictedTrain] = train( obj,train,param)
+            error('train method should be implemented in all subclasses');
+        end
+        
+        %TEST predict labels of TEST patterns labels using MODEL.
+        function [projected, predicted]= test(obj,test,model)
+            error('test method should be implemented in all subclasses');
+        end
+        
     end
-    
-    %    methods(Abstract)
-    %
-    %        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    %        %
-    %        % Function: runAlgorithm(Public)
-    %        % Description: function to run the algorithm (train and test partitions)
-    %        % Type: Void
-    %        % Arguments:
-    %        %           No arguments
-    %        %
-    %        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    %
-    %        runAlgorithm(obj);
-    %
-    %        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    %        %
-    %        % Function: defaultParameters(Public)
-    %        % Description: function for setting the default parameters
-    %        % Type: Void
-    %        % Arguments:
-    %        %           No arguments
-    %        %
-    %        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    %
-    %        defaultParameters(obj);
-    %
-    %        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    %        %
-    %        % Function: train(Public)
-    %        % Description: function for training the model
-    %        % Type: Void
-    %        % Arguments:
-    %        %           No arguments
-    %        %
-    %        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    %
-    %        train(obj);
-    %
-    %        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    %        %
-    %        % Function: test(Public)
-    %        % Description: function for testing the model
-    %        % Type: Void
-    %        % Arguments:
-    %        %           No arguments
-    %        %
-    %        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    %
-    %        test(obj);
-    %    end
-    
     
 end
 
