@@ -29,8 +29,8 @@ classdef SVR < Algorithm
     %       This software is released under the The GNU General Public License v3.0 licence
     %       available at http://www.gnu.org/licenses/gpl-3.0.html
     properties
-        name_parameters = {'C','k','e'};
-        parameters;
+        parameters = struct('c', 0.1, 'k', 0.1, 'e', 0.1)
+        kernelType = 'rbf';
         algorithmMexPath = fullfile(pwd,'Algorithms','libsvm-weights-3.12','matlab');
     end
     
@@ -53,7 +53,7 @@ classdef SVR < Algorithm
             %   to a default value.
             
             % cost
-            obj.parameters.C = 10.^(3:-1:-3);
+            obj.parameters.c = 10.^(3:-1:-3);
             % kernel width
             obj.parameters.k = 10.^(3:-1:-3);
             % epsilon
@@ -71,7 +71,7 @@ classdef SVR < Algorithm
             auxTrain = train;
             auxTrain.targets = (auxTrain.targets-1)/(nOfClasses-1);
             svrParameters = ...
-                ['-s 3 -t 2 -c ' num2str(parameters.C) ' -p ' num2str(parameters.e) ' -g '  num2str(parameters.k) ' -q'];
+                ['-s 3 -t 2 -c ' num2str(parameters.c) ' -p ' num2str(parameters.e) ' -g '  num2str(parameters.k) ' -q'];
             
             weights = ones(size(auxTrain.targets));
             model.libsvmModel = svmtrain(weights, auxTrain.targets, auxTrain.patterns, svrParameters);

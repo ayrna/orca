@@ -29,8 +29,8 @@ classdef KDLOR < Algorithm
     
     properties
         optimizationMethod = 'quadprog';
-        name_parameters = {'C','k','u'};
-        parameters;
+        parameters = struct('c', 0.1, 'k', 0.1, 'u', 0.01)
+        kernelType = 'rbf';
     end
     
     methods
@@ -72,7 +72,7 @@ classdef KDLOR < Algorithm
             %to a default value.
             
             % cost
-            obj.parameters.C = [0.1,1,10,100];
+            obj.parameters.c = [0.1,1,10,100];
             % kernel width
             obj.parameters.k = 10.^(-3:1:3);
             % parameter for avoiding singular matrix problems
@@ -108,7 +108,7 @@ classdef KDLOR < Algorithm
                         kernelParam = 1;
                 end
             else
-                d = parameters.C;
+                d = parameters.c;
                 u = parameters.u;
                 kernelParam = parameters.k;
             end
@@ -223,7 +223,7 @@ classdef KDLOR < Algorithm
             model.kernelType = obj.kernelType;
             model.algorithm = 'KDLOR';
             model.train = trainPatterns;
-            projectedTrain = model.projection'*kernelMatrix;            
+            projectedTrain = model.projection'*kernelMatrix;
             predictedTrain = assignLabels(obj, projectedTrain, model.thresholds');
             
             
@@ -232,7 +232,7 @@ classdef KDLOR < Algorithm
         % TODO: Fix to receibe data structure as unique parameter
         function [projected, predicted] = test(obj, testPatterns, model)
             %TEST predict labels of TEST patterns labels using MODEL.
-                        
+            
             kernelMatrix = computeKernelMatrix(model.train,testPatterns',model.kernelType, model.parameters.k);
             projected = model.projection'*kernelMatrix;
             
@@ -240,8 +240,8 @@ classdef KDLOR < Algorithm
             
         end
         
-        function predicted = assignLabels(obj, projected, thresholds)  
-            %TEST assign the labels from projections and thresholds          
+        function predicted = assignLabels(obj, projected, thresholds)
+            %TEST assign the labels from projections and thresholds
             numClasses = size(thresholds,2)+1;
             project2 = repmat(projected, numClasses-1,1);
             project2 = project2 - thresholds'*ones(1,size(project2,2));

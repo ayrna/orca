@@ -31,7 +31,6 @@ classdef ORBoost < Algorithm
     %       available at http://www.gnu.org/licenses/gpl-3.0.html
     properties
         parameters = [];
-        name_parameters = {};
         weights = true;
     end
     
