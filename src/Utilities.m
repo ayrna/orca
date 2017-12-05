@@ -5,7 +5,7 @@ classdef Utilities < handle
     %
     %   UTILITIES methods:
     %      runExperiments             - setting and running experiments
-    %      runExperiment              - Launchs a single experiment
+    %      runExperimentFold          - Launchs a single experiment fold
     %      configureExperiment        - sets configuration of the several experiments
     %      results                    - creates experiments reports
     %
@@ -395,14 +395,13 @@ classdef Utilities < handle
         end
         
         function logsDir = configureExperiment(expFile,dirSuffix)
-        % CONFIGUREEXPERIMENT Function for setting the configuration of the
-        % 	different experiments.
-        %   LOGSDIR = CONFIGUREEXPERIMENT(EXPFILE,DIRSUFFIX) parses EXPFILE and
-        %       generates single experiment files describing individual experiment 
-        %       of each fold. It also creates folders to store predictions
-        %       and models for all the partitions. All the resources are
-        %       created int exp-DIRSUFFIX folder. 
-            
+            % CONFIGUREEXPERIMENT Function for setting the configuration of the
+            % 	different experiments.
+            %   LOGSDIR = CONFIGUREEXPERIMENT(EXPFILE,DIRSUFFIX) parses EXPFILE and
+            %       generates single experiment files describing individual experiment
+            %       of each fold. It also creates folders to store predictions
+            %       and models for all the partitions. All the resources are
+            %       created int exp-DIRSUFFIX folder.
             if( ~(exist(expFile,'file')))
                 fprintf('The file %s does not exist\n',expFile);
                 return;
@@ -415,73 +414,64 @@ classdef Utilities < handle
             end
             mkdir(logsDir);
             mkdir(resultsDir);
-            fid = fopen(expFile,'r+');
-            num_experiment = 0;
             
-            while ~feof(fid)
-                new_line = fgetl(fid);
-                if strncmpi(new_line,'%',1)
-                    %Do nothing!
-                elseif strcmpi('new experiment', new_line)
-                    num_experiment = num_experiment + 1;
-                    id_experiment = num2str(num_experiment);
-                    auxiliar = '';
-                elseif strcmpi('name', new_line)
-                    id_experiment = [fgetl(fid) num2str(num_experiment)];
-                elseif strcmpi('dir', new_line)
-                    directory = fgetl(fid);
-                    if ~(exist(directory,'dir'))
-                        error('Datasets directory "%s" does not exist', directory)
-                    end
-                elseif strcmpi('datasets', new_line)
-                    datasets = fgetl(fid);
-                elseif strcmpi('end experiment', new_line)
-                    conf_file = [logsDir '/' 'exp-' id_experiment];
-                    [matchstart,matchend,tokenindices,matchstring,tokenstring,tokenname,splitstring] = regexpi(datasets,',');
-                    % Check that all datasets partitions are accesible
-                    % The method checkDatasets calls error
-                    Utilities.checkDatasets(directory, datasets);
-                    [train, test] = Utilities.processDirectory(directory,splitstring);
-                    for i=1:numel(train)
-                        aux_directory = [resultsDir '/' splitstring{i} '-' id_experiment];
-                        mkdir(aux_directory);
-                        
-                        mkdir([aux_directory '/' 'OptHyperparams']);
-                        mkdir([aux_directory '/' 'Times']);
-                        mkdir([aux_directory '/' 'Models']);
-                        mkdir([aux_directory '/' 'Predictions']);
-                        mkdir([aux_directory '/' 'Guess']);
-                        
-                        file = [resultsDir '/' splitstring{i} '-' id_experiment '/' 'dataset'];
-                        fich = fopen(file,'w');
-                        fprintf(fich, [directory '/' splitstring{i} '/' 'matlab']);
-                        fclose(fich);
-                        
-                        runfolds = numel(train{i});
-                        
-                        for j=1:runfolds
-                            file = [conf_file '-' splitstring{i} '-' num2str(j)];
-                            fich = fopen(file,'w');
-                            fprintf(fich, ['directory\n' directory '/' splitstring{i} '/' 'matlab' '\n']);
-                            fprintf(fich, ['train\n' train{i}(j).name '\n']);
-                            fprintf(fich, ['test\n' test{i}(j).name '\n']);
-                            fprintf(fich, ['results\n' resultsDir '/' splitstring{i} '-' id_experiment '\n']);
-                            fprintf(fich, auxiliar);
-                            fclose(fich);
-                        end
-                    end
-                else
-                    auxiliar = [auxiliar new_line '\n'];
+            % Load and parse conf file
+            cObj = Config(expFile);
+            
+            num_experiment = numel(cObj.exps);
+            for e = 1:num_experiment
+                expObj = cObj.exps{e};
+                
+                id_experiment = expObj.expId;
+                directory = expObj.general('basedir');
+                if ~(exist(directory,'dir'))
+                    error('Datasets directory "%s" does not exist', directory)
                 end
                 
+                datasets = expObj.general('datasets');
+                conf_file = [logsDir '/' 'exp-' id_experiment];
+                [matchstart,matchend,tokenindices,matchstring,tokenstring,tokenname,datasetsList] = regexpi(datasets,',');
+                % Check that all datasets partitions are accesible
+                % The method checkDatasets calls error
+                Utilities.checkDatasets(directory, datasets);
+
+                [train, test] = Utilities.processDirectory(directory,datasetsList);
+
+                % Generate one config file and corresponding directories
+                % for each fold.
+                for i=1:numel(train)
+                    aux_directory = [resultsDir '/' datasetsList{i} '-' id_experiment];
+                    mkdir(aux_directory);
+                    
+                    mkdir([aux_directory '/' 'OptHyperparams']);
+                    mkdir([aux_directory '/' 'Times']);
+                    mkdir([aux_directory '/' 'Models']);
+                    mkdir([aux_directory '/' 'Predictions']);
+                    mkdir([aux_directory '/' 'Guess']);
+                    
+                    file = [resultsDir '/' datasetsList{i} '-' id_experiment '/' 'dataset'];
+                    fich = fopen(file,'w');
+                    fprintf(fich, [directory '/' datasetsList{i} '/' 'matlab']);
+                    fclose(fich);
+                    
+                    runfolds = numel(train{i});                    
+                    for j=1:runfolds
+                        iniFile = [conf_file '-' datasetsList{i} '-' num2str(j) '.ini'];
+                        
+                        expObj.general('directory') = [directory '/' datasetsList{i} '/' 'matlab'];
+                        expObj.general('train') = train{i}(j).name;
+                        expObj.general('test') = test{i}(j).name ;
+                        expObj.general('results') = [resultsDir '/' datasetsList{i} '-' id_experiment];
+                        
+                        expObj.writeIni(iniFile);
+                    end
+                end
             end
-            fclose(fid);
-            
         end
         
-        function runExperiment(confFile)
-        % RUNEXPERIMENT(CONFFILE) launch a single experiment described in
-        %   file CONFFILE
+        function runExperimentFold(confFile)
+            % RUNEXPERIMENTFOLD(CONFFILE) launch a single experiment described in
+            %   file CONFFILE
             addpath('Measures');
             addpath('Algorithms');
             
@@ -497,15 +487,15 @@ classdef Utilities < handle
     methods(Static = true, Access = private)
         
         function [trainFileNames, testFileNames] = processDirectory(directory, dataSetNames)
-        % PROCESSDIRECTORY Function to get all the train and test pair of
-        %   files of dataset's folds
-        %   [TRAINFILENAMES, TESTFILENAMES] = PROCESSDIRECTORY(DIRECTORY, DATASETNAMES) 
-        %   process comma separated list of datasets names in DATASETNAMES.
-        %   All the dataset's folders need to be stored in DIRECTORY.
-        %   Returns all the pairs of train-test files in TRAINFILENAMES and
-        %   TESTFILENAMES. 
-        %   [TRAINFILENAMES, TESTFILENAMES] = PROCESSDIRECTORY(DIRECTORY,
-        %   'all') process all datasets in DIRECTORY.
+            % PROCESSDIRECTORY Function to get all the train and test pair of
+            %   files of dataset's folds
+            %   [TRAINFILENAMES, TESTFILENAMES] = PROCESSDIRECTORY(DIRECTORY, DATASETNAMES)
+            %   process comma separated list of datasets names in DATASETNAMES.
+            %   All the dataset's folders need to be stored in DIRECTORY.
+            %   Returns all the pairs of train-test files in TRAINFILENAMES and
+            %   TESTFILENAMES.
+            %   [TRAINFILENAMES, TESTFILENAMES] = PROCESSDIRECTORY(DIRECTORY,
+            %   'all') process all datasets in DIRECTORY.
             dbs = dir(directory);
             dbs(2) = [];
             dbs(1) = [];
@@ -543,12 +533,12 @@ classdef Utilities < handle
         end
         
         function checkDatasets(basedir, datasets)
-        % CHECKDATASETS Test datasets are accessible and with expected
-        % names. Launch error in case a dataset is not found.
-        %   CHECKDATASETS(BASEDIR, DATASETS) tests all DATASETS (comma 
-        %   separated list of datasets) in directory BASEDIR. 
-        %   CHECKDATASETS(BASEDIR, 'all') tests all DATASETS in BASEDIR
-
+            % CHECKDATASETS Test datasets are accessible and with expected
+            % names. Launch error in case a dataset is not found.
+            %   CHECKDATASETS(BASEDIR, DATASETS) tests all DATASETS (comma
+            %   separated list of datasets) in directory BASEDIR.
+            %   CHECKDATASETS(BASEDIR, 'all') tests all DATASETS in BASEDIR
+            
             if ~exist(basedir,'dir')
                 error('Datasets directory "%s" does not exist', basedir)
             end

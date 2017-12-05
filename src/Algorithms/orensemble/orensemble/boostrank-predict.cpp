@@ -142,9 +142,9 @@ int main (unsigned int argc, char* argv[]) {
     tl = tlt / n_crit;
     rl = rlt / n_crit;
 
-    std::cout << "Absolute Error: " << ae << std::endl;
-    std::cout << "Classification Error: " << ce << std::endl;
-    std::cout << "Raw Ranking Loss: " << rl << std::endl;
-    std::cout << "Thresholded Ranking Loss: " << tl << std::endl;
+    //std::cout << "Absolute Error: " << ae << std::endl;
+    //std::cout << "Classification Error: " << ce << std::endl;
+    //std::cout << "Raw Ranking Loss: " << rl << std::endl;
+    //std::cout << "Thresholded Ranking Loss: " << tl << std::endl;
     return 0;
 }

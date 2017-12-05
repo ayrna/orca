@@ -352,8 +352,8 @@ BOOL smo_LoadMatrix ( Data_List * pairs, char * inputfilename, int inputdim, int
 	
 	if (1 == pairs->normalized_output && pairs->deviation > 0)
 		printf("Outputs are normalized.\r\n") ;
-	if ( inputdim > 0 && pairs->deviation <= 0 )
-		printf("Tragets are not at hand.\r\n") ;
+	//if ( inputdim > 0 && pairs->deviation <= 0 )
+	//	printf("Tragets are not at hand.\r\n") ;
 
 	Clear_Label_Data_List (&label) ;
 	if (NULL != smo_target)

@@ -6,6 +6,9 @@ method = 'SVC1V1';
 % Create the algorithm object
 algorithmObj = SVC1V1();
 
+% Clear parameter struct
+clear param;
+
 % Parameter C (Cost)
 param(1) = 10;
 

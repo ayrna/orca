@@ -340,8 +340,8 @@ BOOL smo_Loadfile_Matlab ( Data_List * pairs, char * inputfilename, int inputdim
 	
 	if (1 == pairs->normalized_output && pairs->deviation > 0)
 		printf("Outputs are normalized.\r\n") ;
-	if ( inputdim > 0 && pairs->deviation <= 0 )
-		printf("Targets are not at hand.\r\n") ;
+	//if ( inputdim > 0 && pairs->deviation <= 0 )
+	//	printf("Targets are not at hand.\r\n") ;
 
 #ifdef _SOFTMAX_SERVER	
 	pairs->classes = 3 ;

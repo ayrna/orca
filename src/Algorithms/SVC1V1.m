@@ -29,8 +29,9 @@ classdef SVC1V1 < Algorithm
     %       This software is released under the The GNU General Public License v3.0 licence
     %       available at http://www.gnu.org/licenses/gpl-3.0.html
     properties
-        name_parameters = {'C','k'};
-        parameters;
+        parameters = struct('c', 0.1, 'k', 0.1);
+        kernelType = 'rbf';
+        algorithmMexPath = fullfile('Algorithms','libsvm-weights-3.12','matlab');
     end
     
     methods
@@ -48,59 +49,33 @@ classdef SVC1V1 < Algorithm
             
         end
         
-        function obj = defaultParameters(obj)
-            %DEFAULTPARAMETERS It assigns the parameters of the algorithm
-            %   to a default value.
-            % cost
-            obj.parameters.C = 10.^(-3:1:3);
-            % kernel width
-            obj.parameters.k = 10.^(-3:1:3);
-        end
-        
-        function [mInf] = runAlgorithm(obj,train, test, parameters)
-            %RUNALGORITHM runs the corresponding algorithm, fitting the
-            %model and testing it in a dataset.
-            %   mInf = RUNALGORITHM(OBJ, TRAIN, TEST, PARAMETERS) learns a
-            %   model with TRAIN data and PARAMETERS as hyper-parameter
-            %   values for the method. Test the generalization performance
-            %   with TRAIN and TEST data and returns predictions and model
-            %   in mInf structure.
-            param.C = parameters(1);
-            param.k = parameters(2);
-            
-            c1 = clock;
-            model = obj.train(train,param);
-            c2 = clock;
-            mInf.trainTime = etime(c2,c1);
-            
-            c1 = clock;
-            [mInf.projectedTrain,mInf.predictedTrain] = obj.test(train,model);
-            [mInf.projectedTest,mInf.predictedTest] = obj.test(test,model);
-            c2 = clock;
-            mInf.testTime = etime(c2,c1);
-            
-            model.algorithm = 'SVC1V1';
-            model.parameters = param;
-            mInf.model = model;
-        end
-        
-        function [model]= train( obj, train , param)
+        function [model, projectedTrain, predictedTrain]= train( obj, train , param)
             %TRAIN trains the model for the SVR method with TRAIN data and
             %vector of parameters PARAMETERS. Return the learned model.
-            addpath(fullfile('Algorithms','libsvm-weights-3.12','matlab'));
+            if isempty(strfind(path,obj.algorithmMexPath))
+                addpath(obj.algorithmMexPath);
+            end
             
             weights = ones(size(train.targets));
-            options = ['-t 2 -c ' num2str(param.C) ' -g ' num2str(param.k) ' -q'];
-            model = svmtrain(weights, train.targets, train.patterns, options);
-            
-            rmpath(fullfile('Algorithms','libsvm-weights-3.12','matlab'));
+            options = ['-t 2 -c ' num2str(param.c) ' -g ' num2str(param.k) ' -q'];
+            model.libsvmModel = svmtrain(weights, train.targets, train.patterns, options);
+            [predictedTrain, acc, projectedTrain] = svmpredict(train.targets,train.patterns,model.libsvmModel, '');
+            model.algorithm = 'SVC1V1';
+            model.parameters = param;
+            if ~isempty(strfind(path,obj.algorithmMexPath))
+                rmpath(obj.algorithmMexPath);
+            end
         end
         
-        function [projected, testTargets]= test(obj,test, model)
+        function [projected, predicted]= test(obj,test, model)
             %TEST predict labels of TEST patterns labels using MODEL.
-            addpath(fullfile('Algorithms','libsvm-weights-3.12','matlab'));
-            [testTargets, acc, projected] = svmpredict(test.targets,test.patterns,model, '');
-            rmpath(fullfile('Algorithms','libsvm-weights-3.12','matlab'));
+            if isempty(strfind(path,obj.algorithmMexPath))
+                addpath(obj.algorithmMexPath);
+            end
+            [predicted, acc, projected] = svmpredict(ones(size(test,1),1),test,model.libsvmModel, '');
+            if ~isempty(strfind(path,obj.algorithmMexPath))
+                rmpath(obj.algorithmMexPath);
+            end
             
         end
     end

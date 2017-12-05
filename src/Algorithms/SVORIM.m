@@ -28,8 +28,9 @@ classdef SVORIM < Algorithm
     %       This software is released under the The GNU General Public License v3.0 licence
     %       available at http://www.gnu.org/licenses/gpl-3.0.html
     properties
-        parameters;
-        name_parameters = {'C', 'k'};
+        parameters = struct('c', 0.1, 'k', 0.1);
+        kernelType = 'rbf';
+        algorithmMexPath = fullfile('Algorithms','SVORIM');
     end
     
     methods
@@ -45,61 +46,37 @@ classdef SVORIM < Algorithm
             end
         end
         
-        function obj = defaultParameters(obj)
-            %DEFAULTPARAMETERS It assigns the parameters of the algorithm
-            %   to a default value.
-            % cost
-            obj.parameters.C =  10.^(-3:1:3);
-            % kernel width
-            obj.parameters.k = 10.^(-3:1:3);
-        end
-        
-        %TODO: Fix train/test API
-        function [mInf] = runAlgorithm(obj,train, test, parameters)
-            %RUNALGORITHM runs the corresponding algorithm, fitting the
-            %model and testing it in a dataset.
-            %   mInf = RUNALGORITHM(OBJ, TRAIN, TEST, PARAMETERS) learns a
-            %   model with TRAIN data and PARAMETERS as hyper-parameter
-            %   values for the method. Test the generalization performance
-            %   with TRAIN and TEST data and returns predictions and model
-            %   in mInf structure.
-            addpath(fullfile('Algorithms','SVORIM'));
-            
-            param.C = parameters(1);
-            param.k = parameters(2);
-            
-            c1 = clock;
-            [model,mInf.projectedTest,mInf.projectedTrain, mInf.trainTime, mInf.testTime] = obj.train([train.patterns train.targets],[test.patterns test.targets],param);
-            c2 = clock;
-            mInf.trainTime = etime(c2,c1);
-            
-            c1 = clock;
-            mInf.predictedTrain = obj.test(mInf.projectedTrain, model);
-            mInf.predictedTest = obj.test(mInf.projectedTest, model);
-            c2 = clock;
-            mInf.testTime = etime(c2,c1);
-            mInf.model = model;
-            
-            rmpath(fullfile('Algorithms','SVORIM'));
-            
-        end
-        
-        function [model, projectedTest, projectedTrain, trainTime, testTime] = train(obj, train,test, parameters)
-            %TRAIN trains the model for the SVR method with TRAIN data and
+        function [model,projectedTrain,predictedTrain] = train(obj, train, parameters)
+            %TRAIN trains the model for the SVORIM method with TRAIN data and
             %vector of parameters PARAMETERS. Return the learned model.
-            [projectedTest, alpha, thresholds, projectedTrain, trainTime, testTime] = svorim(train,test,parameters.k,parameters.C,0,0,0);
+            if isempty(strfind(path,obj.algorithmMexPath))
+                addpath(obj.algorithmMexPath);
+            end
+            [alpha, thresholds, projectedTrain] = svorim([train.patterns train.targets],parameters.k,parameters.c,0,0,0);
+            predictedTrain = obj.assignLabels(projectedTrain, thresholds);
             model.projection = alpha;
             model.thresholds = thresholds;
             model.parameters = parameters;
             model.algorithm = 'SVORIM';
+            model.train = train.patterns;
+            if ~isempty(strfind(path,obj.algorithmMexPath))
+                rmpath(obj.algorithmMexPath);
+            end
         end
         
-        
-        function [targets] = test(obj, project, model)
+        function [projected, predicted] = test(obj, test, model)
             %TEST predict labels of TEST patterns labels using MODEL.
-            numClasses = size(model.thresholds,2)+1;
-            project2 = repmat(project, numClasses-1,1);
-            project2 = project2 - model.thresholds'*ones(1,size(project2,2));
+            kernelMatrix = computeKernelMatrix(model.train',test','rbf',model.parameters.k);
+            projected = model.projection*kernelMatrix;
+            
+            predicted = assignLabels(obj, projected, model.thresholds);
+        end
+        
+        function predicted = assignLabels(obj, projected, thresholds)
+            numClasses = size(thresholds,2)+1;
+            %TEST assign the labels from projections and thresholds
+            project2 = repmat(projected, numClasses-1,1);
+            project2 = project2 - thresholds'*ones(1,size(project2,2));
             
             % Asignation of the class
             % f(x) = max {Wx-bk<0} or Wx - b_(K-1) > 0
@@ -110,15 +87,14 @@ classdef SVORIM < Algorithm
             wx(wx(:,:)>0)=NaN;
             
             % Then, we choose the biggest one.
-            [maximum,targets]=max(wx,[],1);
+            [maximum,predicted]=max(wx,[],1);
             
             % If a max is equal to NaN is because Wx-bk for all k is >0, so this
             % pattern belongs to the last class.
-            targets(isnan(maximum(:,:)))=numClasses;
+            predicted(isnan(maximum(:,:)))=numClasses;
             
-            targets = targets';
+            predicted = predicted';
         end
-        
         
     end
     

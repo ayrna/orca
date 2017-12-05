@@ -41,7 +41,7 @@ switch upper(kType)
         else
             bias = 1;
         end
-        KM = (P1' * P2 + bias).^kParam;
+        KM = ((P1' * P2 + bias)/size(P1,1)).^kParam;
         
     case 'SIGMOID'
         

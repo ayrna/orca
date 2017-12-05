@@ -6,6 +6,9 @@ method = 'SVOREX';
 % Create the algorithm object
 algorithmObj = SVOREX();
 
+% Clear parameter struct
+clear param;
+
 % Parameter C (Cost)
 param(1) = 10;
 

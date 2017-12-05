@@ -16,42 +16,55 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 {
    clock_t start;
    double trainTime=0;
-   double testTime=0;
+   /*TEST REMOVED */
+   /* double testTime=0; */
 
-   if(nrhs != 7)
+   /*TEST REMOVED if(nrhs != 7)
 	{
         mexErrMsgTxt("Error. 7 parámetros requeridos => Train , Test , Ko , Co, Normalizar(1: SI, 0:NO), Salidas MexPrintf(1:SI, 0: NO), Kernel Polinómico(1: SI, 0:NO)");
+	}*/
+
+	if(nrhs != 6)
+	{
+        mexErrMsgTxt("Error. 6 parameters required => Train , Ko , Co, Normalize (1: YES, 0:NO), MexPrintf Outputs (1:YES, 0: NO), Linear kernel (1: YES, 0:NO)");
 	}
-
-
-	def_Settings * defsetting = NULL ;
+ 
+   def_Settings * defsetting = NULL ;
 	smo_Settings * smosetting = NULL ;
+	/*kcv_Settings * kcvsetting ;*/
+	/*Data_Node * node ;
+
+	char filename[1024] ;
 	
-	double ** matBien = NULL;
+	FILE * log ; 
+	double * guess ;*/
+
+   double ** matBien = NULL;
    double ** matTrain = NULL;
    double ** matTest = NULL;
    double * data1 = NULL;
-	double * data6 = NULL;
-
-	//struct estructura * ptr=NULL;
+	double * data6 =NULL;
+	
+	//struct estructura * ptr = NULL;	
 	struct estructura e1;
 
    int aux,aux2;
    int m,n,contador,i,j;
 	int nFil=0,nFil2=0,nCol=0,nCol2=0;
-   double Ko=0,Co=0,Normalizar=0,salidasMexPrintf=0, kPolinomico=0;
+   double Ko=0, Co=0, Normalizar=0, salidasMexPrintf=0, kPolinomico=0;
 
-
-   for (i = 0; i < nrhs; i++) /*nrhs: matrices de la parte derecha*/
-   {
-        
-        if( i< 2)
+	for (i = 0; i < nrhs; i++) /*nrhs: matrices de la parte derecha*/
+	{
+        /*TEST REMOVED 
+        if( i< 2)*/
+        if( i< 1)
         {
+
 		
             /* Find the dimensions of the data */
             m = mxGetM(prhs[i]);/*numero filas*/ 
             n = mxGetN(prhs[i]);/*numero columnas*/
-   
+        				
             /*Reservo la matriz dinamica MatBien*/  
             matBien=(double **)calloc(m,sizeof(double *));
 	
@@ -60,9 +73,10 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
                 matBien[aux]=(double *)calloc(n,sizeof(double));
             }
              		
-    			/* Retrieve the input data */
+           	/* Retrieve the input data */
     			data1 = mxGetPr(prhs[i]); /*Pointer to the first element of the real data*/
 
+     	   	        
             /*Recolocacion de la matriz*/
             contador=0;
             for(aux=0; aux< n; aux++)
@@ -75,7 +89,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
          
             }
                
-            if(i==0)
+            if(i==0)/*parametro cero: Matriz train*/
             {
 
 				nFil=m;
@@ -104,13 +118,13 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
             
             }
             
-            if(i==1)
+            /*TEST REMOVED if(i==1)*parametro uno: Matriz test
             {
 
 				nFil2=m;
 				nCol2=n;
               
-                /*Reservo la matriz dinamica MatTest*/  
+                *Reservo la matriz dinamica MatTest
                 matTest=(double **)calloc(m,sizeof(double *));
 	
                 for(aux=0; aux<m; aux++)
@@ -119,70 +133,85 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
                 } 
                 
             
-                /*Asignacion test y comprobacion*/
+                *Asignacion test y comprobacion
                 
                 for(aux=0; aux<m; aux++)
                 {
                     for(aux2=0; aux2<n; aux2++)			
                     {
                         matTest[aux][aux2]=matBien[aux][aux2];
-                        /*mexPrintf ("matTest[%d][%d]=%lf\n",aux,aux2,matTest[aux][aux2]);*/
+                        *mexPrintf ("matTest[%d][%d]=%lf\n",aux,aux2,matTest[aux][aux2]);
                     }
                 }
             
-            }   
+            }   */
               
         }
         
         
-        if(i==2)
+        /* TEST REMOVED if(i==2)*parametro dos: K*/
+        if(i==1)
         {
             data1 = mxGetPr(prhs[i]);
             Ko=data1[0];
         }
-        if(i==3)
+
+        /* TEST REMOVED if(i==3)*parametro tres: Cs*/
+        if(i==2)
         {
             data1 = mxGetPr(prhs[i]);
             Co=data1[0];
-        } 
+        }
 
-    	  if(i==4) /*Normalizacion*/
+		  /* TEST REMOVED if(i==4) *Normalizacion*/
+        if(i==3)
 		  {
 				data1 = mxGetPr(prhs[i]);
             Normalizar=data1[0]; 
 		  }	
 
-		  if(i==5) /*Salidas mexPrintf*/
+		  /* TEST REMOVED if(i==5) *Salidas mexPrintf*/
+        if(i==4)
 		  {
 				data1 = mxGetPr(prhs[i]);
             salidasMexPrintf=data1[0]; 
-		  }	              
-		  
-		 if(i==6)
+		  }	
+			       
+		 /* TEST REMOVED if(i==6)*/
+        if(i==5)
 		 {
 				data1 = mxGetPr(prhs[i]);
             kPolinomico=data1[0]; 
 
 		 }
-        
-        
+
+
 	}
+	
+	/* TEST REMOVED Hack*/
+	nFil2=2;
+	nCol2=nCol;
+     matTest=(double **)calloc(nFil2,sizeof(double *));
+	for(aux=0; aux<nFil2; aux++)
+        matTest[aux]=(double *)calloc(nCol2,sizeof(double));
+     for(aux=0; aux<nFil2; aux++)
+        for(aux2=0; aux2<nCol2; aux2++)
+           matTest[aux][aux2]=matTrain[aux][aux2];
+	/* End Hack*/
 	
 	/* compruebo que las dos matrices tenga el mismo numero de filas y columnas, sino paro */
 //	if(nFil != nFil2 || nCol != nCol2)
 	if(nCol != nCol2)
 	{
-		mexErrMsgTxt("El numero de columnas de las matrices de train y test debe ser el mismo.");
+		mexErrMsgTxt("Number of columns of training and test must be the same");
 	}     
 
 	if(salidasMexPrintf == 1) //Hemos activados los mexPrintf
-		mexPrintf("\nSupport Vector Ordinal Regression Using K-fold Cross Validation v2.%d \n--- Chu Wei Copyright(C) 2003-2004\n\n", VERSION) ;
+	mexPrintf("\nSupport Vector Ordinal Regression Using K-fold Cross Validation v2.%d \n--- Chu Wei Copyright(C) 2003-2004\n\n", VERSION) ;
 
+   defsetting = Create_def_Settings_Matlab(); 
 
-	defsetting = Create_def_Settings_Matlab();  
-
-   
-   if(kPolinomico == 1)
+	if(kPolinomico == 1)
 	{
 
 		defsetting->kernel = POLYNOMIAL ;
@@ -222,9 +251,8 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 	{
 		defsetting->normalized_input = TRUE ;	
 		defsetting->pairs.normalized_input = TRUE ;
-	}         
-              
- 
+	}   
+	 
 //	Update_def_Settings_Matlab(defsetting, nFil,nCol,matTrain,matTest); 
 	Update_def_Settings_Matlab(defsetting, nFil,nCol,matTrain); 
 	
@@ -309,7 +337,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
    			start=clock();
 			svm_predict (&defsetting->testdata, smosetting) ;
 			e1=svm_saveresults_Matlab (&defsetting->testdata, smosetting) ;
-			testTime= (clock()-start)/((double)CLOCKS_PER_SEC);
+			/*testTime= (clock()-start)/((double)CLOCKS_PER_SEC);*/
 			e1=svm_saveresults_Matlab (&defsetting->testdata, smosetting) ;
 
 			if(salidasMexPrintf == 1)
@@ -355,15 +383,15 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 
 		/*Devolución de valores*/
 
-	for(i=0;i<6;i++)
+	/*TEST REMOVED for(i=0;i<6;i++)
 	{
 
 		if(i==0)
 		{
-			/* Create an mxArray for the output data */
+			* Create an mxArray for the output data *
    		plhs[i] = mxCreateDoubleMatrix(1, e1.dim2, mxREAL);
 	
-			/* Create a pointer to the output data*/ 
+			* Create a pointer to the output data*
    		data6 = mxGetPr(plhs[i]);
 
 			for(j=0; j< e1.dim2; j++)
@@ -374,10 +402,10 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 	
 		if(i==1)
 		{
-			/* Create an mxArray for the output data */
+			* Create an mxArray for the output data *
    		plhs[i] = mxCreateDoubleMatrix(1, e1.dim3, mxREAL);
 	
-			/* Create a pointer to the output data*/ 
+			* Create a pointer to the output data* 
    		data6 = mxGetPr(plhs[i]);
 
 			for(j=0; j< e1.dim3; j++)
@@ -388,10 +416,10 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 	
 		if(i==2)
 		{
-			/* Create an mxArray for the output data */
+			* Create an mxArray for the output data *
    		plhs[i] = mxCreateDoubleMatrix(1, e1.dim4, mxREAL);
 	
-			/* Create a pointer to the output data*/ 
+			* Create a pointer to the output data*
    		data6 = mxGetPr(plhs[i]);
 
 			for(j=0; j< e1.dim4; j++)
@@ -402,10 +430,10 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 
 		if(i==3)
 		{
-			/* Create an mxArray for the output data */
+			* Create an mxArray for the output data *
    		plhs[i] = mxCreateDoubleMatrix(1, e1.dim5, mxREAL);
 	
-			/* Create a pointer to the output data*/ 
+			* Create a pointer to the output data*
    		data6 = mxGetPr(plhs[i]);
 
 			for(j=0; j< e1.dim5; j++)
@@ -421,6 +449,57 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 		if(i==5)
 		{
 			plhs[i] = mxCreateDoubleScalar(testTime);
+
+		}
+
+	}*/
+	for(i=0;i<4;i++)
+	{
+	
+		if(i==0)
+		{
+			/* Create an mxArray for the output data */
+   		plhs[i] = mxCreateDoubleMatrix(1, e1.dim3, mxREAL);
+	
+			/* Create a pointer to the output data*/ 
+   		data6 = mxGetPr(plhs[i]);
+
+			for(j=0; j< e1.dim3; j++)
+			{
+				data6[j] = e1.data3[j];	
+			}
+		}
+	
+		if(i==1)
+		{
+			/* Create an mxArray for the output data */
+   		plhs[i] = mxCreateDoubleMatrix(1, e1.dim4, mxREAL);
+	
+			/* Create a pointer to the output data*/ 
+   		data6 = mxGetPr(plhs[i]);
+
+			for(j=0; j< e1.dim4; j++)
+			{
+				data6[j] = e1.data4[j];	
+			}
+		}
+
+		if(i==2)
+		{
+			/* Create an mxArray for the output data */
+   		plhs[i] = mxCreateDoubleMatrix(1, e1.dim5, mxREAL);
+	
+			/* Create a pointer to the output data*/ 
+   		data6 = mxGetPr(plhs[i]);
+
+			for(j=0; j< e1.dim5; j++)
+			{
+				data6[j] = e1.data5[j];	
+			}
+		}
+		if(i==3)
+		{
+			plhs[i] = mxCreateDoubleScalar(trainTime);
 
 		}
 

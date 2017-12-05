@@ -29,8 +29,9 @@ classdef SVR < Algorithm
     %       This software is released under the The GNU General Public License v3.0 licence
     %       available at http://www.gnu.org/licenses/gpl-3.0.html
     properties
-        name_parameters = {'C','k','e'};
-        parameters;
+        parameters = struct('c', 0.1, 'k', 0.1, 'e', 0.1);
+        kernelType = 'rbf';
+        algorithmMexPath = fullfile(pwd,'Algorithms','libsvm-weights-3.12','matlab');
     end
     
     methods
@@ -47,81 +48,45 @@ classdef SVR < Algorithm
             end
         end
         
-        function obj = defaultParameters(obj)
-            %DEFAULTPARAMETERS It assigns the parameters of the algorithm 
-            %   to a default value.
-            
-            % cost
-            obj.parameters.C = 10.^(3:-1:-3);
-            % kernel width
-            obj.parameters.k = 10.^(3:-1:-3);
-            % epsilon
-            obj.parameters.e = 10.^(-3:1:0);
-        end
-                
-        function mInf = runAlgorithm(obj,train, test, parameters)
-            %RUNALGORITHM runs the corresponding algorithm, fitting the
-            %model and testing it in a dataset.
-            %   mInf = RUNALGORITHM(OBJ, TRAIN, TEST, PARAMETERS) learns a
-            %   model with TRAIN data and PARAMETERS as hyper-parameter 
-            %   values for the method. Test the generalization performance 
-            %   with TRAIN and TEST data and returns predictions and model
-            %   in mInf structure. 
-            addpath(fullfile('Algorithms','libsvm-weights-3.12','matlab'));
-            
-            param.C = parameters(1);
-            param.k = parameters(2);
-            param.e = parameters(3);
-            
-            c1 = clock;
-            % Scale the targets
-            nOfClasses = numel(unique(train.targets));
-            
-            auxTrain = train;
-            auxTest = test;
-            
-            auxTrain.targets = (auxTrain.targets-1)/(nOfClasses-1);
-            auxTest.targets = (auxTest.targets-1)/(nOfClasses-1);
-            
-            classes = unique([auxTrain.targets' auxTest.targets']);
-            
-            model = obj.train( auxTrain, param);
-            c2 = clock;
-            mInf.trainTime = etime(c2,c1);
-            
-            c1 = clock;
-            [mInf.projectedTrain, mInf.predictedTrain] = obj.test( auxTrain,model,classes );
-            [mInf.projectedTest, mInf.predictedTest] = obj.test( auxTest,model,classes );
-            c2 = clock;
-            mInf.testTime = etime(c2,c1);
-            
-            model.algorithm = 'SVR';
-            model.parameters = param;
-            %mInf.projection = model.SVs' * model.sv_coef;
-            mInf.model = model;
-            
-            rmpath(fullfile('Algorithms','libsvm-weights-3.12','matlab'));
-        end
-        
-        function model = train(obj,train, parameters)
+        function [model,projectedTrain,predictedTrain] = train(obj,train,parameters)
             %TRAIN trains the model for the SVR method with TRAIN data and
             %vector of parameters PARAMETERS. Return the learned model. 
+            if isempty(strfind(path,obj.algorithmMexPath))
+                addpath(obj.algorithmMexPath);
+            end
+            nOfClasses = numel(unique(train.targets));
+            % Scale the targets
+            auxTrain = train;
+            auxTrain.targets = (auxTrain.targets-1)/(nOfClasses-1);
             svrParameters = ...
-                ['-s 3 -t 2 -c ' num2str(parameters.C) ' -p ' num2str(parameters.e) ' -g '  num2str(parameters.k) ' -q'];
+                ['-s 3 -t 2 -c ' num2str(parameters.c) ' -p ' num2str(parameters.e) ' -g '  num2str(parameters.k) ' -q'];
             
-            weights = ones(size(train.targets));
-            model = svmtrain(weights, train.targets, train.patterns, svrParameters);
+            weights = ones(size(auxTrain.targets));
+            model.libsvmModel = svmtrain(weights, auxTrain.targets, auxTrain.patterns, svrParameters);
+            model.scaledLabelSet = unique(auxTrain.targets);            
+            model.algorithm = 'SVR';
+            model.parameters = parameters;
+            
+            [projectedTrain, predictedTrain] = obj.test(auxTrain.patterns,model);
+            if ~isempty(strfind(path,obj.algorithmMexPath))
+                rmpath(obj.algorithmMexPath);
+            end
         end
 
-        % TODO: remove class parameters. Avoid using test.targets
-        function [projected, predicted]= test(obj, test, model,classes)
+        function [projected, predicted]= test(obj, test,model)
             %TEST predict labels of TEST patterns labels using MODEL. 
-            [projected err] = svmpredict(test.targets, test.patterns, model);
+            if isempty(strfind(path,obj.algorithmMexPath))
+                addpath(obj.algorithmMexPath);
+            end
+            [projected err] = svmpredict(ones(size(test,1),1), test, model.libsvmModel);
             
-            classMembership = repmat(projected, 1,numel(classes));
-            classMembership = abs(classMembership -  ones(size(classMembership,1),1)*classes);
+            classMembership = repmat(projected, 1,numel(model.scaledLabelSet));
+            classMembership = abs(classMembership -  ones(size(classMembership,1),1)*model.scaledLabelSet');
             
             [m,predicted]=min(classMembership,[],2);
+            if ~isempty(strfind(path,obj.algorithmMexPath))
+                rmpath(obj.algorithmMexPath);
+            end
         end
         
     end

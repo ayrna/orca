@@ -45,8 +45,7 @@ classdef ELMOP < Algorithm
         wMin = -1;
         wMax = 1;
         
-        parameters
-        name_parameters = {'hiddenN'};
+        parameters = struct('hiddenN', 50);
     end
     
     
@@ -62,59 +61,17 @@ classdef ELMOP < Algorithm
             else
                 obj.activationFunction = 'sig';
             end
-        end
+        end  
         
-        
-        function obj = defaultParameters(obj)
-            obj.parameters.hiddenN = {5,10,20,30,40,50,60,70,80,90,100};
-        end
-        
-        function [mInf] = runAlgorithm(obj,train, test, parameters)
-            %RUNALGORITHM runs the corresponding algorithm, fitting the
-            %model and testing it in a dataset.
-            %   mInf = RUNALGORITHM(OBJ, TRAIN, TEST, PARAMETERS) learns a
-            %   model with TRAIN data and PARAMETERS as hyper-parameter
-            %   values for the method. Test the generalization performance
-            %   with TRAIN and TEST data and returns predictions and model
-            %   in mInf structure.
-            
-            train.uniqueTargets = unique([test.targets ;train.targets]);
-            test.uniqueTargets = train.uniqueTargets;
-            train.nOfClasses = max(train.uniqueTargets);
-            test.nOfClasses = train.nOfClasses;
-            train.nOfPatterns = length(train.targets);
-            test.nOfPatterns = length(test.targets);
-            
-            train.dim = size(train.patterns,2);
-            test.dim = train.dim;
-            
-            param.hiddenN = parameters(1);
-            
-            [train, test] = obj.labelToOrelm(train,test);
-            train.uniqueTargetsOrelm = unique([test.targetsOrelm ;train.targetsOrelm],'rows');
-            test.uniqueTargetsOrelm = train.uniqueTargetsOrelm;
-            
-            
-            c1 = clock;
-            model = obj.train( train, param);
-            c2 = clock;
-            % time information for testing
-            mInf.trainTime = etime(c2,c1);
-            
-            c1 = clock;
-            [mInf.projectedTrain, mInf.predictedTrain] = obj.test( train,model );
-            [mInf.projectedTest, mInf.predictedTest] = obj.test( test,model );
-            c2 = clock;
-            % time information for testing
-            mInf.testTime = etime(c2,c1);
-            
-            mInf.model = model;
-            
-        end
-        
-        function model = train( obj,train, parameters)
-        %TRAIN trains the model for the SVR method with TRAIN data and
+        function [model, projectedTrain, predictedTrain] = train( obj, train, parameters)
+            %TRAIN trains the model for the SVR method with TRAIN data and
             %vector of parameters PARAMETERS. Return the learned model. 
+            %TODO train.uniqueTargets = unique([test.targets ;train.targets]);
+            train.uniqueTargets = unique(train.targets);
+            train.nOfClasses = max(train.uniqueTargets);
+            train.nOfPatterns = length(train.targets);
+            train.dim = size(train.patterns,2);
+            train = obj.labelToOrelm(train);
             
             if( strcmp(obj.activationFunction,'rbf') && parameters.hiddenN > train.nOfPatterns)
                 %disp(['User''s number of hidden neurons ' num2str(parameters.hiddenN) ...
@@ -275,12 +232,18 @@ classdef ELMOP < Algorithm
             model.OutputWeight = OutputWeight;
             model.algorithm = 'ELMOP';
             model.parameters = parameters;
+            model.labelSet = unique(train.targetsOrelm,'rows');
+            model.nOfClasses = train.nOfClasses;
+            model.dim = train.dim;
+            [projectedTrain, predictedTrain] = obj.test( train.patterns, model );
             
         end
        
         function [TY, TestPredictedY]= test(obj, test, model)
             %TEST predict labels of TEST patterns labels using MODEL. 
-            TV.P = test.patterns';
+            nOfPatterns = length(test);
+            
+            TV.P = test';
             
             %------Perform log(P) calculation once for UP
             % The calculation is done here for including it into the validation time
@@ -294,7 +257,7 @@ classdef ELMOP < Algorithm
                 tempH_test=model.InputWeight*TV.P;
                 %Movido abajo
                 %clear TV.P;             %   Release input of testing data
-                ind=ones(1,test.nOfPatterns);
+                ind=ones(1,nOfPatterns);
                 
                 BiasMatrix=model.BiasofHiddenNeurons(:,ind);              %   Extend the bias matrix BiasofHiddenNeurons to match the demention of H
                 tempH_test=tempH_test + BiasMatrix;
@@ -320,12 +283,12 @@ classdef ELMOP < Algorithm
                 case {'up'}
                     
                     %TV.P = log(TV.P);
-                    H_test = zeros(model.hiddenN, test.nOfPatterns);
+                    H_test = zeros(model.hiddenN, nOfPatterns);
                     
-                    for i = 1 : test.nOfPatterns
+                    for i = 1 : nOfPatterns
                         for j = 1 : model.hiddenN
-                            temp = zeros(test.dim,1);
-                            for n = 1: test.dim
+                            temp = zeros(model.dim,1);
+                            for n = 1: model.dim
                                 %temp(n) = TV.P(n,i)^InputWeight(j,n);
                                 temp(n) = model.InputWeight(j,n)*TV.P(n,i);
                             end
@@ -336,7 +299,7 @@ classdef ELMOP < Algorithm
                     
                     clear temp;
                 case {'rbf','krbf'}
-                    H_test = zeros(test.nOfPatterns,model.hiddenN);
+                    H_test = zeros(nOfPatterns,model.hiddenN);
                     TV.P = TV.P';
                     
                     for j=1:model.hiddenN
@@ -360,7 +323,7 @@ classdef ELMOP < Algorithm
             TY=(H_test' * model.OutputWeight)';                       %   TY: the actual output of the testing data            
             clear H_test;
             
-            TestPredictedY = obj.orelmToLabel(TY', test.uniqueTargetsOrelm);
+            TestPredictedY = obj.orelmToLabel(TY', model.labelSet);
             TestPredictedY = TestPredictedY';
             
         end
@@ -388,16 +351,12 @@ classdef ELMOP < Algorithm
         end
         
         %TODO: This method should work only with a dataset partition. 
-        function [trainSet, testSet] = labelToOrelm(obj,trainSet,testSet)
+        function [data] = labelToOrelm(obj,data)
             %LABELTOORELM Compute the labels to the ordinal format. It 
-            %returns the two pattern structures (train and test)
-            
-            trainSet.targetsOrelm = ones(trainSet.nOfPatterns,trainSet.nOfClasses);
-            testSet.targetsOrelm = ones(testSet.nOfPatterns,trainSet.nOfClasses);
-            
-            for i=1:trainSet.nOfClasses
-                trainSet.targetsOrelm(trainSet.targets<trainSet.uniqueTargets(i),i) = -1;
-                testSet.targetsOrelm(testSet.targets<trainSet.uniqueTargets(i),i) = -1;
+            %returns the two pattern structures (train and test)            
+            data.targetsOrelm = ones(data.nOfPatterns,data.nOfClasses);    
+            for i=1:data.nOfClasses
+                data.targetsOrelm(data.targets<data.uniqueTargets(i),i) = -1;
             end
         end
     end

@@ -6,6 +6,9 @@ method = 'POM';
 % Create the algorithm object
 algorithmObj = POM();
 
+% Clear parameter struct
+clear param;
+
 % Running the algorithm
 info = algorithmObj.runAlgorithm(train,test);
 
