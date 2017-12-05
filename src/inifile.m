@@ -332,7 +332,7 @@ elseif (strcmpi(operation,'read'))
     % Now, go through all the keys and do the conversion if the conversion
     % char is given
     for ii=1:m
-        if ~isempty(conversionOp{ii}) && ~strcmpi(conversionOp{ii},'s')
+        if ~isempty(conversionOp{ii}) & ~strcmpi(conversionOp{ii},'s')
             if strcmpi(conversionOp{ii},'i') | strcmpi(conversionOp{ii},'d')
                 if ~isnumeric(readsett{ii})
                     readsett{ii} = str2num(readsett{ii});
@@ -439,7 +439,7 @@ try
             % Keys that were found as belonging to any previous section
             % are now assumed as located (because another
             % section is found here which could even be a repeated one)
-            keyInd = find( ~keysLocated && strcmpi(keysIn(:,1),currSection) );  
+            keyInd = find( ~keysLocated & strcmpi(keysIn(:,1),currSection) );  
             if length(keyInd)
                 keysLocated(keyInd) = 1;
                 nKeysLocated = nKeysLocated + length(keyInd);
@@ -447,7 +447,7 @@ try
             currSection = readValue;
             currSubSection = '';
             % Indices to non-located keys belonging to current section
-            keyInd = find( ~keysLocated && strcmpi(keysIn(:,1),currSection) );  
+            keyInd = find( ~keysLocated & strcmpi(keysIn(:,1),currSection) );  
             if ~isempty(keyInd)
                 secsExist(keyInd) = 1;
             end
@@ -458,14 +458,14 @@ try
             % Keys that were found as belonging to any PREVIOUS section
             % and/or subsection are now assumed as located (because another
             % subsection is found here which could even be a repeated one)
-            keyInd = find( ~keysLocated && strcmpi(keysIn(:,1),currSection) && ~keysLocated && strcmpi(keysIn(:,2),currSubSection));
+            keyInd = find( ~keysLocated & strcmpi(keysIn(:,1),currSection) & ~keysLocated & strcmpi(keysIn(:,2),currSubSection));
             if length(keyInd)
                 keysLocated(keyInd) = 1;
                 nKeysLocated = nKeysLocated + length(keyInd);
             end
             currSubSection = readValue;
             % Indices to non-located keys belonging to current section and subsection at the same time
-            keyInd = find( ~keysLocated && strcmpi(keysIn(:,1),currSection) && ~keysLocated && strcmpi(keysIn(:,2),currSubSection));
+            keyInd = find( ~keysLocated & strcmpi(keysIn(:,1),currSection) & ~keysLocated & strcmpi(keysIn(:,2),currSubSection));
             if ~isempty(keyInd)
                 subSecsExist(keyInd) = 1;
             end
@@ -479,7 +479,7 @@ try
             currKey = readValue;
             pos2 = ftell(fh);       % the last-byte position of the read key  - the total sum of chars read so far
             for ii=1:length(keyInd)
-               if strcmpi( keysIn(keyInd(ii),3),readKey ) && ~keysLocated(keyInd(ii))
+               if strcmpi( keysIn(keyInd(ii),3),readKey ) & ~keysLocated(keyInd(ii))
                    keysExist(keyInd(ii)) = 1;
                    startOffsets(keyInd(ii)) = pos1+1;
                    endOffsets(keyInd(ii)) = pos2;
@@ -590,7 +590,7 @@ try
     ii = 1;
     while ii < nKeys
         ind = find(so==so(ii));
-        if ~isempty(ind) && length(ind) > 1
+        if ~isempty(ind) & length(ind) > 1
             n = length(ind);
             from = ind(1);
             to = ind(end);
@@ -631,13 +631,13 @@ try
             datain = [datain dataout(from:to)];    % the lines before the key
         end
         
-        if length(datain) && (~(datain(end)==RETURN | datain(end)==NEWLINE))
+        if length(datain) & (~(datain(end)==RETURN | datain(end)==NEWLINE))
             datain = [datain, sprintf(NL_CHAR)];
         end
 
         tab = [];
         if ~keysExist(ii) 
-            if ~secsExist(ii) && ~isempty(keysIn(ii,1))
+            if ~secsExist(ii) & ~isempty(keysIn(ii,1))
                 if ~isempty(keysIn{ii,1})
                     datain = [datain sprintf(['%s' NL_CHAR],['[' keysIn{ii,1} ']'])];
                 end                
@@ -646,21 +646,21 @@ try
                 % This section exists at all keys  corresponding to the same section from know on (even the empty ones)
                 secsExist(ind) = 1;
             end
-            if ~subSecsExist(ii) && ~isempty(keysIn(ii,2))
+            if ~subSecsExist(ii) & ~isempty(keysIn(ii,2))
                 if ~isempty( keysIn{ii,2})
                     if secsExist(ii); tab = tab1;  end;
                     datain = [datain sprintf(['%s' NL_CHAR],[tab '{' keysIn{ii,2} '}'])];
                 end
                 % Key-indices with the same section AND subsection as this, ii-th key
                 % (even empty sections and subsections are considered)
-                ind = find( strcmpi( keysIn(:,1), keysIn(ii,1)) && strcmpi( keysIn(:,2), keysIn(ii,2)) );
+                ind = find( strcmpi( keysIn(:,1), keysIn(ii,1)) & strcmpi( keysIn(:,2), keysIn(ii,2)) );
                 % This subsection exists at all keys corresponding to the
                 % same section and subsection from know on (even the empty ones)
                 subSecsExist(ind) = 1;
             end
         end
-        if secsExist(ii) && (~isempty(keysIn{ii,1})); tab = tab1;  end;
-        if subSecsExist(ii) && (~isempty(keysIn{ii,2})); tab = [tab tab1];  end;
+        if secsExist(ii) & (~isempty(keysIn{ii,1})); tab = tab1;  end;
+        if subSecsExist(ii) & (~isempty(keysIn{ii,2})); tab = [tab tab1];  end;
         datain = [datain sprintf(['%s' NL_CHAR],[tab keysIn{ii,3} ' = ' values{ii}])];
     end
     from = eo(ii);
@@ -831,11 +831,11 @@ end
 if strcmpi(line(1),';')                     % comment found
     status = 4;
     value = line(2:end);
-elseif (line(1) == '[') && (line(end) == ']') && (length(line) >= 3)  % section found
+elseif (line(1) == '[') & (line(end) == ']') & (length(line) >= 3)  % section found
     value = lower(line(2:end-1));
     status = 1;
-elseif (line(1) == '{') &&...                % subsection found
-       (line(end) == '}') && (length(line) >= 3)
+elseif (line(1) == '{') &...                % subsection found
+       (line(end) == '}') & (length(line) >= 3)
     value = lower(line(2:end-1));
     status = 2;
 else                                        % either key-value pair or unknown string
