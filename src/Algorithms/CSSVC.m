@@ -24,7 +24,7 @@ classdef CSSVC < Algorithm
     %       This software is released under the The GNU General Public License v3.0 licence
     %       available at http://www.gnu.org/licenses/gpl-3.0.html
     properties
-        parameters = struct('c', 0.1, 'k', 0.1)
+        parameters = struct('c', 0.1, 'k', 0.1);
         kernelType = 'rbf';
         algorithmMexPath = fullfile(pwd,'Algorithms','libsvm-weights-3.12','matlab');
     end

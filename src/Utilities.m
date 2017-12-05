@@ -5,7 +5,7 @@ classdef Utilities < handle
     %
     %   UTILITIES methods:
     %      runExperiments             - setting and running experiments
-    %      runExperiment              - Launchs a single experiment
+    %      runExperimentFold          - Launchs a single experiment fold
     %      configureExperiment        - sets configuration of the several experiments
     %      results                    - creates experiments reports
     %
@@ -469,8 +469,8 @@ classdef Utilities < handle
             end
         end
         
-        function runExperiment(confFile)
-            % RUNEXPERIMENT(CONFFILE) launch a single experiment described in
+        function runExperimentFold(confFile)
+            % RUNEXPERIMENTFOLD(CONFFILE) launch a single experiment described in
             %   file CONFFILE
             addpath('Measures');
             addpath('Algorithms');

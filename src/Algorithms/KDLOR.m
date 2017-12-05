@@ -29,7 +29,7 @@ classdef KDLOR < Algorithm
     
     properties
         optimizationMethod = 'quadprog';
-        parameters = struct('c', 0.1, 'k', 0.1, 'u', 0.01)
+        parameters = struct('c', 0.1, 'k', 0.1, 'u', 0.01);
         kernelType = 'rbf';
     end
     
