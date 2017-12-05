@@ -6,6 +6,9 @@ method = 'CSSVC';
 % Create the algorithm object
 algorithmObj = CSSVC();
 
+% Clear parameter struct
+clear param;
+
 % Parameter C (Cost)
 param(1) = 10;
 

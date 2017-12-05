@@ -36,6 +36,7 @@ classdef REDSVM < Algorithm
         parameters;
         
         name_parameters = {'C','k'};
+        algorithmMexPath = fullfile('Algorithms','libsvm-rank-2.81','matlab');
     end
     
     methods
@@ -62,48 +63,31 @@ classdef REDSVM < Algorithm
             obj.parameters.k = 10.^(-3:1:3);
         end
         
-        function [mInf] = runAlgorithm(obj,train, test, parameters)
-            %RUNALGORITHM runs the corresponding algorithm, fitting the
-            %model and testing it in a dataset.
-            %   mInf = RUNALGORITHM(OBJ, TRAIN, TEST, PARAMETERS) learns a
-            %   model with TRAIN data and PARAMETERS as hyper-parameter
-            %   values for the method. Test the generalization performance
-            %   with TRAIN and TEST data and returns predictions and model
-            %   in mInf structure.
-            addpath(fullfile('Algorithms','libsvm-rank-2.81','matlab'));
-            param.C = parameters(1);
-            param.k = parameters(2);
-            
-            c1 = clock;
-            model = obj.train(train,param);
-            c2 = clock;
-            mInf.trainTime = etime(c2,c1);
-            
-            c1 = clock;
-            [mInf.projectedTrain,mInf.predictedTrain] = obj.test(train,model);
-            [mInf.projectedTest,mInf.predictedTest] = obj.test(test,model);
-            c2 = clock;
-            mInf.testTime = etime(c2,c1);
-            
-            model.algorithm = 'REDSVM';
-            model.parameters = param;
-            mInf.model = model;
-            
-            rmpath(fullfile('Algorithms','libsvm-rank-2.81','matlab'));
-            
-        end
-        
-        function [model]= train( obj, train , param)
+        function [model, projectedTrain, predictedTrain]= train( obj, train , param)
             %TRAIN trains the model for the SVR method with TRAIN data and
             %vector of parameters PARAMETERS. Return the learned model.
+            if isempty(strfind(path,obj.algorithmMexPath))
+                addpath(obj.algorithmMexPath);
+            end
             options = ['-s 5 -t 2 -c ' num2str(param.C) ' -g ' num2str(param.k) ' -q'];
-            model = svmtrain(train.targets, train.patterns, options);
-            
+            model.libsvmModel = svmtrain(train.targets, train.patterns, options);
+            model.algorithm = 'REDSVM';
+            model.parameters = param;
+            [predictedTrain, acc, projectedTrain] = svmpredict(train.targets,train.patterns,model.libsvmModel, '');
+            if ~isempty(strfind(path,obj.algorithmMexPath))
+                rmpath(obj.algorithmMexPath);
+            end            
         end
         
-        function [projected, testTargets]= test(obj,test, model)
+        function [projected, predicted]= test(obj,test, model)
             %TEST predict labels of TEST patterns labels using MODEL.
-            [testTargets, acc, projected] = svmpredict(test.targets,test.patterns,model, '');
+            if isempty(strfind(path,obj.algorithmMexPath))
+                addpath(obj.algorithmMexPath);
+            end
+            [predicted, acc, projected] = svmpredict(ones(size(test,1),1),test,model.libsvmModel, '');
+            if ~isempty(strfind(path,obj.algorithmMexPath))
+                rmpath(obj.algorithmMexPath);
+            end
             
         end
     end

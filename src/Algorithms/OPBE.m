@@ -27,7 +27,8 @@ classdef OPBE < Algorithm
     %       available at http://www.gnu.org/licenses/gpl-3.0.html
     properties
         parameters;
-        name_parameters = {'C', 'k'};
+        name_parameters;
+        base_algorithm;
     end
     
     methods
@@ -35,45 +36,18 @@ classdef OPBE < Algorithm
         function obj = OPBE()
             %OPBE constructs an object of the class SVR and sets its default
             obj.name = 'Ordinal Projection Based Ensemble';
+            obj.base_algorithm = SVORIM;
+            obj.name_parameters = obj.base_algorithm.name_parameters;
         end
         
         function obj = defaultParameters(obj)
             %DEFAULTPARAMETERS It assigns the parameters of the algorithm
             %   to a default value.
             % cost
-            obj.parameters.C = 10.^(-3:1:3);
-            % kernel width
-            obj.parameters.k = 10.^(-3:1:3);
+            obj.base_algorithm.defaultParameters();
         end
         
-        function [mInf] = runAlgorithm(obj,train, test, parameters)
-            %RUNALGORITHM runs the corresponding algorithm, fitting the
-            %model and testing it in a dataset.
-            %   mInf = RUNALGORITHM(OBJ, TRAIN, TEST, PARAMETERS) learns a
-            %   model with TRAIN data and PARAMETERS as hyper-parameter
-            %   values for the method. Test the generalization performance
-            %   with TRAIN and TEST data and returns predictions and model
-            %   in mInf structure.
-            param.C = parameters(1);
-            param.k = parameters(2);
-            
-            c1 = clock;
-            [model,mInf.projectedTrain,mInf.predictedTrain] = obj.train(train, test, parameters);
-            c2 = clock;
-            mInf.trainTime = etime(c2,c1);
-            
-            c1 = clock;
-            [mInf.projectedTest, mInf.predictedTest] = obj.test( test, train, model);
-            c2 = clock;
-            
-            mInf.testTime = etime(c2,c1);
-            mInf.model.parameters = param;
-            mInf.model.algorithm = 'OPBE';
-            mInf.model.ensembleModels = model;
-            
-        end
-        
-        function [models, projected, trainTargets] = train(obj, train, test, parameters)
+        function [model, projected, trainTargets] = train(obj, train, param)
             %TRAIN trains the model for the OPBE method with TRAIN data and
             %vector of parameters PARAMETERS. Return the learned model and
             %the projected TRAIN and TEST patterns
@@ -120,10 +94,11 @@ classdef OPBE < Algorithm
                 auxtrain.targets = currentTargets;
                 
                 % Train each label decomposition
-                [models(i)] = baseAlgorithm.runAlgorithm(auxtrain, test, parameters);
+                [model, projectedTrain] = baseAlgorithm.train(auxtrain, param);
+                models(i) = model;
                 
                 % Estimate probabilities
-                probTrain = obj.calculateProbabilities(models(i).projectedTrain, models(i).model.thresholds');
+                probTrain = obj.calculateProbabilities(projectedTrain, models(i).thresholds');
                 
                 % Compute weights and fused probabilities
                 for j = 1: nOfClasses
@@ -158,6 +133,8 @@ classdef OPBE < Algorithm
                     
                 end
             end
+            model.ensembleModels = models;
+            model.parameters = param;
             
             % Join weights and probabilities into a final
             % decision label
@@ -171,19 +148,21 @@ classdef OPBE < Algorithm
             
         end
         
-        function [projected, testTargets] = test(obj, test, train, models)
+        function [projected, testTargets] = test(obj, test, model)
             %TEST predict labels of TEST patterns labels using model in MODEL.
-            classes = unique(train.targets);
-            nOfClasses = numel(classes);
+            models = model.ensembleModels;
+            nOfClasses = size(models,2);
+            classes = 1:nOfClasses;
             weights = zeros(nOfClasses,1);
-            classBelongingProbTest = ones(nOfClasses, size(test.patterns,1));
+            classBelongingProbTest = ones(nOfClasses, size(test,1));
             
             for i = 1:nOfClasses
                 nLowerRankingClasses = sum(classes<i);
                 nHigherRankingClasses = sum(classes>i);
                 
                 % Estimate probabilities
-                probTest = obj.calculateProbabilities(models(i).projectedTest, models(i).model.thresholds');
+                [projectedTest] = obj.base_algorithm.test(test, models(i));
+                probTest = obj.calculateProbabilities(projectedTest, models(i).thresholds');
                 
                 % Compute weights and fused probabilities
                 

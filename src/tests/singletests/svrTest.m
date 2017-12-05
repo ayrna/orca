@@ -6,6 +6,9 @@ method = 'SVR';
 % Create the algorithm object
 algorithmObj = SVR();
 
+% Clear parameter struct
+clear param;
+
 % Parameter C (Cost)
 param(1) = 10;
 

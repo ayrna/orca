@@ -79,65 +79,22 @@ classdef KDLOR < Algorithm
             obj.parameters.u = [0.01,0.001,0.0001,0.00001,0.000001];
         end
         
-        function [mInf] = runAlgorithm(obj,train, test, parameters)
-            %RUNALGORITHM runs the corresponding algorithm, fitting the
-            %model and testing it in a dataset.
-            %   mInf = RUNALGORITHM(OBJ, TRAIN, TEST, PARAMETERS) learns a
-            %   model with TRAIN data and PARAMETERS as hyper-parameter
-            %   values for the method. Test the generalization performance
-            %   with TRAIN and TEST data and returns predictions and model
-            %   in mInf structure.
-            param.C = parameters(1);
-            param.k = parameters(2);
-            
-            if strcmp(obj.kernelType, 'sigmoid')
-                param.k = [parameters(2),parameters(3)];
-                if numel(parameters)>3
-                    param.u = parameters(4);
-                else
-                    param.u = 0.01;
-                end
-            else
-                if numel(parameters)>2
-                    param.u = parameters(3);
-                else
-                    param.u = 0.01;
-                end
-                
-            end
-            
-            c1 = clock;
-            [model]= obj.train( train.patterns', train.targets', param);
-            c2 = clock;
-            mInf.trainTime = etime(c2,c1);
-            
-            c1 = clock;
-            [mInf.projectedTrain, mInf.predictedTrain] = obj.test( train.patterns', train.patterns', model);
-            [mInf.projectedTest, mInf.predictedTest] = obj.test( test.patterns', train.patterns', model);
-            c2 = clock;
-            % time information for testing
-            mInf.testTime = etime(c2,c1);
-            
-            mInf.model = model;
-            
-            
-        end
-        
         % TODO: Fix to receibe data structure as unique parameter
-        function [model]= train( obj,trainPatterns, trainTargets , parameters)
+        function [model, projectedTrain, predictedTrain]= train( obj, train, parameters)
             %TRAIN trains the model for the KDLOR method with TRAIN data and
             %vector of parameters PARAMETERS. Return the learned model.
+            trainPatterns = train.patterns';
             [dim,numTrain] = size(trainPatterns);
             
-            if(nargin < 2)
+            if(nargin < 1)
                 error('Patterns and targets are needed.\n');
             end
             
-            if length(trainTargets) ~= size(trainPatterns,2)
+            if length(train.targets) ~= size(trainPatterns,2)
                 error('Number of patterns and targets should be the same.\n');
             end
             
-            if(nargin < 4)
+            if(nargin < 3)
                 % Default parameters
                 d=10;
                 u=0.001;
@@ -159,10 +116,10 @@ classdef KDLOR < Algorithm
             
             
             % Compute the Gram or Kernel matrix
-            kernelMatrix = computeKernelMatrix(trainPatterns, trainPatterns,obj.kernelType, kernelParam);
+            kernelMatrix = computeKernelMatrix(trainPatterns,trainPatterns,obj.kernelType, kernelParam);
             
             dim2 = numTrain;
-            numClasses = length(unique(trainTargets));
+            numClasses = length(unique(train.targets));
             meanClasses = zeros(numClasses,dim2);
             
             Q=zeros(numClasses-1, numClasses-1);
@@ -173,14 +130,14 @@ classdef KDLOR < Algorithm
             E=ones(1,numClasses-1);
             
             aux=zeros(1,dim2);
-            N=hist(trainTargets,1:numClasses);
+            N=hist(train.targets,1:numClasses);
             
             H = sparse(dim2,dim2);
             
             % Calculate the mean of the classes and the H matrix
             for currentClass = 1:numClasses
-                meanClasses(currentClass,:) = mean(kernelMatrix(:,( trainTargets == currentClass )),2);
-                H = H + kernelMatrix(:,( trainTargets == currentClass ))*(eye(N(1,currentClass),N(1,currentClass))-ones(N(1,currentClass),N(1,currentClass))/sum( trainTargets == currentClass ))*kernelMatrix(:,( trainTargets == currentClass ))';
+                meanClasses(currentClass,:) = mean(kernelMatrix(:,( train.targets == currentClass )),2);
+                H = H + kernelMatrix(:,( train.targets == currentClass ))*(eye(N(1,currentClass),N(1,currentClass))-ones(N(1,currentClass),N(1,currentClass))/sum( train.targets == currentClass ))*kernelMatrix(:,( train.targets == currentClass ))';
             end
             
             % Avoid ill-posed matrixes
@@ -265,43 +222,46 @@ classdef KDLOR < Algorithm
             model.parameters = parameters;
             model.kernelType = obj.kernelType;
             model.algorithm = 'KDLOR';
+            model.train = trainPatterns;
+            projectedTrain = model.projection'*kernelMatrix;            
+            predictedTrain = assignLabels(obj, projectedTrain, model.thresholds');
             
             
         end
         
         % TODO: Fix to receibe data structure as unique parameter
-        function [projected, testTargets] = test(obj, testPatterns, trainPatterns, model)
+        function [projected, predicted] = test(obj, testPatterns, model)
             %TEST predict labels of TEST patterns labels using MODEL.
+                        
+            kernelMatrix = computeKernelMatrix(model.train,testPatterns',model.kernelType, model.parameters.k);
+            projected = model.projection'*kernelMatrix;
             
-            numClasses = size(model.thresholds,1)+1;
+            predicted = assignLabels(obj, projected, model.thresholds');
             
-            kernelMatrix2 = computeKernelMatrix(trainPatterns, testPatterns,model.kernelType, model.parameters.k);
-            projected = model.projection'*kernelMatrix2;
-            
-            % We calculate the projected patterns minus each threshold, and then with
-            % the following decision rule we can compute the class to which each pattern
-            % belongs to.
-            projected2 = repmat(projected, numClasses-1,1);
-            projected2 = projected2 - model.thresholds*ones(1,size(projected2,2));
+        end
+        
+        function predicted = assignLabels(obj, projected, thresholds)  
+            %TEST assign the labels from projections and thresholds          
+            numClasses = size(thresholds,2)+1;
+            project2 = repmat(projected, numClasses-1,1);
+            project2 = project2 - thresholds'*ones(1,size(project2,2));
             
             % Asignation of the class
             % f(x) = max {Wx-bk<0} or Wx - b_(K-1) > 0
-            wx=projected2;
+            wx=project2;
             
             % The procedure for that is the following:
             % We assign the values > 0 to NaN
             wx(wx(:,:)>0)=NaN;
             
             % Then, we choose the biggest one.
-            [maximum,testTargets]=max(wx,[],1);
+            [maximum,predicted]=max(wx,[],1);
             
             % If a max is equal to NaN is because Wx-bk for all k is >0, so this
-            % pattern belong to the last class.
-            testTargets(isnan(maximum(:,:)))=numClasses;
+            % pattern belongs to the last class.
+            predicted(isnan(maximum(:,:)))=numClasses;
             
-            projected = projected';
-            testTargets = testTargets';
-            
+            predicted = predicted';
         end
         
     end
