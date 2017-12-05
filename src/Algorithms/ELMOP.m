@@ -45,8 +45,7 @@ classdef ELMOP < Algorithm
         wMin = -1;
         wMax = 1;
         
-        parameters;
-        name_parameters = {'hiddenN'};
+        parameters = struct('hiddenN', 50)
     end
     
     

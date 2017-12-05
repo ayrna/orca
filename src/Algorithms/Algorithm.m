@@ -9,7 +9,6 @@ classdef Algorithm < handle
     %       This software is released under the The GNU General Public License v3.0 licence
     %       available at http://www.gnu.org/licenses/gpl-3.0.html
     properties
-        kernelType = 'rbf';
         name
     end
     
@@ -17,6 +16,14 @@ classdef Algorithm < handle
         function name = getName(obj)
             %GETNAME returns the name of the implemented algorithm.
             name = obj.name;
+        end
+        
+        function name_parameters = getParameterNames(obj)
+            if ~isempty(obj.parameters)
+                name_parameters = fieldnames(obj.parameters);
+            else
+                name_parameters = [];
+            end
         end
         
         function mInf = runAlgorithm(obj,train, test, parameters)
@@ -27,10 +34,11 @@ classdef Algorithm < handle
             %   values for the method. Test the generalization performance
             %   with TRAIN and TEST data and returns predictions and model
             %   in mInf structure.
-            nParam = numel(obj.name_parameters);
+            name_parameters = obj.getParameterNames();
+            nParam = numel(name_parameters);
             if nParam~= 0
                 parameters = reshape(parameters,[1,nParam]);
-                param = cell2struct(num2cell(parameters(1:nParam)),obj.name_parameters,2);
+                param = cell2struct(num2cell(parameters(1:nParam)),name_parameters,2);
             else
                 param = [];
             end

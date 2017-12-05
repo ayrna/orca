@@ -26,8 +26,7 @@ classdef OPBE < Algorithm
     %       This software is released under the The GNU General Public License v3.0 licence
     %       available at http://www.gnu.org/licenses/gpl-3.0.html
     properties
-        parameters;
-        name_parameters;
+        parameters = [];
         base_algorithm;
     end
     
@@ -37,7 +36,8 @@ classdef OPBE < Algorithm
             %OPBE constructs an object of the class SVR and sets its default
             obj.name = 'Ordinal Projection Based Ensemble';
             obj.base_algorithm = SVORIM;
-            obj.name_parameters = obj.base_algorithm.name_parameters;
+            %obj.name_parameters = obj.base_algorithm.getParameterNames();
+            obj.parameters = obj.base_algorithm.parameters;
         end
         
         function obj = defaultParameters(obj)

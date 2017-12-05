@@ -40,7 +40,6 @@ classdef POM < Algorithm
     
     properties
         parameters = [];
-        name_parameters = {};
     end
     
     methods

@@ -29,8 +29,8 @@ classdef SVOREX < Algorithm
     %       available at http://www.gnu.org/licenses/gpl-3.0.html
     
     properties
-        parameters;        
-        name_parameters = {'C', 'k'};
+        parameters = struct('c', 0.1, 'k', 0.1)
+        kernelType = 'rbf';
         algorithmMexPath = fullfile('Algorithms','SVOREX');
     end
     
@@ -52,7 +52,7 @@ classdef SVOREX < Algorithm
             %DEFAULTPARAMETERS It assigns the parameters of the algorithm
             %   to a default value.
             % cost
-            obj.parameters.C =  10.^(-3:1:3);
+            obj.parameters.c =  10.^(-3:1:3);
             % kernel width
             obj.parameters.k = 10.^(-3:1:3);
         end
@@ -63,7 +63,7 @@ classdef SVOREX < Algorithm
             if isempty(strfind(path,obj.algorithmMexPath))
                 addpath(obj.algorithmMexPath);
             end
-            [alpha, thresholds, projectedTrain] = svorex([train.patterns train.targets],parameters.k,parameters.C,0,0,0);
+            [alpha, thresholds, projectedTrain] = svorex([train.patterns train.targets],parameters.k,parameters.c,0,0,0);
             predictedTrain = obj.assignLabels(projectedTrain, thresholds);
             model.projection = alpha;
             model.thresholds = thresholds;
@@ -77,14 +77,14 @@ classdef SVOREX < Algorithm
         end
         
         function [projected, predicted] = test(obj, test, model)
-            %TEST predict labels of TEST patterns labels using MODEL.            
+            %TEST predict labels of TEST patterns labels using MODEL.
             kernelMatrix = computeKernelMatrix(model.train',test','rbf',model.parameters.k);
             projected = model.projection*kernelMatrix;
             
-            predicted = assignLabels(obj, projected, model.thresholds);            
+            predicted = assignLabels(obj, projected, model.thresholds);
         end
         
-        function predicted = assignLabels(obj, projected, thresholds)            
+        function predicted = assignLabels(obj, projected, thresholds)
             numClasses = size(thresholds,2)+1;
             %TEST assign the labels from projections and thresholds
             project2 = repmat(projected, numClasses-1,1);

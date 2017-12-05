@@ -24,8 +24,8 @@ classdef CSSVC < Algorithm
     %       This software is released under the The GNU General Public License v3.0 licence
     %       available at http://www.gnu.org/licenses/gpl-3.0.html
     properties
-        name_parameters = {'C','k'};
-        parameters;
+        parameters = struct('c', 0.1, 'k', 0.1)
+        kernelType = 'rbf';
         algorithmMexPath = fullfile(pwd,'Algorithms','libsvm-weights-3.12','matlab');
     end
     
@@ -40,7 +40,6 @@ classdef CSSVC < Algorithm
             else
                 obj.kernelType = 'rbf';
             end
-            
         end
         
         function obj = defaultParameters(obj)
@@ -48,7 +47,7 @@ classdef CSSVC < Algorithm
             %to a default value.
             
             % cost
-            obj.parameters.C = 10.^(-3:1:3);
+            obj.parameters.c = 10.^(-3:1:3);
             % kernel width
             obj.parameters.k = 10.^(-3:1:3);
         end
@@ -59,7 +58,7 @@ classdef CSSVC < Algorithm
             if isempty(strfind(path,obj.algorithmMexPath))
                 addpath(obj.algorithmMexPath);
             end
-            options = ['-t 2 -c ' num2str(param.C) ' -g ' num2str(param.k) ' -q'];
+            options = ['-t 2 -c ' num2str(param.c) ' -g ' num2str(param.k) ' -q'];
             
             labelSet = unique(train.targets);
             labelSetSize = length(labelSet);

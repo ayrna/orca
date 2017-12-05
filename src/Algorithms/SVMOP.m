@@ -32,8 +32,8 @@ classdef SVMOP < Algorithm
     %       available at http://www.gnu.org/licenses/gpl-3.0.html
     
     properties
-        name_parameters = {'C','k'};
-        parameters;
+        parameters = struct('c', 0.1, 'k', 0.1)
+        kernelType = 'rbf';
         weights = true;
         algorithmMexPath = fullfile(pwd,'Algorithms','libsvm-weights-3.12','matlab');
     end
@@ -56,7 +56,7 @@ classdef SVMOP < Algorithm
             %DEFAULTPARAMETERS It assigns the parameters of the algorithm
             %   to a default value.
             % cost
-            obj.parameters.C = 10.^(-3:1:3);
+            obj.parameters.c = 10.^(-3:1:3);
             % kernel width
             obj.parameters.k = 10.^(-3:1:3);
         end
@@ -86,7 +86,7 @@ classdef SVMOP < Algorithm
                 etiquetas_train = [ ones(size(trainTargets(trainTargets<i))) ;  ones(size(trainTargets(trainTargets>=i)))*2];
                 
                 % Train
-                options = ['-b 1 -t 2 -c ' num2str(param.C) ' -g ' num2str(param.k) ' -q'];
+                options = ['-b 1 -t 2 -c ' num2str(param.c) ' -g ' num2str(param.k) ' -q'];
                 if obj.weights
                     weightsTrain = obj.computeWeights(i-1,trainTargets);
                 else

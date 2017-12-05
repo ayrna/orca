@@ -28,8 +28,8 @@ classdef SVORLin < Algorithm
     %       This software is released under the The GNU General Public License v3.0 licence
     %       available at http://www.gnu.org/licenses/gpl-3.0.html
     properties
-        parameters;
-        name_parameters = {'C'};
+        parameters = struct('c', 0.1)
+        kernelType = 'rbf';
         algorithmMexPath = fullfile('Algorithms','SVORIM');
     end
     
@@ -45,7 +45,7 @@ classdef SVORLin < Algorithm
         function obj = defaultParameters(obj)
             %DEFAULTPARAMETERS It assigns the parameters of the algorithm
             %   to a default value.
-            obj.parameters.C =  10.^(-3:1:3);
+            obj.parameters.c =  10.^(-3:1:3);
         end
         
         function [model,projectedTrain,predictedTrain] = train(obj,train,parameters)
@@ -54,7 +54,7 @@ classdef SVORLin < Algorithm
             if isempty(strfind(path,obj.algorithmMexPath))
                 addpath(obj.algorithmMexPath);
             end
-            [alpha, thresholds, projectedTrain] = svorim([train.patterns train.targets],1,parameters.C,0,0,1);
+            [alpha, thresholds, projectedTrain] = svorim([train.patterns train.targets],1,parameters.c,0,0,1);
             predictedTrain = obj.assignLabels(projectedTrain, thresholds);
             model.projection = alpha;
             model.thresholds = thresholds;
