@@ -10,10 +10,10 @@ classdef ConfigExp
     %
     properties
         expId
-        keys@cell
-        general@containers.Map
-        algorithm@containers.Map
-        params@containers.Map
+        keys%cell
+        general%containers.Map
+        algorithm%containers.Map
+        params%containers.Map
     end
     
     methods
