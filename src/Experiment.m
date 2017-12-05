@@ -130,11 +130,10 @@ classdef Experiment < handle
             % SAVERESULTS saves the results of the experiment and
             % the best hyperparameters.
             
-            if numel(obj.method.name_parameters)~=0
+            par = obj.method.getParameterNames();
+            if ~isempty(par)
                 outputFile = [obj.resultsDir filesep 'OptHyperparams' filesep obj.data.dataname ];
                 fid = fopen(outputFile,'w');
-                
-                par = fieldnames(TotalResults.model.parameters);
                 
                 for i=1:(numel(par))
                     value = getfield(TotalResults.model.parameters,par{i});
