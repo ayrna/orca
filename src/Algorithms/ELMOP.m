@@ -61,13 +61,7 @@ classdef ELMOP < Algorithm
             else
                 obj.activationFunction = 'sig';
             end
-        end
-        
-        
-        function obj = defaultParameters(obj)
-            obj.parameters.hiddenN = {5,10,20,30,40,50,60,70,80,90,100};
-        end
-  
+        end  
         
         function [model, projectedTrain, predictedTrain] = train( obj, train, parameters)
             %TRAIN trains the model for the SVR method with TRAIN data and

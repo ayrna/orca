@@ -39,14 +39,7 @@ classdef OPBE < Algorithm
             %obj.name_parameters = obj.base_algorithm.getParameterNames();
             obj.parameters = obj.base_algorithm.parameters;
         end
-        
-        function obj = defaultParameters(obj)
-            %DEFAULTPARAMETERS It assigns the parameters of the algorithm
-            %   to a default value.
-            % cost
-            obj.base_algorithm.defaultParameters();
-        end
-        
+
         function [model, projected, trainTargets] = train(obj, train, param)
             %TRAIN trains the model for the OPBE method with TRAIN data and
             %vector of parameters PARAMETERS. Return the learned model and

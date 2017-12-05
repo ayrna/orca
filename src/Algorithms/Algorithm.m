@@ -57,20 +57,15 @@ classdef Algorithm < handle
         
         % Abstract methods: they have been implementes in this way to
         % ensure compatibility with Octave
-        %DEFAULTPARAMETERS It assigns the parameters of the algorithm
-        %to a default value.
-        function obj = defaultParameters(obj)
-            error('defaultParameters method should be implemented in all subclasses');
-        end
         
-        %TRAIN trains the model for the SVR method with TRAIN data and
-        %vector of parameters PARAMETERS. Return the learned model.
         function [model, projectedTrain, predictedTrain] = train( obj,train,param)
+            %TRAIN trains the model for the SVR method with TRAIN data and
+            %vector of parameters PARAMETERS. Return the learned model.
             error('train method should be implemented in all subclasses');
         end
         
-        %TEST predict labels of TEST patterns labels using MODEL.
         function [projected, predicted]= test(obj,test,model)
+            %TEST predict labels of TEST patterns labels using MODEL.
             error('test method should be implemented in all subclasses');
         end
         

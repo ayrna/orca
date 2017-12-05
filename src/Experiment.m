@@ -23,14 +23,13 @@ classdef Experiment < handle
     %       available at http://www.gnu.org/licenses/gpl-3.0.html
     %
     properties
-        
         data = DataSet;
         method = KDLOR;
         cvCriteria = MAE;
         crossvalide = 0;
         resultsDir = '';
         seed = 1;
-        
+        parameters; % parameters to optimize
     end
     
     properties (SetAccess = private)
@@ -98,7 +97,6 @@ classdef Experiment < handle
             try
                 alg = expObj.algorithm('algorithm');
                 eval(['obj.method = ' alg ';']);
-                obj.method.defaultParameters();
             catch
                 error('Unknown algorithm')
             end
@@ -121,7 +119,7 @@ classdef Experiment < handle
             
             pkeys = expObj.params.keys;
             for p=1:expObj.params.Count
-                eval(['obj.method.parameters.' pkeys{p} ' = [' expObj.params(pkeys{p}) '];']);
+                eval(['obj.parameters.' pkeys{p} ' = [' expObj.params(pkeys{p}) '];']);
                 obj.crossvalide = 1;
             end
         end
@@ -179,10 +177,10 @@ classdef Experiment < handle
             %   (k defined by 'num fold' in configuration file). Returns vector OPTIMALS
             %   with optimal parameter(s)
             nOfFolds = obj.data.nOfFolds;
-            parameters = obj.method.parameters;
-            par = fieldnames(parameters);
+            %parameters = obj.parameters;
+            %par = fieldnames(parameters);
             
-            sets = struct2cell(parameters);
+            sets = struct2cell(obj.parameters);
             c = cell(1, numel(sets));
             [c{:}] = ndgrid( sets{:} );
             combinations = cell2mat( cellfun(@(v)v(:), c, 'UniformOutput',false) );

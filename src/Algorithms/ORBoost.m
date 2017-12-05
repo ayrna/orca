@@ -42,13 +42,7 @@ classdef ORBoost < Algorithm
             %   OBJ = ORBoost() builds ORBoost object
             obj.name = 'OR Ensemble with perceptrons';
         end
-        
-        function obj = defaultParameters(obj)
-            %DEFAULTPARAMETERS dummy implementation to satisfy abstract
-            %class API requirements
-            obj.parameters = [];
-        end
-        
+
         function [model, projectedTrain, predictedTrain] = train(obj,train,parameters)
             %TRAIN trains the model for the SVR method with TRAIN data and
             %vector of parameters PARAMETERS. Return the learned model.

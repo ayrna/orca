@@ -42,12 +42,6 @@ classdef SVORLin < Algorithm
             obj.name = 'Support Vector for Ordinal Regression (Implicit constraints / Linear)';
         end
         
-        function obj = defaultParameters(obj)
-            %DEFAULTPARAMETERS It assigns the parameters of the algorithm
-            %   to a default value.
-            obj.parameters.c =  10.^(-3:1:3);
-        end
-        
         function [model,projectedTrain,predictedTrain] = train(obj,train,parameters)
             %TRAIN trains the model for the SVORLin method with TRAIN data and
             %vector of parameters PARAMETERS. Return the learned model.

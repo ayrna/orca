@@ -66,19 +66,6 @@ classdef KDLOR < Algorithm
             end
         end
         
-        
-        function obj = defaultParameters(obj)
-            %DEFAULTPARAMETERS It assigns the parameters of the algorithm
-            %to a default value.
-            
-            % cost
-            obj.parameters.c = [0.1,1,10,100];
-            % kernel width
-            obj.parameters.k = 10.^(-3:1:3);
-            % parameter for avoiding singular matrix problems
-            obj.parameters.u = [0.01,0.001,0.0001,0.00001,0.000001];
-        end
-        
         % TODO: Fix to receibe data structure as unique parameter
         function [model, projectedTrain, predictedTrain]= train( obj, train, parameters)
             %TRAIN trains the model for the KDLOR method with TRAIN data and

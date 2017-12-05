@@ -47,16 +47,6 @@ classdef SVOREX < Algorithm
             end
         end
         
-        %TODO: Fix train/test API
-        function obj = defaultParameters(obj)
-            %DEFAULTPARAMETERS It assigns the parameters of the algorithm
-            %   to a default value.
-            % cost
-            obj.parameters.c =  10.^(-3:1:3);
-            % kernel width
-            obj.parameters.k = 10.^(-3:1:3);
-        end
-        
         function [model, projectedTrain, predictedTrain] = train(obj,train,parameters)
             %TRAIN trains the model for the SVOREX method with TRAIN data and
             %vector of parameters PARAMETERS. Return the learned model.
