@@ -8,6 +8,8 @@ In order to use ORCA you need:
 
 * `gcc` and `g++`
 * MATLAB/Octave (Octave >= 4.0), including `mex`.
+  * MATLAB toolboxes: Statistics and Machine Learning
+  * Octave packages: statistics,optim,liboctave-dev,struct,io
 
 ## Download ORCA
 
