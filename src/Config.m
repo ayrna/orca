@@ -51,6 +51,17 @@ classdef Config
                 mapObjGeneral = containers.Map(expKeys(strcmp(expKeys(:, 2), 'general-conf'), 3), ...
                     expKeys(strcmp(expKeys(:, 2), 'general-conf'), 4));
                 
+                % all keyword replaces 'datasets' with the full list in the
+                % 'basedir' directory. Otherwise clean whitespaces in the
+                % list
+                if strcmp(mapObjGeneral('datasets'), 'all')
+                    dsdirs = ls(mapObjGeneral('basedir'));
+                    dsdirs = regexprep(dsdirs, '\s*', ',');
+                    mapObjGeneral('datasets')=dsdirs(1:end-1); % remove last ,
+                else
+                    mapObjGeneral('datasets') = regexprep(mapObjGeneral('datasets'), '\s*', '');
+                end
+                
                 mapObjAlgorithm = containers.Map(expKeys(strcmp(expKeys(:, 2), 'algorithm-parameters'), 3), ...
                     expKeys(strcmp(expKeys(:, 2), 'algorithm-parameters'), 4));
                 

@@ -537,18 +537,12 @@ classdef Utilities < handle
             % names. Launch error in case a dataset is not found.
             %   CHECKDATASETS(BASEDIR, DATASETS) tests all DATASETS (comma
             %   separated list of datasets) in directory BASEDIR.
-            %   CHECKDATASETS(BASEDIR, 'all') tests all DATASETS in BASEDIR
             
             if ~exist(basedir,'dir')
                 error('Datasets directory "%s" does not exist', basedir)
             end
             
-            if strcmpi(datasets, 'all')
-                dsdirs = ls(basedir);
-                dsdirsCell = regexp(dsdirs, '((\w|-|_)+(\t*)(\w*))','tokens');
-            else
-                dsdirsCell = regexp(datasets, '((\w|-|_)+(\w*))','tokens');
-            end
+            dsdirsCell = regexp(datasets, '((\w|-|_)+(\w*))','tokens');
             for i=1:length(dsdirsCell) % skip . and ..
                 dsName = dsdirsCell{i};
                 dsName = dsName{:};
