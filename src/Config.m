@@ -54,8 +54,16 @@ classdef Config
                 mapObjAlgorithm = containers.Map(expKeys(strcmp(expKeys(:, 2), 'algorithm-parameters'), 3), ...
                     expKeys(strcmp(expKeys(:, 2), 'algorithm-parameters'), 4));
                 
-                mapObjParametersOpt = containers.Map(expKeys(strcmp(expKeys(:, 2), 'algorithm-hyper-parameters-to-cv'), 3), ...
-                    expKeys(strcmp(expKeys(:, 2), 'algorithm-hyper-parameters-to-cv'), 4));
+                % The algorithm can have no-parameters
+                keysCV = expKeys(strcmp(expKeys(:, 2), 'algorithm-hyper-parameters-to-cv'), 3);
+                
+                if ~isempty(keysCV)                
+                    mapObjParametersOpt = containers.Map(expKeys(strcmp(expKeys(:, 2), 'algorithm-hyper-parameters-to-cv'), 3), ...
+                        expKeys(strcmp(expKeys(:, 2), 'algorithm-hyper-parameters-to-cv'), 4));
+                else
+                    % Use empty cell
+                    mapObjParametersOpt = keysCV;
+                end
                 
                 eObj = ConfigExp(obj.sections{i},expKeys, mapObjGeneral, mapObjAlgorithm, mapObjParametersOpt);
                 

@@ -117,10 +117,12 @@ classdef Experiment < handle
                 obj.method.activationFunction = expObj.algorithm('activationFunction');
             end
             
-            pkeys = expObj.params.keys;
-            for p=1:expObj.params.Count
-                eval(['obj.parameters.' pkeys{p} ' = [' expObj.params(pkeys{p}) '];']);
-                obj.crossvalide = 1;
+            if ~isempty(expObj.params)
+                pkeys = expObj.params.keys;
+                for p=1:expObj.params.Count
+                    eval(['obj.parameters.' pkeys{p} ' = [' expObj.params(pkeys{p}) '];']);
+                    obj.crossvalide = 1;
+                end
             end
         end
         

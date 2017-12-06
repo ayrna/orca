@@ -1,5 +1,5 @@
 classdef ConfigExp
-    %CONFIGEXP Configuration of an experiment. 
+    %CONFIGEXP Configuration of an experiment.
     %
     %   This file is part of ORCA: https://github.com/ayrna/orca
     %   Original authors: Pedro Antonio Gutiérrez, María Pérez Ortiz, Javier Sánchez Monedero
@@ -26,8 +26,8 @@ classdef ConfigExp
         end
         
         function obj = writeIni(obj,outFile)
-        %Write object to an INI file especified by OUTFILE.
-        
+            %Write object to an INI file especified by OUTFILE.
+            
             idAsCell = cell(1,1);
             idAsCell{1,1} = obj.expId;
             
@@ -49,14 +49,17 @@ classdef ConfigExp
                 repmat(algAsCell, obj.algorithm.Count, 1)...
                 obj.algorithm.keys' obj.algorithm.values'];
             
-            paramAlgorithm = [repmat(idAsCell, obj.params.Count, 1) ...
-                repmat(parmAsCell, obj.params.Count, 1)...
-                obj.params.keys' obj.params.values'];
-            
-            writeKeys = [keysGeneral ; keysAlgorithm ; paramAlgorithm];
+            if ~isempty(obj.params)
+                paramAlgorithm = [repmat(idAsCell, obj.params.Count, 1) ...
+                    repmat(parmAsCell, obj.params.Count, 1)...
+                    obj.params.keys' obj.params.values'];
+                writeKeys = [keysGeneral ; keysAlgorithm ; paramAlgorithm];
+            else
+                writeKeys = [keysGeneral ; keysAlgorithm];
+            end
             
             inifile(outFile,'write',writeKeys,'plain');
-
+            
         end
     end
 end

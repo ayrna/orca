@@ -34,6 +34,7 @@ files = dir(tests_dir);
 files(1:2) = [];
 
 for i=1:length(files)
+    disp(['Running ' tests_dir '/'  files(i).name])
     exp_dir = Utilities.runExperiments([tests_dir '/'  files(i).name], false);
     try
         csv_result = [exp_dir filesep 'Results' filesep 'mean-results_test.csv'];
