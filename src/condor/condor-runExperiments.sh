@@ -10,5 +10,5 @@ EXPERIMENTS=(`ls Experiments/exp-$1/exp*`);
 
 echo "Launching ${EXPERIMENTS[$2]} configuration file (number $2)!!"
 
-cmd="/usr/local/matlab/bin/matlab -nodesktop -nojvm -nodisplay -r addpath('..');Utilities.runExperiment('${EXPERIMENTS[$2]}');quit";
+cmd="/usr/local/matlab/bin/matlab -nodesktop -nojvm -nodisplay -r addpath('..');Utilities.runExperimentFold('${EXPERIMENTS[$2]}');quit";
 $cmd;
