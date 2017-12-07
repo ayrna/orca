@@ -1,7 +1,7 @@
 classdef Utilities < handle
     %UTILITIES Static class that contains several methods for configurating
-    %   and running the experiments. Examples of integration with HTCondor
-    %   are provided src/condor folder.
+    %   and running the experiments. It allows experiments CPU parallelization. 
+    %   Examples of integration with HTCondor are provided src/condor folder.
     %
     %   UTILITIES methods:
     %      runExperiments             - setting and running experiments
@@ -29,36 +29,29 @@ classdef Utilities < handle
             %   name LOGSDIR that stores all the results. LOGSDIR is
             %   generated based on the date and time of the system.
             %
-            %   [LOGSDIR] = RUNEXPERIMENTS(EXPFILE, PARALLEL) runs
+            %   [LOGSDIR] = RUNEXPERIMENTS(EXPFILE, options) runs
             %   experiments described in EXPFILE and returns the folder
-            %   name LOGSDIR that stores all the results. PARALLEL is a
-            %   boolean variable that activates CPU parallel processing of
-            %   databases's folds.
+            %   name LOGSDIR that stores all the results. Options are:
+            %       - 'parallel': 'false' or 'true' to activate CPU parallel 
+            %         processing of databases's folds. Default is 'false'
+            %       - 'numcores': default maximum number of cores or desired 
+            %         number. If parallel = 1 and numcores <2 it sets the number
+            %         to maximum number of cores. 
+            %       - 'closepool': whether to close or not the pool after 
+            %         experiments. Default 'true'. Disabling it can speed
+            %         up consecutive calls to runExperiments.
+            %            
+            %  Examples: 
             %
-            
-            parallel = 0;
-            num_cores = 0;
-            maximum_ncores = 0;
-            if (exist ('OCTAVE_VERSION', 'builtin') > 0)
-                maximum_ncores = nproc;
-            else
-                maximum_ncores = feature('numCores');
-            end
-            optargin = size(varargin,2);
-            if optargin == 1
-                parallel = varargin{1};
-                num_cores = maximum_ncores;
-            else
-                if optargin == 2
-                    parallel = varargin{1};
-                    num_cores = varargin{2};
-                    if num_cores > maximum_ncores
-                        disp(['Number of cores was too high and was set up to the maximum available: ' num2str(feature('numCores')) ])
-                        num_cores = maximum_ncores;
-                    end
-                end
-            end
-            
+            %  Runs parallel folds with 3 workers:
+            %   Utilities.runExperiments('tests/cvtests-30-holdout/kdlor.ini', 'parallel', 1, 'numcores', 3)
+            %  Runs parallel folds with max workers:
+            %   Utilities.runExperiments('tests/cvtests-30-holdout/kdlor.ini', 'parallel', 1)
+            %  Runs parallel folds with max workers and do not close the
+            %  pool:
+            %   Utilities.runExperiments('tests/cvtests-30-holdout/kdlor.ini', 'parallel', 1, 'closepool', false)
+            %   Utilities.runExperiments('tests/cvtests-30-holdout/svorim.ini', 'parallel', 1, 'closepool', false)
+            % 
             addpath('Measures');
             addpath('Algorithms');
             
@@ -70,21 +63,12 @@ classdef Utilities < handle
             logsDir = Utilities.configureExperiment(expFile,dirSuffix);
             expFiles = dir([logsDir '/' 'exp-*']);
             
-            if parallel
+            % Parse options.
+            op = Utilities.parseParArgs(varargin);
+            
+            if op.parallel
+                Utilities.preparePool(op.numcores)
                 
-                if verLessThan('matlab', '8.3')
-                    % Check if the pool is open, then close and open with the
-                    % right number of cores
-                    poolsize = matlabpool('size');
-                    if poolsize > 0
-                        if poolsize ~= num_cores
-                            matlabpool close;
-                            matlabpool(num_cores);
-                        end
-                    else
-                        parpool(num_cores)
-                    end
-                end
                 parfor i=1:numel(expFiles)
                     if ~strcmp(expFiles(i).name(end), '~')
                         myExperiment = Experiment;
@@ -94,14 +78,7 @@ classdef Utilities < handle
                     end
                 end
                 
-                if verLessThan('matlab', '8.3')
-                    isOpen = matlabpool('size') > 0;
-                    if isOpen
-                        matlabpool close;
-                    end
-                else
-                    delete(gcp('nocreate'))
-                end
+                Utilities.closePool()
             else
                 for i=1:numel(expFiles)
                     if ~strcmp(expFiles(i).name(end), '~')
@@ -575,6 +552,105 @@ classdef Utilities < handle
                 end
             end
             
+        end
+        
+        function preparePool(numcores)
+            %PREPAREPOOL(NUMCORES) creates a pool of workers. Function to
+            %abstract code from different matlab versions. Adapt the pool
+            %to the desired number of cores. If there is a current pool with 
+            %desired number of cores do not open again to save time
+            if (exist ('OCTAVE_VERSION', 'builtin') > 0)
+                maximum_ncores = nproc;
+            else
+                maximum_ncores = feature('numCores');
+            end
+            
+            % Adjust number of cores
+            if numcores > maximum_ncores
+                disp(['Number of cores was too high and was set up to the maximum available: ' num2str(feature('numCores')) ])
+                numcores = maximum_ncores;
+            end
+            
+            % Check size of the pool
+            if verLessThan('matlab', '8.3')
+                poolsize = matlabpool('size');
+                if poolsize > 0
+                    if poolsize ~= numcores
+                        matlabpool close;
+                        matlabpool(numcores);
+                    end
+                else
+                    matlabpool(numcores);
+                end
+            else
+                poolobj = gcp('nocreate'); % If no pool, do not create new one.
+                if ~isempty(poolobj)
+                    if poolobj.NumWorkers ~= numcores
+                        numcores = poolobj.NumWorkers;
+                        delete(gcp('nocreate'))
+                        parpool(numcores);
+                    end
+                else
+                    parpool(numcores);
+                end
+            end
+        end
+        
+        function closePool()
+            if verLessThan('matlab', '8.3')
+                isOpen = matlabpool('size') > 0;
+                if isOpen
+                    matlabpool close;
+                end
+            else
+                delete(gcp('nocreate'))
+            end
+        end
+        
+        function options = parseParArgs(varargin)
+            %OPTIONS = PARSEPARARGS(VARARGIN) parses parallelization
+            %options with are:
+            % - 'parallel': 'false' or 'true' to activate, default 'false'
+            % - 'numcores': default maximum number of cores or desired 
+            %    number. If parallel = 1 and numcores <2 it sets the number
+            %    to maximum number of cores. 
+            % - 'closepool': whether to close or not the pool after 
+            %    experiments. Default 'true'
+            % Solution adapted from https://stackoverflow.com/questions/2775263/how-to-deal-with-name-value-pairs-of-function-arguments-in-matlab#2776238
+            if (exist ('OCTAVE_VERSION', 'builtin') > 0)
+                maximum_ncores = nproc;
+            else
+                maximum_ncores = feature('numCores');
+            end
+            
+            varargin = varargin{1};
+            
+            options = struct('parallel',false,'numcores',maximum_ncores,'closepool',true);
+            
+            %# read the acceptable names
+            optionNames = fieldnames(options);
+            
+            %# count arguments
+            nArgs = length(varargin);
+            if mod(nArgs,2)
+                error('parseParArgs needs propertyName/propertyValue pairs')
+            end
+            
+            for pair = reshape(varargin,2,[]) %# pair is {propName;propValue}
+                inpName = lower(pair{1}); %# make case insensitive
+                
+                if any(strcmp(inpName,optionNames))
+                    %# overwrite options.
+                    options.(inpName) = pair{2};
+                else
+                    error('%s is not a recognized parameter name',inpName)
+                end
+            end
+            
+            if options.parallel && options.numcores <2
+                disp('Number of cores to low, setting to default number of cores')
+                options.numcores = maximum_ncores;
+            end
         end
     end
 end
