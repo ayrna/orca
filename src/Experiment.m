@@ -119,7 +119,7 @@ classdef Experiment < handle
             
             if ~isempty(expObj.params)
                 pkeys = expObj.params.keys;
-                for p=1:expObj.params.Count
+                for p=1:cast(expObj.params.Count,'int32')
                     eval(['obj.parameters.' pkeys{p} ' = [' expObj.params(pkeys{p}) '];']);
                     obj.crossvalide = 1;
                 end

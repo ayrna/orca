@@ -35,7 +35,7 @@ files(1:2) = [];
 
 for i=1:length(files)
     disp(['Running ' tests_dir '/'  files(i).name])
-    exp_dir = Utilities.runExperiments([tests_dir '/'  files(i).name], false);
+    exp_dir = Utilities.runExperiments([tests_dir '/'  files(i).name], 'parallel', false);
     try
         csv_result = [exp_dir filesep 'Results' filesep 'mean-results_test.csv'];
         results = csvread(csv_result, 1,1);
