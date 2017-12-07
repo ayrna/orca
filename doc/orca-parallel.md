@@ -16,8 +16,7 @@ tic;Utilities.runExperiments('tests/cvtests-30-holdout/kdlor.ini');toc
 Elapsed time is 318.869864 seconds.
 
 % Launch parallel experiments with maximum number of cores
-Utilities.runExperiments('tests/cvtests-30-holdout/kdlor.ini', 'parallel', 1)
-tic;Utilities.runExperiments('tests/kdlor', true);toc
+tic;Utilities.runExperiments('tests/cvtests-30-holdout/kdlor.ini', 'parallel', true);toc
 ...
 Elapsed time is 190.453860 seconds.
 
