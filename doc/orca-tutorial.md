@@ -83,7 +83,7 @@ standarize = true
 algorithm = POM
 ```
 
-**Subsections** help to organize the file:
+**Subsections** help to organize the file and are mandatory:
  - `{general-conf}`: generic parts of the file.
  - `{algorithm-parameters}`: algorithms and parameters selection.
  - `{algorithm-hyper-parameters-to-cv}`: algorithms' hyper-parameters to optimise (see [Hyper-parameter optimization](orca-tutorial.md#hyper-parameter-optimization)).
