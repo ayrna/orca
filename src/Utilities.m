@@ -72,18 +72,19 @@ classdef Utilities < handle
             
             if parallel
                 
-                % Check if the pool is open, then close and open with the
-                % right number of cores
-                poolsize = matlabpool('size');
-                if poolsize > 0
-                    if poolsize ~= num_cores
-                        matlabpool close;
-                        matlabpool(num_cores);
+                if verLessThan('matlab', '8.3')
+                    % Check if the pool is open, then close and open with the
+                    % right number of cores
+                    poolsize = matlabpool('size');
+                    if poolsize > 0
+                        if poolsize ~= num_cores
+                            matlabpool close;
+                            matlabpool(num_cores);
+                        end
+                    else
+                        parpool(num_cores)
                     end
-                else
-                    matlabpool(num_cores)
                 end
-                
                 parfor i=1:numel(expFiles)
                     if ~strcmp(expFiles(i).name(end), '~')
                         myExperiment = Experiment;
@@ -93,12 +94,14 @@ classdef Utilities < handle
                     end
                 end
                 
-                isOpen = matlabpool('size') > 0;
-                if isOpen
-                    matlabpool close;
+                if verLessThan('matlab', '8.3')
+                    isOpen = matlabpool('size') > 0;
+                    if isOpen
+                        matlabpool close;
+                    end
+                else
+                    delete(gcp('nocreate'))
                 end
-                
-                
             else
                 for i=1:numel(expFiles)
                     if ~strcmp(expFiles(i).name(end), '~')
@@ -434,9 +437,9 @@ classdef Utilities < handle
                 % Check that all datasets partitions are accesible
                 % The method checkDatasets calls error
                 Utilities.checkDatasets(directory, datasets);
-
+                
                 [train, test] = Utilities.processDirectory(directory,datasetsList);
-
+                
                 % Generate one config file and corresponding directories
                 % for each fold.
                 for i=1:numel(train)
@@ -454,7 +457,7 @@ classdef Utilities < handle
                     fprintf(fich, [directory '/' datasetsList{i} '/' 'matlab']);
                     fclose(fich);
                     
-                    runfolds = numel(train{i});                    
+                    runfolds = numel(train{i});
                     for j=1:runfolds
                         iniFile = [conf_file '-' datasetsList{i} '-' num2str(j) '.ini'];
                         
