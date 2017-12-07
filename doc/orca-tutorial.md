@@ -66,29 +66,41 @@ Accuracy Train 0.871111, Accuracy Test 0.853333
 ## Experiment configuration
 
 ORCA experiments are specified in configuration files, which run an algorithm (or many algorithms) for a collections of datasets (each dataset with a given number of partitions). The folder [src/config-files](src/config-files) contains example configuration files for running all the algorithms included in ORCA for all the algorithms and datasets of the [review paper](http://www.uco.es/grupos/ayrna/orreview). The following code is an example for running the Proportion Odds Model (POM), a.k.a. Ordinal Logistic Regression:
-```
-new experiment
-name
-pom-real
-dir
-datasets/ordinal/real/30-holdout
-datasets
-automobile,balance-scale,bondrate,car,contact-lenses,ERA,ESL,eucalyptus,LEV,marketing,newthyroid,pasture,squash-stored,squash-unstored,SWD,tae,thyroid,toy,winequality-red,winequality-white
-algorithm
-POM
-standarize
-1
-end experiment
+```INI
+# Experiment ID
+[pom-real]
+{general-conf}
+seed = 1
+# Datasets path
+basedir = ../../../datasets/ordinal/real/30-holdout
+# Datasets to process (comma separated list or 'all' to process all)
+datasets = automobile,balance-scale,bondrate,car,contact-lenses,ERA,ESL,eucalyptus,LEV,marketing,newthyroid,pasture,squash-stored,squash-unstored,SWD,tae,thyroid,toy,winequality-red,winequality-white
+# Activate data standardization
+standarize = true
+
+# Method: algorithm and parameter
+{algorithm-parameters}
+algorithm = POM
 ```
 
-The above file tells ORCA to run the algorithm `POM` for all the datasets specified in the list `datasets`. Each of these datasets should be found at folder *dir*, in such a way that ORCA expects one subfolder for each dataset, where the name of the subfolder must match the name of the dataset. The *standarize* flag activates the standardization of the data (by using the mean and standard deviation of the train set). Directive *name* is used as and identifier for the experiment set.
+**Subsections** help to organize the file:
+ - `{general-conf}`: generic parts of the file.
+ - `{algorithm-parameters}`: algorithms and parameters selection.
+ - `{algorithm-hyper-parameters-to-cv}`: algorithms' hyper-parameters to optimise (see [Hyper-parameter optimization](orca-tutorial.md#hyper-parameter-optimization)).
+
+The above file tells ORCA to run the algorithm `POM` for all the datasets specified in the list `datasets` (`datasets = all` processes all the datasets in `basedir`). Each of these datasets should be found at folder `basedir`, in such a way that ORCA expects one subfolder for each dataset, where the name of the subfolder must match the name of the dataset. Other directives are:
+
+ - INI section `[pom-real]` sets the experiment identifier.
+ - The `standarize` flag activates the standardization of the data (by using the mean and standard deviation of the train set).
+ - Other parameters of the model depends on the specific algorithm (and they should be checked in the documentation of the algorithm). For instance, the kernel type is set up with `kernel` parameter.
+
 
 ## Launch experiments
 
 Assuming you are on the 'src' folder, to launch the bundle of experiments open MATLAB's console and run:
 
 ```MATLAB
-Utilities.runExperiments('config-files/pom')
+Utilities.runExperiments('config-files/pom.ini')
 ```
 
 This should produce and output like this:
@@ -113,41 +125,40 @@ After running all the experiments, all the results are generated in the `Experim
 ## Hyper-parameter optimization
 
 Many machine learning methods depends on hyper-parameters to achieve optimal results. ORCA automates hyper-parameter optimization by using a grid search with an internal nested *k*-fold cross-validation considering only the training partition. Let see an example for the optimisation of the two hyper-parameters of SVORIM: cost ('C') and kernel width parameter ('k', a.k.a *gamma*):
-```
-new experiment
-name
-svorim-mae-real
-dir
-datasets/ordinal/real/30-holdout
-datasets
-automobile,balance-scale,bondrate,car,contact-lenses,ERA,ESL,eucalyptus,LEV,marketing,newthyroid,pasture,squash-stored,squash-unstored,SWD,tae,thyroid,toy,winequality-red,winequality-white
-algorithm
-SVORIM
-num fold
-5
-standarize
-1
-crossval
-mae
-parameter C
-10.^(-3:1:3)
-parameter k
-10.^(-3:1:3)
-kernel
-rbf
-seed
-1
-end experiment
+```ini
+# Experiment ID
+[svorim-mae-real]
+{general-conf}
+seed = 1
+# Datasets path
+basedir = datasets/ordinal/real/30-holdout
+# Datasets to process (comma separated list)
+datasets = all
+# Activate data standardization
+standarize = true
+# Number of folds for the parameters optimization
+num_folds = 5
+# Crossvalidation metric
+cvmetric = mae
+
+# Method: algorithm and parameter
+{algorithm-parameters}
+algorithm = SVORIM
+kernel = rbf
+
+# Method's hyper-parameter values to optimize
+{algorithm-hyper-parameters-to-cv}
+c = 10.^(-3:1:3)
+k = 10.^(-3:1:3)
 ```
 
 The meanings of the directives associated to hyper-parameter optimisation are:
+ - `seed`: is the value to initialize MATLAB random number generator. This can be helpful to debug algorithms.
+ - `num_folds`: *k* value for the nested *k*-fold cross validation over the training data.
+ - `cvmetric`: metric used to select the best hyper-parameters in the grid search. The metrics available are: `AMAE`,`CCR`,`GM`,`MAE`,`MMAE`,`MS`,`MZE`,`Spearman`,`Tkendall` and `Wkappa`.
+ - The list of hyper-parameters to be optimised and values considered for each parameter during the grid search are specified in subsection `{algorithm-hyper-parameters-to-cv}`:
+  - `C`: add a new parameter with name `C` and a set of values of `10.^(-3:1:3)` (10<sup>-3</sup>,10<sup>-2</sup>,...,10<sup>3</sup>). The same apples for `k`.
 
- - *num fold*: *k* value for the nested *k*-fold cross validation over the training data.
- - *crossval*: metric used to select the best hyper-parameters in the grid search. The metrics available are: `AMAE`,`CCR`,`GM`,`MAE`,`MMAE`,`MS`,`MZE`,`Spearman`,`Tkendall` and `Wkappa`.
- - List of hyper-parameters to be optimised and values considered for each parameter during the grid search:
-  - *parameter C*: add a new parameter with name `C` and a set of values of `10.^(-3:1:3)` (10<sup>-3</sup>,10<sup>-2</sup>,...,10<sup>3</sup>).
- - Other parameters of the model depends on the specific algorithm (and they should be checked in the documentation of the algorithm). Here the kernel type is set up with *kernel* parameter. These are parameters that will not be optimized.
- - *seed*: is the value to initialize MATLAB random number generator. This can be helpful to debug algorithms.
 
 # Experimental results and reports
 
@@ -184,14 +195,14 @@ ORCA is intended to be used for ordinal regression problems, so the labels shoul
 The datasets should be partitioned before applying the ORCA algorithms, i.e. ORCA needs all the pairs of training and test files for each dataset. These pairs of files would be used to train and measure generalization performance of each algorithm. For instance, for the `toy` dataset, we have the following folder and file arrangement to perform `30` times a stratified holdout validation:
 ```
 toy
-toy/gpor/
-toy/gpor/test_toy.0
-toy/gpor/train_toy.0
-toy/gpor/test_toy.1
-toy/gpor/train_toy.1
+toy/matlab/
+toy/matlab/test_toy.0
+toy/matlab/train_toy.0
+toy/matlab/test_toy.1
+toy/matlab/train_toy.1
 
-toy/gpor/test_toy.29
-toy/gpor/train_toy.29
+toy/matlab/test_toy.29
+toy/matlab/train_toy.29
 ```
 ORCA will train a model for all the training/test pairs, and the performance results will be used for the reports. The website of the review paper associated to ORCA includes the [partitions](http://www.uco.es/grupos/ayrna/ucobigfiles/datasets-orreview.zip) for all the datasets considered in the experimental part.
 
