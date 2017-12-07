@@ -14,24 +14,24 @@ fi
 
 # Get the number of experiments and pass it later to the queue of condor-runExperiments
 # For this, we iterate over the directories and count train-test pairs with diferent configuration to run
-LINES=`cat $1 | grep dir -n`;
-RUTAS=(`cat $1 |  grep dir --after-context=1 | grep -v dir | grep -v --regexp "--" | sed -e 's/\ //g'`)
 total=0;
 jR=0;
-for i in $LINES
+NFILES=$(($(csplit $1 -f $1 '/\[..*\]/' {\*} | wc -l) - 1))
+for i in $(seq $NFILES)
 do
-	ii=`echo $i | sed -e 's/:dir//g'`;
-	j=`expr $ii + 4`;
-	DATASETS=(`sed -n ''$ii','$j'p' $1 | grep datasets --after-context=1 | grep datasets -v | sed -e 's/\,/\n/g'`);
-	for iii in `seq 1 ${#DATASETS[@]}`
+	FILE="$1"0"$i"
+	echo $FILE
+	BASEDIR=$(cat $FILE | grep basedir | sed -r -e 's/.*=[ ]*([^ ]*)/\1/g')
+	DATASETS=($(cat $FILE | grep datasets | sed -r -e 's/.*=[ ]*([^ ]*)/\1/g' | sed -e 's/\,/\n/g'));
+	for i in `seq 1 ${#DATASETS[@]}`
 	do
-		iiii=`expr $iii - 1`;
-		numFiles=`ls ${RUTAS[$jR]}/${DATASETS[$iiii]}/matlab/train_* -l | wc -l`;
+		ii=$(($i - 1))
+		numFiles=`ls $BASEDIR/${DATASETS[$ii]}/matlab/train_* -l | wc -l`;
 		expresion="expr ( "$total" + "$numFiles" )";
 		total=`$expresion`;
 	done
-	jR=`expr $jR + 1`;
 done
+rm "$1?*"
 
 # Copy files to keep the configuration used for the experiments
 cp *.submit $DATE-$1/
