@@ -20,7 +20,6 @@ NFILES=$(($(csplit $1 -f $1 '/\[..*\]/' {\*} | wc -l) - 1))
 for i in $(seq $NFILES)
 do
 	FILE="$1"0"$i"
-	echo $FILE
 	BASEDIR=$(cat $FILE | grep basedir | sed -r -e 's/.*=[ ]*([^ ]*)/\1/g')
 	DATASETS=($(cat $FILE | grep datasets | sed -r -e 's/.*=[ ]*([^ ]*)/\1/g' | sed -e 's/\,/\n/g'));
 	for i in `seq 1 ${#DATASETS[@]}`
@@ -31,7 +30,7 @@ do
 		total=`$expresion`;
 	done
 done
-rm "$1?*"
+rm $1?*
 
 # Copy files to keep the configuration used for the experiments
 cp *.submit $DATE-$1/
