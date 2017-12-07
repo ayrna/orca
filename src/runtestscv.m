@@ -1,6 +1,6 @@
 %% COPYRIGHT
 % This file is part of ORCA: https://github.com/ayrna/orca
-% Original authors: Pedro Antonio Gutiérrez, María Pérez Ortiz, Javier Sánchez Monedero
+% Original authors: Pedro Antonio Guti??rrez, Mar??a P??rez Ortiz, Javier S??nchez Monedero
 % Citation: If you use this code, please cite the associated paper http://www.uco.es/grupos/ayrna/orreview
 % Copyright:
 %     This software is released under the The GNU General Public License v3.0 licence
@@ -35,7 +35,7 @@ files(1:2) = [];
 
 for i=1:length(files)
     disp(['Running ' tests_dir '/'  files(i).name])
-    exp_dir = Utilities.runExperiments([tests_dir '/'  files(i).name], false);
+    exp_dir = Utilities.runExperiments([tests_dir '/'  files(i).name]);
     try
         csv_result = [exp_dir filesep 'Results' filesep 'mean-results_test.csv'];
         results = csvread(csv_result, 1,1);
