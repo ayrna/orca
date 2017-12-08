@@ -7,6 +7,11 @@ ORCA can take advantage of MATLAB's parallel toolbox. The parallelism is done at
 
 The improvement is done in models fitting and prediction. However, the reports have to be generated sequentially. Given that lots of metrics are obtained in these reports, this non-parallelizable operation is very costly.
 
+In Octave, the `parfor` tool is not yet implemented. However, we have adapted the code to use the `parallel` package which provides similar functionality. If you want to parallelize experiments in Octave, you will have to install the corresponding package: 
+```MATLAB
+pkg install -forge parallel
+```
+
 These are some examples measuring the performance improvement:
 ```MATLAB
 % Launch experiments sequentially
