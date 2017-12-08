@@ -62,20 +62,24 @@ classdef Utilities < handle
             dirSuffix = [num2str(c(1)) '-' num2str(c(2)) '-'  num2str(c(3)) '-' num2str(c(4)) '-' num2str(c(5)) '-' num2str(uint8(c(6)))];
             logsDir = Utilities.configureExperiment(expFile,dirSuffix);
             expFiles = dir([logsDir '/' 'exp-*']);
-            
+
             % Parse options.
             op = Utilities.parseParArgs(varargin);
             
             if op.parallel
                 Utilities.preparePool(op.numcores)
-                
-                parfor i=1:numel(expFiles)
-                    if ~strcmp(expFiles(i).name(end), '~')
-                        myExperiment = Experiment;
-                        
-                        disp(['Running experiment ', expFiles(i).name]);
-                        myExperiment.launch([logsDir '/' expFiles(i).name]);
-                    end
+                if (exist ('OCTAVE_VERSION', 'builtin') > 0)
+                    logsCell = cell(numel(expFiles),1);
+                    logsCell(:) = logsDir;                    
+                    parcellfun(op.numcores,@(varargin) Utilities.octaveParallelAuxFunction(varargin{:}),num2cell(expFiles),logsCell);                   
+                else
+                  parfor i=1:numel(expFiles)
+                      if ~strcmp(expFiles(i).name(end), '~')
+                          myExperiment = Experiment;
+                          disp(['Running experiment ', expFiles(i).name]);
+                          myExperiment.launch([logsDir '/' expFiles(i).name]);
+                      end
+                  end
                 end
                 
                 Utilities.closePool()
@@ -98,6 +102,18 @@ classdef Utilities < handle
             %rmpath('Measures');
             %rmpath('Algorithms');
             
+        end
+        
+        function octaveParallelAuxFunction(experimentToRun,logsDir)
+            % OCTAVEPARALLELAUXFUNCTION Function for running one experiment file
+            %   It is used in Octave because it Octave does not have parfor
+            %   OCTAVEPARALLELAUXFUNCTION(EXPERIMENT,LOGSDIR) run the experiment
+            %   named EXPERIMENT and contained in the folder LOGSDIR
+            if ~strcmp(experimentToRun.name(end), '~')
+                myExperiment = Experiment;                        
+                disp(['Running experiment ', experimentToRun.name]);
+                myExperiment.launch([logsDir '/' experimentToRun.name]);
+            end
         end
         
         function results(experiment_folder,train)
@@ -572,38 +588,46 @@ classdef Utilities < handle
             end
             
             % Check size of the pool
-            if verLessThan('matlab', '8.3')
-                poolsize = matlabpool('size');
-                if poolsize > 0
-                    if poolsize ~= numcores
-                        matlabpool close;
-                        matlabpool(numcores);
-                    end
-                else
-                    matlabpool(numcores);
-                end
+            if (exist ('OCTAVE_VERSION', 'builtin') > 0)
+              pkg load parallel;
             else
-                poolobj = gcp('nocreate'); % If no pool, do not create new one.
-                if ~isempty(poolobj)
-                    if poolobj.NumWorkers ~= numcores
-                        numcores = poolobj.NumWorkers;
-                        delete(gcp('nocreate'))
-                        parpool(numcores);
-                    end
-                else
-                    parpool(numcores);
-                end
+              if verLessThan('matlab', '8.3')
+                  poolsize = matlabpool('size');
+                  if poolsize > 0
+                      if poolsize ~= numcores
+                          matlabpool close;
+                          matlabpool(numcores);
+                      end
+                  else
+                      matlabpool(numcores);
+                  end
+              else
+                  poolobj = gcp('nocreate'); % If no pool, do not create new one.
+                  if ~isempty(poolobj)
+                      if poolobj.NumWorkers ~= numcores
+                          numcores = poolobj.NumWorkers;
+                          delete(gcp('nocreate'))
+                          parpool(numcores);
+                      end
+                  else
+                      parpool(numcores);
+                  end
+              end
             end
         end
         
         function closePool()
-            if verLessThan('matlab', '8.3')
-                isOpen = matlabpool('size') > 0;
-                if isOpen
-                    matlabpool close;
-                end
+            if (exist ('OCTAVE_VERSION', 'builtin') > 0)
+              pkg unload parallel;
             else
-                delete(gcp('nocreate'))
+              if verLessThan('matlab', '8.3')
+                  isOpen = matlabpool('size') > 0;
+                  if isOpen
+                      matlabpool close;
+                  end
+              else
+                  delete(gcp('nocreate'))
+              end
             end
         end
         
