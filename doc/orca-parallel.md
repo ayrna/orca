@@ -1,19 +1,27 @@
 # Parallelizing experiments with ORCA
 
-ORCA can take advantage of MATLAB's parallel toolbox. The parallelism is done at dataset partition level. The method `runExperiments` of the class [Utilities](../src/Utilities.m) includes two optional arguments, apart from the name of the configuration file. The first argument, if `true`, makes use of `parfor` to parallelize the execution of the different partitions using the cores available in the computer. The second argument indicates the number of cores to be used (by default, the maximum number of cores is considered).
+ORCA can take advantage of MATLAB's parallel toolbox. The parallelism is done at dataset partition level. The method `runExperiments` of the class [Utilities](../src/Utilities.m) includes the following optional arguments, apart from the name of the configuration file:
+ - `'parallel'`: *false* or *true* to activate CPU parallel processing of databases's folds. Default is 'false'
+ - `'numcores'`: default maximum number of cores or desired number. If *true* and numcores <2 it sets the number to maximum number of cores.
+ - `'closepool`': whether to close or not the pool after  experiments. Default *true*. Disabling it can speed up consecutive calls to `runExperiments` saving the time of opening and closing pools.
+
+Please note that reports calculation is done sequentially, so that the improvement is done in models fitting and prediction. Since the reports calculate lots of metrics, this is a costly operation.
+
+Examples:
 
 ```MATLAB
 % Launch experiments sequentially
-Utilities.runExperiments('tests/kdlor')
+tic;Utilities.runExperiments('tests/cvtests-30-holdout/kdlor.ini');toc
+...
+Elapsed time is 318.869864 seconds.
 
-Elapsed time is 333.078627 seconds.
+% Launch parallel experiments with maximum number of cores
+tic;Utilities.runExperiments('tests/cvtests-30-holdout/kdlor.ini', 'parallel', true);toc
+...
+Elapsed time is 190.453860 seconds.
 
-% Switch on parfor with maximum number of workers
-tic;Utilities.runExperiments('tests/kdlor', true);toc
-
-Elapsed time is 108.940259 seconds.
-
-% Switch on parfor with fixed number of workers
-tic;Utilities.runExperiments('tests/kdlor', true, 2);toc
+% Runs parallel folds with max workers and do not close the pool
+Utilities.runExperiments('tests/cvtests-30-holdout/kdlor.ini', 'parallel', 1, 'closepool', false)
+Utilities.runExperiments('tests/cvtests-30-holdout/svorim.ini', 'parallel', 1, 'closepool', false)
 
 ```
