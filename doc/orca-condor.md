@@ -5,17 +5,17 @@ ORCA can be *easily* integrated with a High Throughput Computing (HTC) environme
 The [src/condor](../src/condor) folder contains a set of scripts that automate the use of ORCA with HTCondor. The script [condor-matlabExperiment.sh](../src/condor/condor-matlabExperiment.sh) allows to run an ORCA set of experiments by using any of the configuration files. To use the script, you will need to have the configuration file in the [src/condor](../src/condor) folder:
 ```bash
 ~/orca/orca$ cd src/condor/
-~/orca/orca/src/condor$ cp ../tests/svorim ./
+~/orca/orca/src/condor$ cp ../tests/svorim.ini ./
 ```
 Then, you have to edit the test file, so that the path of the experiments is correct with respect to the current path (replace `../example-data` by `../../example-data`). This can be done with a text editor or using the following `sed` command:
 ```bash
-~/orca/orca/src/condor$ sed -i 's/\.\.\//\.\.\/\.\.\//g' svorim
+~/orca/orca/src/condor$ sed -i 's/\.\.\//\.\.\/\.\.\//g' svorim.ini
 ```
 Now the script is ready to be used. The following command:
 ```bash
-~/orca/orca/src/condor$ condor-matlabExperiment.sh svorim
+~/orca/orca/src/condor$ condor-matlabExperiment.sh svorim.ini
 ```
-will create a HTCondor work and will add this work to the HTCondor queue. Each work consists of a task for dividing the work into different independent configuration files, a train-test task for each dataset partition, and an extra task to collect all the data and create the reports. Most of the experimental results will be compressed, with the exception of the CSV files. To adapt the set of scripts to your HTCondor system please set up environment variables corresponding to MATLAB's path, universe, requirements and so on.
+will create a HTCondor work and will add this work to the HTCondor queue. Each work consists of a task for dividing the work into different independent configuration files, a train-test task for each dataset partition and an extra task to collect all the data and create the reports. Most of the experimental results will be compressed, with the exception of the CSV files. To adapt the set of scripts to your HTCondor system please set up environment variables corresponding to MATLAB's path, universe, requirements and edit the ``.sh`` file.
 
 Additionally, the [src/condor](../src/condor) folder includes the following files:
 - [condor-matlabFramework.dag](../src/condor/condor-matlabFramework.dag): this HTCondor `dag` file will run the `submit` files into the appropriate order, that is, `condor-createExperiments.submit`, `condor-runExperiments.submit` and `condor-joinResults.submit`.
