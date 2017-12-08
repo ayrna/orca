@@ -590,7 +590,7 @@ try
     ii = 1;
     while ii < nKeys
         ind = find(so==so(ii));
-        if ~isempty(ind) & length(ind) > 1
+        if ~isempty(ind) && length(ind) > 1
             n = length(ind);
             from = ind(1);
             to = ind(end);
@@ -631,7 +631,7 @@ try
             datain = [datain dataout(from:to)];    % the lines before the key
         end
         
-        if length(datain) & (~(datain(end)==RETURN | datain(end)==NEWLINE))
+        if length(datain) && (~(datain(end)==RETURN | datain(end)==NEWLINE))
             datain = [datain, sprintf(NL_CHAR)];
         end
 
