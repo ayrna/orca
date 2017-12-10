@@ -6,7 +6,7 @@
 %     This software is released under the The GNU General Public License v3.0 licence
 %     available at http://www.gnu.org/licenses/gpl-3.0.html
 %% RUN ALL TESTS
-% This script runs full experiment test using the ORCA scripts to describe and
+% This script runs full experiment tests using the ORCA INI files to describe an
 % experiment. The toy dataset is used with a 1 or 30-hold-out experimental
 % design and method's parameter optimization. At the end of the test there
 % should be one new folder for each method in the 'Experiments' directory.
