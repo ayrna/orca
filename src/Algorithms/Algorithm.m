@@ -55,8 +55,9 @@ classdef Algorithm < handle
             mInf.model = model;
         end
         
-        % Abstract methods: they have been implementes in this way to
-        % ensure compatibility with Octave
+        % Abstract methods: they have been implemented in this way to
+        % ensure compatibility with Octave. An error is thrown if the method
+        % is not implemented in child class.
         
         function [model, projectedTrain, predictedTrain] = train( obj,train,param)
             %TRAIN trains the model for the SVR method with TRAIN data and
