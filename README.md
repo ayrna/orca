@@ -54,6 +54,7 @@ The [src](src) folder contains the following folders and files:
 - [condor](src/condor): Folder with the necessary files and steps for using condor with our framework.
 - [config-files](src/config-files): Folder with different configuration files for running all the algorithms. In order to use these files, you will need the [datasets](http://www.uco.es/grupos/ayrna/ucobigfiles/datasets-orreview.zip) of our review paper.
 - [Measures](src/Measures): Folder with the matlab classes for the metrics used for evaluating the classifiers. The measures included in ORCA are the following (more details about the metrics can be found in [12,13]:
+  - [Metric.m](src/Measures/Metric.m): File to specify abstract class to define metrics.
   - [MAE](src/Measures/MAE.m): Mean Absolute Error between predicted and expected categories, representing classes as integer numbers (1, 2, ...).
   - [MZE](src/Measures/MZE.m): Mean Zero-one Error or standard classification error (1-accuracy).
   - [AMAE](src/Measures/AMAE.m): Average MAE, considering MAEs individually calculated for each class.
@@ -66,12 +67,11 @@ The [src](src) folder contains the following folders and files:
   - [Wkappa](src/Measures/Wkappa.m): Weighted Kappa statistic, using ordinal weights.
 - [DataSet.m](src/DataSet.m): Matlab class for data preprocessing.
 - [Experiment.m](src/Experiment.m): Matlab class that runs the different experiments.
-- [Metric.m](src/Metric.m): File that sets the necessary properties and functions for a metric class.
 - [Utilities.m](src/Utilities.m): Class that preprocess the experiment files, run the different algorithms and produces the results.
 - [runtests.m](src/runtests.m): Script to run all the methods in order to check that the installation is correct.
 - [runtestssingle.m](src/runtests.m): Script to run all the methods using the ORCA API. Reference performance is compared with toy dataset in order to check that the installation is correct.
 - [runtestscv.m](src/runtests.m): This script runs full experiment tests using the ORCA configuration files to describe experiments.
- 	
+
 
 # External software
 The ORCA frameworks makes use of the following external software implementations. For some of them, a Matlab interface has been developed through the use of MEX files.
