@@ -44,12 +44,12 @@ classdef Algorithm < handle
             end
             
             c1 = clock;
-            [model,mInf.projectedTrain, mInf.predictedTrain] = obj.train(train,param);
+            [model,mInf.projectedTrain, mInf.predictedTrain] = obj.fit(train,param);
             c2 = clock;
             mInf.trainTime = etime(c2,c1);
             
             c1 = clock;
-            [mInf.projectedTest, mInf.predictedTest] = obj.test(test.patterns, model);
+            [mInf.projectedTest, mInf.predictedTest] = obj.predict(test.patterns, model);
             c2 = clock;
             mInf.testTime = etime(c2,c1);
             mInf.model = model;
@@ -59,14 +59,14 @@ classdef Algorithm < handle
         % ensure compatibility with Octave. An error is thrown if the method
         % is not implemented in child class.
         
-        function [model, projectedTrain, predictedTrain] = train( obj,train,param)
-            %TRAIN trains the model for the SVR method with TRAIN data and
+        function [model, projectedTrain, predictedTrain] = fit( obj,train,param)
+            %FIT trains the model for the SVR method with TRAIN data and
             %vector of parameters PARAMETERS. Return the learned model.
             error('train method should be implemented in all subclasses');
         end
         
-        function [projected, predicted]= test(obj,test,model)
-            %TEST predict labels of TEST patterns labels using MODEL.
+        function [projected, predicted]= predict(obj,test,model)
+            %PREDICT predicts labels of TEST patterns labels using MODEL.
             error('test method should be implemented in all subclasses');
         end
         

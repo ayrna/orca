@@ -6,8 +6,8 @@ classdef ELMOP < Algorithm
     %   ELMOP methods:
     %      runAlgorithm               - runs the corresponding algorithm,
     %                                   fitting the model and testing it in a dataset.
-    %      train                      - Learns a model from data
-    %      test                       - Performs label prediction
+    %      fit                        - Fits a model from training data
+    %      predict                    - Performs label prediction
     %
     %   ELMOP properties:
     %      activationFunction         - Activation function, default
@@ -63,8 +63,8 @@ classdef ELMOP < Algorithm
             end
         end  
         
-        function [model, projectedTrain, predictedTrain] = train( obj, train, parameters)
-            %TRAIN trains the model for the SVR method with TRAIN data and
+        function [model, projectedTrain, predictedTrain] = fit( obj, train, parameters)
+            %FIT trains the model for the SVR method with TRAIN data and
             %vector of parameters PARAMETERS. Return the learned model. 
             %TODO train.uniqueTargets = unique([test.targets ;train.targets]);
             train.uniqueTargets = unique(train.targets);
@@ -235,12 +235,12 @@ classdef ELMOP < Algorithm
             model.labelSet = unique(train.targetsOrelm,'rows');
             model.nOfClasses = train.nOfClasses;
             model.dim = train.dim;
-            [projectedTrain, predictedTrain] = obj.test( train.patterns, model );
+            [projectedTrain, predictedTrain] = obj.predict( train.patterns, model );
             
         end
        
-        function [TY, TestPredictedY]= test(obj, test, model)
-            %TEST predict labels of TEST patterns labels using MODEL. 
+        function [TY, TestPredictedY]= predict(obj, test, model)
+            %PREDICT predicts labels of TEST patterns labels using MODEL. 
             nOfPatterns = length(test);
             
             TV.P = test';
@@ -292,8 +292,8 @@ classdef ELMOP < Algorithm
                                 %temp(n) = TV.P(n,i)^InputWeight(j,n);
                                 temp(n) = model.InputWeight(j,n)*TV.P(n,i);
                             end
-                            %H_test(j,i) =  prod(temp);
-                            H_test(j,i) =  sum(temp);
+                            %H_predict(j,i) =  prod(temp);
+                            H_predict(j,i) =  sum(temp);
                         end
                     end
                     
@@ -303,7 +303,7 @@ classdef ELMOP < Algorithm
                     TV.P = TV.P';
                     
                     for j=1:model.hiddenN
-                        H_test(:,j)=gaussian_func(TV.P,model.W1(j,:),model.W10(j,:));
+                        H_predict(:,j)=gaussian_func(TV.P,model.W1(j,:),model.W10(j,:));
                     end
                     H_test = H_test';
                     

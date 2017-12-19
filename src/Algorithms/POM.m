@@ -4,8 +4,8 @@ classdef POM < Algorithm
     %   POM methods:
     %      runAlgorithm               - runs the corresponding algorithm,
     %                                   fitting the model and testing it in a dataset.
-    %      train                      - Learns a model from data
-    %      test                       - Performs label prediction
+    %      fit                        - Fits a model from training data
+    %      predict                    - Performs label prediction
     %
     %   References:
     %     [1] P. McCullagh, Regression models for ordinal data,  Journal of
@@ -49,8 +49,8 @@ classdef POM < Algorithm
             obj.name = 'Linear Proportional Odds Model for Ordinal Regression';
         end
 
-        function [model, projectedTrain, predictedTrain]= train( obj,train,parameters)
-            %TRAIN trains the model for the SVR method with TRAIN data and
+        function [model, projectedTrain, predictedTrain]= fit( obj,train,parameters)
+            %FIT trains the model for the SVR method with TRAIN data and
             %vector of parameters PARAMETERS. Return the learned model.
             nOfClasses = numel(unique(train.targets));
             if exist ('OCTAVE_VERSION', 'builtin') > 0
@@ -63,12 +63,12 @@ classdef POM < Algorithm
                 model.projection = -betaHatOrd(nOfClasses:end);
             end
             
-            [projectedTrain, predictedTrain] = obj.test(train.patterns, model);
+            [projectedTrain, predictedTrain] = obj.predict(train.patterns, model);
             model.algorithm = 'POM';
         end
         
-        function [ projected, predicted ] = test( obj, testPatterns, model)
-            %TEST predict labels of TEST patterns labels using MODEL.
+        function [ projected, predicted ] = predict( obj, testPatterns, model)
+            %PREDICT predict labels of TEST patterns labels using MODEL.
             numClasses = size(model.thresholds,1)+1;
             projected = model.projection' * testPatterns';
             

@@ -4,10 +4,10 @@ classdef SVR < Algorithm
     %It uses libSVM-weight SVM implementation. 
     %
     %   SVR methods:
-    %      runAlgorithm               - runs the corresponding algorithm, 
+    %      runAlgorithm               - runs the corresponding algorithm,
     %                                   fitting the model and testing it in a dataset.
-    %      train                      - Learns a model from data
-    %      test                       - Performs label prediction
+    %      fit                        - Fits a model from training data
+    %      predict                    - Performs label prediction
     %
     %   References:
     %     [1] P.A. Gutiérrez, M. Pérez-Ortiz, J. Sánchez-Monedero,
@@ -48,8 +48,8 @@ classdef SVR < Algorithm
             end
         end
         
-        function [model,projectedTrain,predictedTrain] = train(obj,train,parameters)
-            %TRAIN trains the model for the SVR method with TRAIN data and
+        function [model,projectedTrain,predictedTrain] = fit(obj,train,parameters)
+            %FIT trains the model for the SVR method with TRAIN data and
             %vector of parameters PARAMETERS. Return the learned model. 
             if isempty(strfind(path,obj.algorithmMexPath))
                 addpath(obj.algorithmMexPath);
@@ -67,14 +67,14 @@ classdef SVR < Algorithm
             model.algorithm = 'SVR';
             model.parameters = parameters;
             
-            [projectedTrain, predictedTrain] = obj.test(auxTrain.patterns,model);
+            [projectedTrain, predictedTrain] = obj.predict(auxTrain.patterns,model);
             if ~isempty(strfind(path,obj.algorithmMexPath))
                 rmpath(obj.algorithmMexPath);
             end
         end
 
-        function [projected, predicted]= test(obj, test,model)
-            %TEST predict labels of TEST patterns labels using MODEL. 
+        function [projected, predicted]= predict(obj, test,model)
+            %PREDICT predict labels of TEST patterns labels using MODEL. 
             if isempty(strfind(path,obj.algorithmMexPath))
                 addpath(obj.algorithmMexPath);
             end

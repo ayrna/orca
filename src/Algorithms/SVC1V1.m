@@ -6,8 +6,8 @@ classdef SVC1V1 < Algorithm
     %   SVC1V1 methods:
     %      runAlgorithm               - runs the corresponding algorithm,
     %                                   fitting the model and testing it in a dataset.
-    %      train                      - Learns a model from data
-    %      test                       - Performs label prediction
+    %      fit                        - Fits a model from training data
+    %      predict                    - Performs label prediction
     %
     %   References:
     %     [1] C.-W. Hsu and C.-J. Lin
@@ -49,8 +49,8 @@ classdef SVC1V1 < Algorithm
             
         end
         
-        function [model, projectedTrain, predictedTrain]= train( obj, train , param)
-            %TRAIN trains the model for the SVR method with TRAIN data and
+        function [model, projectedTrain, predictedTrain]= fit( obj, train , param)
+            %FIT trains the model for the SVR method with TRAIN data and
             %vector of parameters PARAMETERS. Return the learned model.
             if isempty(strfind(path,obj.algorithmMexPath))
                 addpath(obj.algorithmMexPath);
@@ -67,8 +67,8 @@ classdef SVC1V1 < Algorithm
             end
         end
         
-        function [projected, predicted]= test(obj,test, model)
-            %TEST predict labels of TEST patterns labels using MODEL.
+        function [projected, predicted]= predict(obj,test, model)
+            %PREDICT predicts labels of TEST patterns labels using MODEL.
             if isempty(strfind(path,obj.algorithmMexPath))
                 addpath(obj.algorithmMexPath);
             end

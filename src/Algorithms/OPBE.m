@@ -8,8 +8,8 @@ classdef OPBE < Algorithm
     %   OPBE methods:
     %      runAlgorithm               - runs the corresponding algorithm,
     %                                   fitting the model and testing it in a dataset.
-    %      train                      - Learns a model from data
-    %      test                       - Performs label prediction
+    %      fit                        - Fits a model from training data
+    %      predict                    - Performs label prediction
     %
     %   References:
     %     [1] María Pérez-Ortiz, Pedro Antonio Gutiérrez and César
@@ -40,8 +40,8 @@ classdef OPBE < Algorithm
             obj.parameters = obj.base_algorithm.parameters;
         end
 
-        function [model, projected, trainTargets] = train(obj, train, param)
-            %TRAIN trains the model for the OPBE method with TRAIN data and
+        function [model, projected, trainTargets] = fit(obj, train, param)
+            %FIT trains the model for the OPBE method with TRAIN data and
             %vector of parameters PARAMETERS. Return the learned model and
             %the projected TRAIN and TEST patterns
             
@@ -87,7 +87,7 @@ classdef OPBE < Algorithm
                 auxtrain.targets = currentTargets;
                 
                 % Train each label decomposition
-                [model, projectedTrain] = baseAlgorithm.train(auxtrain, param);
+                [model, projectedTrain] = baseAlgorithm.fit(auxtrain, param);
                 models(i) = model;
                 
                 % Estimate probabilities
@@ -141,8 +141,8 @@ classdef OPBE < Algorithm
             
         end
         
-        function [projected, testTargets] = test(obj, test, model)
-            %TEST predict labels of TEST patterns labels using model in MODEL.
+        function [projected, testTargets] = predict(obj, test, model)
+            %PREDICT predicts labels of TEST patterns labels using model in MODEL.
             models = model.ensembleModels;
             nOfClasses = size(models,2);
             classes = 1:nOfClasses;
@@ -154,7 +154,7 @@ classdef OPBE < Algorithm
                 nHigherRankingClasses = sum(classes>i);
                 
                 % Estimate probabilities
-                [projectedTest] = obj.base_algorithm.test(test, models(i));
+                [projectedTest] = obj.base_algorithm.predict(test, models(i));
                 probTest = obj.calculateProbabilities(projectedTest, models(i).thresholds');
                 
                 % Compute weights and fused probabilities

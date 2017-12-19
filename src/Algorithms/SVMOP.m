@@ -5,8 +5,8 @@ classdef SVMOP < Algorithm
     %   SVMOP methods:
     %      runAlgorithm               - runs the corresponding algorithm,
     %                                   fitting the model and testing it in a dataset.
-    %      train                      - Learns a model from data
-    %      test                       - Performs label prediction
+    %      fit                        - Fits a model from training data
+    %      predict                    - Performs label prediction
     %
     %   References:
     %     [1] E. Frank and M. Hall, "A simple approach to ordinal classification"
@@ -52,8 +52,8 @@ classdef SVMOP < Algorithm
             end
         end
         
-        function [model, projectedTrain, predictedTrain] = train( obj, train, param)
-            %TRAIN trains the model for the SVR method with TRAIN data and
+        function [model, projectedTrain, predictedTrain] = fit( obj, train, param)
+            %FIT trains the model for the SVR method with TRAIN data and
             %vector of parameters PARAMETERS. Return the learned model.
             if isempty(strfind(path,obj.algorithmMexPath))
                 addpath(obj.algorithmMexPath);
@@ -93,7 +93,7 @@ classdef SVMOP < Algorithm
             model.parameters = param;
             model.weights = obj.weights;
             model.nOfClasses = nOfClasses;
-            [projectedTrain, predictedTrain] = obj.test(train.patterns,model);
+            [projectedTrain, predictedTrain] = obj.predict(train.patterns,model);
             
             if ~isempty(strfind(path,obj.algorithmMexPath))
                 rmpath(obj.algorithmMexPath);
@@ -101,8 +101,8 @@ classdef SVMOP < Algorithm
             
         end
         
-        function [projected,predicted] = test(obj,test,model)
-            %TEST predict labels of TEST patterns labels using MODEL.
+        function [projected,predicted] = predict(obj,test,model)
+            %PREDICT predicts labels of TEST patterns labels using MODEL.
             if isempty(strfind(path,obj.algorithmMexPath))
                 addpath(obj.algorithmMexPath);
             end

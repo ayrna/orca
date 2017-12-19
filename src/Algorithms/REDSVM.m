@@ -9,8 +9,8 @@ classdef REDSVM < Algorithm
     %   REDSVM methods:
     %      runAlgorithm               - runs the corresponding algorithm,
     %                                   fitting the model and testing it in a dataset.
-    %      train                      - Learns a model from data
-    %      test                       - Performs label prediction
+    %      fit                        - Fits a model from training data
+    %      predict                    - Performs label prediction
     %
     %   References:
     %     [1] H.-T. Lin and L. Li, "Reduction from cost-sensitive ordinal
@@ -52,8 +52,8 @@ classdef REDSVM < Algorithm
             
         end
 
-        function [model, projectedTrain, predictedTrain]= train( obj, train , param)
-            %TRAIN trains the model for the SVR method with TRAIN data and
+        function [model, projectedTrain, predictedTrain]= fit( obj, train , param)
+            %FIT trains the model for the SVR method with TRAIN data and
             %vector of parameters PARAMETERS. Return the learned model.
             if isempty(strfind(path,obj.algorithmMexPath))
                 addpath(obj.algorithmMexPath);
@@ -68,8 +68,8 @@ classdef REDSVM < Algorithm
             end
         end
         
-        function [projected, predicted]= test(obj,test, model)
-            %TEST predict labels of TEST patterns labels using MODEL.
+        function [projected, predicted]= predict(obj,test, model)
+            %PREDICT predict labels of TEST patterns labels using MODEL.
             if isempty(strfind(path,obj.algorithmMexPath))
                 addpath(obj.algorithmMexPath);
             end

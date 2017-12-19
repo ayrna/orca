@@ -5,8 +5,8 @@ classdef ORBoost < Algorithm
     %   ORBoost methods:
     %      runAlgorithm               - runs the corresponding algorithm,
     %                                   fitting the model and testing it in a dataset.
-    %      train                      - Learns a model from data
-    %      test                       - Performs label prediction
+    %      fit                        - Fits a model from training data
+    %      predict                    - Performs label prediction
     %
     %   References:
     %
@@ -43,8 +43,8 @@ classdef ORBoost < Algorithm
             obj.name = 'OR Ensemble with perceptrons';
         end
 
-        function [model, projectedTrain, predictedTrain] = train(obj,train,parameters)
-            %TRAIN trains the model for the SVR method with TRAIN data and
+        function [model, projectedTrain, predictedTrain] = fit(obj,train,parameters)
+            %FIT trains the model for the SVR method with TRAIN data and
             %vector of parameters PARAMETERS. Return the learned model.
             
             % Output model file
@@ -79,14 +79,14 @@ classdef ORBoost < Algorithm
             model.algorithm = 'OREnsemble';
             model.textInformation = s;
             model.weights = obj.weights;
-            [projectedTrain,predictedTrain] = obj.test(train.patterns,model);
+            [projectedTrain,predictedTrain] = obj.predict(train.patterns,model);
             % Delete temp files
             delete(trainFile);
             delete(modelFile);
         end
         
-        function [projected, predicted]= test( obj,test,model)
-            %TEST predict labels of TEST patterns labels using MODEL.
+        function [projected, predicted]= predict( obj,test,model)
+            %PREDICT predicts labels of TEST patterns labels using MODEL.
             
             % Write test file
             testFile = tempname();

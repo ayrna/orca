@@ -4,8 +4,8 @@ classdef KDLOR < Algorithm
     %   KDLOR methods:
     %      runAlgorithm               - runs the corresponding algorithm,
     %                                   fitting the model and testing it in a dataset.
-    %      train                      - Learns a model from data
-    %      test                       - Performs label prediction
+    %      fit                        - Fits a model from training data
+    %      predict                    - Performs label prediction
     %
     %   References:
     %     [1] B.-Y. Sun, J. Li, D. D. Wu, X.-M. Zhang, and W.-B. Li,
@@ -66,9 +66,8 @@ classdef KDLOR < Algorithm
             end
         end
         
-        % TODO: Fix to receibe data structure as unique parameter
-        function [model, projectedTrain, predictedTrain]= train( obj, train, parameters)
-            %TRAIN trains the model for the KDLOR method with TRAIN data and
+        function [model, projectedTrain, predictedTrain]= fit( obj, train, parameters)
+            %FIT trains the model for the KDLOR method with TRAIN data and
             %vector of parameters PARAMETERS. Return the learned model.
             trainPatterns = train.patterns';
             [dim,numTrain] = size(trainPatterns);
@@ -216,9 +215,8 @@ classdef KDLOR < Algorithm
             
         end
         
-        % TODO: Fix to receibe data structure as unique parameter
-        function [projected, predicted] = test(obj, testPatterns, model)
-            %TEST predict labels of TEST patterns labels using MODEL.
+        function [projected, predicted] = predict(obj, testPatterns, model)
+            %PREDICT predicts labels of TEST patterns labels using MODEL.
             
             kernelMatrix = computeKernelMatrix(model.train,testPatterns',model.kernelType, model.parameters.k);
             projected = model.projection'*kernelMatrix;
@@ -228,7 +226,7 @@ classdef KDLOR < Algorithm
         end
         
         function predicted = assignLabels(obj, projected, thresholds)
-            %TEST assign the labels from projections and thresholds
+            %ASSIGNLABELS assigns the labels from projections and thresholds
             numClasses = size(thresholds,2)+1;
             project2 = repmat(projected, numClasses-1,1);
             project2 = project2 - thresholds'*ones(1,size(project2,2));

@@ -6,8 +6,8 @@ classdef CSSVC < Algorithm
     %   CSSVC methods:
     %      runAlgorithm               - runs the corresponding algorithm,
     %                                   fitting the model and testing it in a dataset.
-    %      train                      - Learns a model from data
-    %      test                       - Performs label prediction
+    %      fit                        - Fits a model from training data
+    %      predict                    - Performs label prediction
     %
     %   References:
     %     [1] P.A. Gutiérrez, M. Pérez-Ortiz, J. Sánchez-Monedero,
@@ -42,8 +42,8 @@ classdef CSSVC < Algorithm
             end
         end
 
-        function [model, projectedTrain, predictedTrain] = train( obj, train, param)
-            %TRAIN trains the model for the SVR method with TRAIN data and
+        function [model, projectedTrain, predictedTrain] = fit( obj, train, param)
+            %FIT trains the model for the SVR method with TRAIN data and
             %vector of parameters PARAMETERS. Return the learned model.
             if isempty(strfind(path,obj.algorithmMexPath))
                 addpath(obj.algorithmMexPath);
@@ -62,14 +62,14 @@ classdef CSSVC < Algorithm
             model = struct('models', {models}, 'labelSet', labelSet);
             model.algorithm = 'CSSVC';
             model.parameters = param;
-            [projectedTrain,predictedTrain] = obj.test(train.patterns,model);
+            [projectedTrain,predictedTrain] = obj.predict(train.patterns,model);
             if ~isempty(strfind(path,obj.algorithmMexPath))
                 rmpath(obj.algorithmMexPath);
             end
         end
 
-        function [decv, pred]= test(obj, test, model)
-            %TEST predict labels of TEST patterns labels using MODEL.
+        function [decv, pred]= predict(obj, test, model)
+            %PREDICT predicts labels of TEST patterns labels using MODEL.
             if isempty(strfind(path,obj.algorithmMexPath))
                 addpath(obj.algorithmMexPath);
             end

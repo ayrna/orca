@@ -7,8 +7,8 @@ classdef SVORLin < Algorithm
     %   SVORLin methods:
     %      runAlgorithm               - runs the corresponding algorithm,
     %                                   fitting the model and testing it in a dataset.
-    %      train                      - Learns a model from data
-    %      test                       - Performs label prediction
+    %      fit                        - Fits a model from training data
+    %      predict                    - Performs label prediction
     %
     %   References:
     %     [1] W. Chu and S. S. Keerthi, Support Vector Ordinal Regression,
@@ -42,8 +42,8 @@ classdef SVORLin < Algorithm
             obj.name = 'Support Vector for Ordinal Regression (Implicit constraints / Linear)';
         end
         
-        function [model,projectedTrain,predictedTrain] = train(obj,train,parameters)
-            %TRAIN trains the model for the SVORLin method with TRAIN data and
+        function [model,projectedTrain,predictedTrain] = fit(obj,train,parameters)
+            %FIT trains the model for the SVORLin method with TRAIN data and
             %vector of parameters PARAMETERS. Return the learned model.
             if isempty(strfind(path,obj.algorithmMexPath))
                 addpath(obj.algorithmMexPath);
@@ -60,8 +60,8 @@ classdef SVORLin < Algorithm
             end
         end
         
-        function [projected, predicted] = test(obj, test, model)
-            %TEST predict labels of TEST patterns labels using MODEL.            
+        function [projected, predicted] = predict(obj, test, model)
+            %PREDICT predicts labels of TEST patterns labels using MODEL.            
             kernelMatrix = computeKernelMatrix(model.train',test','linear',1);
             projected = model.projection*kernelMatrix;
             
