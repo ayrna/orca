@@ -44,7 +44,7 @@ classdef CSSVC < Algorithm
 
         function [model, projectedTrain, predictedTrain] = fit( obj, train, param)
             %FIT trains the model for the CSSVC method with TRAIN data and
-            %vector of parameters PARAMETERS. Return the learned model.
+            %vector of parameters PARAM. Return the learned model.
             if isempty(strfind(path,obj.algorithmMexPath))
                 addpath(obj.algorithmMexPath);
             end
