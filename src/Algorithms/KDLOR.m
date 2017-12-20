@@ -36,7 +36,7 @@ classdef KDLOR < Algorithm
     methods
         
         function obj = KDLOR(kernel, opt)
-            %KDLOR constructs an object of the class SVR. Default kernel is
+            %KDLOR constructs an object of the class KDLOR. Default kernel is
             %'rbf' and default optimization method is 'quadprog'
             %
             %   OBJ = KDLOR(KERNEL) builds KDLOR with KERNEL as kernel function

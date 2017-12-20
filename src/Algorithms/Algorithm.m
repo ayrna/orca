@@ -60,7 +60,7 @@ classdef Algorithm < handle
         % is not implemented in child class.
         
         function [model, projectedTrain, predictedTrain] = fit( obj,train,param)
-            %FIT trains the model for the SVR method with TRAIN data and
+            %FIT trains the model for the Algorithm method with TRAIN data and
             %vector of parameters PARAMETERS. Return the learned model.
             error('train method should be implemented in all subclasses');
         end
