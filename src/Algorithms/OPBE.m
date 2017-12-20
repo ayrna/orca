@@ -33,7 +33,7 @@ classdef OPBE < Algorithm
     methods
         
         function obj = OPBE()
-            %OPBE constructs an object of the class SVR and sets its default
+            %OPBE constructs an object of the class OPBE and sets its default
             obj.name = 'Ordinal Projection Based Ensemble';
             obj.base_algorithm = SVORIM;
             %obj.name_parameters = obj.base_algorithm.getParameterNames();

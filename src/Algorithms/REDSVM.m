@@ -40,7 +40,7 @@ classdef REDSVM < Algorithm
     methods
         
         function obj = REDSVM(kernel)
-            %REDSVM constructs an object of the class SVR and sets its default
+            %REDSVM constructs an object of the class REDSVM and sets its default
             %   characteristics
             %   OBJ = REDSVM(KERNEL) builds REDSVM with KERNEL as kernel function
             obj.name = 'Reduction from OR to weighted binary classification (SVM)';
@@ -53,7 +53,7 @@ classdef REDSVM < Algorithm
         end
 
         function [model, projectedTrain, predictedTrain]= fit( obj, train , param)
-            %FIT trains the model for the SVR method with TRAIN data and
+            %FIT trains the model for the REDSVM method with TRAIN data and
             %vector of parameters PARAMETERS. Return the learned model.
             if isempty(strfind(path,obj.algorithmMexPath))
                 addpath(obj.algorithmMexPath);

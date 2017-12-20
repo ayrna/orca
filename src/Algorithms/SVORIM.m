@@ -35,9 +35,9 @@ classdef SVORIM < Algorithm
     
     methods
         function obj = SVORIM(kernel)
-            %SVORIM constructs an object of the class SVR and sets its default
+            %SVORIM constructs an object of the class SVORIM and sets its default
             %   characteristics
-            %   OBJ = SVORIM(KERNEL) builds SVR with KERNEL as kernel function
+            %   OBJ = SVORIM(KERNEL) builds SVORIM with KERNEL as kernel function
             obj.name = 'Support Vector for Ordinal Regression (Implicit constraints)';
             if(nargin ~= 0)
                 obj.kernelType = kernel;

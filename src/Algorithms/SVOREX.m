@@ -36,9 +36,9 @@ classdef SVOREX < Algorithm
     
     methods
         function obj = SVOREX(kernel)
-            %SVOREX constructs an object of the class SVR and sets its default
+            %SVOREX constructs an object of the class SVOREX and sets its default
             %   characteristics
-            %   OBJ = SVOREX(KERNEL) builds SVR with KERNEL as kernel function
+            %   OBJ = SVOREX(KERNEL) builds SVOREX with KERNEL as kernel function
             obj.name = 'Support Vector for Ordinal Regression (Explicit constraints)';
             if(nargin ~= 0)
                 obj.kernelType = kernel;

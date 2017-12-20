@@ -64,7 +64,7 @@ classdef ELMOP < Algorithm
         end  
         
         function [model, projectedTrain, predictedTrain] = fit( obj, train, parameters)
-            %FIT trains the model for the SVR method with TRAIN data and
+            %FIT trains the model for the ELMOP method with TRAIN data and
             %vector of parameters PARAMETERS. Return the learned model. 
             %TODO train.uniqueTargets = unique([test.targets ;train.targets]);
             train.uniqueTargets = unique(train.targets);

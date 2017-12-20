@@ -50,7 +50,7 @@ classdef POM < Algorithm
         end
 
         function [model, projectedTrain, predictedTrain]= fit( obj,train,parameters)
-            %FIT trains the model for the SVR method with TRAIN data and
+            %FIT trains the model for the POM method with TRAIN data and
             %vector of parameters PARAMETERS. Return the learned model.
             nOfClasses = numel(unique(train.targets));
             if exist ('OCTAVE_VERSION', 'builtin') > 0

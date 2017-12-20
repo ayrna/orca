@@ -37,7 +37,7 @@ classdef SVC1VA < Algorithm
     methods
         
         function obj = SVC1VA(kernel)
-            %SVC1VA constructs an object of the class SVR and sets its default
+            %SVC1VA constructs an object of the class SVC1VA and sets its default
             %   characteristics
             %   OBJ = SVC1VA(KERNEL) builds SVC1VA with KERNEL as kernel function
             obj.name = 'Support Vector Machine Classifier with 1vsAll paradigm';
@@ -50,7 +50,7 @@ classdef SVC1VA < Algorithm
         end
         
         function [model, projectedTrain, predictedTrain]= fit( obj, train, param)
-            %FIT trains the model for the SVR method with TRAIN data and
+            %FIT trains the model for the SVC1VA method with TRAIN data and
             %vector of parameters PARAMETERS. Return the learned model.
             if isempty(strfind(path,obj.algorithmMexPath))
                 addpath(obj.algorithmMexPath);

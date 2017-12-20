@@ -41,9 +41,9 @@ classdef SVMOP < Algorithm
     methods
         
         function obj = SVMOP(kernel)
-            %SVR SVMOP an object of the class SVR and sets its default
+            %SVMOP SVMOP an object of the class SVMOP and sets its default
             %   characteristics
-            %   OBJ = SVR(KERNEL) builds SVR with KERNEL as kernel function
+            %   OBJ = SVMOP(KERNEL) builds SVMOP with KERNEL as kernel function
             obj.name = 'Frank Hall Support Vector Machines';
             if(nargin ~= 0)
                 obj.kernelType = kernel;
@@ -53,7 +53,7 @@ classdef SVMOP < Algorithm
         end
         
         function [model, projectedTrain, predictedTrain] = fit( obj, train, param)
-            %FIT trains the model for the SVR method with TRAIN data and
+            %FIT trains the model for the SVMOP method with TRAIN data and
             %vector of parameters PARAMETERS. Return the learned model.
             if isempty(strfind(path,obj.algorithmMexPath))
                 addpath(obj.algorithmMexPath);

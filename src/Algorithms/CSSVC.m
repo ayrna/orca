@@ -31,7 +31,7 @@ classdef CSSVC < Algorithm
 
     methods
         function obj = CSSVC(kernel)
-            %CSSVC constructs an object of the class SVR and sets its default
+            %CSSVC constructs an object of the class CSSVC and sets its default
             %   characteristics
             %   OBJ = CSSVC(KERNEL) builds CSSVC with KERNEL as kernel function
             obj.name = 'Support Vector Machine Classifier with 1vsAll paradigm with ordinal weights';
@@ -43,7 +43,7 @@ classdef CSSVC < Algorithm
         end
 
         function [model, projectedTrain, predictedTrain] = fit( obj, train, param)
-            %FIT trains the model for the SVR method with TRAIN data and
+            %FIT trains the model for the CSSVC method with TRAIN data and
             %vector of parameters PARAMETERS. Return the learned model.
             if isempty(strfind(path,obj.algorithmMexPath))
                 addpath(obj.algorithmMexPath);
