@@ -20,6 +20,9 @@ if nargin < 1
         cd 'libsvm-rank-2.81/matlab/'
         make
         cd ../..
+        cd 'liblinear-2.20/matlab/'
+        make
+        cd ../..
         cd SVOREX
         make
         cd ..
@@ -40,6 +43,9 @@ elseif nargin == 1
         make(opt)
         cd ../..
         cd 'libsvm-rank-2.81/matlab/'
+        make(opt)
+        cd ../..
+        cd 'liblinear-2.20/matlab/'
         make(opt)
         cd ../..
         cd SVOREX
