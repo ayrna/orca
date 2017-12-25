@@ -12,11 +12,11 @@ clear param;
 % Parameter C (Cost)
 param(1) = 10;
 
-% Parameter k (kernel width)
-param(2) = 10;
-
 % Parameter e (epsilon, tube width)
-param(3) = 0.1;
+param(2) = 0.1;
+
+% Parameter k (kernel width)
+param(3) = 10;
 
 % Running the algorithm
 info = algorithmObj.runAlgorithm(train,test,param);
