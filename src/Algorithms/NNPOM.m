@@ -7,9 +7,9 @@ classdef NNPOM < Algorithm
     % probabilistic outputs. The learning is based on iRProp+ algorithm and
     % the implementation provided by Roberto Calandra in his toolbox Rprop 
     % Toolbox for {MATLAB}:
-    % url{http://www.ias.informatik.tu-darmstadt.de/Research/RpropToolbox}
+    % http://www.ias.informatik.tu-darmstadt.de/Research/RpropToolbox
     % The model is adjusted by minimizing cross entropy. A regularization 
-    % parameter "lamdad" is included based on L2, and the number of 
+    % parameter "lambda" is included based on L2, and the number of 
     % iterations is specified by the "iter" parameter.
     %   NNPOM methods:
     %      runAlgorithm               - runs the corresponding algorithm,
@@ -77,7 +77,7 @@ classdef NNPOM < Algorithm
             num_labels = numel(unique(y));  
             m = size(X,1);
             
-            % Recode y to Y
+            % Recode y to Y using nominal coding
             Y = repmat(y,1,num_labels) == repmat((1:num_labels),m,1);
             
             % Hidden layer weigths (with bias)
@@ -108,6 +108,10 @@ classdef NNPOM < Algorithm
             
             % Running RProp
             [nn_params,cost,exitflag,stats1] = rprop(costFunction,initial_nn_params,p);
+            
+%             options = optimoptions('fminunc','Algorithm','quasi-newton','SpecifyObjectiveGradient',true,'Diagnostics','on','Display','iter-detailed','UseParallel',true,'MaxIter', 1000,'CheckGradients',true);
+%             [nn_params, cost, exitflag, output] = fminunc(costFunction, initial_nn_params, options);
+
             
             % Unpack the parameters
             [Theta1, Theta2, Thresholds_param] = obj.unpackParameters(nn_params,input_layer_size,hidden_layer_size,num_labels);
