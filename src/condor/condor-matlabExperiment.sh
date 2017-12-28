@@ -22,8 +22,6 @@ do
 	FILE="$1""$i"
 	BASEDIR=$(cat $FILE | egrep 'basedir[ ]*=[ ]*' | sed -r -e 's/.*=[ ]*([^ ]*)/\1/g');
 	DATASETS=($(cat $FILE | egrep 'datasets[ ]*=[ ]*' | sed -r -e 's/.*=[ ]*([^ ]*)/\1/g' | sed -e 's/\,/\n/g'));
-	echo $BASEDIR
-	echo $DATASETS
 	for i in `seq 1 ${#DATASETS[@]}`
 	do
 		ii=$(($i - 1))
