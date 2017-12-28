@@ -17,7 +17,7 @@ fi
 total=0;
 jR=0;
 NFILES=$(($(csplit $1 -f $1 '/\[..*\]/' {\*} | wc -l) - 1))
-for i in $(seq -w $NFILES)
+for i in $(seq -f "%02g" $NFILES)
 do
 	FILE="$1""$i"
 	BASEDIR=$(cat $FILE | egrep 'basedir[ ]*=[ ]*' | sed -r -e 's/.*=[ ]*([^ ]*)/\1/g');
