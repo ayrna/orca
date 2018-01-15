@@ -17,11 +17,11 @@ fi
 total=0;
 jR=0;
 NFILES=$(($(csplit $1 -f $1 '/\[..*\]/' {\*} | wc -l) - 1))
-for i in $(seq $NFILES)
+for i in $(seq -f "%02g" $NFILES)
 do
-	FILE="$1"0"$i"
-	BASEDIR=$(cat $FILE | grep basedir | sed -r -e 's/.*=[ ]*([^ ]*)/\1/g')
-	DATASETS=($(cat $FILE | grep datasets | sed -r -e 's/.*=[ ]*([^ ]*)/\1/g' | sed -e 's/\,/\n/g'));
+	FILE="$1""$i"
+	BASEDIR=$(cat $FILE | egrep 'basedir[ ]*=[ ]*' | sed -r -e 's/.*=[ ]*([^ ]*)/\1/g');
+	DATASETS=($(cat $FILE | egrep 'datasets[ ]*=[ ]*' | sed -r -e 's/.*=[ ]*([^ ]*)/\1/g' | sed -e 's/\,/\n/g'));
 	for i in `seq 1 ${#DATASETS[@]}`
 	do
 		ii=$(($i - 1))

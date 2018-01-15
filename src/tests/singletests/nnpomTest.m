@@ -1,22 +1,23 @@
 % Reference performance
-accTestRef = 0.973333;
-allowedError = 0.001;
-method = 'SVR';
+accTestRef = 0.950000;
+% Increase the error due to method's variability
+allowedError = 0.05; 
+method = 'NNPOM';
 
 % Create the algorithm object
-algorithmObj = SVR();
+algorithmObj = NNPOM();
 
 % Clear parameter struct
 clear param;
 
-% Parameter C (Cost)
+% Parameter hiddenN (Number of neurons in the hidden layer)
 param(1) = 10;
 
-% Parameter e (epsilon, tube width)
-param(2) = 0.1;
+% Parameter iter (Number of iterations)
+param(2) = 1000;
 
-% Parameter k (kernel width)
-param(3) = 10;
+% Parameter lambda (Regularization parameter)
+param(3) = 0.01;
 
 % Running the algorithm
 info = algorithmObj.runAlgorithm(train,test,param);

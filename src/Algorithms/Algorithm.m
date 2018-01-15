@@ -20,7 +20,7 @@ classdef Algorithm < handle
         
         function name_parameters = getParameterNames(obj)
             if ~isempty(obj.parameters)
-                name_parameters = fieldnames(obj.parameters);
+                name_parameters = sort(fieldnames(obj.parameters));
             else
                 name_parameters = [];
             end
