@@ -113,8 +113,12 @@ classdef Experiment < handle
             if expObj.algorithm.isKey('kernel')
                 obj.method.kernelType = expObj.algorithm('kernel');
             end
-            if expObj.algorithm.isKey('activationFunction')
-                obj.method.activationFunction = expObj.algorithm('activationFunction');
+            if expObj.algorithm.isKey('activationfunction')
+                obj.method.activationFunction = expObj.algorithm('activationfunction');
+            end
+            
+            if expObj.algorithm.isKey('sharedparams')
+                obj.method.sharedParams = expObj.algorithm('sharedparams');
             end
             
             if ~isempty(expObj.params)
