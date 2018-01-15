@@ -26,23 +26,14 @@ classdef Algorithm < handle
             end
         end
         
-        function mInf = runAlgorithm(obj,train, test, parameters)
+        function mInf = runAlgorithm(obj,train, test, param)
             %RUNALGORITHM runs the corresponding algorithm, fitting the
             %model and testing it in a dataset.
             %   mInf = RUNALGORITHM(OBJ, TRAIN, TEST, PARAMETERS) learns a
             %   model with TRAIN data and PARAMETERS as hyper-parameter
-            %   values for the method. Test the generalization performance
-            %   with TRAIN and TEST data and returns predictions and model
-            %   in mInf structure.
-            name_parameters = obj.getParameterNames();
-            nParam = numel(name_parameters);
-            if nParam~= 0
-                parameters = reshape(parameters,[1,nParam]);
-                param = cell2struct(num2cell(parameters(1:nParam)),name_parameters,2);
-            else
-                param = [];
-            end
-            
+            %   structure of values for the method. It tests the
+            %   generalization performance with TRAIN and TEST data and
+            %   returns predictions and model in mInf structure.
             c1 = clock;
             [model,mInf.projectedTrain, mInf.predictedTrain] = obj.fit(train,param);
             c2 = clock;

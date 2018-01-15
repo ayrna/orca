@@ -100,7 +100,7 @@ classdef Experiment < handle
             catch
                 error('Unknown algorithm')
             end
-                
+            
             % TODO: These parameters loading should be moved to Algorithms classes
             % Those classes should check they have necessary parameters
             % description to be created and provide default values
@@ -183,6 +183,9 @@ classdef Experiment < handle
             %par = fieldnames(parameters);
             
             sets = struct2cell(obj.parameters);
+            name_parameters = fieldnames(obj.parameters);
+            nParam = numel(name_parameters);
+            
             c = cell(1, numel(sets));
             [c{:}] = ndgrid( sets{:} );
             combinations = cell2mat( cellfun(@(v)v(:), c, 'UniformOutput',false) );
@@ -241,7 +244,16 @@ classdef Experiment < handle
                 for i=1:size(combinations,2)
                     % Extract the combination of parameters
                     currentCombination = combinations(:,i);
-                    model = obj.method.runAlgorithm(auxTrain, auxTest, currentCombination);
+                    
+                    if nParam~= 0
+                        currentCombination = reshape(currentCombination,[1,nParam]);
+                        param = cell2struct(num2cell(currentCombination(1:nParam)),name_parameters,2);
+                    else
+                        param = [];
+                    end
+                    
+                    model = obj.method.runAlgorithm(auxTrain, auxTest, param);
+                    
                     if strcmp(obj.cvCriteria.name,'Area under curve')
                         result(ff,i) = obj.cvCriteria.calculateCrossvalMetric(auxTest.targets, model.projectedTest);
                     else
@@ -255,7 +267,14 @@ classdef Experiment < handle
             end
             
             [bestValue,bestIdx] = min(mean(result));
-            optimals = combinations(:,bestIdx);
+            optimalCombination = combinations(:,bestIdx);
+            
+            if nParam~= 0
+                optimalCombination = reshape(optimalCombination,[1,nParam]);
+                optimals = cell2struct(num2cell(optimalCombination(1:nParam)),name_parameters,2);
+            else
+                optimals = [];
+            end
             
         end
         
