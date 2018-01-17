@@ -43,10 +43,11 @@ classdef POM < Algorithm
     end
     
     methods
-        function obj = POM()
+        function obj = POM(varargin)
             %POM constructs an object of the class POM. This method does not
             %have any parameters
             obj.name = 'Linear Proportional Odds Model for Ordinal Regression';
+            obj.parseArgs(varargin);
         end
 
         function [model, projectedTrain, predictedTrain]= fit( obj,train,parameters)

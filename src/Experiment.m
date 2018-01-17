@@ -24,7 +24,7 @@ classdef Experiment < handle
     %
     properties
         data = DataSet;
-        method = KDLOR;
+        method = Algorithm;
         cvCriteria = MAE;
         crossvalide = 0;
         resultsDir = '';
@@ -68,7 +68,7 @@ classdef Experiment < handle
                 totalResults = obj.method.runAlgorithm(train, test, Optimals);
                 totalResults.crossvaltime = crossvaltime;
             else
-                totalResults = obj.method.runAlgorithm(train, test);
+                totalResults = obj.method.runAlgorithm(train, test, []);
             end
             
             obj.saveResults(totalResults);
@@ -80,6 +80,8 @@ classdef Experiment < handle
             cObj = Config(fname);
             expObj = cObj.exps{:};
             % Copy ini values to corresponding object properties
+            
+            % General experiment properties
             try
                 obj.data.directory = expObj.general('directory');
                 obj.data.train = expObj.general('train');
@@ -94,32 +96,42 @@ classdef Experiment < handle
                 error('Configuration file %s does not have mininum fields. Exception %s', fname, ME.identifier)
             end
             
+            % Algorithm properties are transformed to varargs ('key',value)
+            %expObj.algorithm('foo') = 'var'
+            %varargs = mapsToString2(expObj.algorithm, expObj.parameters);
             try
+                varargs = obj.mapsToCell(expObj.algorithm);
                 alg = expObj.algorithm('algorithm');
-                eval(['obj.method = ' alg ';']);
-            catch
-                error('Unknown algorithm')
+            catch ME % TODO: refine error unknown algorithm vs bad parameters
+                switch ME.identifier
+                    case 'MATLAB:Containers:Map:NoKey'
+                        error('Algorithm is not defined in configuration file')
+                    otherwise
+                        error('Unknown error: %s', ME.identifier)
+                end
             end
             
-            % TODO: These parameters loading should be moved to Algorithms classes
-            % Those classes should check they have necessary parameters
-            % description to be created and provide default values
-            % otherwise. There, it would be easier to generalize the
-            % code
-            if expObj.algorithm.isKey('weights')
-                wei = expObj.algorithm('weights');
-                eval(['obj.method.weights = ' wei ';']);
-            end
-            if expObj.algorithm.isKey('kernel')
-                obj.method.kernelType = expObj.algorithm('kernel');
-            end
-            if expObj.algorithm.isKey('activationFunction')
-                obj.method.activationFunction = expObj.algorithm('activationFunction');
+            obj.method = feval(alg, varargs);
+            try
+                obj.method = feval(alg, varargs);
+            catch ME
+                switch ME.identifier
+                    case 'MATLAB:noPublicFieldForClass'
+                        rethrow(ME)
+                    case 'MATLAB:UndefinedFunction'
+                        error('Unknown method ''%s'' in configuration file', alg)
+                    case 'ORCA:InconsistentDataType'
+                        error('Error: %s. %s', ME.identifier, ME.message)
+                    otherwise
+                        error('Unknown error. Error: %s. %s', ME.identifier, ME.message)
+                end
             end
             
+            % Parameters to be optimized
             if ~isempty(expObj.params)
                 pkeys = expObj.params.keys;
                 for p=1:cast(expObj.params.Count,'int32')
+                    %isfield(obj.parameters.' pkeys{p})
                     eval(['obj.parameters.' pkeys{p} ' = [' expObj.params(pkeys{p}) '];']);
                     obj.crossvalide = 1;
                 end
@@ -278,6 +290,35 @@ classdef Experiment < handle
             
         end
         
+    end
+    
+    methods (Static = true)
+
+        function varargs = mapsToCell(aObj)
+            %varargs = mapsToCell(mapObj) returns key value pairs in a comma separated
+            %   string. Example: "'kernel', 'rbf', 'c', 0.1"
+            mapObj = containers.Map(aObj.keys,aObj.values);
+            mapObj.remove('algorithm');
+            pkeys = mapObj.keys;
+            varargs = cell(1,cast(mapObj.Count,'int32')*2);
+            for p=1:2:cast(mapObj.Count,'int32')*2
+                value = mapObj.values(pkeys(p));
+                value = value{:};
+                varargs{1,p} = sprintf('%s', pkeys{p});
+                % Check numerical values
+                valuenum = str2double(value);
+                if isnan(valuenum) % we have a string
+                    varargs{1,p+1} = sprintf('%s', value);
+                else % we have a number
+                    varargs{1,p+1} = valuenum;
+                end
+                %     if isempty(varargs)
+                %         varargs{1,p} = sprintf('''%s'',%s', pkeys{p},value);
+                %     else
+                %         varargs = sprintf('%s,''%s'',%s',varargs, pkeys{p},value);
+                %     end
+            end
+        end
     end
     
     

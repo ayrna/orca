@@ -29,24 +29,18 @@ classdef SVC1VA < Algorithm
     %       This software is released under the The GNU General Public License v3.0 licence
     %       available at http://www.gnu.org/licenses/gpl-3.0.html
     properties
-        parameters = struct('c', 0.1, 'k', 0.1);
-        kernelType = 'rbf';
+        parameters = struct('C', 0.1, 'k', 0.1);
         algorithmMexPath = fullfile('Algorithms','libsvm-weights-3.12','matlab');
     end
     
     methods
         
-        function obj = SVC1VA(kernel)
+        function obj = SVC1VA(varargin)
             %SVC1VA constructs an object of the class SVC1VA and sets its default
             %   characteristics
-            %   OBJ = SVC1VA(KERNEL) builds SVC1VA with KERNEL as kernel function
+            %   OBJ = SVC1VA() builds SVC1VA with RBF as kernel function
             obj.name = 'Support Vector Machine Classifier with 1vsAll paradigm';
-            if(nargin ~= 0)
-                obj.kernelType = kernel;
-            else
-                obj.kernelType = 'rbf';
-            end
-            
+            obj.parseArgs(varargin);            
         end
         
         function [model, projectedTrain, predictedTrain]= fit( obj, train, param)
@@ -56,7 +50,7 @@ classdef SVC1VA < Algorithm
                 addpath(obj.algorithmMexPath);
             end
             
-            options = ['-t 2 -c ' num2str(param.c) ' -g ' num2str(param.k) ' -q'];
+            options = ['-t 2 -c ' num2str(param.C) ' -g ' num2str(param.k) ' -q'];
             
             labelSet = unique(train.targets);
             labelSetSize = length(labelSet);

@@ -52,15 +52,13 @@ classdef ELMOP < Algorithm
     methods
         
         
-        function obj = ELMOP(activationFunction)
+        function obj = ELMOP(varargin)
             %ELMOP constructs an object of the class ELMOP and sets its default
             %   characteristics
+            %   OBJ = ELMOP('activationFunction', ) builds ELMOP with 
+            %       activationFunction ('sig', 'rbf', 'krbf', 'grbf', 'up')
             obj.name = 'Extreme Learning Machine for Ordinal Regression';
-            if(nargin ~= 0)
-                obj.activationFunction = activationFunction;
-            else
-                obj.activationFunction = 'sig';
-            end
+            obj.parseArgs(varargin);
         end  
         
         function [model, projectedTrain, predictedTrain] = fit( obj, train, parameters)

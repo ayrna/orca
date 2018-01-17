@@ -57,10 +57,13 @@ classdef NNOP < Algorithm
     methods
         
         
-        function obj = NNOP()
+        function obj = NNOP(varargin)
             %NNOP constructs an object of the class NNOP and sets its default
             %   characteristics
+            %   obj = NNOP('epsilonInit', 0.5) sets initialization of
+            %   epsilon to 0.5
             obj.name = 'Neural Network with Ordered Partitions';
+            obj.parseArgs(varargin);
         end  
         
         function [model, projectedTrain, predictedTrain] = fit( obj, train, parameters)

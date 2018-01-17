@@ -36,11 +36,12 @@ classdef ORBoost < Algorithm
     
     methods
         
-        function obj = ORBoost()
+        function obj = ORBoost(varargin)
             %ORBoost constructs an object of the class ORBoost and sets its default
             %   characteristics
             %   OBJ = ORBoost() builds ORBoost object
             obj.name = 'OR Ensemble with perceptrons';
+            obj.parseArgs(varargin);
         end
 
         function [model, projectedTrain, predictedTrain] = fit(obj,train,parameters)
