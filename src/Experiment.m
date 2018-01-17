@@ -111,7 +111,6 @@ classdef Experiment < handle
                 end
             end
             
-            obj.method = feval(alg, varargs);
             try
                 obj.method = feval(alg, varargs);
             catch ME
