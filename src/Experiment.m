@@ -97,35 +97,10 @@ classdef Experiment < handle
             end
             
             % Algorithm properties are transformed to varargs ('key',value)
-            %expObj.algorithm('foo') = 'var'
-            %varargs = mapsToString2(expObj.algorithm, expObj.parameters);
-            try
-                varargs = obj.mapsToCell(expObj.algorithm);
-                alg = expObj.algorithm('algorithm');
-            catch ME % TODO: refine error unknown algorithm vs bad parameters
-                switch ME.identifier
-                    case 'MATLAB:Containers:Map:NoKey'
-                        error('Algorithm is not defined in configuration file')
-                    otherwise
-                        error('Unknown error: %s', ME.identifier)
-                end
-            end
-            
-            try
-                obj.method = feval(alg, varargs);
-            catch ME
-                switch ME.identifier
-                    case 'MATLAB:noPublicFieldForClass'
-                        rethrow(ME)
-                    case 'MATLAB:UndefinedFunction'
-                        error('Unknown method ''%s'' in configuration file', alg)
-                    case 'ORCA:InconsistentDataType'
-                        error('Error: %s. %s', ME.identifier, ME.message)
-                    otherwise
-                        error('Unknown error. Error: %s. %s', ME.identifier, ME.message)
-                end
-            end
-            
+            varargs = obj.mapsToCell(expObj.algorithm);
+            alg = expObj.algorithm('algorithm');
+            obj.method = feval(alg, varargs);
+
             % Parameters to be optimized
             if ~isempty(expObj.params)
                 pkeys = expObj.params.keys;
@@ -296,13 +271,22 @@ classdef Experiment < handle
         function varargs = mapsToCell(aObj)
             %varargs = mapsToCell(mapObj) returns key value pairs in a comma separated
             %   string. Example: "'kernel', 'rbf', 'c', 0.1"
+            
+            % If there are no parameters return empty cell
+            if aObj.Count == 1
+                varargs = cell(1,1);
+                return
+            end
+                
             mapObj = containers.Map(aObj.keys,aObj.values);
             mapObj.remove('algorithm');
             pkeys = mapObj.keys;
             varargs = cell(1,cast(mapObj.Count,'int32')*2);
-            for p=1:2:cast(mapObj.Count,'int32')*2
-                value = mapObj.values(pkeys(p));
-                value = value{:};
+            
+            for p=1:2:cast(mapObj.Count*2,'int32')
+                keyasstr = pkeys(p);
+                keyasstr = keyasstr{:};
+                value = mapObj(keyasstr);
                 varargs{1,p} = sprintf('%s', pkeys{p});
                 % Check numerical values
                 valuenum = str2double(value);
@@ -311,11 +295,6 @@ classdef Experiment < handle
                 else % we have a number
                     varargs{1,p+1} = valuenum;
                 end
-                %     if isempty(varargs)
-                %         varargs{1,p} = sprintf('''%s'',%s', pkeys{p},value);
-                %     else
-                %         varargs = sprintf('%s,''%s'',%s',varargs, pkeys{p},value);
-                %     end
             end
         end
     end

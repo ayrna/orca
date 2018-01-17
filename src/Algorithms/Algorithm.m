@@ -34,7 +34,7 @@ classdef Algorithm < handle
             if ~isempty(varargin) && ~isempty(varargin{1})
                 while iscell(varargin{1})
                     varargin = varargin{1};
-                    if isempty(varargin)
+                    if isempty(varargin{1})
                         return
                     end
                 end
@@ -64,14 +64,16 @@ classdef Algorithm < handle
                             else
                                 msg = sprintf('Data type of property ''%s'' (%s) not compatible with data type (%s) of assigned value in configuration file', ...
                                     inpName, class(obj.(inpName)), class(pair{2}));
-                                ME = MException('ORCA:InconsistentDataType', msg);
-                                throw(ME)
+                                error(msg);
+                                %ME = MException('ORCA:InconsistentDataType', msg);
+                                %throw(ME)
                             end
                         end
                     else
-                        ME = MException('MATLAB:noPublicFieldForClass', ...
-                            'Error ''%s'' is not a recognized class property name',inpName);
-                        throw(ME)
+                        error('Error ''%s'' is not a recognized class property name',inpName)
+%                         ME = MException('MATLAB:noPublicFieldForClass', ...
+%                             'Error ''%s'' is not a recognized class property name',inpName);
+%                         throw(ME)
                     end
                 end
             end
