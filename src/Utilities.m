@@ -550,7 +550,7 @@ classdef Utilities < handle
                 dsName = dsdirsCell{i};
                 dsName = dsName{:};
                 if ~exist([basedir '/' dsName],'dir')
-                    error('Dataset directory "%s" does not exist', dsName)
+                    error('Dataset directory "%s" does not exist', [basedir '/' dsName])
                 end
                 
                 dsTrainFiles = dir([basedir '/' dsName '/matlab/train*']);
