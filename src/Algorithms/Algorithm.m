@@ -85,6 +85,9 @@ classdef Algorithm < handle
             %   structure of values for the method. It tests the
             %   generalization performance with TRAIN and TEST data and
             %   returns predictions and model in mInf structure.
+            if nargin == 3
+                param = [];
+            end
             c1 = clock;
             [model,mInf.projectedTrain, mInf.predictedTrain] = obj.fit(train,param);
             c2 = clock;
