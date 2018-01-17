@@ -82,16 +82,23 @@ classdef Experiment < handle
             % Copy ini values to corresponding object properties
             
             % General experiment properties
+            % TODO: check robustness and document behaviour of ini file
             try
                 obj.data.directory = expObj.general('directory');
                 obj.data.train = expObj.general('train');
                 obj.data.test = expObj.general('test');
                 obj.resultsDir = expObj.general('results');
-                obj.data.nOfFolds = str2num(expObj.general('num_folds'));
-                obj.data.standarize = str2num(expObj.general('standarize'));
-                met = upper(expObj.general('cvmetric'));
-                eval(['obj.cvCriteria = ' met ';']);
-                obj.seed = str2num(expObj.general('seed'));
+                %obj.data.nOfFolds = str2num(expObj.general('num_folds'));
+                if expObj.general.isKey('standarize')
+                    obj.data.standarize = str2num(expObj.general('standarize'));
+                end
+                if expObj.general.isKey('cvmetric')
+                    met = upper(expObj.general('cvmetric'));
+                    eval(['obj.cvCriteria = ' met ';']);
+                end
+                if expObj.general.isKey('seed')
+                    obj.seed = str2num(expObj.general('seed'));
+                end
             catch ME
                 error('Configuration file %s does not have mininum fields. Exception %s', fname, ME.identifier)
             end
