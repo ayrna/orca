@@ -117,7 +117,7 @@ classdef Utilities < handle
         end
         
         function results(experiment_folder,train)
-            % RUNEXPERIMENTS Function for computing the results
+            % RESULTS Function for computing the results
             %   RESULTS(EXPERIMENT_FOLDER) computes results of predictions
             %   stored in EXPERIMENT_FOLDER. It generates CSV files with
             %   several performance metrics of the testing (generalization)
