@@ -67,18 +67,18 @@ Accuracy Train 0.871111, Accuracy Test 0.853333
 
 ORCA experiments are specified in configuration INI files, which run an algorithm for a collections of datasets (each dataset with a given number of partitions). The folder [src/config-files](src/config-files) contains example configuration files for running all the algorithms included in ORCA for all the algorithms and datasets of the [review paper](http://www.uco.es/grupos/ayrna/orreview). The following code is an example for running the Proportion Odds Model (POM), a.k.a. Ordinal Logistic Regression:
 ```INI
-# Experiment ID
+; Experiment ID
 [pom-real]
 {general-conf}
 seed = 1
-# Datasets path
+; Datasets path
 basedir = ../../../datasets/ordinal/real/30-holdout
-# Datasets to process (comma separated list or 'all' to process all)
+; Datasets to process (comma separated list or 'all' to process all)
 datasets = automobile,balance-scale,bondrate,car,contact-lenses,ERA,ESL,eucalyptus,LEV,marketing,newthyroid,pasture,squash-stored,squash-unstored,SWD,tae,thyroid,toy,winequality-red,winequality-white
-# Activate data standardization
+; Activate data standardization
 standarize = true
 
-# Method: algorithm and parameter
+; Method: algorithm and parameter
 {algorithm-parameters}
 algorithm = POM
 ```
