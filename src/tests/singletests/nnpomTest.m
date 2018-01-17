@@ -11,13 +11,13 @@ algorithmObj = NNPOM();
 clear param;
 
 % Parameter hiddenN (Number of neurons in the hidden layer)
-param(1) = 10;
+param.hiddenN = 10;
 
 % Parameter iter (Number of iterations)
-param(2) = 1000;
+param.iter = 1000;
 
 % Parameter lambda (Regularization parameter)
-param(3) = 0.01;
+param.lambda = 0.01;
 
 % Running the algorithm
 info = algorithmObj.runAlgorithm(train,test,param);

@@ -10,10 +10,10 @@ algorithmObj = CSSVC();
 clear param;
 
 % Parameter C (Cost)
-param(1) = 10;
+param.C = 10;
 
 % Parameter k (kernel width)
-param(2) = 1;
+param.k = 1;
 
 % Running the algorithm
 info = algorithmObj.runAlgorithm(train,test,param);

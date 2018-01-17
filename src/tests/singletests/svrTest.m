@@ -10,13 +10,13 @@ algorithmObj = SVR();
 clear param;
 
 % Parameter C (Cost)
-param(1) = 10;
+param.C = 10;
 
 % Parameter e (epsilon, tube width)
-param(2) = 0.1;
+param.e = 0.1;
 
 % Parameter k (kernel width)
-param(3) = 10;
+param.k = 10;
 
 % Running the algorithm
 info = algorithmObj.runAlgorithm(train,test,param);

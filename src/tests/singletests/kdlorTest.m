@@ -4,19 +4,19 @@ allowedError = 0.001;
 method = 'KDLOR';
 
 % Create the algorithm object
-algorithmObj = KDLOR('rbf','quadprog');
+algorithmObj = KDLOR('kernelType', 'rbf','optimizationMethod', 'quadprog');
 
 % Clear parameter struct
 clear param;
 
 % Parameter C (Cost)
-param(1) = 10;
+param.C = 10;
 
 % Parameter k (kernel width)
-param(2) = 0.1;
+param.k = 0.1;
 
 % Parameter u (to avoid singularities)
-param(3) = 0.001;
+param.u = 0.001;
 
 % Running the algorithm
 info = algorithmObj.runAlgorithm(train,test,param);
