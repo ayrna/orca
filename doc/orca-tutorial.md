@@ -2,12 +2,14 @@
 
 # How to use ORCA
 
-ORCA is a framework focused on productivity. The two main objectives of the framework are:
+ORCA is an experimental framework focused on productivity and experiments reproductibility for machine learning researchers. Initially created to collect ordinal classification methods, it is suitable for other type of classifiers. The two main objectives of the framework are:
 
 1. To run many experiments as easily as possible to compare **many algorithms** and **many datasets**.
 2. To provide an easy way of including new algorithms into the framework by simply defining the parameters of the algorithms and the training and test methods.
 
-ORCA has been developed and tested in GNU/Linux systems. Although it may run on Windows and other proprietary operating systems, the following instructions are given for GNU/Linux.
+To help these purposes, ORCA is mainly used through scripts that describe experiments.
+
+ORCA has been developed and tested in GNU/Linux systems and ported to Windows. It has been tested in MATLAB R2009a-R2017b and Octave >4.0. To install ORCA visit [ORCA Quick Install Guide](orca-quick-install).
 
 ## Running ORCA algorithms from your own Matlab code
 
