@@ -26,23 +26,70 @@ classdef Algorithm < handle
             end
         end
         
-        function mInf = runAlgorithm(obj,train, test, parameters)
+        %TODO Document
+        function parseArgs(obj,varargin)
+            %PARSEARGS(VARARGIN) parses a pair of keys-values in matlab
+            %style format. It throws different exceptions if the field does
+            %not exits on the class or if the type assignement is not consistent.
+            if ~isempty(varargin) && ~isempty(varargin{1})
+                while iscell(varargin{1})
+                    varargin = varargin{1};
+                    if isempty(varargin{1})
+                        return
+                    end
+                end
+                
+                %# read the acceptable names
+                optionNames = fieldnames(obj);
+                
+                %# count arguments
+                nArgs = length(varargin);
+                if mod(nArgs,2)
+                    error('parseParArgs needs propertyName/propertyValue pairs')
+                end
+                
+                for pair = reshape(varargin,2,[]) % pair is {propName;propValue}
+                    inpName = pair{1}; % make case insensitive
+                    
+                    if any(strcmp(inpName,optionNames))
+                        % overwrite properties.
+                        % check type
+                        if strcmp(class(obj.(inpName)), class(pair{2}))
+                            obj.(inpName) = pair{2};
+                        else
+                            % Check boolean
+                            if islogical(obj.(inpName)) && ...
+                                    (strcmp(pair{2},'true') || strcmp(pair{2},'false'))
+                                obj.(inpName) = eval(pair{2});
+                            else
+                                msg = sprintf('Data type of property ''%s'' (%s) not compatible with data type (%s) of assigned value in configuration file', ...
+                                    inpName, class(obj.(inpName)), class(pair{2}));
+                                error(msg);
+                                %ME = MException('ORCA:InconsistentDataType', msg);
+                                %throw(ME)
+                            end
+                        end
+                    else
+                        error('Error ''%s'' is not a recognized class property name',inpName)
+%                         ME = MException('MATLAB:noPublicFieldForClass', ...
+%                             'Error ''%s'' is not a recognized class property name',inpName);
+%                         throw(ME)
+                    end
+                end
+            end
+        end
+        
+        function mInf = runAlgorithm(obj,train, test, param)
             %RUNALGORITHM runs the corresponding algorithm, fitting the
             %model and testing it in a dataset.
             %   mInf = RUNALGORITHM(OBJ, TRAIN, TEST, PARAMETERS) learns a
             %   model with TRAIN data and PARAMETERS as hyper-parameter
-            %   values for the method. Test the generalization performance
-            %   with TRAIN and TEST data and returns predictions and model
-            %   in mInf structure.
-            name_parameters = obj.getParameterNames();
-            nParam = numel(name_parameters);
-            if nParam~= 0
-                parameters = reshape(parameters,[1,nParam]);
-                param = cell2struct(num2cell(parameters(1:nParam)),name_parameters,2);
-            else
+            %   structure of values for the method. It tests the
+            %   generalization performance with TRAIN and TEST data and
+            %   returns predictions and model in mInf structure.
+            if nargin == 3
                 param = [];
             end
-            
             c1 = clock;
             [model,mInf.projectedTrain, mInf.predictedTrain] = obj.fit(train,param);
             c2 = clock;

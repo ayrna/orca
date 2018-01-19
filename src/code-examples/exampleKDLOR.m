@@ -11,16 +11,16 @@ test.patterns = test_toy(:,1:end-1);
 test.targets = test_toy(:,end);
 
 % Create the algorithm object
-kdlorAlgorithm = KDLOR('rbf','quadprog');
+kdlorAlgorithm = KDLOR('kernelType','rbf','optimizationMethod','quadprog');
 
 % Parameter C (Cost)
-param(1) = 10;
+param.C = 10;
 
 % Parameter k (kernel width)
-param(2) = 0.1;
+param.k = 0.1;
 
 % Parameter u (to avoid singularities)
-param(3) = 0.001;
+param.u = 0.001;
 
 % Running the algorithm
 info = kdlorAlgorithm.runAlgorithm(train,test,param);

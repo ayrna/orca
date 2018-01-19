@@ -10,7 +10,7 @@ algorithmObj = SVORLin();
 clear param;
 
 % Parameter C (Cost)
-param(1) = 10;
+param.C = 10;
 
 % Running the algorithm
 info = algorithmObj.runAlgorithm(train,test,param);

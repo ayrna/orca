@@ -32,33 +32,27 @@ classdef REDSVM < Algorithm
     %       available at http://www.gnu.org/licenses/gpl-3.0.html
     %
     properties
-        parameters = struct('c', 0.1, 'k', 0.1);
-        kernelType = 'rbf';
+        parameters = struct('C', 0.1, 'k', 0.1);
         algorithmMexPath = fullfile('Algorithms','libsvm-rank-2.81','matlab');
     end
     
     methods
         
-        function obj = REDSVM(kernel)
+        function obj = REDSVM(varargin)
             %REDSVM constructs an object of the class REDSVM and sets its default
             %   characteristics
-            %   OBJ = REDSVM(KERNEL) builds REDSVM with KERNEL as kernel function
+            %   OBJ = REDSVM() builds REDSVM with RBF kernel function
             obj.name = 'Reduction from OR to weighted binary classification (SVM)';
-            if(nargin ~= 0)
-                obj.kernelType = kernel;
-            else
-                obj.kernelType = 'rbf';
-            end
-            
+            obj.parseArgs(varargin);
         end
-
+        
         function [model, projectedTrain, predictedTrain]= fit( obj, train , param)
             %FIT trains the model for the REDSVM method with TRAIN data and
             %vector of parameters PARAMETERS. Return the learned model.
             if isempty(strfind(path,obj.algorithmMexPath))
                 addpath(obj.algorithmMexPath);
             end
-            options = ['-s 5 -t 2 -c ' num2str(param.c) ' -g ' num2str(param.k) ' -q'];
+            options = ['-s 5 -t 2 -c ' num2str(param.C) ' -g ' num2str(param.k) ' -q'];
             model.libsvmModel = svmtrain(train.targets, train.patterns, options);
             model.algorithm = 'REDSVM';
             model.parameters = param;

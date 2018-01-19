@@ -117,7 +117,7 @@ classdef Utilities < handle
         end
         
         function results(experiment_folder,train)
-            % RUNEXPERIMENTS Function for computing the results
+            % RESULTS Function for computing the results
             %   RESULTS(EXPERIMENT_FOLDER) computes results of predictions
             %   stored in EXPERIMENT_FOLDER. It generates CSV files with
             %   several performance metrics of the testing (generalization)
@@ -550,7 +550,7 @@ classdef Utilities < handle
                 dsName = dsdirsCell{i};
                 dsName = dsName{:};
                 if ~exist([basedir '/' dsName],'dir')
-                    error('Dataset directory "%s" does not exist', dsName)
+                    error('Dataset directory "%s" does not exist', [basedir '/' dsName])
                 end
                 
                 dsTrainFiles = dir([basedir '/' dsName '/matlab/train*']);

@@ -27,17 +27,26 @@ classdef OPBE < Algorithm
     %       available at http://www.gnu.org/licenses/gpl-3.0.html
     properties
         parameters = [];
-        base_algorithm;
+        baseMethod = SVORIM;
+        % Method name as str to allow loading from configuration file. The
+        % constructor will instanciate it via feval() 
+        base_algorithm = 'SVORIM'; 
     end
     
     methods
         
-        function obj = OPBE()
-            %OPBE constructs an object of the class OPBE and sets its default
+        % TODO: Update and test parameter description
+        function obj = OPBE(varargin)
+            %OPBE constructs an object of the class OPBE and sets its
+            %default properties. 
+            %   obj = OPBE('baseMethod', METHOD) sets METHOD as base
+            %   algorithm. 
             obj.name = 'Ordinal Projection Based Ensemble';
-            obj.base_algorithm = SVORIM;
-            %obj.name_parameters = obj.base_algorithm.getParameterNames();
-            obj.parameters = obj.base_algorithm.parameters;
+            obj.parseArgs(varargin);
+            % TODO: Pass varargin parameters to base algorithm?
+            obj.baseMethod = feval(obj.base_algorithm);
+            %obj.name_parameters = obj.baseMethod.getParameterNames();
+            obj.parameters = obj.baseMethod.parameters;
         end
 
         function [model, projected, trainTargets] = fit(obj, train, param)
@@ -154,7 +163,7 @@ classdef OPBE < Algorithm
                 nHigherRankingClasses = sum(classes>i);
                 
                 % Estimate probabilities
-                [projectedTest] = obj.base_algorithm.predict(test, models(i));
+                [projectedTest] = obj.baseMethod.predict(test, models(i));
                 probTest = obj.calculateProbabilities(projectedTest, models(i).thresholds');
                 
                 % Compute weights and fused probabilities

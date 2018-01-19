@@ -2,63 +2,63 @@
 
 # How to use ORCA
 
-ORCA is a framework focused on productivity. The two main objectives of the framework are:
+ORCA is an experimental framework focused on productivity and experiments reproductibility for machine learning researchers. Initially created to collect ordinal classification methods, it is suitable for other type of classifiers. The two main objectives of the framework are:
 
 1. To run many experiments as easily as possible to compare **many algorithms** and **many datasets**.
 2. To provide an easy way of including new algorithms into the framework by simply defining the parameters of the algorithms and the training and test methods.
 
-ORCA has been developed and tested in GNU/Linux systems. Although it may run on Windows and other proprietary operating systems, the following instructions are given for GNU/Linux.
+To help these purposes, ORCA is mainly used through scripts that describe experiments.
+
+ORCA has been developed and tested in GNU/Linux systems and ported to Windows. It has been tested in MATLAB R2009a-R2017b and Octave >4.0. To install ORCA visit [ORCA Quick Install Guide](orca-quick-install).
 
 ## Running ORCA algorithms from your own Matlab code
 
 ORCA algorithms can be used from your own Matlab code. All algorithms included in the [Algorithms](../src/Algorithms) have a `runAlgorithm` method, which can be used for running the algorithms with your data. The method receives the matrix of training data, the matrix of test data and a structure with the values of the parameters associated.
 
-For example, the KDLOR method has a total of five parameters. Two of them (the type of kernel, `kernel`, and the optimisation routine considered, `opt`) are received in the constructor of the corresponding class, and the other three parameters (cost, `C`, kernel parameter, `k`, and value to avoid singularities, `u`) are supposed to have to be fine-tuned for each dataset and partition, so they are received in a list passed to the `runAlgorithm` method. This an example of execution of KDLOR from the Matlab console:
+For example, the KDLOR method has a total of five parameters. Two of them (the type of kernel, `kernelType`, and the optimisation routine considered, `optimizationMethod`) are received in the constructor of the corresponding class, and the other three parameters (cost, `C`, kernel parameter, `k`, and value to avoid singularities, `u`) are supposed to have to be fine-tuned for each dataset and partition, so they are received in a structure passed to the `runAlgorithm` method. This an example of execution of KDLOR from the Matlab console:
 ```MATLAB
->> cd src/Algorithms/
->> addpath ..
->> kdlorAlgorithm = KDLOR('rbf','quadprog');
+>> cd src/
+>> addpath Algorithms/
+>> kdlorAlgorithm = KDLOR('kernelType','rbf','optimizationMethod','quadprog');
 >> kdlorAlgorithm
 
 kdlorAlgorithm =
 
-  KDLOR handle
+  KDLOR with properties:
 
-  Properties:
     optimizationMethod: 'quadprog'
-       name_parameters: {'C'  'k'  'u'}
-            parameters: []
+            parameters: [1×1 struct]
             kernelType: 'rbf'
                   name: 'Kernel Discriminant Learning for Ordinal Regression'
 
-  Methods, Events, Superclasses
-
->> load ../../exampledata/toy/matlab/train_toy.0
->> load ../../exampledata/toy/matlab/test_toy.0
+>> load ../exampledata/1-holdout/toy/matlab/train_toy.0
+>> load ../exampledata/1-holdout/toy/matlab/test_toy.0
 >> train.patterns = train_toy(:,1:(size(train_toy,2)-1));
 >> train.targets = train_toy(:,size(train_toy,2));
 >> test.patterns = test_toy(:,1:(size(test_toy,2)-1));
 >> test.targets = test_toy(:,size(test_toy,2));
->> param(1) = 10;
->> param(2) = 0.1;
->> param(3) = 0.001;
+>> param.C = 10;
+>> param.k = 0.1;
+>> param.u = 0.001;
 >> info = kdlorAlgorithm.runAlgorithm(train,test,param);
 >> info
 
 info =
 
-         trainTime: 0.2834
-    projectedTrain: [225x1 double]
-    predictedTrain: [225x1 double]
-     projectedTest: [75x1 double]
-     predictedTest: [75x1 double]
-          testTime: 0.0108
-             model: [1x1 struct]
+  struct with fields:
+
+    projectedTrain: [1×225 double]
+    predictedTrain: [225×1 double]
+         trainTime: 0.3154
+     projectedTest: [1×75 double]
+     predictedTest: [75×1 double]
+          testTime: 0.0013
+             model: [1×1 struct]
 
 >> fprintf('Accuracy Train %f, Accuracy Test %f\n',sum(train.targets==info.predictedTrain)/size(train.targets,1),sum(test.targets==info.predictedTest)/size(test.targets,1));
 Accuracy Train 0.871111, Accuracy Test 0.853333
 ```
-The corresponding script ([exampleKDLOR.m](../src/tests/exampleKDLOR.m)) can found and run in the [tests](../src/tests) folder:
+The corresponding script ([exampleKDLOR.m](../src/code-examples/exampleKDLOR.m)) can found and run in the [tests](../src/code-examples) folder:
 ```MATLAB
 >> exampleKDLOR
 Accuracy Train 0.871111, Accuracy Test 0.853333
