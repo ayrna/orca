@@ -30,7 +30,7 @@ classdef SVOREX < Algorithm
     
     properties
         parameters = struct('C', 0.1, 'k', 0.1);
-        algorithmMexPath = fullfile('Algorithms','SVOREX');
+        algorithmMexPath = fullfile(fileparts(which('Algorithm.m')),'SVOREX');
     end
     
     methods

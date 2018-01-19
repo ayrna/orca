@@ -25,7 +25,8 @@ classdef CSSVC < Algorithm
     %       available at http://www.gnu.org/licenses/gpl-3.0.html
     properties
         parameters = struct('C', 0.1, 'k', 0.1);
-        algorithmMexPath = fullfile(pwd,'Algorithms','libsvm-weights-3.12','matlab');
+        
+        algorithmMexPath = fullfile(fileparts(which('Algorithm.m')),'libsvm-weights-3.12','matlab');
     end
 
     methods

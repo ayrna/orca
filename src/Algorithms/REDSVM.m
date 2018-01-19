@@ -33,7 +33,7 @@ classdef REDSVM < Algorithm
     %
     properties
         parameters = struct('C', 0.1, 'k', 0.1);
-        algorithmMexPath = fullfile('Algorithms','libsvm-rank-2.81','matlab');
+        algorithmMexPath = fullfile(fileparts(which('Algorithm.m')),'libsvm-rank-2.81','matlab');
     end
     
     methods
