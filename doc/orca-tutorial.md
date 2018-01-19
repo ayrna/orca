@@ -7,9 +7,9 @@ ORCA is an experimental framework focused on productivity and experiments reprod
 1. To run many experiments as easily as possible to compare **many algorithms** and **many datasets**.
 2. To provide an easy way of including new algorithms into the framework by simply defining the parameters of the algorithms and the training and test methods.
 
-To help these purposes, ORCA is mainly used through scripts that describe experiments.
+To help these purposes, ORCA is mainly used through scripts that describe experiments, but the methods can be easily used through a common API.
 
-ORCA has been developed and tested in GNU/Linux systems and ported to Windows. It has been tested in MATLAB R2009a-R2017b and Octave >4.0. To install ORCA visit [ORCA Quick Install Guide](orca-quick-install).
+To install ORCA visit [ORCA Quick Install Guide](orca-quick-install).
 
 ## Running ORCA algorithms from your own Matlab code
 
@@ -58,7 +58,7 @@ info =
 >> fprintf('Accuracy Train %f, Accuracy Test %f\n',sum(train.targets==info.predictedTrain)/size(train.targets,1),sum(test.targets==info.predictedTest)/size(test.targets,1));
 Accuracy Train 0.871111, Accuracy Test 0.853333
 ```
-The corresponding script ([exampleKDLOR.m](../src/code-examples/exampleKDLOR.m)) can found and run in the [tests](../src/code-examples) folder:
+The corresponding script ([exampleKDLOR.m](../src/code-examples/exampleKDLOR.m)) can found and run in the [code example](../src/code-examples) folder:
 ```MATLAB
 >> exampleKDLOR
 Accuracy Train 0.871111, Accuracy Test 0.853333
