@@ -73,7 +73,7 @@ POM results ([download CSV](tutorial/reference-results/pom-mean-results_test.csv
 SVORIM results ([download CSV](tutorial/reference-results/svorim-mean-results_test.csv)):
 
 | Dataset-Experiment | MeanMAE | StdMAE | MeanAMAE | StdAMAE | MeanTrainTime | StdTrainTime |
-| --- | --- | --- | --- | --- | --- | --- | |
+| --- | --- | --- | --- | --- | --- | --- |
 | pasture-svorim-mae-real | 0,322222 | 0,106614 | 0,322222 | 0,106614 | 0,013843 | 0,002601 |
 | pyrim10-svorim-mae-real | 1,377083 | 0,208761 | 1,375 | 0,225138 | 0,031384 | 0,022827 |
 | tae-svorim-mae-real | 0,475439 | 0,069086 | 0,473291 | 0,068956 | 0,042999 | 0,023227 |
