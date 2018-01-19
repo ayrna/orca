@@ -13,14 +13,17 @@ function [actual,pred] = getLabelsFromCM(cm)
 counter1 = 1;
 counter2 = 1;
 for i=1:size(cm,1)
-    actual(counter1:(sum(cm(i,:))+counter1-1))=i-1;
+    %actual(counter1:(sum(cm(i,:))+counter1-1))=i-1;
+    actual(counter1:(sum(cm(i,:))+counter1-1))=i;
     counter1 = counter1 + sum(cm(i,:));
     for z=1:size(cm,1)
-        pred(counter2:(cm(i,z)+counter2-1))=z-1;
+        %pred(counter2:(cm(i,z)+counter2-1))=z-1;
+        pred(counter2:(cm(i,z)+counter2-1))=z;
         counter2 = counter2 + cm(i,z);
         
     end
 end
-
+actual = actual';
+pred = pred';
 end
 
