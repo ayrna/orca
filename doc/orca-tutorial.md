@@ -2,20 +2,17 @@
 
 # How to use ORCA
 
-ORCA is an experimental framework focused on productivity and experiments reproductibility for machine learning researchers. Initially created to collect ordinal classification methods, it is suitable for other type of classifiers. The two main objectives of the framework are:
-
-1. To run many experiments as easily as possible to compare **many algorithms** and **many datasets**.
-2. To provide an easy way of including new algorithms into the framework by simply defining the parameters of the algorithms and the training and test methods.
-
-To help these purposes, ORCA is mainly used through scripts that describe experiments, but the methods can be easily used through a common API.
+ORCA is an experimental framework focused on productivity and experiments reproductibility for machine learning researchers. Initially created to collect ordinal classification methods, it is suitable for other type of classifiers.
 
 To install ORCA visit [ORCA Quick Install Guide](orca-quick-install).
 
-## Running ORCA algorithms from your own Matlab code
+## Running algorithms with ORCA API
 
-ORCA algorithms can be used from your own Matlab code. All algorithms included in the [Algorithms](../src/Algorithms) have a `runAlgorithm` method, which can be used for running the algorithms with your data. The method receives the matrix of training data, the matrix of test data and a structure with the values of the parameters associated.
+### Run a pair of train-test files with runAlgorithm
 
-For example, the KDLOR method has a total of five parameters. Two of them (the type of kernel, `kernelType`, and the optimisation routine considered, `optimizationMethod`) are received in the constructor of the corresponding class, and the other three parameters (cost, `C`, kernel parameter, `k`, and value to avoid singularities, `u`) are supposed to have to be fine-tuned for each dataset and partition, so they are received in a structure passed to the `runAlgorithm` method. This an example of execution of KDLOR from the Matlab console:
+ORCA algorithms can be used from your own Matlab code. All algorithms included in the [Algorithms](../src/Algorithms) have a `runAlgorithm` method, which can be used for running the algorithms with your data. The method receives a structure with the matrix of training data and labels, the equivalent for test data and a structure with the values of the parameters associated to the method. With respect to other tools, parameters are a mandatory argument for method to avoid the use of default values.
+
+For example, the [KDLOR](../src/Algorithms/KDLOR.m)  method has a total of five parameters. Two of them (the type of kernel, `kernelType`, and the optimisation routine considered, `optimizationMethod`) are received in the constructor of the corresponding class, and the other three parameters (cost, `C`, kernel parameter, `k`, and value to avoid singularities, `u`) are supposed to have to be fine-tuned for each dataset and partition, so they are received in a structure passed to the `runAlgorithm` method. This an example of execution of KDLOR from the Matlab console:
 ```MATLAB
 >> cd src/
 >> addpath Algorithms/
@@ -63,6 +60,106 @@ The corresponding script ([exampleKDLOR.m](../src/code-examples/exampleKDLOR.m))
 >> exampleKDLOR
 Accuracy Train 0.871111, Accuracy Test 0.853333
 ```
+
+### Using performance metrics
+
+Ordinal classification problems are evaluated with specific metrics that consider the magnitude of the prediction errors in different ways. ORCA collect a set of these metrics in [Measures](../src/Measures) folder. Given the previous example, we can calculate different performance metrics with the actual and predictel labels:
+
+```MATLAB
+>> CCR.calculateMetric(test.targets,info.predictedTest)
+ans =
+    0.8533
+>> MAE.calculateMetric(test.targets,info.predictedTest)
+ans =
+    0.1467
+>> AMAE.calculateMetric(test.targets,info.predictedTest)
+ans =
+    0.1080
+>> Wkappa.calculateMetric(test.targets,info.predictedTest)
+ans =
+    0.8854
+```
+
+The same results can be optained using the confusion matrix:
+
+```MATLAB
+>> cm = confusionmat(test.targets,info.predictedTest)
+cm =
+     9     0     0     0     0
+     1    14     7     0     0
+     0     0    20     0     0
+     0     0     3    14     0
+     0     0     0     0     7
+>> CCR.calculateMetric(cm)
+ans =
+    0.8533
+>> MAE.calculateMetric(cm)
+ans =
+    0.1467
+>> AMAE.calculateMetric(cm)
+ans =
+    0.1080
+>> Wkappa.calculateMetric(cm)
+ans =
+    0.8854
+```
+
+### Visualizing projections
+
+Many ordinal regression methods belong to the category of threshold methods, which briefly means that models project the patterns into a one-dimensional latent space. We can visualize this projection and thresholds in the following way to observe the effect of the kernel width parameter starting from the previous example:
+
+```MATLAB
+figure; hold on;
+info1 = kdlorAlgorithm.runAlgorithm(train,test,param);
+h1 = histogram(info1.projectedTest,30);
+param.k = 10;
+info2 = kdlorAlgorithm.runAlgorithm(train,test,param);
+h2 = histogram(info2.projectedTest,30);
+legend('KDLOR k=0.1','KDLOR k=10', 'Location','NorthWest')
+hold off;
+```
+![Histogram of KDLOR projections](images/kdlor-projection-hist.png)
+
+Now, you can compare performance using AMAE:
+
+```MATLAB
+>> amae1 = AMAE.calculateMetric(test.targets,info1.predictedTest)
+amae1 =
+    0.1080
+>> amae2 = AMAE.calculateMetric(test.targets,info2.predictedTest)
+amae2 =
+    0.0817
+```
+
+The whole example is available at [exampleProjections.m](../code-examples/exampleProjections.m).
+
+### Visualizing projections and decision thresholds
+
+The `model` structure stores decision thresholds in the field thresholds. Starting from the previous example:
+
+```MATLAB
+% Run algorithm
+info1 = kdlorAlgorithm.runAlgorithm(train,test,param);
+amaeTest1 = AMAE.calculateMetric(test.targets,info1.predictedTest);
+% Build legend text
+msg{1} = sprintf('KDLOR k=%f. AMAE=%f', param.k, amaeTest1);
+msg{2} = 'Thresholds';
+
+figure; hold on;
+h1 = histogram(info1.projectedTest,30);
+plot(info1.model.thresholds, ...
+    zeros(length(info1.model.thresholds),1),...
+    'r+', 'MarkerSize', 10)
+legend(msg)
+legend('Location','NorthWest')
+hold off;
+```
+
+![Histogram of KDLOR projections](images/kdlor-projection-hist-thresholds.png)
+
+The whole example is available at [exampleProjections.m](../code-examples/exampleProjectionsThresholds.m).
+
+
 ## Experiment configuration
 
 ORCA experiments are specified in configuration INI files, which run an algorithm for a collections of datasets (each dataset with a given number of partitions). The folder [src/config-files](src/config-files) contains example configuration files for running all the algorithms included in ORCA for all the algorithms and datasets of the [review paper](http://www.uco.es/grupos/ayrna/orreview). The following code is an example for running the Proportion Odds Model (POM), a.k.a. Ordinal Logistic Regression:
@@ -83,7 +180,7 @@ standarize = true
 algorithm = POM
 ```
 
-**Subsections** help to organize the file and are mandatory:
+**Subsections** help to organize the file and are mandatory in the INI file:
  - `{general-conf}`: generic parts of the file.
  - `{algorithm-parameters}`: algorithms and parameters selection.
  - `{algorithm-hyper-parameters-to-cv}`: algorithms' hyper-parameters to optimise (see [Hyper-parameter optimization](orca-tutorial.md#hyper-parameter-optimization)).
