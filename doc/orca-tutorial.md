@@ -81,12 +81,12 @@ SVORIM results ([download CSV](tutorial/reference-results/svorim-mean-results_te
 
 SVC1V1 results ([download CSV](tutorial/reference-results/svc1v1-mean-results_test.csv)):
 
-Dataset-Experiment | MeanMAE | StdMAE | MeanAMAE | StdAMAE | MeanTrainTime | StdTrainTime | MeanTestTime |
+| Dataset-Experiment | MeanMAE | StdMAE | MeanAMAE | StdAMAE | MeanTrainTime | StdTrainTime |
 | --- | --- | --- | --- | --- | --- | --- |
-| pasture-svc1v1-mae-tutorial | 0,314815 | 0,127468 | 0,314815 | 0,127468 | 0,014363 | 0,003297 | 0,01366 |
-| pyrim10-svc1v1-mae-tutorial | 1,870833 | 0,379457 | 1,85 | 0,410961 | 0,015592 | 0,003114 | 0,01426 |
-| tae-svc1v1-mae-tutorial | 0,534211 | 0,108865 | 0,533832 | 0,110083 | 0,017699 | 0,004122 | 0,014086 |
-| toy-svc1v1-mae-tutorial | 0,051556 | 0,023419 | 0,044367 | 0,022971 | 0,015869 | 0,003786 | 0,012912 |
+| pasture-svc1v1-mae-tutorial | 0,314815 | 0,127468 | 0,314815 | 0,127468 | 0,014363 | 0,003297 |
+| pyrim10-svc1v1-mae-tutorial | 1,870833 | 0,379457 | 1,85 | 0,410961 | 0,015592 | 0,003114 |
+| tae-svc1v1-mae-tutorial | 0,534211 | 0,108865 | 0,533832 | 0,110083 | 0,017699 | 0,004122 |
+| toy-svc1v1-mae-tutorial | 0,051556 | 0,023419 | 0,044367 | 0,022971 | 0,015869 | 0,003786 |
 
 Finally, you can plot a bar plot to compare the performance of the methods, for instance the following code (run in `src`) plots the below figure:
 
