@@ -24,7 +24,7 @@ warning('off','MATLAB:nearlySingularMatrix')
 warning('off','stats:mnrfit:IterOrEvalLimit')
 ```
 
-## Launch experiments
+## Launch experiments through `ini` files
 
 In this section, we will run several experiments to compare the performance of three methods in a set of datasets: POM (Proportional Odds Model), SVORIM (Support Vector Machines with IMplicit constrains) and SVC1V1 (SVM classifier with 1-vs-1 binary decomposition). POM is a linear ordinal model, with limited performance but with easy interpretation. SVORIM is an ordinal nonlinear model, with one of the best performance values according to several studies. SVC1V1 is the nominal counterpart of SVORIM, so that we can check the benefits of considering ordinality.
 
@@ -33,7 +33,7 @@ From Matlab consoles, assuming you are on the `src` folder, the set of experimen
 Utilities.runExperiments('../doc/tutorial/config-files/pom.ini')
 ```
 
-This should produce an output like this:
+The syntaxis of these files will be explained in the [next subsection](orca-tutorial.md#ini-files-sintaxis). This should produce an output like this:
 ```MATLAB
 >> Utilities.runExperiments('../doc/tutorial/config-files/pom.ini')
 Setting up experiments...
@@ -60,9 +60,9 @@ Utilities.runExperiments('../doc/tutorial/config-files/svorim.ini')
 Utilities.runExperiments('../doc/tutorial/config-files/svc1v1.ini')
 ```
 
-After running all the experiments, all the results are generated in the `Experiments` folder, as described in the [corresponding section](orca-tutorial.md#experimental-results-and-reports) of this tutorial.
+Once the experiments are finished, the corresponding results can be found in a `Experiments` subfolder, as described in the [corresponding section](orca-tutorial.md#experimental-results-and-reports) of this tutorial.
 
-You should have two CSV files with results in corresponding experiment folders with results similar to the following (some columns are omitted):
+Each experiment has a different folder, and each folder should include two CSV files with results with results similar to the following (some columns are omitted):
 
 POM results ([download CSV](tutorial/reference-results/pom-mean-results_test.csv)):
 
@@ -91,8 +91,7 @@ SVC1V1 results ([download CSV](tutorial/reference-results/svc1v1-mean-results_te
 | tae-svc1v1-mae-tutorial | 0,534211 | 0,108865 | 0,533832 | 0,110083 | 0,017699 | 0,004122 |
 | toy-svc1v1-mae-tutorial | 0,051556 | 0,023419 | 0,044367 | 0,022971 | 0,015869 | 0,003786 |
 
-Finally, you can plot a bar plot to compare the performance of the methods, for instance the following code (run in `src`) plots the below figure:
-
+Finally, you can plot a bar plot to graphically compare the performance of the methods. The following code (to be run from the `src` folder) plots the figure below:
 ```MATLAB
 pomT = readtable('../doc/tutorial/reference-results/pom-mean-results_test.csv');
 svorimT = readtable('../doc/tutorial/reference-results/svorim-mean-results_test.csv');
@@ -106,7 +105,7 @@ title('AMAE performance (smaller is better)')
 
 ![AMAE performance of several methods](tutorial/images/pom-vs-svorim-vs-svc1v1.png)
 
-## Experiment configuration
+## `ini` files syntaxis
 
 ORCA experiments are specified in configuration INI files, which run an algorithm for a collections of datasets (each dataset with a given number of partitions). The folder [src/config-files](src/config-files) contains example configuration files for running all the algorithms included in ORCA for all the algorithms and datasets of the [review paper](http://www.uco.es/grupos/ayrna/orreview). The following code is an example for running the Proportion Odds Model (POM), a.k.a. Ordinal Logistic Regression:
 ```INI
