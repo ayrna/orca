@@ -502,4 +502,43 @@ All of them are based on an ordered partition decomposition, where the binary su
 | C4 | 1 | 1 | 1 | 0 |
 | C5 | 1 | 1 | 1 | 1 |
 
-### SVM with ordered partitions
+
+### SVM with ordered partitions (SVMOP)
+
+SVMOP method is based on applying the ordered partition binary decomposition, together different weights according to the absolute distance between the class of the binary problem and the specific category being examined. The models are trained independently and final prediction is based on the first model (in the ordinal scale) predicting a positive class. Again, the parameters of this model are:
+- Parameter `C`, importance given to errors.
+- Parameter `k`, inverse of the width of the RBF kernel.
+
+The same parameter values are considered for all subproblems, although the results could be improved by considering different `C` and `k` for each subproblem (resulting in a significantly higher computational cost). Here, we can check the performance of SVMOP on the partition of melanoma we have been studying:
+
+```MATLAB
+>> algorithmObj = SVMOP();
+info = algorithmObj.runAlgorithm(train,test,struct('C',10,'k',0.001));
+fprintf('\nSVMOP\n---------------\n');
+fprintf('SVMOP Accuracy: %f\n', CCR.calculateMetric(test.targets,info.predictedTest));
+fprintf('SVMOP MAE: %f\n', MAE.calculateMetric(test.targets,info.predictedTest));
+
+SVMOP
+---------------
+SVMOP Accuracy: 0.678571
+SVMOP MAE: 0.517857
+```
+
+Of course, decision values include the independent values obtained for all subproblems:
+```MATLAB
+>> info.projectedTest
+
+ans =
+
+  Columns 1 through 12
+
+    0.3161    0.6788    0.0873    0.0213    0.1411    0.1021    0.2897    0.1883    0.4164    0.5428    0.8796    0.1691
+    0.2321    0.3929    0.0826    0.0397    0.1228    0.0916    0.2082    0.1310    0.2140    0.2849    0.7380    0.1135
+    0.0256    0.1160    0.0540    0.0186    0.0548    0.0441    0.1156    0.0537    0.0424    0.1020    0.0067    0.0204
+    0.0055    0.0212    0.0103    0.0057    0.0074    0.0165    0.0697    0.0141    0.0095    0.0351    0.0034    0.0068
+         0         0         0         0         0         0         0         0         0         0         0         0
+```
+
+### Neural network approaches (ELMOP and NNOP)
+
+Two neural network models are
