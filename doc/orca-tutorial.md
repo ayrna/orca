@@ -107,7 +107,7 @@ title('AMAE performance (smaller is better)')
 
 ## `ini` files syntax
 
-ORCA experiments are specified in configuration `ini` files, which run an algorithm for a collections of datasets (each dataset with a given number of partitions). The folder [src/config-files](src/config-files) contains example configuration files for running all the algorithms included in ORCA for all the algorithms and datasets of the [review paper](http://www.uco.es/grupos/ayrna/orreview). The following code is an example for running the Proportion Odds Model (POM), a.k.a. Ordinal Logistic Regression:
+ORCA experiments are specified in configuration `ini` files, which run an algorithm for a collections of datasets (each dataset with a given number of partitions). The folder [src/config-files](src/config-files) contains example configuration files for running all the algorithms included in ORCA for all the algorithms and datasets of the [review paper](http://www.uco.es/grupos/ayrna/orreview). The following code is an example for running the Proportion Odds Model (POM), a.k.a. Ordinal Logistic Regression. Note that the execution of this `ini` file can take several hours:
 ```INI
 ; Experiment ID
 [pom-real]
@@ -125,20 +125,19 @@ standarize = true
 algorithm = POM
 ```
 
-**Subsections** help to organize the file and are mandatory in the INI file:
- - `{general-conf}`: generic parts of the file.
- - `{algorithm-parameters}`: algorithms and parameters selection.
- - `{algorithm-hyper-parameters-to-cv}`: algorithms' hyper-parameters to optimise (see [Hyper-parameter optimization](orca-tutorial.md#hyper-parameter-optimization)).
+`ini` files include **Subsections** to help organize the configuration. These sections are mandatory:
+ - `{general-conf}`: generic parameters of the experiment, including the seed considered for random number generation, the directory containing the datasets, the datasets to be processed... All the parameters included here are the same for all the algorithms.
+ - `{algorithm-parameters}`: here you can specify the algorithm to run and those parameters which are going to be fixed (not optimized through cross validation).
+ - `{algorithm-hyper-parameters-to-cv}`: algorithms' hyper-parameters to optimise. For more details, see [Hyper-parameter optimization](orca-tutorial.md#hyper-parameter-optimization).
 
-The above file tells ORCA to run the algorithm `POM` for all the datasets specified in the list `datasets` (`datasets = all` processes all the datasets in `basedir`). Each of these datasets should be found at folder `basedir`, in such a way that ORCA expects one subfolder for each dataset, where the name of the subfolder must match the name of the dataset. Other directives are:
-
+The above file tells ORCA to run the algorithm `POM` for all the datasets specified in the list `datasets`. You can also use `datasets = all` to process all the datasets in `basedir`). Each of these datasets should be found at folder `basedir`, in such a way that ORCA expects one subfolder for each dataset, where the name of the subfolder must match the name of the dataset. Other directives are:
  - INI section `[pom-real]` sets the experiment identifier.
  - The `standarize` flag activates the standardization of the data (by using the mean and standard deviation of the train set).
  - Other parameters of the model depends on the specific algorithm (and they should be checked in the documentation of the algorithm). For instance, the kernel type is set up with `kernel` parameter.
 
 ## Hyper-parameter optimization
 
-Many machine learning methods depends on hyper-parameters to achieve optimal results. ORCA automates hyper-parameter optimization by using a grid search with an internal nested *k*-fold cross-validation considering only the training partition. Let see an example for the optimisation of the two hyper-parameters of SVORIM: cost ('C') and kernel width parameter ('k', a.k.a *gamma*):
+Many machine learning methods are very sensitive to the value considered for the hyper-parameters (consider, for example, support vector machines and the two associated parameters, cost and kernel width). They depend on hyper-parameters to achieve optimal results. ORCA automates hyper-parameter optimization by using a grid search with an internal nested *k*-fold cross-validation considering only the training partition. Let see an example for the optimisation of the two hyper-parameters of SVORIM: cost (`C`) and kernel width parameter (`k`, a.k.a. *gamma*):
 ```ini
 # Experiment ID
 [svorim-mae-real]
@@ -166,12 +165,12 @@ c = 10.^(-3:1:3)
 k = 10.^(-3:1:3)
 ```
 
-The meanings of the directives associated to hyper-parameter optimisation are:
- - `seed`: is the value to initialize MATLAB random number generator. This can be helpful to debug algorithms.
- - `num_folds`: *k* value for the nested *k*-fold cross validation over the training data.
- - `cvmetric`: metric used to select the best hyper-parameters in the grid search. The metrics available are: `AMAE`,`CCR`,`GM`,`MAE`,`MMAE`,`MS`,`MZE`,`Spearman`,`Tkendall` and `Wkappa`.
- - The list of hyper-parameters to be optimised and values considered for each parameter during the grid search are specified in subsection `{algorithm-hyper-parameters-to-cv}`:
-  - `C`: add a new parameter with name `C` and a set of values of `10.^(-3:1:3)` (10<sup>-3</sup>,10<sup>-2</sup>,...,10<sup>3</sup>). The same apples for `k`.
+The directive for configuring the search process are included in the general section. The directives associated to hyper-parameter optimisation are:
+* `seed`: is the value to initialize MATLAB random number generator. This can be helpful to debug algorithms.
+* `num_folds`: *k* value for the nested *k*-fold cross validation over the training data.
+* `cvmetric`: metric used to select the best hyper-parameters in the grid search. The metrics available are: `AMAE`,`CCR`,`GM`,`MAE`,`MMAE`,`MS`,`MZE`,`Spearman`,`Tkendall` and `Wkappa`.
+* The list of hyper-parameters to be optimised and values considered for each parameter during the grid search are specified in subsection `{algorithm-hyper-parameters-to-cv}`;
+    * `C`: add a new parameter with name `C` and a set of values of `10.^(-3:1:3)` (10<sup>-3</sup>,10<sup>-2</sup>,...,10<sup>3</sup>). The same apples for `k`.
 
 
 ## Experimental results and reports
