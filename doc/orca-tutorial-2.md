@@ -155,7 +155,7 @@ Again, the results have not changed, as there were no attributes with these char
 
 The first thing we will do is applying standard approaches for this ordinal regression dataset. This includes applying regression, classification and cost-sensitive classification.
 
-### Regression
+### Regression (SVR)
 
 One very simple way of solving an ordinal classification problem is applying regression. This is, we train a regressor to predict the number of the category (where categories are coded with real consecutive values, `1`, `2`, ..., `Q`, which are scaled between 0 and 1, `0/(Q-1)=0`, `1/(Q-1)`, ..., `(Q-1)/(Q-1)`). Then, in order to predict categories, we round the real values predicted by the regressor to the nearest integer.
 
@@ -359,7 +359,7 @@ Experiments/exp-2018-1-20-17-38-22
 Note that the number of experiments is quite important, so that the execution can take a lot. To accelerate the experiments you can use multiple cores of your CPU (see this [page](orca-parallel.md)).
 
 
-### Nominal classification
+### Nominal classification (SVC1V1 and SVC1VA)
 
 We can also approach ordinal classification by considering nominal classification, i.e. by ignoring ordering information. It has been shown that this can make the classifier need more data to learn the concept.
 
@@ -434,7 +434,7 @@ ans =
 ```
 In this case, SVC1V1 obtains better results.
 
-### Cost sensitive classification
+### Cost sensitive classification (CSSVC)
 
 This is a special case of approaching ordinal classification by nominal classifiers. We can include different misclassification costs in the optimization function, in order to penalyze more those mistakes which involve several categories in the ordinal scale. ORCA implements this methods using again SVC and specifically the SVC1VA alternative. The costs are included as weights in the patterns, in such a way that, when generating the `Q` binary problems, the patterns of the negative class are given a weight according to the absolute difference (in number of categories) between the positive class and the specific negative class.
 
@@ -541,4 +541,136 @@ ans =
 
 ### Neural network approaches (ELMOP and NNOP)
 
-Two neural network models are
+Neural networks allow solving all the binary subproblems using a single model with several output nodes. Two neural network models are considered in ORCA:
+- Extreme learning machines with ordered partitions (ELMOP).
+- Neural network with ordered partitions (NNOP).
+
+ELMOP model is based on ELM, which are a quite popular type of neural network. In ELMs, the hidden weights are randomly set and the output weights are analytically set. The implementation in ORCA consider the ordered partition decomposition in the output layer. The prediction phase is tackled using an exponential loss based decoding process, where the class predicted is that with the minimum exponential loss with respect to the decision values.
+
+The algorithm can be configured using different activation functions for the hidden layer ('sig, 'sin', 'hardlim','tribas', 'radbas', 'up','rbf'/'krbf' or 'grbf'). During training, the user has to specify the following parameter in the `param` structure:
+- Parameter `hiddenN`: number of hidden nodes of the model. This is a decisive parameter for avoiding overfitting.
+
+Now, we perform a test for training ELMOP:
+```MATLAB
+>> algorithmObj = ELMOP('activationFunction','sig');
+info = algorithmObj.runAlgorithm(train,test,struct('hiddenN',20));
+fprintf('\nELMOP\n---------------\n');
+fprintf('ELMOP Accuracy: %f\n', CCR.calculateMetric(test.targets,info.predictedTest));
+fprintf('ELMOP MAE: %f\n', MAE.calculateMetric(test.targets,info.predictedTest));
+
+ELMOP
+---------------
+ELMOP Accuracy: 0.607143
+ELMOP MAE: 0.642857
+```
+
+These are the decision values for ELMOP:
+```MATLAB
+>> info.projectedTest
+
+ans =
+
+  Columns 1 through 12
+
+    0.9896    1.0486    0.9168    0.9247    1.0403    1.0267    1.0340    1.0738    1.0198    1.0798    1.0952    1.1875
+   -0.1175    0.1854   -0.6503   -1.1460    0.0094   -0.2907   -0.6847    0.2618   -0.4546   -0.4248   -0.5869   -0.4123
+   -0.4277   -0.1900   -0.8463   -1.1260   -0.5096   -0.5601   -0.8069   -0.2252   -0.7395   -0.6979   -0.6891   -0.6284
+   -0.7446   -0.6973   -0.7709   -1.2785   -0.7912   -0.6649   -0.9554   -0.6374   -0.9156   -0.9938   -0.9971   -1.1071
+   -0.9630   -0.9493   -0.9312   -0.9969   -1.0528   -0.9400   -1.0753   -0.9589   -0.9230   -0.9160   -0.9969   -1.1435
+```
+
+***Exercise*** : compare all different activation functions for ELM trying to find the most appropriate one. Check the source code of [ELMOP](../src/Algorithms/ELMOP.m) to understand the different functions.
+
+The other neural network model is NNOP. In this case, a standard neural network is considered, training all its parameters (hidden and output weights). In the output layer, a standard sigmoidal function is used, and the mean squared error with respect to the ordered partition targets is used for gradient descent. The algorithm used for gradient descent is the iRProp+ algorithm.
+
+The prediction rule is based on checking which is the first class whose output value is higher than a predefined threshold (0.5 in this case).
+
+Three parameters have to be specified in this case:
+- Parameter `hiddenN`, number of hidden neurons of the model.
+- Parameter `iter`, number of iterations for gradient descent.
+- Parameter `lambda`, regularization parameter in the error function (L2 regularizer), in order to avoid overfitting.
+
+This is an example of execution of NNOP:
+```MATLAB
+>> algorithmObj = NNOP();
+info = algorithmObj.runAlgorithm(train,test,struct('hiddenN',20,'iter',500,'lambda',0.1));
+fprintf('\nNNOP\n---------------\n');
+fprintf('NNOP Accuracy: %f\n', CCR.calculateMetric(test.targets,info.predictedTest));
+fprintf('NNOP MAE: %f\n', MAE.calculateMetric(test.targets,info.predictedTest));
+
+NNOP
+---------------
+NNOP Accuracy: 0.732143
+NNOP MAE: 0.428571
+```
+and the decision values are:
+```MATLAB
+>> info.projectedTest
+
+ans =
+
+    0.8846    0.9433    0.9995    0.9998
+    0.6481    0.9579    0.9547    0.9772
+    0.9765    0.9770    0.9548    0.9961
+    0.9942    0.9991    0.9999    0.9997
+    0.8824    0.9938    0.9731    0.9982
+    0.9668    0.9957    0.9955    0.9973
+    0.4480    0.2875    0.7679    0.9627
+    0.7560    0.9554    0.9836    0.9978
+    0.7151    0.9807    0.9940    0.9727
+    0.4807    0.8472    0.9446    0.9206
+    0.1589    0.1477    0.9872    0.9998
+    0.8633    0.9513    0.9997    0.9995
+    ...
+```
+
+### Summary of results for binary decompositions
+
+As a summary, the results obtained for the third partition of melanoma dataset are:
+- SVMOP Accuracy: 0.678571
+- ELMOP Accuracy: 0.607143
+- NNOP Accuracy: 0.732143
+- SVMOP MAE: 0.517857
+- ELMOP MAE: 0.642857
+- NNOP MAE: 0.428571
+
+In this case, the best classifier is NNOP, although parameter values can be influencing these results.
+
+## Ternary decomposition
+
+The last method considered in the tutorial is a projection similar to One-Vs-All but generating three class subproblems, instead of binary ones. The subproblems are solved considering independent classifiers, and the prediction phase is performed under a probabilistic approach (which firstly obtain a `Q` class probability distribution for each ternary classifier and then fuse all the distributions).
+
+The base algorithm used can be configured by the user in the constructor, but it is necessary to use a one-dimensional projection method (threshold model). The parameters of OPBE are the same than the base algorithm, all subproblems being solved using the same parameter values.
+
+```MATLAB
+>> algorithmObj = OPBE('base_algorithm','SVORIM');
+info = algorithmObj.runAlgorithm(train,test,struct('C',10,'k',0.001));
+fprintf('\nOPBE\n---------------\n');
+fprintf('OPBE Accuracy: %f\n', CCR.calculateMetric(test.targets,info.predictedTest));
+fprintf('OPBE MAE: %f\n', MAE.calculateMetric(test.targets,info.predictedTest));
+
+OPBE
+---------------
+OPBE Accuracy: 0.696429
+OPBE MAE: 0.446429
+```
+
+In this case, the decision values only include the maximum probability after considering the weights given for each class:
+```MATLAB
+>> info.projectedTest
+
+ans =
+
+  Columns 1 through 12
+
+    0.0071    0.0013    0.0083    0.0103    0.0081    0.0083    0.0045    0.0072    0.0054    0.0026    0.0004    0.0080
+
+  Columns 13 through 24
+
+    0.0086    0.0099    0.0099    0.0109    0.0084    0.0092    0.0089    0.0081    0.0006    0.0105    0.0109    0.0090
+...
+```
+
+***Exercise*** : in this tutorial, we hace considered a total of 8 classifiers with different parameter values for one of the folds of the melanoma dataset. In this exercise, you should generalise these results over the `10` partitions and interpret the results, trying to search for the best method. Apart from the two metrics considered in the tutorial (CCR and MAE), include metrics more sensitive to minority classes (for example, MS and MMAE). Construct a table with the average of these four metrics over the 10 folds. You can use the parameter values given in this tutorial or try to tune a bit them.
+
+***Exercise*** : now you should consider cross-validation to tune hyper parameters. In order to limit the computational time, do not include too many values for each parameter and only use the three first partitions of the dataset (by deleting or moving the files for the rest of partitions). Check again the conclusions about the methods. **Hyper parameters are decisive for performance!!**
