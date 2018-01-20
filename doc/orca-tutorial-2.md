@@ -177,7 +177,7 @@ Support Vector Regression
 SVR Accuracy: 0.678571
 SVR MAE: 0.392857
 ```
-The object info also contains the projection values, where, in this case, are the real values without being rounded:
+The object info also contains the projection values, which, in this case, are the real values without being rounded:
 ```MATLAB
 >> info.projectedTest
 
@@ -366,6 +366,7 @@ We can also approach ordinal classification by considering nominal classificatio
 ORCA includes two approaches to perform ordinal classification by nominal classification, both based on the Support Vector Classifier:
 - One-Vs-One (SVC1V1), where all pairs of classes are compared in different binary SVCs. The prediction is based on majority voting.
 - One-Vs-All (SVC1VA), where each class is compared against the rest. The class predicted is that with the largest decision function value.
+
 Both methods consider an RBF kernel with the following two parameters:
 - Parameter `C`, importance given to errors.
 - Parameter `k`, inverse of the width of the RBF kernel.
@@ -471,7 +472,9 @@ ans =
     0.0180   -0.9739   -1.2185   -1.1168   -1.3740
 ```
 
-We can compare all the results obtained by naïve methods:
+### Summary of results for naïve approaches
+
+We can compare all the results obtained by naïve methods in the third partition of the melanoma dataset:
 - SVR Accuracy: 0.678571
 - SVC1V1 Accuracy: 0.678571
 - SVC1VA Accuracy: 0.660714
@@ -480,7 +483,8 @@ We can compare all the results obtained by naïve methods:
 - SVC1V1 MAE: 0.517857
 - SVC1VA MAE: 0.535714
 - CSSVC MAE: 0.571429
-In this case, SVR has definitely obtained the best results. As can be
+
+In this case, SVR has definitely obtained the best results. As can be checked, SVC1V1 accuracy is quite high, but it masking a not so good MAE value.
 
 
 ## Binary decomposition methods
