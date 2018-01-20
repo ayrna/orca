@@ -11,12 +11,14 @@ targets = ERAData(:,end);
 k=10;
 CVO = cvpartition(targets,'k',k);
 
-% For each fold
+% Prepare filesystem
 nameDataset = 'era';
 rootDir = fullfile('..', '..', 'exampledata', '10-fold', nameDataset);
 mkdir(rootDir);
 rootDir = fullfile(rootDir,'matlab');
 mkdir(rootDir);
+
+% For each fold
 for ff = 1:CVO.NumTestSets
     trIdx = CVO.training(ff);
     teIdx = CVO.test(ff);
