@@ -9,7 +9,7 @@ targets = ERAData(:,end);
 
 % Generate k fold partitions
 k=10;
-CVO = cvpartition(targets,'k',k);
+CVO = cvpartition(targets,'KFold',k);
 
 % Prepare filesystem
 nameDataset = 'era';
