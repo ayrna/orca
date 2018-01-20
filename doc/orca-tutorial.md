@@ -104,7 +104,7 @@ title('AMAE performance (smaller is better)')
 
 ![AMAE performance of several methods](tutorial/images/pom-vs-svorim-vs-svc1v1.png)
 
-*** Exercise *** : you should repeat this barplots but considering:
+***Exercise*** : you should repeat this barplots but considering:
 - One `global` (i.e. a metric where the class a priori probability is not considered) **nominal** metric.
 - One `global` **ordinal** metric.
 - One **nominal** metric specifically designed for imbalanced datasets.
@@ -531,9 +531,9 @@ end
 ```
 The source code of this example is in [exampleERAHHoldout.m](../src/code-examples/exampleERAHHoldout.m). As can be checked, the `cvpartition` function performs the partitions, receiving the target vector. The targets are used in order to obtain a stratified partition.
 
-*** Exercise *** : you should prepare a `30holdout` set of partitions for the dataset `ESL`, which is included in the folder [exampledata](/exampledata). Try to find the description of this dataset in the Internet and spot the main differences with respect to ERA.
+***Exercise*** : you should prepare a `30holdout` set of partitions for the dataset `ESL`, which is included in the folder [exampledata](/exampledata). Try to find the description of this dataset in the Internet and spot the main differences with respect to ERA.
 
-*** Exercise *** : train classifiers for both `ERA` and `ESL` datasets, using the same experimental design you used in the [experiment section](orca-tutorial.md#launch-experiments-through-ini-files). Compare the results obtained for both datasets. Generate bar plots for comparing accuracy and AMAE. Which one is better classified? Which one is better ordered?
+***Exercise*** : train classifiers for both `ERA` and `ESL` datasets, using the same experimental design you used in the [experiment section](orca-tutorial.md#launch-experiments-through-ini-files). Compare the results obtained for both datasets. Generate bar plots for comparing accuracy and AMAE. Which one is better classified? Which one is better ordered?
 
 ### Warning about highly imbalanced datasets
 
