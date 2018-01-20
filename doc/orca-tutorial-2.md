@@ -493,6 +493,7 @@ These methods decompose the original problem in several binary problems (as SVC1
 - One based on SVMs. Because of the way SVM is formulated, the binary subproblems are trained with **multiple models**.
 - Two based on neural networks. The flexibility of NN training makes possible learn all binary subproblems with one **single model**.
 All of them are based on an ordered partition decomposition, where the binary subproblems have the following structure:
+
 | Class | Problem1 | Problem2 | Problem3 | Problem4 |
 | --- | --- | --- | --- | --- |
 | C1 | 0 | 0 | 0 | 0 |
