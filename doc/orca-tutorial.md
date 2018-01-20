@@ -223,7 +223,7 @@ kdlorAlgorithm =
 >> param.u = 0.001;
 >> param
 
-param = 
+param =
 
     C: 10
     k: 0.1000
@@ -258,7 +258,7 @@ As can be checked, the methods return a structure with the main information abou
 ```MATLAB
 >> info.model
 
-ans = 
+ans =
 
     projection: [225x1 double]
     thresholds: [4x1 double]
@@ -280,6 +280,7 @@ Accuracy Train 0.871111, Accuracy Test 0.853333
 Ordinal classification problems should be evaluated with specific metrics that consider the magnitude of the prediction errors in different ways. ORCA includes a set of these metrics in [Measures](../src/Measures) folder. Given the previous example, we can calculate different performance metrics with the actual and predicted labels:
 
 ```MATLAB
+>> addpath ../Measures/
 >> CCR.calculateMetric(test.targets,info.predictedTest)
 ans =
     0.8533
@@ -390,7 +391,7 @@ ORCA is intended to be used for ordinal regression problems, so the labels shoul
 
 ### Data partitions for the experiments
 
-The datasets should be partitioned before applying the ORCA algorithms, i.e. ORCA needs all the pairs of training and test files for each dataset. This is because, in this way, we are sure all the methods will consider the same partitions, which is very important to obtain reliable unbiased estimation of the performance and be able to perform fair comparisons. The partitions would be used to train and measure generalization performance of each algorithm. 
+The datasets should be partitioned before applying the ORCA algorithms, i.e. ORCA needs all the pairs of training and test files for each dataset. This is because, in this way, we are sure all the methods will consider the same partitions, which is very important to obtain reliable unbiased estimation of the performance and be able to perform fair comparisons. The partitions would be used to train and measure generalization performance of each algorithm.
 
 For each dataset, ORCA will look for a subfolder called `matlab`, which will contain the training and test partitions. If the name of the dataset is `dataset`, the name of the files will be `train_dataset.X` for training partitions, and `test_dataset.X` for the test ones, where `X` is the number of partitions. This format has to be respected.
 
@@ -407,6 +408,73 @@ toy/matlab/test_toy.29
 toy/matlab/train_toy.29
 ```
 ORCA will train a model for all the training/test pairs, and the performance results will be used for the reports. The website of the review paper associated to ORCA includes the [partitions](http://www.uco.es/grupos/ayrna/ucobigfiles/datasets-orreview.zip) for all the datasets considered in the experimental part.
+
+### Generating your own partitions
+
+If you are using your own dataset, you will probably have to generate your own partitions. There are many options for performing the training/test partitions of a dataset, but the two most common ones are:
+- `k`-fold cross-validation: in this case, the dataset is randomly divided in `k` subsets or folds. `k` training/test partitions will be considered, where, for each partition, one fold will be used for test and the remaining ones will be used for training.
+- Holdout validation: in this case, the dataset is simply divided in two random subsets, one for training and the other one for test. It is quite common to use the following percentages: 75% for training and 25% for test.
+- Repeated holdout validation (`h`-holdout): in order to avoid the dependence of the random partition, the holdout process is repeated a total of `h` times. A common value for `h` is 30, given that it is high enough for obtaining reliable estimations of the performance from a statistical point of view.
+
+For classification (ordinal or nominal), both methods (`k`-fold and `h`-holdout) should be applied in a stratified way, i.e. the partitions are generated respecting the initial proportions of patterns in the original dataset. This is especially important for imbalanced datasets.
+
+Now, we are going to generate the partitions for a given dataset. We will use the dataset ERA. This is its description:
+> The ERA data set was originally gathered during an academic decision-making
+> experiment aiming at determining which are the most important qualities of
+> candidates for a certain type of jobs. Unlike the ESL data set (enclosed)
+> which was collected from expert recruiters, this data set was collected
+> during a MBA academic course.
+> The input in the data set are features of a candidates such as past
+> experience, verbal skills, etc., and the output is the subjective judgment of
+> a decision-maker to which degree he or she tends to accept the applicant to
+> the job or to reject him altogether (the lowest score means total tendency to
+> reject an applicant and vice versa).
+
+Specifically, 4 input attributes are used for evaluating each individual, and the variable to be predicted is the final judgment of the decision maker. We can load the dataset in MATLAB by using the following code:
+```MATLAB
+>> ERAData = table2array(readtable('../../exampledata/ERA.csv'));
+
+>> ERAData(1:20,:)
+
+ans =
+
+     3     2     0    14     1
+     3     3     5     9     1
+     1     3    10     7     1
+     0     5     7     2     1
+     0    10    12     7     1
+     0     5     7     2     1
+     2     1     5     1     1
+     0     5     7     2     1
+     3     2     0    14     1
+    10     7     1     6     1
+     1     2    12     4     1
+     2     1     5     1     1
+     1     3    10     7     1
+     0     5     7     2     1
+     3     2     0    14     1
+     1     9     4     1     1
+     2     1     5     1     1
+     3     2     0    14     1
+     2     1     5     1     1
+     5     7     3    12     1
+>> targets = ERAData(:,end);
+>> k=10;
+>> CVO = cvpartition(targets,'k',k);
+>> nameDataset = 'era';
+>> rootDir = fullfile('..', '..', 'exampledata', '10-fold', nameDataset);
+>> mkdir(rootDir);
+>> rootDir = fullfile(rootDir,'matlab');
+>> mkdir(rootDir);
+>> for ff = 1:CVO.NumTestSets
+    trIdx = CVO.training(ff);
+    teIdx = CVO.test(ff);
+    dlmwrite(fullfile(rootDir,sprintf('train-%s.%d',nameDataset,ff-1)),ERAData(trIdx,:),' ');
+    dlmwrite(fullfile(rootDir,sprintf('test-%s.%d',nameDataset,ff-1)),ERAData(teIdx,:),' ');
+end
+```
+This will generate all the partitions for a `10`fold crossvalidation experimental design. The source code of this example is in [exampleERAKFold.m](../src/code-examples/exampleERAKFold.m). In order to obtain a `30`holdout design, the code will be a bit different:
+
 
 ### Warning about highly imbalanced datasets
 
