@@ -33,7 +33,7 @@ From Matlab consoles, assuming you are on the `src` folder, the set of experimen
 Utilities.runExperiments('../doc/tutorial/config-files/pom.ini')
 ```
 
-The syntax of these files will be explained in the [next subsection](orca-tutorial.md#ini-files-syntax). This should produce an output like this:
+The syntax of these files will be explained in the [next subsection](orca-tutorial.md#syntax-of-ini-files). This should produce an output like this:
 ```MATLAB
 >> Utilities.runExperiments('../doc/tutorial/config-files/pom.ini')
 Setting up experiments...
@@ -105,7 +105,7 @@ title('AMAE performance (smaller is better)')
 
 ![AMAE performance of several methods](tutorial/images/pom-vs-svorim-vs-svc1v1.png)
 
-## `ini` files syntax
+### Syntax of `ini` files
 
 ORCA experiments are specified in configuration `ini` files, which run an algorithm for a collections of datasets (each dataset with a given number of partitions). The folder [src/config-files](src/config-files) contains example configuration files for running all the algorithms included in ORCA for all the algorithms and datasets of the [review paper](http://www.uco.es/grupos/ayrna/orreview). The following code is an example for running the Proportion Odds Model (POM), a.k.a. Ordinal Logistic Regression. Note that the execution of this `ini` file can take several hours:
 ```INI
@@ -135,7 +135,7 @@ The above file tells ORCA to run the algorithm `POM` for all the datasets specif
  - The `standarize` flag activates the standardization of the data (by using the mean and standard deviation of the train set).
  - Other parameters of the model depends on the specific algorithm (and they should be checked in the documentation of the algorithm). For instance, the kernel type is set up with `kernel` parameter.
 
-## Hyper-parameter optimization
+### Hyper-parameter optimization
 
 Many machine learning methods are very sensitive to the value considered for the hyper-parameters (consider, for example, support vector machines and the two associated parameters, cost and kernel width). They depend on hyper-parameters to achieve optimal results. ORCA automates hyper-parameter optimization by using a grid search with an internal nested *k*-fold cross-validation considering only the training partition. Let see an example for the optimisation of the two hyper-parameters of SVORIM: cost (`C`) and kernel width parameter (`k`, a.k.a. *gamma*):
 ```ini
@@ -173,7 +173,7 @@ The directive for configuring the search process are included in the general sec
     - `C`: add a new parameter with name `C` and a set of values of `10.^(-3:1:3)` (10<sup>-3</sup>,10<sup>-2</sup>,...,10<sup>3</sup>). The same apples for `k`.
 
 
-## Experimental results and reports
+### Experimental results and reports
 
 ORCA uses the `Experiments` folder to store all the results of the different experiments. Each report is placed in a subfolder of `Experiments` named with the current date, time and the name of the configuration file (for example 'exp-2015-7-14-10-5-57-pom'). After a successful experiment, this folder should contain the following information:
  - Individual experiment configuration files for each dataset and partition.
@@ -182,9 +182,9 @@ ORCA uses the `Experiments` folder to store all the results of the different exp
     - The `Results` folder contains one subfolder for each dataset with the following data:
         - Train and test confusion matrices (`matrices.txt`).
         - Name of the folder used for the experiments (`dataset`).
-        - Individual results for each of the partitions in CSV format (`results.csv`).
-        - Models of each partition in `.mat` format (`Models` folder).
-        - For threshold models, the one dimensional mapping (before applying the discretisation based on the thresholds) for training and test datasets ('Guess' folder).
+        - Individual results for each partition in CSV format (`results.csv`).
+        - Models of each partition in `.mat` format (`Models` folder). These models are structures and their fields depend on the specific algorithm.
+        - Decision values used to obtain the predicted labels for training and test partitions ('Guess' folder). For threshold models, this is the one dimensional mapping before applying the discretisation based on the thresholds. The rest of models may have multidimensional mappings.
         - Labels predicted by the models for each partition ('Predictions' folder).
         - Optimal hyper-parameters values obtained after nested cross-validation ('OptHyperparams').
         - Computational time results ('Times').
@@ -221,6 +221,13 @@ kdlorAlgorithm =
 >> param.C = 10;
 >> param.k = 0.1;
 >> param.u = 0.001;
+>> param
+
+param = 
+
+    C: 10
+    k: 0.1000
+    u: 1.0000e-03
 >> info = kdlorAlgorithm.runAlgorithm(train,test,param);
 >> info
 
@@ -239,6 +246,29 @@ info =
 >> fprintf('Accuracy Train %f, Accuracy Test %f\n',sum(train.targets==info.predictedTrain)/size(train.targets,1),sum(test.targets==info.predictedTest)/size(test.targets,1));
 Accuracy Train 0.871111, Accuracy Test 0.853333
 ```
+
+As can be checked, the methods return a structure with the main information about the execution of the algorithm. The fields of this structure are:
+- `projectedTrain`: decision values for the training set.
+- `predictedTrain`: labels predicted for the training set.
+- `trainTime`: time in seconds needed for training the model.
+- `projectedTest`: decision values for the test set.
+- `predictedTest`: labels predicted for the test set.
+- `testTime`: time in seconds needed for the test phase.
+- `model`: structure containing the model (its coefficients, parameters, etc.). Note that, although most of the fields of this structure depend on the specific algorithm considered, we will always find the `algorithm` and `parameters` fields. These are the fields for KDLOR:
+```MATLAB
+>> info.model
+
+ans = 
+
+    projection: [225x1 double]
+    thresholds: [4x1 double]
+    parameters: [1x1 struct]
+    kernelType: 'rbf'
+     algorithm: 'KDLOR'
+         train: [2x225 double]
+```
+i.e., the algorithm used for training (`algorithm`), the weight given to each pattern in the kernel model (`projection`), the set of threshold values (`thresholds`), the parameters used for training (`parameters`), the type of kernel considered (`kernelType`) and the training data (`train`). As can be checked, at least, this structure should contain the information for performing the test phase. In this way, for KDLOR, the prediction phase needs to apply the kernel to each training point and the test point being evaluated (using `kernelType`, `train` and `parameters.K`) and perform the weighted sum of these values (using `projection`). After that, the thresholds are used to obtain the labels.
+
 The corresponding script ([exampleKDLOR.m](../src/code-examples/exampleKDLOR.m)) can found and run in the [code example](../src/code-examples) folder:
 ```MATLAB
 >> exampleKDLOR
@@ -247,7 +277,7 @@ Accuracy Train 0.871111, Accuracy Test 0.853333
 
 ### Using performance metrics
 
-Ordinal classification problems are evaluated with specific metrics that consider the magnitude of the prediction errors in different ways. ORCA collect a set of these metrics in [Measures](../src/Measures) folder. Given the previous example, we can calculate different performance metrics with the actual and predictel labels:
+Ordinal classification problems should be evaluated with specific metrics that consider the magnitude of the prediction errors in different ways. ORCA includes a set of these metrics in [Measures](../src/Measures) folder. Given the previous example, we can calculate different performance metrics with the actual and predicted labels:
 
 ```MATLAB
 >> CCR.calculateMetric(test.targets,info.predictedTest)
@@ -264,7 +294,7 @@ ans =
     0.8854
 ```
 
-The same results can be optained using the confusion matrix:
+The same results can be obtained from the confusion matrix:
 
 ```MATLAB
 >> cm = confusionmat(test.targets,info.predictedTest)
@@ -346,7 +376,7 @@ The whole example is available at [exampleProjections.m](../code-examples/exampl
 
 ## Using ORCA with your own datasets
 
-This section shows how to use ORCA with custom datasets.
+This section shows how to use ORCA with custom datasets. First of all, you should take into account the structure of the files and then the way you should include them in the corresponding folder.
 
 ### Data format
 
@@ -356,11 +386,15 @@ attr1 attr2 ... attrN label
 attr1 attr2 ... attrN label
 attr1 attr2 ... attrN label
 ```
-ORCA is intended to be used for ordinal regression problems, so the labels should be integer numbers: `1` for the first class in the ordinal scale, `2` for the second one, ..., `Q` for the last one, where `Q` is the number of classes of the problem.
+ORCA is intended to be used for ordinal regression problems, so the labels should be integer numbers: `1` for the first class in the ordinal scale, `2` for the second one, ..., `Q` for the last one, where `Q` is the number of classes of the problem. Please, take into account that all the attributes should be numeric, i.e. categorical variables needs to be transformed into several binary dummy variables before using ORCA.
 
 ### Data partitions for the experiments
 
-The datasets should be partitioned before applying the ORCA algorithms, i.e. ORCA needs all the pairs of training and test files for each dataset. These pairs of files would be used to train and measure generalization performance of each algorithm. For instance, for the `toy` dataset, we have the following folder and file arrangement to perform `30` times a stratified holdout validation:
+The datasets should be partitioned before applying the ORCA algorithms, i.e. ORCA needs all the pairs of training and test files for each dataset. This is because, in this way, we are sure all the methods will consider the same partitions, which is very important to obtain reliable unbiased estimation of the performance and be able to perform fair comparisons. The partitions would be used to train and measure generalization performance of each algorithm. 
+
+For each dataset, ORCA will look for a subfolder called `matlab`, which will contain the training and test partitions. If the name of the dataset is `dataset`, the name of the files will be `train_dataset.X` for training partitions, and `test_dataset.X` for the test ones, where `X` is the number of partitions. This format has to be respected.
+
+For instance, for the `toy` dataset, we have the following folder and file arrangement to perform `30` times a stratified holdout validation:
 ```
 toy
 toy/matlab/
