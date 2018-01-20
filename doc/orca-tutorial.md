@@ -2,14 +2,15 @@
 
 # How to use ORCA
 
-ORCA is an experimental framework focused on productivity and experiments reproductibility for machine learning researchers. Initially created to collect ordinal classification methods, it is suitable for other type of classifiers.
+ORCA is an experimental framework focused on productivity and experiments reproducibility for machine learning researchers. Initially created to collect ordinal classification methods, it is suitable for other type of classifiers.
 
-To install ORCA and test installation visit [ORCA Quick Install Guide](orca-quick-install).
+First of all, you should install the framework. In order to do so, please visit [ORCA Quick Install Guide](orca-quick-install,md). Note that you should be able to perform the test when the framework is successfully installed.
 
-This tutorial uses four small datasets ('pasture','pyrim10','tae','toy') contained in folder [example data](../exampledata/30-holdout). The datasets are already partitioned with a 30-holdout experimental design.
+This tutorial uses four small datasets (`pasture`, `pyrim10`, `tae`, `toy`) contained in folder [example data](../exampledata/30-holdout). The datasets are already partitioned with a 30-holdout experimental design.
 
-Note: with very small datasets like the ones in this tutorial, you are likely to get lot of warning messages such as:
+The tutorial is prepared for running the experiments in Matlab, although it should be easily adapted to Octave.
 
+Very small datasets like the ones used in this tutorial are given to produce lot of warning messages such as:
 ```MATLAB
 Warning: Matrix is close to singular or badly scaled. Results may be inaccurate. RCOND =
 1.747151e-17.
@@ -17,8 +18,7 @@ Warning: Maximum likelihood estimation did not converge.  Iteration limit
 exceeded.  You may need to merge categories to increase observed counts.
 ```
 
-To disable these messages:
-
+You can disable these messages by using the following code:
 ```MATLAB
 warning('off','MATLAB:nearlySingularMatrix')
 warning('off','stats:mnrfit:IterOrEvalLimit')
@@ -26,17 +26,14 @@ warning('off','stats:mnrfit:IterOrEvalLimit')
 
 ## Launch experiments
 
-In this section we will run several experiments to compare the performance of three methods in a set of datasets: POM (Proportional Odds Model), SVORIM (Support Vector Machines with IMplicit constrains) and SVC1V1 (SVM classifier with 1-vs-1 binary decomposition).
+In this section, we will run several experiments to compare the performance of three methods in a set of datasets: POM (Proportional Odds Model), SVORIM (Support Vector Machines with IMplicit constrains) and SVC1V1 (SVM classifier with 1-vs-1 binary decomposition). POM is a linear ordinal model, with limited performance but with easy interpretation. SVORIM is an ordinal nonlinear model, with one of the best performance values according to several studies. SVC1V1 is the nominal counterpart of SVORIM, so that we can check the benefits of considering ordinality.
 
-Assuming you are on the `src` folder, to launch the bundle of experiments described in INI file `tutorial/pom.ini` open MATLAB's console and run:
-
+From Matlab consoles, assuming you are on the `src` folder, the set of experiments described in INI file `tutorial/pom.ini` can be run by:
 ```MATLAB
-Utilities.runExperiments('../doc/tutorial/config-files/svorim.ini')
-Utilities.runExperiments('../doc/tutorial/config-files/svc1v1.ini')
 Utilities.runExperiments('../doc/tutorial/config-files/pom.ini')
 ```
 
-This should produce and output like this:
+This should produce an output like this:
 ```MATLAB
 >> Utilities.runExperiments('../doc/tutorial/config-files/pom.ini')
 Setting up experiments...
@@ -56,6 +53,12 @@ Experiments/exp-2018-1-19-20-0-11/Results/toy-pom-tutorial/dataset
 ```
 
 As can be observed, ORCA analyses all the files included in the folder of the dataset, where the training and test partitions are included (a pair of files `train_dataset.X` and `test_dataset.X` for each dataset, where `X` is the number of partition). For each partition, a model is trained using training data and tested using test data.
+
+After this, you can also run the experiments for SVORIM and SVC1V1:
+```MATLAB
+Utilities.runExperiments('../doc/tutorial/config-files/svorim.ini')
+Utilities.runExperiments('../doc/tutorial/config-files/svc1v1.ini')
+```
 
 After running all the experiments, all the results are generated in the `Experiments` folder, as described in the [corresponding section](orca-tutorial.md#experimental-results-and-reports) of this tutorial.
 
