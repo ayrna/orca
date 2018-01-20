@@ -1,7 +1,9 @@
 ![ORCA logo](orca_small.png)
 
+# How to use ORCA
 <!-- TOC depthFrom:1 depthTo:6 withLinks:1 updateOnSave:1 orderedList:0 -->
 
+- [How to use ORCA](#how-to-use-orca)
 	- [Launch experiments through `ini` files](#launch-experiments-through-ini-files)
 		- [Syntax of `ini` files](#syntax-of-ini-files)
 		- [Hyper-parameter optimization](#hyper-parameter-optimization)
