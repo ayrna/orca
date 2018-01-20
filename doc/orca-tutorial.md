@@ -106,7 +106,7 @@ title('AMAE performance (smaller is better)')
 
 *** Exercise *** : you should repeat this barplots but considering:
 - One `global` (i.e. a metric where the class a priori probability is not considered) **nominal** metric.
-- One `global` **ordinal** metric. 
+- One `global` **ordinal** metric.
 - One **nominal** metric specifically designed for imbalanced datasets.
 - One **ordinal** metric specifically designed for imbalanced datasets.
 
@@ -531,9 +531,9 @@ end
 ```
 The source code of this example is in [exampleERAHHoldout.m](../src/code-examples/exampleERAHHoldout.m). As can be checked, the `cvpartition` function performs the partitions, receiving the target vector. The targets are used in order to obtain a stratified partition.
 
-*** Exercise *** : you should prepare a `30holdout` set of partitions for the dataset `ESL`, which is included in the [exampledata](/exampledata). Try to find the differences between this dataset and ERA.
+*** Exercise *** : you should prepare a `30holdout` set of partitions for the dataset `ESL`, which is included in the folder [exampledata](/exampledata). Try to find the description of this dataset in the Internet and spot the main differences with respect to ERA.
 
-*** Exercise *** : compare the results obtained for `ERA` and `ESL` datasets using the same experimental design you used in the [experiment section](orca-tutorial.md#launch-experiments-through-ini-files). Generate bar plots for comparing accuracy and AMAE.
+*** Exercise *** : train classifiers for both `ERA` and `ESL` datasets, using the same experimental design you used in the [experiment section](orca-tutorial.md#launch-experiments-through-ini-files). Compare the results obtained for both datasets. Generate bar plots for comparing accuracy and AMAE. Which one is better classified? Which one is better ordered?
 
 ### Warning about highly imbalanced datasets
 
