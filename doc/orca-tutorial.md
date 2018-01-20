@@ -276,7 +276,7 @@ ans =
 ```
 i.e., the algorithm used for training (`algorithm`), the weight given to each pattern in the kernel model (`projection`), the set of threshold values (`thresholds`), the parameters used for training (`parameters`), the type of kernel considered (`kernelType`) and the training data (`train`). As can be checked, at least, this structure should contain the information for performing the test phase. In this way, for KDLOR, the prediction phase needs to apply the kernel to each training point and the test point being evaluated (using `kernelType`, `train` and `parameters.K`) and perform the weighted sum of these values (using `projection`). After that, the thresholds are used to obtain the labels.
 
-The corresponding script ([exampleKDLOR.m](../src/code-examples/exampleKDLOR.m)) can found and run in the [code example](../src/code-examples) folder:
+The corresponding script ([exampleKDLOR.m](../src/code-examples/exampleKDLOR.m)) can be found and run in the [code example](../src/code-examples) folder:
 ```MATLAB
 >> exampleKDLOR
 Accuracy Train 0.871111, Accuracy Test 0.853333
