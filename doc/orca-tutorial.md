@@ -33,7 +33,7 @@ From Matlab consoles, assuming you are on the `src` folder, the set of experimen
 Utilities.runExperiments('../doc/tutorial/config-files/pom.ini')
 ```
 
-The syntaxis of these files will be explained in the [next subsection](orca-tutorial.md#ini-files-sintaxis). This should produce an output like this:
+The syntax of these files will be explained in the [next subsection](orca-tutorial.md#ini-files-syntax). This should produce an output like this:
 ```MATLAB
 >> Utilities.runExperiments('../doc/tutorial/config-files/pom.ini')
 Setting up experiments...
@@ -105,9 +105,9 @@ title('AMAE performance (smaller is better)')
 
 ![AMAE performance of several methods](tutorial/images/pom-vs-svorim-vs-svc1v1.png)
 
-## `ini` files syntaxis
+## `ini` files syntax
 
-ORCA experiments are specified in configuration INI files, which run an algorithm for a collections of datasets (each dataset with a given number of partitions). The folder [src/config-files](src/config-files) contains example configuration files for running all the algorithms included in ORCA for all the algorithms and datasets of the [review paper](http://www.uco.es/grupos/ayrna/orreview). The following code is an example for running the Proportion Odds Model (POM), a.k.a. Ordinal Logistic Regression:
+ORCA experiments are specified in configuration `ini` files, which run an algorithm for a collections of datasets (each dataset with a given number of partitions). The folder [src/config-files](src/config-files) contains example configuration files for running all the algorithms included in ORCA for all the algorithms and datasets of the [review paper](http://www.uco.es/grupos/ayrna/orreview). The following code is an example for running the Proportion Odds Model (POM), a.k.a. Ordinal Logistic Regression:
 ```INI
 ; Experiment ID
 [pom-real]
