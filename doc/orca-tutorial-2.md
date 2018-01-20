@@ -1,5 +1,22 @@
 ![ORCA logo](orca_small.png)
 
+<!-- TOC depthFrom:1 depthTo:6 withLinks:1 updateOnSave:1 orderedList:0 -->
+
+- [Naïve approaches and decomposition methods in orca](#nave-approaches-and-decomposition-methods-in-orca)
+	- [Loading the dataset and performing some preliminary experiments](#loading-the-dataset-and-performing-some-preliminary-experiments)
+	- [Naïve approaches](#nave-approaches)
+		- [Regression (SVR)](#regression-svr)
+		- [Nominal classification (SVC1V1 and SVC1VA)](#nominal-classification-svc1v1-and-svc1va)
+		- [Cost sensitive classification (CSSVC)](#cost-sensitive-classification-cssvc)
+		- [Summary of results for naïve approaches](#summary-of-results-for-nave-approaches)
+	- [Binary decomposition methods](#binary-decomposition-methods)
+		- [SVM with ordered partitions (SVMOP)](#svm-with-ordered-partitions-svmop)
+		- [Neural network approaches (ELMOP and NNOP)](#neural-network-approaches-elmop-and-nnop)
+		- [Summary of results for binary decompositions](#summary-of-results-for-binary-decompositions)
+	- [Ternary decomposition](#ternary-decomposition)
+
+<!-- /TOC -->
+
 # Naïve approaches and decomposition methods in orca
 
 This tutorial will cover how to apply naïve approaches and decomposition methods in the framework ORCA. It is highly recommended to have previously completed the [how to tutorial](orca-tutorial.md).
@@ -10,7 +27,7 @@ We are going to test these methods using a melanoma diagnosis dataset based on d
 
 The dataset is included in this repository, in a specific [folder](/exampledata/10-fold/melanoma-5classes-abcd-100/matlab). The corresponding script for this tutorial, ([exampleMelanoma.m](../src/code-examples/exampleMelanoma.m)), can be found and run in the [code example](../src/code-examples).
 
-## Loading the dataset and performing some preliminary Experiments
+## Loading the dataset and performing some preliminary experiments
 
 First of all, we are going to load the dataset and examine the label for some of the patterns.
 ```MATLAB
