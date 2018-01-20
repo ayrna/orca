@@ -60,6 +60,7 @@ info = algorithmObj.runAlgorithm(train,test,struct('C',10,'k',0.001,'e',0.01));
 fprintf('\nSupport Vector Regression\n---------------\n');
 fprintf('SVR Accuracy: %f\n', CCR.calculateMetric(test.targets,info.predictedTest));
 fprintf('SVR MAE: %f\n', MAE.calculateMetric(test.targets,info.predictedTest));
+info.projectedTest
 
 fprintf('\nSupport Vector Regression parameters\n---------------\n');
 bestAccuracy=0;
@@ -81,13 +82,13 @@ end
 fprintf('Best Results SVR C %f, k %f, e %f --> Accuracy: %f\n', bestParam.C, bestParam.k, bestParam.e, bestAccuracy);
 
 %% For the exercise of cross validation
-algorithmObj = SVR();
-param = crossvalide(algorithmObj,train,5);
-param
-info = algorithmObj.runAlgorithm(train,test,param);
-fprintf('\nSupport Vector Regression with cross validated parameters\n---------------\n');
-fprintf('SVR Accuracy: %f\n', CCR.calculateMetric(test.targets,info.predictedTest));
-fprintf('SVR MAE: %f\n', MAE.calculateMetric(test.targets,info.predictedTest));
+%algorithmObj = SVR();
+%param = crossvalide(algorithmObj,train,5);
+%param
+%info = algorithmObj.runAlgorithm(train,test,param);
+%fprintf('\nSupport Vector Regression with cross validated parameters\n---------------\n');
+%fprintf('SVR Accuracy: %f\n', CCR.calculateMetric(test.targets,info.predictedTest));
+%fprintf('SVR MAE: %f\n', MAE.calculateMetric(test.targets,info.predictedTest));
 
 %% Nominal SVCs
 algorithmObj = SVC1V1();
@@ -95,12 +96,14 @@ info = algorithmObj.runAlgorithm(train,test,struct('C',10,'k',0.001));
 fprintf('\nSVC1V1\n---------------\n');
 fprintf('SVC1V1 Accuracy: %f\n', CCR.calculateMetric(test.targets,info.predictedTest));
 fprintf('SVC1V1 MAE: %f\n', MAE.calculateMetric(test.targets,info.predictedTest));
+info.projectedTest
 
 algorithmObj = SVC1VA();
 info = algorithmObj.runAlgorithm(train,test,struct('C',10,'k',0.001));
 fprintf('\nSVC1VA\n---------------\n');
 fprintf('SVC1VA Accuracy: %f\n', CCR.calculateMetric(test.targets,info.predictedTest));
 fprintf('SVC1VA MAE: %f\n', MAE.calculateMetric(test.targets,info.predictedTest));
+info.projectedTest
 
 %% Cost sensitive SVC
 algorithmObj = CSSVC();
@@ -108,3 +111,32 @@ info = algorithmObj.runAlgorithm(train,test,struct('C',10,'k',0.001));
 fprintf('\nCSSVC\n---------------\n');
 fprintf('CSSVC Accuracy: %f\n', CCR.calculateMetric(test.targets,info.predictedTest));
 fprintf('CSSVC MAE: %f\n', MAE.calculateMetric(test.targets,info.predictedTest));
+info.projectedTest
+
+%% SVM with ordered partitions and weights
+algorithmObj = SVMOP();
+info = algorithmObj.runAlgorithm(train,test,struct('C',10,'k',0.001));
+fprintf('\nSVMOP\n---------------\n');
+fprintf('SVMOP Accuracy: %f\n', CCR.calculateMetric(test.targets,info.predictedTest));
+fprintf('SVMOP MAE: %f\n', MAE.calculateMetric(test.targets,info.predictedTest));
+
+%% Extreme learning machine with ordered partitions
+algorithmObj = ELMOP('activationFunction','sig');
+info = algorithmObj.runAlgorithm(train,test,struct('hiddenN',20));
+fprintf('\nELMOP\n---------------\n');
+fprintf('ELMOP Accuracy: %f\n', CCR.calculateMetric(test.targets,info.predictedTest));
+fprintf('ELMOP MAE: %f\n', MAE.calculateMetric(test.targets,info.predictedTest));
+
+%% Neural network with ordered partitions
+algorithmObj = NNOP();
+info = algorithmObj.runAlgorithm(train,test,struct('hiddenN',20,'iter',500,'lambda',0.1));
+fprintf('\nNNOP\n---------------\n');
+fprintf('NNOP Accuracy: %f\n', CCR.calculateMetric(test.targets,info.predictedTest));
+fprintf('NNOP MAE: %f\n', MAE.calculateMetric(test.targets,info.predictedTest));
+
+%% Ordinal projection based ensemble with SVORIM
+algorithmObj = OPBE('base_algorithm','SVORIM');
+info = algorithmObj.runAlgorithm(train,test,struct('C',10,'k',0.001));
+fprintf('\nOPBE\n---------------\n');
+fprintf('OPBE Accuracy: %f\n', CCR.calculateMetric(test.targets,info.predictedTest));
+fprintf('OPBE MAE: %f\n', MAE.calculateMetric(test.targets,info.predictedTest));
