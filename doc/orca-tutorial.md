@@ -90,7 +90,11 @@ SVC1V1 results ([download CSV](tutorial/reference-results/svc1v1-mean-results_te
 | tae-svc1v1-mae-tutorial | 0,534211 | 0,108865 | 0,533832 | 0,110083 | 0,017699 | 0,004122 |
 | toy-svc1v1-mae-tutorial | 0,051556 | 0,023419 | 0,044367 | 0,022971 | 0,015869 | 0,003786 |
 
+---
+
 ***Exercise*** : apparently, POM is the slowest method, but here we are not taking into account the crossvalidation time. Check the detailed CSV results to conclude which is the costliest method (taking crossvalidation, training and test phases into account).
+
+---
 
 Finally, you can plot a bar plot to graphically compare the performance of the methods. The following code (to be run from the `src` folder) plots the figure below:
 ```MATLAB
