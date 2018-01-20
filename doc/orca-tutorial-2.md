@@ -2,13 +2,13 @@
 
 <!-- TOC depthFrom:1 depthTo:6 withLinks:1 updateOnSave:1 orderedList:0 -->
 
-- [Naïve approaches and decomposition methods in orca](#nave-approaches-and-decomposition-methods-in-orca)
+- [Naive approaches and decomposition methods in orca](#naive-approaches-and-decomposition-methods-in-orca)
 	- [Loading the dataset and performing some preliminary experiments](#loading-the-dataset-and-performing-some-preliminary-experiments)
-	- [Naïve approaches](#nave-approaches)
+	- [Naive approaches](#nave-approaches)
 		- [Regression (SVR)](#regression-svr)
 		- [Nominal classification (SVC1V1 and SVC1VA)](#nominal-classification-svc1v1-and-svc1va)
 		- [Cost sensitive classification (CSSVC)](#cost-sensitive-classification-cssvc)
-		- [Summary of results for naïve approaches](#summary-of-results-for-nave-approaches)
+		- [Summary of results for naive approaches](#summary-of-results-for-nave-approaches)
 	- [Binary decomposition methods](#binary-decomposition-methods)
 		- [SVM with ordered partitions (SVMOP)](#svm-with-ordered-partitions-svmop)
 		- [Neural network approaches (ELMOP and NNOP)](#neural-network-approaches-elmop-and-nnop)
@@ -17,9 +17,9 @@
 
 <!-- /TOC -->
 
-# Naïve approaches and decomposition methods in orca
+# Naive approaches and decomposition methods in orca
 
-This tutorial will cover how to apply naïve approaches and decomposition methods in the framework ORCA. It is highly recommended to have previously completed the [how to tutorial](orca-tutorial.md).
+This tutorial will cover how to apply naive approaches and decomposition methods in the framework ORCA. It is highly recommended to have previously completed the [how to tutorial](orca-tutorial.md).
 
 We are going to test these methods using a melanoma diagnosis dataset based on dermatoscopic images. Melanoma is a type of cancer that develops from the pigment-containing cells known as melanocytes. Usually occurring on the skin, early detection and diagnosis is strongly related to survival rates. The dataset is aimed at predicting the severity of the lesion:
 - A total of `100` image descriptors are used as input features, including features related to shape, colour, pigment network and texture.
@@ -175,7 +175,7 @@ Again, the results have not changed, as there were no attributes with these char
 
 ---
 
-## Naïve approaches
+## Naive approaches
 
 The first thing we will do is applying standard approaches for this ordinal regression dataset. This includes applying regression, classification and cost-sensitive classification.
 
@@ -500,9 +500,9 @@ ans =
     0.0180   -0.9739   -1.2185   -1.1168   -1.3740
 ```
 
-### Summary of results for naïve approaches
+### Summary of results for naive approaches
 
-We can compare all the results obtained by naïve methods in the third partition of the melanoma dataset:
+We can compare all the results obtained by naive methods in the third partition of the melanoma dataset:
 - SVR Accuracy: 0.678571
 - SVC1V1 Accuracy: 0.678571
 - SVC1VA Accuracy: 0.660714
