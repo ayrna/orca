@@ -32,7 +32,6 @@ From Matlab consoles, assuming you are on the `src` folder, the set of experimen
 ```MATLAB
 Utilities.runExperiments('../doc/tutorial/config-files/pom.ini')
 ```
-
 The syntax of these files will be explained in the [next subsection](orca-tutorial.md#syntax-of-ini-files). This should produce an output like this:
 ```MATLAB
 >> Utilities.runExperiments('../doc/tutorial/config-files/pom.ini')
@@ -104,6 +103,12 @@ title('AMAE performance (smaller is better)')
 ```
 
 ![AMAE performance of several methods](tutorial/images/pom-vs-svorim-vs-svc1v1.png)
+
+*** Exercise *** : you should repeat this barplots but considering:
+- One `global` (i.e. a metric where the class a priori probability is not considered) **nominal** metric.
+- One `global` **ordinal** metric. 
+- One **nominal** metric specifically designed for imbalanced datasets.
+- One **ordinal** metric specifically designed for imbalanced datasets.
 
 ### Syntax of `ini` files
 
@@ -460,7 +465,7 @@ ans =
      5     7     3    12     1
 >> targets = ERAData(:,end);
 >> k=10;
->> CVO = cvpartition(targets,'k',k);
+>> CVO = cvpartition(targets,'KFold',k);
 >> nameDataset = 'era';
 >> rootDir = fullfile('..', '..', 'exampledata', '10-fold', nameDataset);
 >> mkdir(rootDir);
@@ -524,7 +529,11 @@ for ff = 1:h
     dlmwrite(fullfile(rootDir,sprintf('test-%s.%d',nameDataset,ff-1)),ERAData(teIdx,:),' ');
 end
 ```
+The source code of this example is in [exampleERAHHoldout.m](../src/code-examples/exampleERAHHoldout.m). As can be checked, the `cvpartition` function performs the partitions, receiving the target vector. The targets are used in order to obtain a stratified partition.
 
+*** Exercise *** : you should prepare a `30holdout` set of partitions for the dataset `ESL`, which is included in the [exampledata](/exampledata). Try to find the differences between this dataset and ERA.
+
+*** Exercise *** : compare the results obtained for `ERA` and `ESL` datasets using the same experimental design you used in the [experiment section](orca-tutorial.md#launch-experiments-through-ini-files). Generate bar plots for comparing accuracy and AMAE.
 
 ### Warning about highly imbalanced datasets
 
