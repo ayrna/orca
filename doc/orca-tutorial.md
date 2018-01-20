@@ -166,11 +166,11 @@ k = 10.^(-3:1:3)
 ```
 
 The directive for configuring the search process are included in the general section. The directives associated to hyper-parameter optimisation are:
-* `seed`: is the value to initialize MATLAB random number generator. This can be helpful to debug algorithms.
-* `num_folds`: *k* value for the nested *k*-fold cross validation over the training data.
-* `cvmetric`: metric used to select the best hyper-parameters in the grid search. The metrics available are: `AMAE`,`CCR`,`GM`,`MAE`,`MMAE`,`MS`,`MZE`,`Spearman`,`Tkendall` and `Wkappa`.
-* The list of hyper-parameters to be optimised and values considered for each parameter during the grid search are specified in subsection `{algorithm-hyper-parameters-to-cv}`;
-    * `C`: add a new parameter with name `C` and a set of values of `10.^(-3:1:3)` (10<sup>-3</sup>,10<sup>-2</sup>,...,10<sup>3</sup>). The same apples for `k`.
+- `seed`: is the value to initialize MATLAB random number generator. This can be helpful to debug algorithms.
+- `num_folds`: *k* value for the nested *k*-fold cross validation over the training data.
+- `cvmetric`: metric used to select the best hyper-parameters in the grid search. The metrics available are: `AMAE`,`CCR`,`GM`,`MAE`,`MMAE`,`MS`,`MZE`,`Spearman`,`Tkendall` and `Wkappa`.
+- The list of hyper-parameters to be optimised and values considered for each parameter during the grid search are specified in subsection `{algorithm-hyper-parameters-to-cv}`;
+    - `C`: add a new parameter with name `C` and a set of values of `10.^(-3:1:3)` (10<sup>-3</sup>,10<sup>-2</sup>,...,10<sup>3</sup>). The same apples for `k`.
 
 
 ## Experimental results and reports
