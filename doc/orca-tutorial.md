@@ -1,7 +1,31 @@
 ![ORCA logo](orca_small.png)
 
-# How to use ORCA
+<!-- TOC depthFrom:1 depthTo:6 withLinks:1 updateOnSave:1 orderedList:0 -->
 
+	- [Launch experiments through `ini` files](#launch-experiments-through-ini-files)
+		- [Syntax of `ini` files](#syntax-of-ini-files)
+		- [Hyper-parameter optimization](#hyper-parameter-optimization)
+- [Experiment ID](#experiment-id)
+- [Datasets path](#datasets-path)
+- [Datasets to process (comma separated list)](#datasets-to-process-comma-separated-list)
+- [Activate data standardization](#activate-data-standardization)
+- [Number of folds for the parameters optimization](#number-of-folds-for-the-parameters-optimization)
+- [Crossvalidation metric](#crossvalidation-metric)
+- [Method: algorithm and parameter](#method-algorithm-and-parameter)
+- [Method's hyper-parameter values to optimize](#methods-hyper-parameter-values-to-optimize)
+		- [Experimental results and reports](#experimental-results-and-reports)
+	- [Running algorithms with ORCA API](#running-algorithms-with-orca-api)
+		- [Run a pair of train-test files with runAlgorithm](#run-a-pair-of-train-test-files-with-runalgorithm)
+		- [Using performance metrics](#using-performance-metrics)
+		- [Visualizing projections](#visualizing-projections)
+		- [Visualizing projections and decision thresholds](#visualizing-projections-and-decision-thresholds)
+	- [Using ORCA with your own datasets](#using-orca-with-your-own-datasets)
+		- [Data format](#data-format)
+		- [Data partitions for the experiments](#data-partitions-for-the-experiments)
+		- [Generating your own partitions](#generating-your-own-partitions)
+		- [Warning about highly imbalanced datasets](#warning-about-highly-imbalanced-datasets)
+
+<!-- /TOC -->
 ORCA is an experimental framework focused on productivity and experiments reproducibility for machine learning researchers. Initially created to collect ordinal classification methods, it is suitable for other type of classifiers.
 
 First of all, you should install the framework. In order to do so, please visit [ORCA Quick Install Guide](orca-quick-install,md). Note that you should be able to perform the test when the framework is successfully installed.
