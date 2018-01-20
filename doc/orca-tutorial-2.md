@@ -46,7 +46,11 @@ ans =
    313    64   102    54    29
 ```
 
-***Exercise*** : obtain the average imbalanced ratio for this dataset, where the imbalanced ratio of each class is the sum of the number of patterns of the rest of classes divided by the number of classes times the number of patterns of the class.
+---
+
+***Exercise 1***: obtain the average imbalanced ratio for this dataset, where the imbalanced ratio of each class is the sum of the number of patterns of the rest of classes divided by the number of classes times the number of patterns of the class.
+
+---
 
 We can apply a simple method, POM, to check the accuracy obtained for this dataset:
 ```Matlab
@@ -148,8 +152,11 @@ ans =
 ```
 Again, the results have not changed, as there were no attributes with these characteristics. However, in general, it is a good idea to apply standarisation of the input variables.
 
-***Exercise*** : construct a function (`preprocess.m`) applying these three preprocessing steps (standarisation, removal of constant features and removal of non numeric values) for future uses.
+---
 
+***Exercise 2***: construct a function (`preprocess.m`) applying these three preprocessing steps (standarisation, removal of constant features and removal of non numeric values) for future uses.
+
+---
 
 ## Naïve approaches
 
@@ -282,7 +289,9 @@ As you can check, the best configuration leads to almost a 70% of accuracy, whic
 
 This way of adjusting the parameters is not fair, as we can be overfitting the specific test set. The decision of the optimal parameters should be taken without checking test results. This can be done by using nested crossvalidation.
 
-***Exercise*** : complete the code of the script ([crossvalide.m](tutorial/scripts/crossvalide.m)) for automatising hyper-parameter selection in this problem. The idea is to have a function like this:
+---
+
+***Exercise 3*** : complete the code of the script ([crossvalide.m](tutorial/scripts/crossvalide.m)) for automatising hyper-parameter selection in this problem. The idea is to have a function like this:
 ``` MATLAB
 >> param = crossvalide(algorithmObj,train,5);
 >> param
@@ -302,6 +311,8 @@ SVR Accuracy: 0.589286
 SVR MAE: 0.732143
 ```
 Although the results are worse, we can be sure that here there is no overfitting.
+
+---
 
 Fortunately, this can be easily done in ORCA by using the `ini` files with the correct format. [svrMelanoma.ini](tutorial/config-files/svrMelanoma.ini) is a configuration file with the following contents:
 ```ini
@@ -579,7 +590,11 @@ ans =
    -0.9630   -0.9493   -0.9312   -0.9969   -1.0528   -0.9400   -1.0753   -0.9589   -0.9230   -0.9160   -0.9969   -1.1435
 ```
 
-***Exercise*** : compare all different activation functions for ELM trying to find the most appropriate one. Check the source code of [ELMOP](../src/Algorithms/ELMOP.m) to understand the different functions.
+---
+
+***Exercise 4***: compare all different activation functions for ELM trying to find the most appropriate one. Check the source code of [ELMOP](../src/Algorithms/ELMOP.m) to understand the different functions.
+
+---
 
 The other neural network model is NNOP. In this case, a standard neural network is considered, training all its parameters (hidden and output weights). In the output layer, a standard sigmoidal function is used, and the mean squared error with respect to the ordered partition targets is used for gradient descent. The algorithm used for gradient descent is the iRProp+ algorithm.
 
@@ -671,6 +686,12 @@ ans =
 ...
 ```
 
-***Exercise*** : in this tutorial, we hace considered a total of 8 classifiers with different parameter values for one of the folds of the melanoma dataset. In this exercise, you should generalise these results over the `10` partitions and interpret the results, trying to search for the best method. Apart from the two metrics considered in the tutorial (CCR and MAE), include metrics more sensitive to minority classes (for example, MS and MMAE). Construct a table with the average of these four metrics over the 10 folds. You can use the parameter values given in this tutorial or try to tune a bit them.
+---
 
-***Exercise*** : now you should consider cross-validation to tune hyper parameters. In order to limit the computational time, do not include too many values for each parameter and only use the three first partitions of the dataset (by deleting or moving the files for the rest of partitions). Check again the conclusions about the methods. **Hyper parameters are decisive for performance!!**
+***Exercise 5***: in this tutorial, we hace considered a total of 8 classifiers with different parameter values for one of the folds of the melanoma dataset. In this exercise, you should generalise these results over the `10` partitions and interpret the results, trying to search for the best method. Apart from the two metrics considered in the tutorial (CCR and MAE), include metrics more sensitive to minority classes (for example, MS and MMAE). Construct a table with the average of these four metrics over the 10 folds. You can use the parameter values given in this tutorial or try to tune a bit them.
+
+---
+
+***Exercise 6***: now you should consider cross-validation to tune hyper parameters. In order to limit the computational time, do not include too many values for each parameter and only use the three first partitions of the dataset (by deleting or moving the files for the rest of partitions). Check again the conclusions about the methods. **Hyper parameters are decisive for performance!!**
+
+---

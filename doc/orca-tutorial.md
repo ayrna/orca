@@ -92,7 +92,7 @@ SVC1V1 results ([download CSV](tutorial/reference-results/svc1v1-mean-results_te
 
 ---
 
-***Exercise 1*** : apparently, POM is the slowest method, but here we are not taking into account the crossvalidation time. Check the detailed CSV results to conclude which is the costliest method (taking crossvalidation, training and test phases into account).
+***Exercise 1***: apparently, POM is the slowest method, but here we are not taking into account the crossvalidation time. Check the detailed CSV results to conclude which is the costliest method (taking crossvalidation, training and test phases into account).
 
 ---
 
@@ -112,7 +112,7 @@ title('AMAE performance (smaller is better)')
 
 ---
 
-***Exercise 2*** : you should repeat this barplots but considering:
+***Exercise 2***: you should repeat this barplots but considering:
 - One `global` (i.e. a metric where the class a priori probability is not considered) **nominal** metric.
 - One `global` **ordinal** metric.
 - One **nominal** metric specifically designed for imbalanced datasets.
@@ -543,11 +543,11 @@ The source code of this example is in [exampleERAHHoldout.m](../src/code-example
 
 ---
 
-***Exercise 3*** : you should prepare a `30holdout` set of partitions for the dataset `ESL`, which is included in the folder [exampledata](/exampledata). Try to find the description of this dataset in the Internet and spot the main differences with respect to ERA.
+***Exercise 3***: you should prepare a `30holdout` set of partitions for the dataset `ESL`, which is included in the folder [exampledata](/exampledata). Try to find the description of this dataset in the Internet and spot the main differences with respect to ERA.
 
 ---
 
-***Exercise 4*** : train classifiers for both `ERA` and `ESL` datasets, using the same experimental design you used in the [experiment section](orca-tutorial.md#launch-experiments-through-ini-files). Compare the results obtained for both datasets. Generate bar plots for comparing accuracy and AMAE. Which one is better classified? Which one is better ordered?
+***Exercise 4***: train classifiers for both `ERA` and `ESL` datasets, using the same experimental design you used in the [experiment section](orca-tutorial.md#launch-experiments-through-ini-files). Compare the results obtained for both datasets. Generate bar plots for comparing accuracy and AMAE. Which one is better classified? Which one is better ordered?
 
 ---
 
