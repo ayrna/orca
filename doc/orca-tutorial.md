@@ -1,4 +1,5 @@
 ![ORCA logo](orca_small.png)
+
 <!-- TOC depthFrom:1 depthTo:6 withLinks:1 updateOnSave:0 orderedList:0 -->
 
 - [How to use ORCA](#how-to-use-orca)
@@ -16,8 +17,8 @@
 		- [Data partitions for the experiments](#data-partitions-for-the-experiments)
 		- [Generating your own partitions](#generating-your-own-partitions)
 		- [Warning about highly imbalanced datasets](#warning-about-highly-imbalanced-datasets)
-    <!-- /TOC -->
-    
+<!-- /TOC -->
+
 # How to use ORCA
 
 ORCA is an experimental framework focused on productivity and experiments reproducibility for machine learning researchers. Initially created to collect ordinal classification methods, it is suitable for other type of classifiers.
@@ -46,7 +47,7 @@ warning('off','stats:mnrfit:IterOrEvalLimit')
 
 In this section, we will run several experiments to compare the performance of three methods in a set of datasets: POM (Proportional Odds Model), SVORIM (Support Vector Machines with IMplicit constrains) and SVC1V1 (SVM classifier with 1-vs-1 binary decomposition). POM is a linear ordinal model, with limited performance but with easy interpretation. SVORIM is an ordinal nonlinear model, with one of the best performance values according to several studies. SVC1V1 is the nominal counterpart of SVORIM, so that we can check the benefits of considering ordinality.
 
-From Matlab consoles, assuming you are on the `src` folder, the set of experiments described in INI file `tutorial/pom.ini` can be run by:
+From Matlab console, assuming you are on the `src` folder, the set of experiments described in INI file `../doc/tutorial/config-files/pom.ini` can be run by:
 ```MATLAB
 Utilities.runExperiments('../doc/tutorial/config-files/pom.ini')
 ```
@@ -402,6 +403,7 @@ legend(msg)
 legend('Location','NorthWest')
 hold off;
 ```
+As can be checked, no pattern is projected in the region of the last class.
 
 ![Histogram of KDLOR projections](tutorial/images/kdlor-projection-hist-thresholds.png)
 
