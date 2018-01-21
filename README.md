@@ -105,7 +105,7 @@ The algorithms included in ORCA are:
 
 # Experiments parallelization with HTCondor
 
-[condor](src/condor) folder with the necessary files and steps for using condor with our framework.
+[condor](src/condor) folder contains the necessary files and steps for using [HTCondor](https://research.cs.wisc.edu/htcondor/) with our framework.
 
 # External software
 The ORCA frameworks makes use of the following external software implementations. For some of them, a Matlab interface has been developed through the use of MEX files.
