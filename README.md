@@ -50,11 +50,13 @@ Bibtex entry:
 For more information about the paper and the ordinal datasets used please visit the associated website: [http://www.uco.es/grupos/ayrna/orreview](http://www.uco.es/grupos/ayrna/orreview)
 For more information about our research group please visit [Learning and Artificial Neural Networks (AYRNA) website](http://www.uco.es/grupos/ayrna/index.php/en) at [University of Córdoba](http://www.uco.es/) (Spain).
 
-# Install, tutorial and documentation
+# Install, tutorials and documentation
 
 All the documentation is in the [doc](doc) folder:
-  - [Quick install of ORCA](doc/orca-quick-install.md) and [build troubleshooting](doc/orca-install.md).
-  - [How to tutorial](doc/orca-tutorial.md) to get started with ORCA.
+  - A [quick install guide of ORCA](doc/orca-quick-install.md) and the associated [build troubleshooting](doc/orca-install.md).
+  - A first [how to tutorial](doc/orca-tutorial.md) to get started with ORCA.
+  - A specific [tutorial for naive approaches and decompositions](doc/orca-tutorial-2.md) covering the different considerations for this kind of methods.
+  - A [tutorial for threshold models](doc/orca-tutorial-3.md) centred on examining the differences of these models.
   - [Paralelize ORCA experiments](doc/orca-parallel.md).
   - [Use ORCA with HTCondor](doc/orca-condor.md).
 
