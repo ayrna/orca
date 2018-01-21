@@ -52,8 +52,8 @@ classdef Utilities < handle
             %   Utilities.runExperiments('tests/cvtests-30-holdout/kdlor.ini', 'parallel', 1, 'closepool', false)
             %   Utilities.runExperiments('tests/cvtests-30-holdout/svorim.ini', 'parallel', 1, 'closepool', false)
             % 
-            addpath('Measures');
-            addpath('Algorithms');
+            addpath(fullfile(fileparts(which('Utilities.m')),'Measures'));
+            addpath(fullfile(fileparts(which('Utilities.m')),'Algorithms'));
             
             disp('Setting up experiments...');
             
@@ -139,8 +139,8 @@ classdef Utilities < handle
             %   MEASURES/MMAE, MEASURES/GM, MEASURES/MS, MEASURES/Spearman,
             %   MEASURES/Tkendall, MEASURES/Wkappa
             
-            addpath('Measures');
-            addpath('Algorithms');
+            addpath(fullfile(fileparts(which('Utilities.m')),'Measures'));
+            addpath(fullfile(fileparts(which('Utilities.m')),'Algorithms'));
             
             if nargin < 2
                 train = 0;
@@ -391,8 +391,8 @@ classdef Utilities < handle
                 end
                 
             end
-            rmpath('Measures');
-            rmpath('Algorithms');
+            rmpath(fullfile(fileparts(which('Utilities.m')),'Measures'));
+            rmpath(fullfile(fileparts(which('Utilities.m')),'Algorithms'));
             
             
         end
@@ -475,14 +475,14 @@ classdef Utilities < handle
         function runExperimentFold(confFile)
             % RUNEXPERIMENTFOLD(CONFFILE) launch a single experiment described in
             %   file CONFFILE
-            addpath('Measures');
-            addpath('Algorithms');
+            addpath(fullfile(fileparts(which('Utilities.m')),'Measures'));
+            addpath(fullfile(fileparts(which('Utilities.m')),'Algorithms'));
             
             auxiliar = Experiment;
             auxiliar.launch(confFile);
             
-            rmpath('Measures');
-            rmpath('Algorithms');
+            rmpath(fullfile(fileparts(which('Utilities.m')),'Measures'));
+            rmpath(fullfile(fileparts(which('Utilities.m')),'Algorithms'));
             
         end
     end
