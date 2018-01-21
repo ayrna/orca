@@ -1,5 +1,20 @@
+![ORCA logo](doc/orca_small.png)
+<!-- TOC depthFrom:1 depthTo:6 withLinks:1 updateOnSave:1 orderedList:0 -->
+
+- [ORCA](#orca)
+- [Cite ORCA](#cite-orca)
+- [Install, tutorial and documentation](#install-tutorial-and-documentation)
+- [Methods](#methods)
+- [Performance metrics](#performance-metrics)
+- [Utilities, classes and scripts](#utilities-classes-and-scripts)
+- [Experiments parallelization with HTCondor](#experiments-parallelization-with-htcondor)
+- [External software](#external-software)
+- [Other contributors](#other-contributors)
+- [References](#references)
+
+<!-- /TOC -->
 # ORCA
-![ORCA logo](doc/orca_small.png) ORCA (Ordinal Regression and Classification Algorithms) is a MATLAB framework including a wide set of ordinal regression methods associated to the paper ["Ordinal regression methods: survey and experimental study"](http://dx.doi.org/10.1109/TKDE.2015.2457911) published in *IEEE Transactions on Knowledge and Data Engineering*. ORCA provides implementation and integration of ordinal classification algorithms and performance metrics for ordinal regression. In addition, it helps to accelerate classifier experimental comparison with automatic fold execution, experiment paralellisation and performance reports. You can find a basic definition of ordinal regression at [Wikipedia](https://en.wikipedia.org/wiki/Ordinal_regression).
+ORCA (Ordinal Regression and Classification Algorithms) is a MATLAB framework including a wide set of ordinal regression methods associated to the paper ["Ordinal regression methods: survey and experimental study"](http://dx.doi.org/10.1109/TKDE.2015.2457911) published in *IEEE Transactions on Knowledge and Data Engineering*. ORCA provides implementation and integration of ordinal classification algorithms and performance metrics for ordinal regression. In addition, it helps to accelerate classifier experimental comparison with automatic fold execution, experiment paralellisation and performance reports. You can find a basic definition of ordinal regression at [Wikipedia](https://en.wikipedia.org/wiki/Ordinal_regression).
 
 As a general experimental framework, the two main objectives of the framework are:
 
