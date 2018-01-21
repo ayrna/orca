@@ -3,7 +3,7 @@
 
 - [ORCA](#orca)
 - [Cite ORCA](#cite-orca)
-- [Install, tutorial2 and documentation](#install-tutorials-and-documentation)
+- [Install, tutorials and documentation](#install-tutorials-and-documentation)
 - [Methods](#methods)
 - [Performance metrics](#performance-metrics)
 - [Utilities, classes and scripts](#utilities-classes-and-scripts)
