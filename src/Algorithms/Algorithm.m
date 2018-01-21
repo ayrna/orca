@@ -65,15 +65,10 @@ classdef Algorithm < handle
                                 msg = sprintf('Data type of property ''%s'' (%s) not compatible with data type (%s) of assigned value in configuration file', ...
                                     inpName, class(obj.(inpName)), class(pair{2}));
                                 error(msg);
-                                %ME = MException('ORCA:InconsistentDataType', msg);
-                                %throw(ME)
                             end
                         end
                     else
                         error('Error ''%s'' is not a recognized class property name',inpName)
-%                         ME = MException('MATLAB:noPublicFieldForClass', ...
-%                             'Error ''%s'' is not a recognized class property name',inpName);
-%                         throw(ME)
                     end
                 end
             end

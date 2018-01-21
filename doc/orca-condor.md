@@ -1,11 +1,11 @@
 # Experiments parallelization with HTCondor
 
-ORCA can be *easily* integrated with a High Throughput Computing (HTC) environment, such as [HTCondor](http://research.cs.wisc.edu/htcondor/), so extensive experiments can be speed up. The parallelization is done at dataset partition level, i.e. each partitions of each dataset is run in a different slot of the cluster. 
+ORCA can be *easily* integrated with a High Throughput Computing (HTC) environment, such as [HTCondor](http://research.cs.wisc.edu/htcondor/), so extensive experiments can be speed up. The parallelization is done at dataset partition level, i.e. each partitions of each dataset is run in a different slot of the cluster.
 
 The [src/condor](../src/condor) folder contains a set of scripts that automate the use of ORCA with HTCondor. The script [condor-matlabExperiment.sh](../src/condor/condor-matlabExperiment.sh) allows to run an ORCA set of experiments by using any of the configuration files. To use the script, you will need to have the configuration file in the [src/condor](../src/condor) folder:
 ```bash
 ~/orca/orca$ cd src/condor/
-~/orca/orca/src/condor$ cp ../tests/svorim.ini ./
+~/orca/orca/src/condor$ cp ../config-files/svorim.ini ./
 ```
 Then, you have to edit the test file, so that the path of the experiments is correct with respect to the current path (replace `../example-data` by `../../example-data`). This can be done with a text editor or using the following `sed` command:
 ```bash

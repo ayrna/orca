@@ -34,7 +34,7 @@ classdef SVMOP < Algorithm
     properties
         parameters = struct('C', 0.1, 'k', 0.1);
         weights = true;
-        algorithmMexPath = fullfile(pwd,'Algorithms','libsvm-weights-3.12','matlab');
+        algorithmMexPath = fullfile(fileparts(which('Algorithm.m')),'libsvm-weights-3.12','matlab');
     end
     
     methods

@@ -239,7 +239,7 @@ classdef ELMOP < Algorithm
        
         function [TY, TestPredictedY]= predict(obj, test, model)
             %PREDICT predicts labels of TEST patterns labels using MODEL. 
-            nOfPatterns = length(test);
+            nOfPatterns = size(test,1);
             
             TV.P = test';
             
