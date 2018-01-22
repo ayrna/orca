@@ -198,7 +198,7 @@ kernel = rbf
 
 # Method's hyper-parameter values to optimize
 {algorithm-hyper-parameters-to-cv}
-c = 10.^(-3:1:3)
+C = 10.^(-3:1:3)
 k = 10.^(-3:1:3)
 ```
 
