@@ -25,6 +25,8 @@ We are going to test these methods using a melanoma diagnosis dataset based on d
 - A total of `100` image descriptors are used as input features, including features related to shape, colour, pigment network and texture.
 - The severity is assessed in terms of melanoma thickness, measured by the Breslow index. The problem is tackled as a five-class classification problem, where the first class represents benign lesions, and the remaining four classes represent the different stages of the melanoma (0, I, II and III, where III is the thickest one and the most dangerous).
 
+![Graphical representation of the Breslow index](tutorial/images/diagram-melanoma-stages.png)
+
 The dataset is included in this repository, in a specific [folder](/exampledata/10-fold/melanoma-5classes-abcd-100/matlab). The corresponding script for this tutorial, ([exampleMelanoma.m](../src/code-examples/exampleMelanoma.m)), can be found and run in the [code example](../src/code-examples).
 
 ## Loading the dataset and performing some preliminary experiments

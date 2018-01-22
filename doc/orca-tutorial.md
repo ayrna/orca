@@ -115,7 +115,10 @@ SVC1V1 results ([download CSV](tutorial/reference-results/svc1v1-mean-results_te
 
 ---
 
-Finally, you can plot a bar plot to graphically compare the performance of the methods. The following code (to be run from the `src` folder) plots the figure below:
+Finally, you can plot a bar plot to graphically compare the performance of the methods. Let analyse the `toy` dataset. This is a synthetic dataset proposed by Herbrich et al. in their paper "Support vector learning for ordinal regression" (1997):
+![Synthetic toy dataset](tutorial/images/toy.png)
+
+The following code (to be run from the `src` folder) plots the figure below:
 ```MATLAB
 pomT = readtable('../doc/tutorial/reference-results/pom-mean-results_test.csv');
 svorimT = readtable('../doc/tutorial/reference-results/svorim-mean-results_test.csv');
