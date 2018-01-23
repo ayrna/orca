@@ -25,8 +25,9 @@ Because of this, there are many threshold model proposals in the literature, and
 - One linear model (POM) [1].
 - One neural network model (NNPOM) [1,2].
 - Two support vector machine proposals (SVOREX and SVORIM) [3].
-- One discriminant analysis proposal (KDLOR) [4].
-- One ensemble model (ORBoost) [5].
+- One reduction from ordinal regression to binary SVM (REDSVM) [4].
+- One discriminant analysis proposal (KDLOR) [5].
+- One ensemble model (ORBoost) [6].
 
 The corresponding script for this tutorial, ([exampleMelanomaTM.m](../src/code-examples/exampleMelanomaTM.m)), can be found and run in the [code example](../src/code-examples).
 
@@ -363,6 +364,25 @@ SVORIM Accuracy: 0.660714
 SVORIM MAE: 0.464286
 ```
 
+## Reduction from ordinal regression to binary SVM classifiers (REDSVM)
+
+The reduction from ordinal regression to binary SVM classifiers (REDSVM) [4] is a method that can be categorized both as threshold method or as decomposition method. The hyper-parameters are the wellknown `k` and `C` of SVM variants.
+
+```MATLAB
+%% Apply the REDSVM model
+% Create the REDSVM object
+algorithmObj = REDSVM();
+
+% Train REDSVM
+info = algorithmObj.runAlgorithm(train,test,struct('C',10,'k',0.001));
+
+% Evaluate the model
+fprintf('REDSVM method\n---------------\n');
+fprintf('REDSVM Accuracy: %f\n', CCR.calculateMetric(test.targets,info.predictedTest));
+fprintf('REDSVM MAE: %f\n', MAE.calculateMetric(test.targets,info.predictedTest));
+```
+
+
 ## Kernel discriminant learning for ordinal regression (KDLOR)
 
 This method adapts discriminant learning to the context of ordinal classification. The original discriminant learning problem is transformed by considering the minimum difference between the averages of two consecutive classes (in the ordinal scale). If this minimum difference is positive, the the classes are correctly ranked according to the projection.
@@ -509,5 +529,6 @@ we can see that, although the correlation of both projections is quite high, som
 1. P. McCullagh, "Regression models for ordinal data",  Journal of the Royal Statistical Society. Series B (Methodological), vol. 42, no. 2, pp. 109–142, 1980.
 1. M. J. Mathieson, "Ordinal models for neural networks", in Proc. 3rd Int. Conf. Neural Netw. Capital Markets, 1996, pp. 523-536.
 1. W. Chu and S. S. Keerthi, "Support Vector Ordinal Regression", Neural Computation, vol. 19, no. 3, pp. 792–815, 2007. http://10.1162/neco.2007.19.3.792
+1. H.-T. Lin and L. Li, "Reduction from cost-sensitive ordinal ranking to weighted binary classification" Neural Computation, vol. 24, no. 5, pp. 1329-1367, 2012. http://10.1162/NECO_a_00265
 1. B.-Y. Sun, J. Li, D. D. Wu, X.-M. Zhang, and W.-B. Li, "Kernel discriminant learning for ordinal regression", IEEE Transactions on Knowledge and Data Engineering, vol. 22, no. 6, pp. 906-910, 2010. https://doi.org/10.1109/TKDE.2009.170
 1. H.-T. Lin and L. Li, "Large-margin thresholded ensembles for ordinal regression: Theory and practice", in Proc. of the 17th Algorithmic Learning Theory International Conference, ser. Lecture Notes in Artificial Intelligence (LNAI), J. L. Balcazar, P. M. Long, and F. Stephan, Eds., vol. 4264. Springer-Verlag, October 2006, pp. 319-333.
