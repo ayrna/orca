@@ -140,7 +140,7 @@ ans =
    -0.3708   -0.6797    0.8863    0.4503
    -0.7856   -0.8335   -1.5715   -1.0839
 
->> info = algorithmObj.runAlgorithm(trainStandarized,ttestStandarized);
+>> info = algorithmObj.runAlgorithm(trainStandarized,testStandarized);
 >> CCR.calculateMetric(info.predictedTest,test.targets)
 
     ans =
@@ -582,7 +582,7 @@ ELMOP model is based on ELM, which are a quite popular type of neural network. I
 The algorithm can be configured using different activation functions for the hidden layer ('sig, 'sin', 'hardlim','tribas', 'radbas', 'up','rbf'/'krbf' or 'grbf'). During training, the user has to specify the following parameter in the `param` structure:
 - Parameter `hiddenN`: number of hidden nodes of the model. This is a decisive parameter for avoiding overfitting.
 
-Now, we perform a test for training ELMOP:
+Now, we perform a test for training ELMOP (note that ELMOP is not deterministic, this is, the results may vary among different runs of the algorithm):
 ```MATLAB
 >> algorithmObj = ELMOP('activationFunction','sig');
 info = algorithmObj.runAlgorithm(train,test,struct('hiddenN',20));
@@ -626,7 +626,7 @@ Three parameters have to be specified in this case:
 - Parameter `iter`, number of iterations for gradient descent.
 - Parameter `lambda`, regularization parameter in the error function (L2 regularizer), in order to avoid overfitting.
 
-This is an example of execution of NNOP:
+This is an example of execution of NNOP (note that results may vary among different runs):
 ```MATLAB
 >> algorithmObj = NNOP();
 info = algorithmObj.runAlgorithm(train,test,struct('hiddenN',20,'iter',500,'lambda',0.1));
