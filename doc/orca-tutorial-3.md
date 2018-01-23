@@ -383,7 +383,7 @@ fprintf('REDSVM Accuracy: %f\n', CCR.calculateMetric(test.targets,info.predicted
 fprintf('REDSVM MAE: %f\n', MAE.calculateMetric(test.targets,info.predictedTest));
 ```
 
-To better understand the crossvalidation process, the following code optimizes parameters `k` and `k` and plots corresponding heatmaps for `Acc` and `AMAE`. Note that the opimal combination may differ depending of the selected performance metric.
+To better understand the relevance of parameters selection process, the following code optimizes parameters `k` and `k` using a pair of train and validation data. Then, it plots corresponding heatmaps for `Acc` and `AMAE`. Note that the optimal combination may differ depending of the selected performance metric.
 
 ```MATLAB
 %% REDSVM optimization
