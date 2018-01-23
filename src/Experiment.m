@@ -83,22 +83,25 @@ classdef Experiment < handle
             
             % General experiment properties
             % TODO: check robustness and document behaviour of ini file
+            if expObj.general.isKey('num_folds')
+                obj.data.nOfFolds = str2num(expObj.general('num_folds'));
+            end
+            if expObj.general.isKey('standarize')
+                obj.data.standarize = str2num(expObj.general('standarize'));
+            end
+            if expObj.general.isKey('cvmetric')
+                met = upper(expObj.general('cvmetric'));
+                eval(['obj.cvCriteria = ' met ';']);
+            end
+            if expObj.general.isKey('seed')
+                obj.seed = str2num(expObj.general('seed'));
+            end
+            
             try
                 obj.data.directory = expObj.general('directory');
                 obj.data.train = expObj.general('train');
                 obj.data.test = expObj.general('test');
                 obj.resultsDir = expObj.general('results');
-                %obj.data.nOfFolds = str2num(expObj.general('num_folds'));
-                if expObj.general.isKey('standarize')
-                    obj.data.standarize = str2num(expObj.general('standarize'));
-                end
-                if expObj.general.isKey('cvmetric')
-                    met = upper(expObj.general('cvmetric'));
-                    eval(['obj.cvCriteria = ' met ';']);
-                end
-                if expObj.general.isKey('seed')
-                    obj.seed = str2num(expObj.general('seed'));
-                end
             catch ME
                 error('Configuration file %s does not have mininum fields. Exception %s', fname, ME.identifier)
             end
@@ -107,7 +110,7 @@ classdef Experiment < handle
             varargs = obj.mapsToCell(expObj.algorithm);
             alg = expObj.algorithm('algorithm');
             obj.method = feval(alg, varargs);
-
+            
             % Parameters to be optimized
             if ~isempty(expObj.params)
                 pkeys = expObj.params.keys;
@@ -274,7 +277,7 @@ classdef Experiment < handle
     end
     
     methods (Static = true)
-
+        
         function varargs = mapsToCell(aObj)
             %varargs = mapsToCell(mapObj) returns key value pairs in a comma separated
             %   string. Example: "'kernel', 'rbf', 'c', 0.1"
@@ -284,7 +287,7 @@ classdef Experiment < handle
                 varargs = cell(1,1);
                 return
             end
-                
+            
             mapObj = containers.Map(aObj.keys,aObj.values);
             mapObj.remove('algorithm');
             pkeys = mapObj.keys;
