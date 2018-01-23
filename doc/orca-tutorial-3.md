@@ -1,4 +1,5 @@
 ![ORCA logo](orca_small.png)
+
 <!-- TOC depthFrom:1 depthTo:6 withLinks:1 updateOnSave:1 orderedList:0 -->
 
 - [Threshold models](#threshold-models)
@@ -8,6 +9,7 @@
 	- [Kernel discriminant learning for ordinal regression (KDLOR)](#kernel-discriminant-learning-for-ordinal-regression-kdlor)
 	- [Ordinal regression boosting (ORBoost)](#ordinal-regression-boosting-orboost)
 	- [Custom Ensemble based on several projections](#custom-ensemble-based-on-several-projections)
+- [References](#references)
 
 <!-- /TOC -->
 
@@ -20,11 +22,11 @@ Moreover, we are going to work again with melanoma diagnosis dataset. You should
 All threshold models are designed with a very reasonable idea: the categories to be predicted in ordinal classification comes from the discretization of an underlying latent variable, so that we can try to model the latent variables and use a total of Q-1 thresholds (for Q classes) to divide this variable in categories. In this way, the order of categories will be taken into account, because the intervals defined for each will be arranged in the same order, and a lot of flexibility will be given to the model by simply moving these thresholds.
 
 Because of this, there are many threshold model proposals in the literature, and ORCA includes some of the most popular ones:
-- One linear model (POM).
-- One neural network model (NNPOM).
-- Two support vector machine proposals (SVOREX and SVORIM).
-- One discriminant analysis proposal (KDLOR).
-- One ensemble model (ORBoost).
+- One linear model (POM) [1].
+- One neural network model (NNPOM) [1,2].
+- Two support vector machine proposals (SVOREX and SVORIM) [3].
+- One discriminant analysis proposal (KDLOR) [4].
+- One ensemble model (ORBoost) [5].
 
 The corresponding script for this tutorial, ([exampleMelanomaTM.m](../src/code-examples/exampleMelanomaTM.m)), can be found and run in the [code example](../src/code-examples).
 
@@ -500,8 +502,12 @@ we can see that, although the correlation of both projections is quite high, som
 
 ---
 
----
-
 ***Exercise 4***: construct a similar ensemble but using different SVORIM projections with different subsets of patterns and different subsets of input variables (randomization). The number of members of the ensemble should remain as a parameter.
 
----
+# References
+
+1. P. McCullagh, "Regression models for ordinal data",  Journal of the Royal Statistical Society. Series B (Methodological), vol. 42, no. 2, pp. 109–142, 1980.
+1. M. J. Mathieson, "Ordinal models for neural networks", in Proc. 3rd Int. Conf. Neural Netw. Capital Markets, 1996, pp. 523-536.
+1. W. Chu and S. S. Keerthi, "Support Vector Ordinal Regression", Neural Computation, vol. 19, no. 3, pp. 792–815, 2007. http://10.1162/neco.2007.19.3.792
+1. B.-Y. Sun, J. Li, D. D. Wu, X.-M. Zhang, and W.-B. Li, "Kernel discriminant learning for ordinal regression", IEEE Transactions on Knowledge and Data Engineering, vol. 22, no. 6, pp. 906-910, 2010. https://doi.org/10.1109/TKDE.2009.170
+1. H.-T. Lin and L. Li, "Large-margin thresholded ensembles for ordinal regression: Theory and practice", in Proc. of the 17th Algorithmic Learning Theory International Conference, ser. Lecture Notes in Artificial Intelligence (LNAI), J. L. Balcazar, P. M. Long, and F. Stephan, Eds., vol. 4264. Springer-Verlag, October 2006, pp. 319-333.
