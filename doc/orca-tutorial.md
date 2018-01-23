@@ -1,6 +1,6 @@
 ![ORCA logo](orca_small.png)
 
-<!-- TOC depthFrom:1 depthTo:6 withLinks:1 updateOnSave:0 orderedList:0 -->
+<!-- TOC depthFrom:1 depthTo:6 withLinks:1 updateOnSave:1 orderedList:0 -->
 
 - [How to use ORCA](#how-to-use-orca)
 	- [Launch experiments through `ini` files](#launch-experiments-through-ini-files)
@@ -17,6 +17,8 @@
 		- [Data partitions for the experiments](#data-partitions-for-the-experiments)
 		- [Generating your own partitions](#generating-your-own-partitions)
 		- [Warning about highly imbalanced datasets](#warning-about-highly-imbalanced-datasets)
+- [References](#references)
+
 <!-- /TOC -->
 
 # How to use ORCA
@@ -176,27 +178,27 @@ The above file tells ORCA to run the algorithm `POM` for all the datasets specif
 
 Many machine learning methods are very sensitive to the value considered for the hyper-parameters (consider, for example, support vector machines and the two associated parameters, cost and kernel width). They depend on hyper-parameters to achieve optimal results. ORCA automates hyper-parameter optimization by using a grid search with an internal nested *k*-fold cross-validation considering only the training partition. Let see an example for the optimisation of the two hyper-parameters of SVORIM: cost (`C`) and kernel width parameter (`k`, a.k.a. *gamma*):
 ```ini
-# Experiment ID
+; Experiment ID
 [svorim-mae-real]
 {general-conf}
 seed = 1
-# Datasets path
+; Datasets path
 basedir = datasets/ordinal/real/30-holdout
-# Datasets to process (comma separated list)
+; Datasets to process (comma separated list)
 datasets = all
-# Activate data standardization
+; Activate data standardization
 standarize = true
-# Number of folds for the parameters optimization
+; Number of folds for the parameters optimization
 num_folds = 5
-# Crossvalidation metric
+; Crossvalidation metric
 cvmetric = mae
 
-# Method: algorithm and parameter
+; Method: algorithm and parameter
 {algorithm-parameters}
 algorithm = SVORIM
 kernel = rbf
 
-# Method's hyper-parameter values to optimize
+; Method's hyper-parameter values to optimize
 {algorithm-hyper-parameters-to-cv}
 C = 10.^(-3:1:3)
 k = 10.^(-3:1:3)

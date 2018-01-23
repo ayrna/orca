@@ -14,6 +14,7 @@
 		- [Neural network approaches (ELMOP and NNOP)](#neural-network-approaches-elmop-and-nnop)
 		- [Summary of results for binary decompositions](#summary-of-results-for-binary-decompositions)
 	- [Ternary decomposition](#ternary-decomposition)
+- [References](#references)
 
 <!-- /TOC -->
 
@@ -715,8 +716,6 @@ ans =
 ---
 
 ***Exercise 6***: now you should consider cross-validation to tune hyper parameters. In order to limit the computational time, do not include too many values for each parameter and only use the three first partitions of the dataset (by deleting or moving the files for the rest of partitions). Check again the conclusions about the methods. **Hyper parameters are decisive for performance!!**
-
----
 
 # References
 
