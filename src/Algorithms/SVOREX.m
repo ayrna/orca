@@ -29,22 +29,17 @@ classdef SVOREX < Algorithm
     %       available at http://www.gnu.org/licenses/gpl-3.0.html
     
     properties
-        parameters = struct('c', 0.1, 'k', 0.1);
-        kernelType = 'rbf';
-        algorithmMexPath = fullfile('Algorithms','SVOREX');
+        parameters = struct('C', 0.1, 'k', 0.1);
+        algorithmMexPath = fullfile(fileparts(which('Algorithm.m')),'SVOREX');
     end
     
     methods
-        function obj = SVOREX(kernel)
+        function obj = SVOREX(varargin)
             %SVOREX constructs an object of the class SVOREX and sets its default
             %   characteristics
-            %   OBJ = SVOREX(KERNEL) builds SVOREX with KERNEL as kernel function
+            %   OBJ = SVOREX(KERNEL) builds SVOREX with RBF as kernel function
             obj.name = 'Support Vector for Ordinal Regression (Explicit constraints)';
-            if(nargin ~= 0)
-                obj.kernelType = kernel;
-            else
-                obj.kernelType = 'rbf';
-            end
+            obj.parseArgs(varargin);
         end
         
         function [model, projectedTrain, predictedTrain] = fit(obj,train,parameters)
@@ -53,7 +48,7 @@ classdef SVOREX < Algorithm
             if isempty(strfind(path,obj.algorithmMexPath))
                 addpath(obj.algorithmMexPath);
             end
-            [alpha, thresholds, projectedTrain] = svorex([train.patterns train.targets],parameters.k,parameters.c,0,0,0);
+            [alpha, thresholds, projectedTrain] = svorex([train.patterns train.targets],parameters.k,parameters.C,0,0,0);
             predictedTrain = obj.assignLabels(projectedTrain, thresholds);
             model.projection = alpha;
             model.thresholds = thresholds;

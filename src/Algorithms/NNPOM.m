@@ -59,10 +59,14 @@ classdef NNPOM < Algorithm
     methods
         
         
-        function obj = NNPOM()
+        function obj = NNPOM(varargin)
             %NNPOM constructs an object of the class NNPOM and sets its default
             %   characteristics
+            %   obj = NNPOM('epsilonInit', 0.5) sets initialization of
+            %   epsilon to 0.5
             obj.name = 'Neural Network based on Proportional Odd Model';
+            obj.parseArgs(varargin);
+            
         end  
         
         function [model, projectedTrain, predictedTrain] = fit( obj, train, parameters)

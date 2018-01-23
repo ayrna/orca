@@ -24,22 +24,18 @@ classdef CSSVC < Algorithm
     %       This software is released under the The GNU General Public License v3.0 licence
     %       available at http://www.gnu.org/licenses/gpl-3.0.html
     properties
-        parameters = struct('c', 0.1, 'k', 0.1);
-        kernelType = 'rbf';
-        algorithmMexPath = fullfile(pwd,'Algorithms','libsvm-weights-3.12','matlab');
+        parameters = struct('C', 0.1, 'k', 0.1);
+        
+        algorithmMexPath = fullfile(fileparts(which('Algorithm.m')),'libsvm-weights-3.12','matlab');
     end
 
     methods
-        function obj = CSSVC(kernel)
+        function obj = CSSVC(varargin)
             %CSSVC constructs an object of the class CSSVC and sets its default
             %   characteristics
-            %   OBJ = CSSVC(KERNEL) builds CSSVC with KERNEL as kernel function
+            %   OBJ = CSSVC() builds CSSVC with RBF kernel function
             obj.name = 'Support Vector Machine Classifier with 1vsAll paradigm with ordinal weights';
-            if(nargin ~= 0)
-                obj.kernelType = kernel;
-            else
-                obj.kernelType = 'rbf';
-            end
+            obj.parseArgs(varargin);
         end
 
         function [model, projectedTrain, predictedTrain] = fit( obj, train, param)
@@ -48,7 +44,7 @@ classdef CSSVC < Algorithm
             if isempty(strfind(path,obj.algorithmMexPath))
                 addpath(obj.algorithmMexPath);
             end
-            options = ['-t 2 -c ' num2str(param.c) ' -g ' num2str(param.k) ' -q'];
+            options = ['-t 2 -c ' num2str(param.C) ' -g ' num2str(param.k) ' -q'];
 
             labelSet = unique(train.targets);
             labelSetSize = length(labelSet);

@@ -29,30 +29,21 @@ classdef KDLOR < Algorithm
     
     properties
         optimizationMethod = 'quadprog';
-        parameters = struct('c', 0.1, 'k', 0.1, 'u', 0.01);
+        parameters = struct('C', 0.1, 'k', 0.1, 'u', 0.01);
         kernelType = 'rbf';
     end
     
     methods
         
-        function obj = KDLOR(kernel, opt)
+        function obj = KDLOR(varargin)
             %KDLOR constructs an object of the class KDLOR. Default kernel is
             %'rbf' and default optimization method is 'quadprog'
             %
-            %   OBJ = KDLOR(KERNEL) builds KDLOR with KERNEL as kernel function
-            %   OBJ = KDLOR(KERNEL, OPT) builds KDLOR with KERNEL as kernel
-            %   function and OPT as optimization method.
+            %   OBJ = KDLOR('kernelType', kernel, 'optimizationMethod', opt)
+            %   builds KDLOR with KERNEL as kernel function and OPT as 
+            %   optimization method.
             obj.name = 'Kernel Discriminant Learning for Ordinal Regression';
-            if(nargin ~= 0)
-                obj.kernelType = kernel;
-            else
-                obj.kernelType = 'rbf';
-            end
-            if(nargin > 1)
-                obj.optimizationMethod = opt;
-            else
-                obj.optimizationMethod = 'quadprog';
-            end
+            obj.parseArgs(varargin);
         end
         
         function obj = set.optimizationMethod(obj, value)
@@ -94,7 +85,7 @@ classdef KDLOR < Algorithm
                         kernelParam = 1;
                 end
             else
-                d = parameters.c;
+                d = parameters.C;
                 u = parameters.u;
                 kernelParam = parameters.k;
             end

@@ -38,7 +38,7 @@ classdef Config
             end
             
             if isempty(obj.keys) || isempty(obj.keys{1,1})
-                error('File %s does not contain valid experiments descriptions', confFile)
+                error('File %s does not contain valid experiment descriptions', confFile)
             end
             obj.iniFile = confFile;
             obj.exps = cell(numel(obj.sections), 1);

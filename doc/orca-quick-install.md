@@ -1,6 +1,6 @@
 # Installing ORCA
 
-This is a **quick install** guide. If you experiment problems, please read the [detailed install guide](orca-install.md).
+This is a **quick install** guide. If you experiment problems, please read the [detailed install guide](orca-install.md). ORCA has been developed and tested in GNU/Linux systems and ported to Windows. It has been tested in MATLAB R2009a-R2017b and Octave >4.0.
 
 ## Installation requirements
 
@@ -9,7 +9,7 @@ In order to use ORCA you need:
 * `gcc` and `g++`
 * MATLAB/Octave (Octave >= 4.0), including `mex`.
   * MATLAB toolboxes: Statistics and Machine Learning
-  * Octave packages: statistics,optim,liboctave-dev. Can be easily installed with `pkg install -forge optim` and so on.
+  * Octave packages: statistics,optim,liboctave-dev. Can be easily installed with `pkg install -forge optim` and so on. Depending on your GNU/Linux distribution you may have to install `liboctave-dev` with your distribution package manager.
 
 ## Download ORCA
 
@@ -18,7 +18,6 @@ To download ORCA you can simply clone this GitHub repository by using the follow
 $ git clone https://github.com/ayrna/orca
 ```
 All the contents of the repository can also be downloaded from the GitHub site by using the "Download ZIP" button.
-
 
 ## Compilation of `mex` files
 
@@ -38,7 +37,7 @@ After building, you can clean the objects files with `make clean`:
 
 We provide a set of basic tests to for checking that all the algorithms work, both using ORCA's API and experiment scripts (see [tutorial](orca-tutorial.md) for more information).
 
-The way to run the tests checking the API is the following (running time is ~12 seconds):
+The way to run the tests checking the API (see [single test scripts](../src/tests/singletests/)) is the following (running time is ~12 seconds):
 
 ```MATLAB
 >> cd src/

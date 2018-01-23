@@ -28,14 +28,13 @@ classdef SVORLin < Algorithm
     %       This software is released under the The GNU General Public License v3.0 licence
     %       available at http://www.gnu.org/licenses/gpl-3.0.html
     properties
-        parameters = struct('c', 0.1);
-        kernelType = 'rbf';
-        algorithmMexPath = fullfile('Algorithms','SVORIM');
+        parameters = struct('C', 0.1);
+        algorithmMexPath = fullfile(fileparts(which('Algorithm.m')),'SVORIM');
     end
     
     methods
         
-        function obj = SVORLin()
+        function obj = SVORLin(varargin)
             %SVORLin constructs an object of the class SVORLin and sets its default
             %   characteristics
             %   OBJ = SVORLin() builds SVORLin object
@@ -48,7 +47,7 @@ classdef SVORLin < Algorithm
             if isempty(strfind(path,obj.algorithmMexPath))
                 addpath(obj.algorithmMexPath);
             end
-            [alpha, thresholds, projectedTrain] = svorim([train.patterns train.targets],1,parameters.c,0,0,1);
+            [alpha, thresholds, projectedTrain] = svorim([train.patterns train.targets],1,parameters.C,0,0,1);
             predictedTrain = obj.assignLabels(projectedTrain, thresholds);
             model.projection = alpha;
             model.thresholds = thresholds;

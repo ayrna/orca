@@ -24,7 +24,7 @@ classdef Experiment < handle
     %
     properties
         data = DataSet;
-        method = KDLOR;
+        method = Algorithm;
         cvCriteria = MAE;
         crossvalide = 0;
         resultsDir = '';
@@ -80,50 +80,42 @@ classdef Experiment < handle
             cObj = Config(fname);
             expObj = cObj.exps{:};
             % Copy ini values to corresponding object properties
+            
+            % General experiment properties
+            % TODO: check robustness and document behaviour of ini file
+            if expObj.general.isKey('num_folds')
+                obj.data.nOfFolds = str2num(expObj.general('num_folds'));
+            end
+            if expObj.general.isKey('standarize')
+                obj.data.standarize = str2num(expObj.general('standarize'));
+            end
+            if expObj.general.isKey('cvmetric')
+                met = upper(expObj.general('cvmetric'));
+                eval(['obj.cvCriteria = ' met ';']);
+            end
+            if expObj.general.isKey('seed')
+                obj.seed = str2num(expObj.general('seed'));
+            end
+            
             try
                 obj.data.directory = expObj.general('directory');
                 obj.data.train = expObj.general('train');
                 obj.data.test = expObj.general('test');
                 obj.resultsDir = expObj.general('results');
-                obj.data.nOfFolds = str2num(expObj.general('num_folds'));
-                obj.data.standarize = str2num(expObj.general('standarize'));
-                met = upper(expObj.general('cvmetric'));
-                eval(['obj.cvCriteria = ' met ';']);
-                obj.seed = str2num(expObj.general('seed'));
             catch ME
                 error('Configuration file %s does not have mininum fields. Exception %s', fname, ME.identifier)
             end
             
-            try
-                alg = expObj.algorithm('algorithm');
-                eval(['obj.method = ' alg ';']);
-            catch
-                error('Unknown algorithm')
-            end
-                
-            % TODO: These parameters loading should be moved to Algorithms classes
-            % Those classes should check they have necessary parameters
-            % description to be created and provide default values
-            % otherwise. There, it would be easier to generalize the
-            % code
-            if expObj.algorithm.isKey('weights')
-                wei = expObj.algorithm('weights');
-                eval(['obj.method.weights = ' wei ';']);
-            end
-            if expObj.algorithm.isKey('kernel')
-                obj.method.kernelType = expObj.algorithm('kernel');
-            end
-            if expObj.algorithm.isKey('activationfunction')
-                obj.method.activationFunction = expObj.algorithm('activationfunction');
-            end
+            % Algorithm properties are transformed to varargs ('key',value)
+            varargs = obj.mapsToCell(expObj.algorithm);
+            alg = expObj.algorithm('algorithm');
+            obj.method = feval(alg, varargs);
             
-            if expObj.algorithm.isKey('sharedparams')
-                obj.method.sharedParams = expObj.algorithm('sharedparams');
-            end
-            
+            % Parameters to be optimized
             if ~isempty(expObj.params)
                 pkeys = expObj.params.keys;
                 for p=1:cast(expObj.params.Count,'int32')
+                    %isfield(obj.parameters.' pkeys{p})
                     eval(['obj.parameters.' pkeys{p} ' = [' expObj.params(pkeys{p}) '];']);
                     obj.crossvalide = 1;
                 end
@@ -187,6 +179,9 @@ classdef Experiment < handle
             %par = fieldnames(parameters);
             
             sets = struct2cell(obj.parameters);
+            name_parameters = fieldnames(obj.parameters);
+            nParam = numel(name_parameters);
+            
             c = cell(1, numel(sets));
             [c{:}] = ndgrid( sets{:} );
             combinations = cell2mat( cellfun(@(v)v(:), c, 'UniformOutput',false) );
@@ -245,7 +240,16 @@ classdef Experiment < handle
                 for i=1:size(combinations,2)
                     % Extract the combination of parameters
                     currentCombination = combinations(:,i);
-                    model = obj.method.runAlgorithm(auxTrain, auxTest, currentCombination);
+                    
+                    if nParam~= 0
+                        currentCombination = reshape(currentCombination,[1,nParam]);
+                        param = cell2struct(num2cell(currentCombination(1:nParam)),name_parameters,2);
+                    else
+                        param = [];
+                    end
+                    
+                    model = obj.method.runAlgorithm(auxTrain, auxTest, param);
+                    
                     if strcmp(obj.cvCriteria.name,'Area under curve')
                         result(ff,i) = obj.cvCriteria.calculateCrossvalMetric(auxTest.targets, model.projectedTest);
                     else
@@ -259,10 +263,50 @@ classdef Experiment < handle
             end
             
             [bestValue,bestIdx] = min(mean(result));
-            optimals = combinations(:,bestIdx);
+            optimalCombination = combinations(:,bestIdx);
+            
+            if nParam~= 0
+                optimalCombination = reshape(optimalCombination,[1,nParam]);
+                optimals = cell2struct(num2cell(optimalCombination(1:nParam)),name_parameters,2);
+            else
+                optimals = [];
+            end
             
         end
         
+    end
+    
+    methods (Static = true)
+        
+        function varargs = mapsToCell(aObj)
+            %varargs = mapsToCell(mapObj) returns key value pairs in a comma separated
+            %   string. Example: "'kernel', 'rbf', 'c', 0.1"
+            
+            % If there are no parameters return empty cell
+            if aObj.Count == 1
+                varargs = cell(1,1);
+                return
+            end
+            
+            mapObj = containers.Map(aObj.keys,aObj.values);
+            mapObj.remove('algorithm');
+            pkeys = mapObj.keys;
+            varargs = cell(1,cast(mapObj.Count,'int32')*2);
+            
+            for p=1:2:cast(mapObj.Count*2,'int32')
+                keyasstr = pkeys(p);
+                keyasstr = keyasstr{:};
+                value = mapObj(keyasstr);
+                varargs{1,p} = sprintf('%s', pkeys{p});
+                % Check numerical values
+                valuenum = str2double(value);
+                if isnan(valuenum) % we have a string
+                    varargs{1,p+1} = sprintf('%s', value);
+                else % we have a number
+                    varargs{1,p+1} = valuenum;
+                end
+            end
+        end
     end
     
     

@@ -595,7 +595,7 @@ try
             from = ind(1);
             to = ind(end);
             tmpKeys = keysIn( ind,: );
-            [tmpKeys,ind2] = sortrows( lower(tmpKeys) );
+            [tmpKeys,ind2] = sortrows( tmpKeys );
             fullInd(from:to) = ind(ind2);
             ii = ii + n;
         else
@@ -832,17 +832,17 @@ if strcmpi(line(1),';')                     % comment found
     status = 4;
     value = line(2:end);
 elseif (line(1) == '[') & (line(end) == ']') & (length(line) >= 3)  % section found
-    value = lower(line(2:end-1));
+    value = line(2:end-1);
     status = 1;
 elseif (line(1) == '{') &...                % subsection found
        (line(end) == '}') & (length(line) >= 3)
-    value = lower(line(2:end-1));
+    value = line(2:end-1);
     status = 2;
 else                                        % either key-value pair or unknown string
     pos = findstr(line,'=');
     if ~isempty(pos)                        % key-value pair found
         status = 3;
-        key = lower(line(1:pos-1));
+        key = line(1:pos-1);
         value = line(pos+1:end);
         key = strim(key);                   % removes any leading and trailing spaces
         value = strim(value);               % removes any leading and trailing spaces

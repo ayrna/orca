@@ -36,11 +36,12 @@ classdef ORBoost < Algorithm
     
     methods
         
-        function obj = ORBoost()
+        function obj = ORBoost(varargin)
             %ORBoost constructs an object of the class ORBoost and sets its default
             %   characteristics
             %   OBJ = ORBoost() builds ORBoost object
             obj.name = 'OR Ensemble with perceptrons';
+            obj.parseArgs(varargin);
         end
 
         function [model, projectedTrain, predictedTrain] = fit(obj,train,parameters)
@@ -59,7 +60,8 @@ classdef ORBoost < Algorithm
                 execute_train = sprintf('%s %s %d %d %d1 204 %d 2000 %s',...
                     bin_train, trainFile,size(train.patterns,1),size(train.patterns,2),(3+obj.weights),max(unique(train.targets)),modelFile);
             else
-                execute_train = sprintf('./Algorithms/orensemble/hack.sh ./Algorithms/orensemble/boostrank-train %s %d %d %d1 204 %d 2000 %s',...
+                execute_train = sprintf('%s/orensemble/hack.sh %s/orensemble/boostrank-train %s %d %d %d1 204 %d 2000 %s',...
+                    fileparts(which('Algorithm.m')), fileparts(which('Algorithm.m')),...
                     trainFile,size(train.patterns,1),size(train.patterns,2),(3+obj.weights),max(unique(train.targets)),modelFile);
             end
             
@@ -104,14 +106,14 @@ classdef ORBoost < Algorithm
             
             % Prepare command line
             if ispc
-                bin_predict = fullfile('Algorithms','orensemble', 'boostrank-predict.exe');
+                bin_predict = fullfile(fileparts(which('Algorithm.m')),'orensemble', 'boostrank-predict.exe');
                 execute_test = sprintf('%s %s %d %d %s 2000 %s',...
                     bin_predict,testFile,size(test,1),...
                     size(test,2),modelFile,predictFile);
             else
                 execute_test = ...
-                    sprintf('./Algorithms/orensemble/hack.sh ./Algorithms/orensemble/boostrank-predict %s %d %d %s 2000 %s',...
-                    testFile,size(test,1),size(test,2),modelFile,predictFile);
+                    sprintf('%s/orensemble/hack.sh %s/orensemble/boostrank-predict %s %d %d %s 2000 %s',...
+                    fileparts(which('Algorithm.m')),fileparts(which('Algorithm.m')),testFile,size(test,1),size(test,2),modelFile,predictFile);
             end
             
             % Execute test

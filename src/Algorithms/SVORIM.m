@@ -28,22 +28,17 @@ classdef SVORIM < Algorithm
     %       This software is released under the The GNU General Public License v3.0 licence
     %       available at http://www.gnu.org/licenses/gpl-3.0.html
     properties
-        parameters = struct('c', 0.1, 'k', 0.1);
-        kernelType = 'rbf';
-        algorithmMexPath = fullfile('Algorithms','SVORIM');
+        parameters = struct('C', 0.1, 'k', 0.1);
+        algorithmMexPath = fullfile(fileparts(which('Algorithm.m')),'SVORIM');
     end
     
     methods
-        function obj = SVORIM(kernel)
+        function obj = SVORIM(varargin)
             %SVORIM constructs an object of the class SVORIM and sets its default
             %   characteristics
-            %   OBJ = SVORIM(KERNEL) builds SVORIM with KERNEL as kernel function
+            %   OBJ = SVORIM(KERNEL) builds SVORIM with RBF as kernel function
             obj.name = 'Support Vector for Ordinal Regression (Implicit constraints)';
-            if(nargin ~= 0)
-                obj.kernelType = kernel;
-            else
-                obj.kernelType = 'rbf';
-            end
+            obj.parseArgs(varargin);
         end
         
         function [model,projectedTrain,predictedTrain] = fit(obj, train, parameters)
@@ -52,7 +47,7 @@ classdef SVORIM < Algorithm
             if isempty(strfind(path,obj.algorithmMexPath))
                 addpath(obj.algorithmMexPath);
             end
-            [alpha, thresholds, projectedTrain] = svorim([train.patterns train.targets],parameters.k,parameters.c,0,0,0);
+            [alpha, thresholds, projectedTrain] = svorim([train.patterns train.targets],parameters.k,parameters.C,0,0,0);
             predictedTrain = obj.assignLabels(projectedTrain, thresholds);
             model.projection = alpha;
             model.thresholds = thresholds;

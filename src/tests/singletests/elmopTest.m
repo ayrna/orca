@@ -11,7 +11,7 @@ algorithmObj = ELMOP();
 clear param;
 
 % Parameter hiddenN (Number of neurons in the hidden layer)
-param(1) = 50;
+param.hiddenN = 50;
 
 % Running the algorithm
 info = algorithmObj.runAlgorithm(train,test,param);
