@@ -4,11 +4,11 @@
 
 - [Naive approaches and decomposition methods in orca](#naive-approaches-and-decomposition-methods-in-orca)
 	- [Loading the dataset and performing some preliminary experiments](#loading-the-dataset-and-performing-some-preliminary-experiments)
-	- [Naive approaches](#nave-approaches)
+	- [Naive approaches](#naive-approaches)
 		- [Regression (SVR)](#regression-svr)
 		- [Nominal classification (SVC1V1 and SVC1VA)](#nominal-classification-svc1v1-and-svc1va)
 		- [Cost sensitive classification (CSSVC)](#cost-sensitive-classification-cssvc)
-		- [Summary of results for naive approaches](#summary-of-results-for-nave-approaches)
+		- [Summary of results for naive approaches](#summary-of-results-for-naive-approaches)
 	- [Binary decomposition methods](#binary-decomposition-methods)
 		- [SVM with ordered partitions (SVMOP)](#svm-with-ordered-partitions-svmop)
 		- [Neural network approaches (ELMOP and NNOP)](#neural-network-approaches-elmop-and-nnop)
@@ -77,6 +77,8 @@ We can apply a simple method, POM, to check the accuracy obtained for this datas
 >> train.targets = trainMelanoma(:,end);
 >> test.patterns = testMelanoma(:,1:(end-1));
 >> test.targets = testMelanoma(:,end);
+>> addpath Algorithms;
+>> algorithmObj = POM();
 >> info = algorithmObj.runAlgorithm(train,test);
 >> addpath Measures
 >> CCR.calculateMetric(info.predictedTest,test.targets)
