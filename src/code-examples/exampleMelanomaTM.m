@@ -174,8 +174,6 @@ fprintf('REDSVM Accuracy: %f\n', CCR.calculateMetric(test.targets,info.predicted
 fprintf('REDSVM MAE: %f\n', MAE.calculateMetric(test.targets,info.predictedTest));
 
 %% REDSVM optimization 
-% Note we change the comparison here to minimize and initialize
-% bestMZE/bestAMAE to Inf
 clear T Ts;
 
 Metrics = {@MZE,@AMAE};
