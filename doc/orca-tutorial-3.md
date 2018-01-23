@@ -6,6 +6,7 @@
 	- [Proportional odds model (POM)](#proportional-odds-model-pom)
 	- [Neural network based on POM (NNPOM)](#neural-network-based-on-pom-nnpom)
 	- [Support vector for ordinal regression (SVOREX and SVORIM)](#support-vector-for-ordinal-regression-svorex-and-svorim)
+	- [Reduction from ordinal regression to binary SVM classifiers (REDSVM)](#reduction-from-ordinal-regression-to-binary-svm-classifiers-redsvm)
 	- [Kernel discriminant learning for ordinal regression (KDLOR)](#kernel-discriminant-learning-for-ordinal-regression-kdlor)
 	- [Ordinal regression boosting (ORBoost)](#ordinal-regression-boosting-orboost)
 	- [Custom Ensemble based on several projections](#custom-ensemble-based-on-several-projections)
@@ -382,6 +383,23 @@ fprintf('REDSVM Accuracy: %f\n', CCR.calculateMetric(test.targets,info.predicted
 fprintf('REDSVM MAE: %f\n', MAE.calculateMetric(test.targets,info.predictedTest));
 ```
 
+To better understand the crossvalidation process, the following code optimizes parameters `k` and `k` and plots corresponding heatmaps for `Acc` and `AMAE`. Note that the opimal combination may differ depending of the selected performance metric.
+
+![REDSVM heapmap to show crossvalidation](tutorial/images/redsvm-melanoma-heatmap.png)
+
+```MATLAB
+%% Apply the REDSVM model
+% Create the REDSVM object
+algorithmObj = REDSVM();
+
+% Train REDSVM
+info = algorithmObj.runAlgorithm(train,test,struct('C',10,'k',0.001));
+
+% Evaluate the model
+fprintf('REDSVM method\n---------------\n');
+fprintf('REDSVM Accuracy: %f\n', CCR.calculateMetric(test.targets,info.predictedTest));
+fprintf('REDSVM MAE: %f\n', MAE.calculateMetric(test.targets,info.predictedTest));
+```
 
 ## Kernel discriminant learning for ordinal regression (KDLOR)
 
