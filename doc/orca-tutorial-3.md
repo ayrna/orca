@@ -383,50 +383,45 @@ fprintf('REDSVM Accuracy: %f\n', CCR.calculateMetric(test.targets,info.predicted
 fprintf('REDSVM MAE: %f\n', MAE.calculateMetric(test.targets,info.predictedTest));
 ```
 
-To better understand the relevance of parameters selection process, the following code optimizes parameters `k` and `k` using a pair of train and validation data. Then, it plots corresponding heatmaps for `Acc` and `AMAE`. Note that the optimal combination may differ depending of the selected performance metric.
+To better understand the relevance of parameters selection process, the following code optimizes parameters `k` and `C` using a 3Fold for each combination. Then, it plots corresponding validation results for `Acc` and `AMAE`. Note that the optimal combination may differ depending of the selected performance metric. Depending on your version of Matlab, a `contourf` or a `heatmap` is used for each metric.
 
 ```MATLAB
-%% REDSVM optimization
-clear T Ts;
-
-Metrics = {@MZE,@AMAE};
-Ts = cell(size(Metrics,2),1);
-for m = 1:size(Metrics,2)
-    mObj = Metrics{m}();
-    fprintf('Grid search to optimize %s for REDSVM\n', mObj.name);
-    bestError=Inf;
-    T = table();
-    for C=10.^(-3:1:3)
-        for k=10.^(-3:1:3)
-            param = struct('C',C,'k',k);
-            info = algorithmObj.runAlgorithm(train,test,param);
-            error = mObj.calculateMetric(test.targets,info.predictedTest);
-
-            if error < bestError
-                bestError = error;
-                bestParam = param;
-            end
-            param.error = error;
-            T = [T; struct2table(param)];
-            fprintf('.');
-        end
+if verLessThan('matlab', '2017a')
+    % Use contours
+    figure;
+    hold on;
+    for m = 1:size(Metrics,2)
+        mObj = Metrics{m}();
+        subplot(size(Metrics,2),1,m)
+        x = Ts{m}{:,1};
+        y = Ts{m}{:,2};
+        z = Ts{m}{:,3};
+        numPoints=100;
+        [xi, yi] = meshgrid(linspace(min(x),max(x),numPoints),linspace(min(y),max(y),numPoints));
+        zi = griddata(x,y,z, xi,yi);
+        contourf(xi,yi,zi,15);
+        set(gca, 'XScale', 'log');
+        set(gca, 'YScale', 'log');
+        colorbar;
+        title([mObj.name ' optimization for REDSVM']);
     end
-    Ts{m} = T;
-    fprintf('\nBest Results REDSVM C %f, k %f --> %s: %f\n', bestParam.C, bestParam.k, mObj.name, bestError);
+    hold off;
+else
+    % Use heatmaps
+    fprintf('Generating heat maps\n');
+    figure;
+    subplot(2,1,1)
+    heatmap(Ts{1},'C','k','ColorVariable','error');
+    title('MZE optimization for REDSVM');
+
+    subplot(2,1,2)
+    heatmap(Ts{2},'C','k','ColorVariable','error');
+    title('AMAE optimization for REDSVM');
 end
-
-fprintf('Generating heat maps\n');
-figure;
-subplot(2,1,1)
-h = heatmap(Ts{1},'C','k','ColorVariable','error');
-title('MZE optimization for REDSVM');
-
-subplot(2,1,2)
-h = heatmap(Ts{2},'C','k','ColorVariable','error');
-title('AMAE optimization for REDSVM');
 ```
+![REDSVM heatmap to show crossvalidation](tutorial/images/redsvm-melanoma-heatmap.png)
 
-![REDSVM heapmap to show crossvalidation](tutorial/images/redsvm-melanoma-heatmap.png)
+![REDSVM contourf to show crossvalidation](tutorial/images/redsvm-melanoma-contour.png)
 
 ## Kernel discriminant learning for ordinal regression (KDLOR)
 

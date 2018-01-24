@@ -178,6 +178,7 @@ clear T Ts;
 
 Metrics = {@MZE,@AMAE};
 Ts = cell(size(Metrics,2),1);
+CVO = cvpartition(train.targets,'KFold',3);
 for m = 1:size(Metrics,2)
     mObj = Metrics{m}();
     fprintf('Grid search to optimize %s for REDSVM\n', mObj.name);
@@ -185,10 +186,14 @@ for m = 1:size(Metrics,2)
     T = table();
     for C=10.^(-3:1:3)
         for k=10.^(-3:1:3)
-            param = struct('C',C,'k',k);
-            info = algorithmObj.runAlgorithm(train,test,param);
-            error = mObj.calculateMetric(test.targets,info.predictedTest);
-
+            error=0;
+            for ff = 1:CVO.NumTestSets
+                param = struct('C',C,'k',k);
+                info = algorithmObj.runAlgorithm(train,test,param);
+                error = error + mObj.calculateMetric(test.targets,info.predictedTest);
+                
+            end
+            error = error / CVO.NumTestSets;
             if error < bestError
                 bestError = error;
                 bestParam = param;
@@ -202,15 +207,38 @@ for m = 1:size(Metrics,2)
     fprintf('\nBest Results REDSVM C %f, k %f --> %s: %f\n', bestParam.C, bestParam.k, mObj.name, bestError);
 end
 
-fprintf('Generating heat maps\n');
-figure;
-subplot(2,1,1)
-h = heatmap(Ts{1},'C','k','ColorVariable','error');
-title('MZE optimization for REDSVM');
+if verLessThan('matlab', '2017a')
+    % Use contours
+    figure;
+    hold on;
+    for m = 1:size(Metrics,2)
+        mObj = Metrics{m}();
+        subplot(size(Metrics,2),1,m)
+        x = Ts{m}{:,1};
+        y = Ts{m}{:,2};
+        z = Ts{m}{:,3};
+        numPoints=100;
+        [xi, yi] = meshgrid(linspace(min(x),max(x),numPoints),linspace(min(y),max(y),numPoints));
+        zi = griddata(x,y,z, xi,yi);
+        contourf(xi,yi,zi,15);
+        set(gca, 'XScale', 'log');
+        set(gca, 'YScale', 'log');
+        colorbar;
+        title([mObj.name ' optimization for REDSVM']);
+    end
+    hold off;
+else
+    % Use heatmaps
+    fprintf('Generating heat maps\n');
+    figure;
+    subplot(2,1,1)
+    heatmap(Ts{1},'C','k','ColorVariable','error');
+    title('MZE optimization for REDSVM');
 
-subplot(2,1,2)
-h = heatmap(Ts{2},'C','k','ColorVariable','error');
-title('AMAE optimization for REDSVM');
+    subplot(2,1,2)
+    heatmap(Ts{2},'C','k','ColorVariable','error');
+    title('AMAE optimization for REDSVM');
+end
 
 
 %% Apply the KDLOR model 
