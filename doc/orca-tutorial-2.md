@@ -4,16 +4,17 @@
 
 - [Naive approaches and decomposition methods in orca](#naive-approaches-and-decomposition-methods-in-orca)
 	- [Loading the dataset and performing some preliminary experiments](#loading-the-dataset-and-performing-some-preliminary-experiments)
-	- [Naive approaches](#nave-approaches)
+	- [Naive approaches](#naive-approaches)
 		- [Regression (SVR)](#regression-svr)
 		- [Nominal classification (SVC1V1 and SVC1VA)](#nominal-classification-svc1v1-and-svc1va)
 		- [Cost sensitive classification (CSSVC)](#cost-sensitive-classification-cssvc)
-		- [Summary of results for naive approaches](#summary-of-results-for-nave-approaches)
+		- [Summary of results for naive approaches](#summary-of-results-for-naive-approaches)
 	- [Binary decomposition methods](#binary-decomposition-methods)
 		- [SVM with ordered partitions (SVMOP)](#svm-with-ordered-partitions-svmop)
 		- [Neural network approaches (ELMOP and NNOP)](#neural-network-approaches-elmop-and-nnop)
 		- [Summary of results for binary decompositions](#summary-of-results-for-binary-decompositions)
 	- [Ternary decomposition](#ternary-decomposition)
+- [References](#references)
 
 <!-- /TOC -->
 
@@ -26,8 +27,9 @@ We are going to test these methods using a melanoma diagnosis dataset based on d
 - The severity is assessed in terms of melanoma thickness, measured by the Breslow index. The problem is tackled as a five-class classification problem, where the first class represents benign lesions, and the remaining four classes represent the different stages of the melanoma (0, I, II and III, where III is the thickest one and the most dangerous).
 
 ![Graphical representation of the Breslow index](tutorial/images/diagram-melanoma-stages.png)
+*Graphical representation of the Breslow index (source [1])*
 
-The dataset is included in this repository, in a specific [folder](/exampledata/10-fold/melanoma-5classes-abcd-100/matlab). The corresponding script for this tutorial, ([exampleMelanoma.m](../src/code-examples/exampleMelanoma.m)), can be found and run in the [code example](../src/code-examples).
+The dataset from [1] is included in this repository, in a specific [folder](/exampledata/10-fold/melanoma-5classes-abcd-100/matlab). The corresponding script for this tutorial, ([exampleMelanoma.m](../src/code-examples/exampleMelanoma.m)), can be found and run in the [code example](../src/code-examples).
 
 ## Loading the dataset and performing some preliminary experiments
 
@@ -71,12 +73,14 @@ ans =
 
 ---
 
-We can apply a simple method, POM, to check the accuracy obtained for this dataset:
+We can apply a simple method, [POM](../src/Algorithms/POM.m) [2], to check the accuracy obtained for this dataset:
 ```Matlab
 >> train.patterns = trainMelanoma(:,1:(end-1));
 >> train.targets = trainMelanoma(:,end);
 >> test.patterns = testMelanoma(:,1:(end-1));
 >> test.targets = testMelanoma(:,end);
+>> addpath Algorithms;
+>> algorithmObj = POM();
 >> info = algorithmObj.runAlgorithm(train,test);
 >> addpath Measures
 >> CCR.calculateMetric(info.predictedTest,test.targets)
@@ -138,7 +142,7 @@ ans =
    -0.3708   -0.6797    0.8863    0.4503
    -0.7856   -0.8335   -1.5715   -1.0839
 
->> info = algorithmObj.runAlgorithm(trainStandarized,ttestStandarized);
+>> info = algorithmObj.runAlgorithm(trainStandarized,testStandarized);
 >> CCR.calculateMetric(info.predictedTest,test.targets)
 
     ans =
@@ -185,7 +189,7 @@ The first thing we will do is applying standard approaches for this ordinal regr
 
 One very simple way of solving an ordinal classification problem is applying regression. This is, we train a regressor to predict the number of the category (where categories are coded with real consecutive values, `1`, `2`, ..., `Q`, which are scaled between 0 and 1, `0/(Q-1)=0`, `1/(Q-1)`, ..., `(Q-1)/(Q-1)`). Then, in order to predict categories, we round the real values predicted by the regressor to the nearest integer.
 
-ORCA includes one algorithm following this approach based on support vector machines: Support Vector Regression (SVR). Note that SVR considers the epsilon-SVR model with an RBF kernel, involving three different parameters:
+ORCA includes one algorithm following this approach based on support vector machines: [Support Vector Regression (SVR)](../src/Algorithms/SVR.m). Note that SVR considers the epsilon-SVR model with an RBF kernel, involving three different parameters:
 - Parameter `C`, importance given to errors.
 - Parameter `k`, inverse of the width of the RBF kernel.
 - Parameter `e`, epsilon. It specifies the epsilon-tube within which no penalty is associated in the training loss function with points predicted within a distance epsilon from the actual value.
@@ -394,8 +398,8 @@ Note that the number of experiments is quite important, so that the execution ca
 We can also approach ordinal classification by considering nominal classification, i.e. by ignoring ordering information. It has been shown that this can make the classifier need more data to learn the concept.
 
 ORCA includes two approaches to perform ordinal classification by nominal classification, both based on the Support Vector Classifier:
-- One-Vs-One (SVC1V1), where all pairs of classes are compared in different binary SVCs. The prediction is based on majority voting.
-- One-Vs-All (SVC1VA), where each class is compared against the rest. The class predicted is that with the largest decision function value.
+- [One-Vs-One (SVC1V1)](../src/Algorithms/SVC1V1.m) [3], where all pairs of classes are compared in different binary SVCs. The prediction is based on majority voting.
+- [One-Vs-All (SVC1VA)](../src/Algorithms/SVC1VA.m) [3], where each class is compared against the rest. The class predicted is that with the largest decision function value.
 
 Both methods consider an RBF kernel with the following two parameters:
 - Parameter `C`, importance given to errors.
@@ -468,7 +472,7 @@ In this case, SVC1V1 obtains better results.
 
 This is a special case of approaching ordinal classification by nominal classifiers. We can include different misclassification costs in the optimization function, in order to penalyze more those mistakes which involve several categories in the ordinal scale. ORCA implements this methods using again SVC and specifically the SVC1VA alternative. The costs are included as weights in the patterns, in such a way that, when generating the `Q` binary problems, the patterns of the negative class are given a weight according to the absolute difference (in number of categories) between the positive class and the specific negative class.
 
-The method is called Cost Sensitive SVC (CSSVC) and considers an RBF kernel with the following two parameters:
+The method is called [Cost Sensitive SVC (CSSVC)](../src/Algorithms/CSSVC.m) [3] and considers an RBF kernel with the following two parameters:
 - Parameter `C`, importance given to errors.
 - Parameter `k`, inverse of the width of the RBF kernel.
 
@@ -535,7 +539,7 @@ All of them are based on an ordered partition decomposition, where the binary su
 
 ### SVM with ordered partitions (SVMOP)
 
-SVMOP method is based on applying the ordered partition binary decomposition, together different weights according to the absolute distance between the class of the binary problem and the specific category being examined. The models are trained independently and final prediction is based on the first model (in the ordinal scale) predicting a positive class. Again, the parameters of this model are:
+[SVMOP](../src/Algorithms/SVMOP) method is based on applying the ordered partition binary decomposition, together different weights according to the absolute distance between the class of the binary problem and the specific category being examined [4,5]. The models are trained independently and final prediction is based on the first model (in the ordinal scale) predicting a positive class. Again, the parameters of this model are:
 - Parameter `C`, importance given to errors.
 - Parameter `k`, inverse of the width of the RBF kernel.
 
@@ -572,15 +576,15 @@ ans =
 ### Neural network approaches (ELMOP and NNOP)
 
 Neural networks allow solving all the binary subproblems using a single model with several output nodes. Two neural network models are considered in ORCA:
-- Extreme learning machines with ordered partitions (ELMOP).
-- Neural network with ordered partitions (NNOP).
+- [Extreme learning machines with ordered partitions (ELMOP)](../src/Algorithms/ELMOP.m) [6].
+- [Neural network with ordered partitions (NNOP)](../src/Algorithms/NNOP.m) [7].
 
 ELMOP model is based on ELM, which are a quite popular type of neural network. In ELMs, the hidden weights are randomly set and the output weights are analytically set. The implementation in ORCA consider the ordered partition decomposition in the output layer. The prediction phase is tackled using an exponential loss based decoding process, where the class predicted is that with the minimum exponential loss with respect to the decision values.
 
 The algorithm can be configured using different activation functions for the hidden layer ('sig, 'sin', 'hardlim','tribas', 'radbas', 'up','rbf'/'krbf' or 'grbf'). During training, the user has to specify the following parameter in the `param` structure:
 - Parameter `hiddenN`: number of hidden nodes of the model. This is a decisive parameter for avoiding overfitting.
 
-Now, we perform a test for training ELMOP:
+Now, we perform a test for training ELMOP (note that ELMOP is not deterministic, this is, the results may vary among different runs of the algorithm):
 ```MATLAB
 >> algorithmObj = ELMOP('activationFunction','sig');
 info = algorithmObj.runAlgorithm(train,test,struct('hiddenN',20));
@@ -624,7 +628,7 @@ Three parameters have to be specified in this case:
 - Parameter `iter`, number of iterations for gradient descent.
 - Parameter `lambda`, regularization parameter in the error function (L2 regularizer), in order to avoid overfitting.
 
-This is an example of execution of NNOP:
+This is an example of execution of NNOP (note that results may vary among different runs):
 ```MATLAB
 >> algorithmObj = NNOP();
 info = algorithmObj.runAlgorithm(train,test,struct('hiddenN',20,'iter',500,'lambda',0.1));
@@ -707,10 +711,18 @@ ans =
 
 ---
 
-***Exercise 5***: in this tutorial, we hace considered a total of 8 classifiers with different parameter values for one of the folds of the melanoma dataset. In this exercise, you should generalise these results over the `10` partitions and interpret the results, trying to search for the best method. Apart from the two metrics considered in the tutorial (CCR and MAE), include metrics more sensitive to minority classes (for example, MS and MMAE). Construct a table with the average of these four metrics over the 10 folds. You can use the parameter values given in this tutorial or try to tune a bit them.
+***Exercise 5***: in this tutorial, we have considered a total of 8 classifiers with different parameter values for one of the folds of the melanoma dataset. In this exercise, you should generalise these results over the `10` partitions and interpret the results, trying to search for the best method. Apart from the two metrics considered in the tutorial (CCR and MAE), include metrics more sensitive to minority classes (for example, MS and MMAE). Construct a table with the average of these four metrics over the 10 folds. You can use the parameter values given in this tutorial or try to tune a bit them.
 
 ---
 
 ***Exercise 6***: now you should consider cross-validation to tune hyper parameters. In order to limit the computational time, do not include too many values for each parameter and only use the three first partitions of the dataset (by deleting or moving the files for the rest of partitions). Check again the conclusions about the methods. **Hyper parameters are decisive for performance!!**
 
----
+# References
+
+1. J. Sánchez-Monedero, M. Pérez-Ortiz, A. Sáez, P.A. Gutiérrez, and C. Hervás-Martínez. "Partial order label decomposition approaches for melanoma diagnosis". Applied Soft Computing. Volume 64, March 2018, Pages 341-355. https://doi.org/10.1016/j.asoc.2017.11.042
+1. P. McCullagh, "Regression models for ordinal data",  Journal of the Royal Statistical Society. Series B (Methodological), vol. 42, no. 2, pp. 109–142, 1980.
+1. C.-W. Hsu and C.-J. Lin. "A comparison of methods for multi-class support vector machines", IEEE Transaction on Neural Networks,vol. 13, no. 2, pp. 415–425, 2002. https://doi.org/10.1109/72.991427
+1. E. Frank and M. Hall, "A simple approach to ordinal classification", in Proceedings of the 12th European Conference on Machine Learning, ser. EMCL'01. London, UK: Springer-Verlag, 2001, pp. 145–156. https://doi.org/10.1007/3-540-44795-4_13
+1. W. Waegeman and L. Boullart, "An ensemble of weighted support vector machines for ordinal regression", International Journal of Computer Systems Science and Engineering, vol. 3, no. 1, pp. 47–51, 2009.
+1. W.-Y. Deng, Q.-H. Zheng, S. Lian, L. Chen, and X. Wang, "Ordinal extreme learning machine", Neurocomputing, vol. 74, no. 1-3, pp. 447-456, 2010.         http://dx.doi.org/10.1016/j.neucom.2010.08.022
+1. J. Cheng, Z. Wang, and G. Pollastri, "A neural network  approach to ordinal regression," in Proc. IEEE Int. Joint Conf. Neural Netw. (IEEE World Congr. Comput. Intell.), 2008, pp. 1279-1284.

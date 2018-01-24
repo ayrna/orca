@@ -1,13 +1,16 @@
 ![ORCA logo](orca_small.png)
+
 <!-- TOC depthFrom:1 depthTo:6 withLinks:1 updateOnSave:1 orderedList:0 -->
 
 - [Threshold models](#threshold-models)
 	- [Proportional odds model (POM)](#proportional-odds-model-pom)
 	- [Neural network based on POM (NNPOM)](#neural-network-based-on-pom-nnpom)
 	- [Support vector for ordinal regression (SVOREX and SVORIM)](#support-vector-for-ordinal-regression-svorex-and-svorim)
+	- [Reduction from ordinal regression to binary SVM classifiers (REDSVM)](#reduction-from-ordinal-regression-to-binary-svm-classifiers-redsvm)
 	- [Kernel discriminant learning for ordinal regression (KDLOR)](#kernel-discriminant-learning-for-ordinal-regression-kdlor)
 	- [Ordinal regression boosting (ORBoost)](#ordinal-regression-boosting-orboost)
 	- [Custom Ensemble based on several projections](#custom-ensemble-based-on-several-projections)
+- [References](#references)
 
 <!-- /TOC -->
 
@@ -20,11 +23,12 @@ Moreover, we are going to work again with melanoma diagnosis dataset. You should
 All threshold models are designed with a very reasonable idea: the categories to be predicted in ordinal classification comes from the discretization of an underlying latent variable, so that we can try to model the latent variables and use a total of Q-1 thresholds (for Q classes) to divide this variable in categories. In this way, the order of categories will be taken into account, because the intervals defined for each will be arranged in the same order, and a lot of flexibility will be given to the model by simply moving these thresholds.
 
 Because of this, there are many threshold model proposals in the literature, and ORCA includes some of the most popular ones:
-- One linear model (POM).
-- One neural network model (NNPOM).
-- Two support vector machine proposals (SVOREX and SVORIM).
-- One discriminant analysis proposal (KDLOR).
-- One ensemble model (ORBoost).
+- One linear model (POM) [1].
+- One neural network model (NNPOM) [1,2].
+- Two support vector machine proposals (SVOREX and SVORIM) [3].
+- One reduction from ordinal regression to binary SVM (REDSVM) [4].
+- One discriminant analysis proposal (KDLOR) [5].
+- One ensemble model (ORBoost) [6].
 
 The corresponding script for this tutorial, ([exampleMelanomaTM.m](../src/code-examples/exampleMelanomaTM.m)), can be found and run in the [code example](../src/code-examples).
 
@@ -361,6 +365,69 @@ SVORIM Accuracy: 0.660714
 SVORIM MAE: 0.464286
 ```
 
+## Reduction from ordinal regression to binary SVM classifiers (REDSVM)
+
+The reduction from ordinal regression to binary SVM classifiers (REDSVM) [4] is a method that can be categorized both as threshold method or as decomposition method. The hyper-parameters are the wellknown `k` and `C` of SVM variants.
+
+```MATLAB
+%% Apply the REDSVM model
+% Create the REDSVM object
+algorithmObj = REDSVM();
+
+% Train REDSVM
+info = algorithmObj.runAlgorithm(train,test,struct('C',10,'k',0.001));
+
+% Evaluate the model
+fprintf('REDSVM method\n---------------\n');
+fprintf('REDSVM Accuracy: %f\n', CCR.calculateMetric(test.targets,info.predictedTest));
+fprintf('REDSVM MAE: %f\n', MAE.calculateMetric(test.targets,info.predictedTest));
+```
+
+To better understand the relevance of parameters selection process, the following code optimizes parameters `k` and `k` using a pair of train and validation data. Then, it plots corresponding heatmaps for `Acc` and `AMAE`. Note that the optimal combination may differ depending of the selected performance metric.
+
+```MATLAB
+%% REDSVM optimization
+clear T Ts;
+
+Metrics = {@MZE,@AMAE};
+Ts = cell(size(Metrics,2),1);
+for m = 1:size(Metrics,2)
+    mObj = Metrics{m}();
+    fprintf('Grid search to optimize %s for REDSVM\n', mObj.name);
+    bestError=Inf;
+    T = table();
+    for C=10.^(-3:1:3)
+        for k=10.^(-3:1:3)
+            param = struct('C',C,'k',k);
+            info = algorithmObj.runAlgorithm(train,test,param);
+            error = mObj.calculateMetric(test.targets,info.predictedTest);
+
+            if error < bestError
+                bestError = error;
+                bestParam = param;
+            end
+            param.error = error;
+            T = [T; struct2table(param)];
+            fprintf('.');
+        end
+    end
+    Ts{m} = T;
+    fprintf('\nBest Results REDSVM C %f, k %f --> %s: %f\n', bestParam.C, bestParam.k, mObj.name, bestError);
+end
+
+fprintf('Generating heat maps\n');
+figure;
+subplot(2,1,1)
+h = heatmap(Ts{1},'C','k','ColorVariable','error');
+title('MZE optimization for REDSVM');
+
+subplot(2,1,2)
+h = heatmap(Ts{2},'C','k','ColorVariable','error');
+title('AMAE optimization for REDSVM');
+```
+
+![REDSVM heapmap to show crossvalidation](tutorial/images/redsvm-melanoma-heatmap.png)
+
 ## Kernel discriminant learning for ordinal regression (KDLOR)
 
 This method adapts discriminant learning to the context of ordinal classification. The original discriminant learning problem is transformed by considering the minimum difference between the averages of two consecutive classes (in the ordinal scale). If this minimum difference is positive, the the classes are correctly ranked according to the projection.
@@ -500,8 +567,13 @@ we can see that, although the correlation of both projections is quite high, som
 
 ---
 
----
-
 ***Exercise 4***: construct a similar ensemble but using different SVORIM projections with different subsets of patterns and different subsets of input variables (randomization). The number of members of the ensemble should remain as a parameter.
 
----
+# References
+
+1. P. McCullagh, "Regression models for ordinal data",  Journal of the Royal Statistical Society. Series B (Methodological), vol. 42, no. 2, pp. 109–142, 1980.
+1. M. J. Mathieson, "Ordinal models for neural networks", in Proc. 3rd Int. Conf. Neural Netw. Capital Markets, 1996, pp. 523-536.
+1. W. Chu and S. S. Keerthi, "Support Vector Ordinal Regression", Neural Computation, vol. 19, no. 3, pp. 792–815, 2007. http://10.1162/neco.2007.19.3.792
+1. H.-T. Lin and L. Li, "Reduction from cost-sensitive ordinal ranking to weighted binary classification" Neural Computation, vol. 24, no. 5, pp. 1329-1367, 2012. http://10.1162/NECO_a_00265
+1. B.-Y. Sun, J. Li, D. D. Wu, X.-M. Zhang, and W.-B. Li, "Kernel discriminant learning for ordinal regression", IEEE Transactions on Knowledge and Data Engineering, vol. 22, no. 6, pp. 906-910, 2010. https://doi.org/10.1109/TKDE.2009.170
+1. H.-T. Lin and L. Li, "Large-margin thresholded ensembles for ordinal regression: Theory and practice", in Proc. of the 17th Algorithmic Learning Theory International Conference, ser. Lecture Notes in Artificial Intelligence (LNAI), J. L. Balcazar, P. M. Long, and F. Stephan, Eds., vol. 4264. Springer-Verlag, October 2006, pp. 319-333.
