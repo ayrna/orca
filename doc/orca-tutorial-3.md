@@ -88,6 +88,7 @@ end
 hold off;
 ```
 which generates the following figure:
+
 ![Projections of POM for melanoma](tutorial/images/POMMelanomaProjections.png)
 
 As can be checked no pattern is projected beyond the last threshold, so that the last class is ignored. Note that POM is a linear model and this can limit its accuracy. We can check this in the confusion matrix:
@@ -120,6 +121,7 @@ legend(arrayfun(@(num) sprintf('C%d', num), 1:Q, 'UniformOutput', false))
 hold off;
 ```
 which generates the plot:
+
 ![Projections of POM for melanoma with colours](tutorial/images/POMMelanomaProjectionsColours.png)
 
 As can be observed the three patterns from the last class are never correctly classified.
@@ -140,6 +142,7 @@ for i=1:size(info.model.thresholds,1)
 end
 hold off;
 ```
+
 ![Cumulative probabilities by this set of thresholds](tutorial/images/POMMelanomaCumProb.png)
 
 ```MATLAB
@@ -154,6 +157,7 @@ for i=1:size(info.model.thresholds,1)
 end
 hold off;
 ```
+
 ![Individual probabilities by this set of thresholds](tutorial/images/POMMelanomaProb.png)
 
 As can be seen, those projections close to the thresholds can be classified in different classes according to the probability distribution. However, following the spirit of threshold models, the implementation of POM included in ORCA classify the patterns according to their position with respect to the thresholds.
@@ -342,6 +346,7 @@ end
 legend('SVOREX');
 hold off;
 ```
+
 ![Comparison of SVORIM and SVOREX](tutorial/images/SVORIM_SVOREX.png)
 
 Fine tuning a bit the parameters, we can improve the results:
@@ -418,7 +423,8 @@ else
     heatmap(Ts{2},'C','k','ColorVariable','error');
     title('AMAE optimization for REDSVM');
 end
-```
+
+
 ![REDSVM heatmap to show crossvalidation](tutorial/images/redsvm-melanoma-heatmap.png)
 
 ![REDSVM contourf to show crossvalidation](tutorial/images/redsvm-melanoma-contour.png)
@@ -487,6 +493,7 @@ end
 legend(arrayfun(@(num) sprintf('C%d', num), 1:Q, 'UniformOutput', false))
 hold off;
 ```
+
 ![Projection of KDLOR for the melanoma dataset](tutorial/images/KDLORProjectionMelanoma.png)
 ---
 
@@ -553,16 +560,20 @@ If we check the dataset used for POM:
 >> scatter(newTrain.patterns(:,1),newTrain.patterns(:,2),7,newTrain.targets);
 
 ```
+
 ![Intermediate dataset of the custom ensemble](tutorial/images/ensembleMelanoma.png)
 we can see that, although the correlation of both projections is quite high, some patterns can be refined by considering both projections.
 
 ---
 
-***Exercise 3***: construct a similar ensemble but using different SVORIM projections with different parameters for the `C` value. The number of members of the ensemble should be a parameter.
+***Exercise 3***: construct a similar ensemble but using different SVORIM projections with different subsets of input variables (a 40% of randomly chosen variables). The number of members of the ensemble should be as a parameter (try 50).
+
+----
+
+***Exercise 4***: construct a similar ensemble but using different SVORIM projections with different parameters for the `C` value.
 
 ---
 
-***Exercise 4***: construct a similar ensemble but using different SVORIM projections with different subsets of patterns and different subsets of input variables (randomization). The number of members of the ensemble should remain as a parameter.
 
 # References
 
