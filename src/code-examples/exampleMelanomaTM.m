@@ -296,7 +296,7 @@ fprintf('REDSVM MAE: %f\n', MAE.calculateMetric(test.targets,info.predictedTest)
 %% REDSVM optimization
 clear T Ts;
 
-CVO = cvpartition(train.targets,'KFold',kFold);
+
 Metrics = {@MZE,@AMAE};
 Ts = cell(size(Metrics,2),1);
 for m = 1:size(Metrics,2)
