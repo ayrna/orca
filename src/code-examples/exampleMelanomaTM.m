@@ -227,3 +227,58 @@ fprintf('SVORIM+SVOREX+POM Accuracy: %f\n', CCR.calculateMetric(test.targets,inf
 fprintf('SVORIM+SVOREX+POM MAE: %f\n', MAE.calculateMetric(test.targets,info.predictedTest));
 
 scatter(newTrain.patterns(:,1),newTrain.patterns(:,2),7,newTrain.targets);
+
+%% Apply the REDSVM model
+% Create the REDSVM object
+algorithmObj = REDSVM();
+
+% Train REDSVM
+info = algorithmObj.runAlgorithm(train,test,struct('C',10,'k',0.001));
+
+% Evaluate the model
+fprintf('REDSVM method\n---------------\n');
+fprintf('REDSVM Accuracy: %f\n', CCR.calculateMetric(test.targets,info.predictedTest));
+fprintf('REDSVM MAE: %f\n', MAE.calculateMetric(test.targets,info.predictedTest));
+
+
+%% REDSVM optimization
+clear T Ts;
+
+CVO = cvpartition(train.targets,'KFold',kFold);
+Metrics = {@MZE,@AMAE};
+Ts = cell(size(Metrics,2),1);
+for m = 1:size(Metrics,2)
+    mObj = Metrics{m}();
+    fprintf('Grid search to optimize %s for REDSVM\n', mObj.name);
+    bestError=Inf;
+    T = table();
+    for C=10.^(-3:1:3)
+        for k=10.^(-3:1:3)
+            param = struct('C',C,'k',k);
+            info = algorithmObj.runAlgorithm(train,test,param);
+            error = mObj.calculateMetric(test.targets,info.predictedTest);
+
+            if error < bestError
+                bestError = error;
+                bestParam = param;
+            end
+            param.error = error;
+            T = [T; struct2table(param)];
+            fprintf('.');
+        end
+    end
+    Ts{m} = T;
+    fprintf('\nBest Results REDSVM C %f, k %f --> %s: %f\n', bestParam.C, bestParam.k, mObj.name, bestError);
+end
+
+fprintf('Generating heat maps\n');
+figure;
+subplot(2,1,1)
+h = heatmap(Ts{1},'C','k','ColorVariable','error');
+title('MZE optimization for REDSVM');
+
+subplot(2,1,2)
+h = heatmap(Ts{2},'C','k','ColorVariable','error');
+title('AMAE optimization for REDSVM');
+
+
