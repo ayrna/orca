@@ -391,7 +391,7 @@ fprintf('REDSVM MAE: %f\n', MAE.calculateMetric(test.targets,info.predictedTest)
 To better understand the relevance of parameters selection process, the following code optimizes parameters `k` and `C` using a 3Fold for each combination. Then, it plots corresponding validation results for `Acc` and `AMAE`. Note that the optimal combination may differ depending of the selected performance metric. Depending on your version of Matlab, a `contourf` or a `heatmap` is used for each metric.
 
 ```MATLAB
-if verLessThan('matlab', '2017a')
+>> if verLessThan('matlab', '2017a')
     % Use contours
     figure;
     hold on;
@@ -423,7 +423,7 @@ else
     heatmap(Ts{2},'C','k','ColorVariable','error');
     title('AMAE optimization for REDSVM');
 end
-
+```
 
 ![REDSVM heatmap to show crossvalidation](tutorial/images/redsvm-melanoma-heatmap.png)
 
