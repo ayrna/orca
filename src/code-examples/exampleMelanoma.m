@@ -9,7 +9,7 @@ trainMelanoma([1:5 300:305],end)
 melanoma = [trainMelanoma; testMelanoma];
 
 % Number of patterns per class
-histcounts(melanoma(:,end),5)
+n = hist(melanoma(:,end),5)
 
 addpath ../Algorithms
 
@@ -23,23 +23,26 @@ test.targets = testMelanoma(:,end);
 % Create the POM object
 algorithmObj = POM();
 
-% Train POM
-info = algorithmObj.runAlgorithm(train,test);
-
 addpath ../Measures
-
-fprintf('Original dataset\n---------------\n');
-fprintf('POM Accuracy: %f\n', CCR.calculateMetric(test.targets,info.predictedTest));
-fprintf('POM MAE: %f\n', MAE.calculateMetric(test.targets,info.predictedTest));
+%% Train POM
+if (exist ('OCTAVE_VERSION', 'builtin') > 0)
+  fprintf('POM in octave fails with non-standardized data\n---------------\n');
+else
+  info = algorithmObj.runAlgorithm(train,test);
+  fprintf('Original dataset\n---------------\n');
+  fprintf('POM Accuracy: %f\n', CCR.calculateMetric(test.targets,info.predictedTest));
+  fprintf('POM MAE: %f\n', MAE.calculateMetric(test.targets,info.predictedTest));
+end
 
 %% Standarize data
 addpath ..
-[trainStandarized,testStandarized] = DataSet.standarizeData(train,test)
+[trainStandarized,testStandarized] = DataSet.standarizeData(train,test);
 
 % Check data
 train.patterns(1:10,2:5)
 trainStandarized.patterns(1:10,2:5)
 
+% Run POM again with standarizeData
 info = algorithmObj.runAlgorithm(trainStandarized,testStandarized);
 fprintf('\nStandarized dataset\n---------------\n');
 fprintf('POM Accuracy: %f\n', CCR.calculateMetric(info.predictedTest,test.targets));

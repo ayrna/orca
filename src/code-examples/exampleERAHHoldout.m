@@ -1,5 +1,9 @@
+if (exist ('OCTAVE_VERSION', 'builtin') > 0)
+  pkg load statistics
+end
+
 % Load data
-ERAData = table2array(readtable('../../exampledata/ERA.csv'));
+ERAData = csvread('../../exampledata/ERA.csv');
 
 % Check the first 20 rows
 ERAData(1:20,:)
@@ -20,8 +24,13 @@ mkdir(rootDir);
 % For each partitions
 for ff = 1:h
     CVO = cvpartition(targets,'HoldOut',0.25); % 25% of patterns for the test set
-    trIdx = CVO.training(1);
-    teIdx = CVO.test(1);
+    if (exist ('OCTAVE_VERSION', 'builtin') > 0)
+      trIdx = training(CVO,1);
+      teIdx = test(CVO,1);
+    else
+      trIdx = CVO.training(1);
+      teIdx = CVO.test(1);
+    end
     dlmwrite(fullfile(rootDir,sprintf('train-%s.%d',nameDataset,ff-1)),ERAData(trIdx,:),' ');
     dlmwrite(fullfile(rootDir,sprintf('test-%s.%d',nameDataset,ff-1)),ERAData(teIdx,:),' ');
 end

@@ -2,7 +2,15 @@ addpath ../
 addpath ../Measures
 addpath ../Algorithms
 
-% Disable warnings
+if (exist ('OCTAVE_VERSION', 'builtin') > 0)
+  try 
+    graphics_toolkit ("gnuplot")
+  catch 
+    error("This code uses gnuplot for plotting. Please install gnuplot and restart Octave to run this code.")
+  end
+end
+
+% Disable MATLAB warnings
 warning('off','MATLAB:nearlySingularMatrix')
 warning('off','stats:mnrfit:IterOrEvalLimit')
 
@@ -35,7 +43,11 @@ fprintf('POM MAE: %f\n', MAE.calculateMetric(test.targets,info.predictedTest));
 
 % Visualize the projection
 figure; hold on;
-h = histogram(info.projectedTest,30);
+if (exist ('OCTAVE_VERSION', 'builtin') > 0)
+    hist(info.projectedTest,30)
+else
+    h = histogram(info.projectedTest,30);
+end
 y1=get(gca,'ylim');
 for i=1:size(info.model.thresholds,1)
     line([info.model.thresholds(i) info.model.thresholds(i)],y1,'Color',[1 0 0]);    
@@ -46,10 +58,19 @@ hold off;
 confusionmat(test.targets,info.predictedTest)
 
 % Visualize the projection with colors
+
+%clf
 figure; hold on;
 Q = size(info.model.thresholds,1)+1;
-for i=1:Q
-    h = histogram(info.projectedTest(test.targets==i),'BinWidth',0.5);
+if (exist ('OCTAVE_VERSION', 'builtin') > 0)
+  colors = {[102 170 215],[232, 152, 117],[183, 174, 105],[178, 130, 187],[173, 205, 131]};
+  for i=1:Q
+      plothist(info.projectedTest(test.targets==i),30,colors{i}/255);
+  end
+else
+  for i=1:Q
+      h = histogram(info.projectedTest(test.targets==i),'BinWidth',0.5);
+  end
 end
 y1=get(gca,'ylim');
 for i=1:size(info.model.thresholds,1)
@@ -179,13 +200,16 @@ clear T Ts;
 Metrics = {@MZE,@AMAE};
 setC = 10.^(-3:1:3);
 setk = 10.^(-3:1:3);
-Ts = cell(size(Metrics,2),1); 
+Ts = cell(size(Metrics,2),1);
 
+% TODO: alternative Octave code
 for m = 1:size(Metrics,2)
     mObj = Metrics{m}();
     fprintf('Grid search to optimize %s for REDSVM\n', mObj.name);
     bestError=Inf;
-    T = table();
+    if (~exist ('OCTAVE_VERSION', 'builtin') > 0)
+      T = table();
+    end
     for C=setC
         for k=setk
             param = struct('C',C,'k',k);
@@ -197,43 +221,50 @@ for m = 1:size(Metrics,2)
                 bestParam = param;
             end
             param.error = error;
-            T = [T; struct2table(param)];
+            if (~exist ('OCTAVE_VERSION', 'builtin') > 0)
+              T = [T; struct2table(param)];
+            end
             fprintf('.');
         end
     end
-    Ts{m} = T;
+    if (~exist ('OCTAVE_VERSION', 'builtin') > 0)
+      Ts{m} = T;
+    end
     fprintf('\nBest Results REDSVM C %f, k %f --> %s: %f\n', bestParam.C, bestParam.k, mObj.name, bestError);
 end
 
 % Depending on matlab version we perform a different plot
-fprintf('Generating heat maps\n');
-figure;
-subplot(2,1,1)
-if verLessThan('matlab','9.2')
-    Data = zeros(length(setC), length(setk));
-    for i=1:length(setC)
-        Data(i,:)= Ts{1}.error(Ts{1}.k==setk(i));
-    end
-    imagesc(Data);
-    colorbar;
+if (exist ('OCTAVE_VERSION', 'builtin') > 0)
+  fprintf('This plot is not supported in octave\n');
 else
-    heatmap(Ts{1},'C','k','ColorVariable','error');
-end
-title('MZE optimization for REDSVM');
+  fprintf('Generating heat maps\n');
+  figure;
+  subplot(2,1,1)
+  if verLessThan('matlab','9.2')
+      Data = zeros(length(setC), length(setk));
+      for i=1:length(setC)
+          Data(i,:)= Ts{1}.error(Ts{1}.k==setk(i));
+      end
+      imagesc(Data);
+      colorbar;
+  else
+      heatmap(Ts{1},'C','k','ColorVariable','error');
+  end
+  title('MZE optimization for REDSVM');
 
-subplot(2,1,2)
-if verLessThan('matlab','9.2')
-    Data = zeros(length(setC), length(setk));
-    for i=1:length(setC)
-        Data(i,:)= Ts{2}.error(Ts{2}.k==setk(i));
-    end
-    imagesc(Data);
-    colorbar;
-else
-   heatmap(Ts{2},'C','k','ColorVariable','error');
+  subplot(2,1,2)
+  if verLessThan('matlab','9.2')
+      Data = zeros(length(setC), length(setk));
+      for i=1:length(setC)
+          Data(i,:)= Ts{2}.error(Ts{2}.k==setk(i));
+      end
+      imagesc(Data);
+      colorbar;
+  else
+     heatmap(Ts{2},'C','k','ColorVariable','error');
+  end
+  title('AMAE optimization for REDSVM');
 end
-title('AMAE optimization for REDSVM');
-
 
 %% Apply the KDLOR model 
 % Create the KDLOR object
@@ -254,9 +285,17 @@ confusionmat(test.targets,info.predictedTest)
 % Visualize the projection with colors
 figure; hold on;
 Q = size(info.model.thresholds,1)+1;
-for i=1:Q
-    h = histogram(info.projectedTest(test.targets==i),30);
+if (exist ('OCTAVE_VERSION', 'builtin') > 0)
+  colors = {[102 170 215],[232, 152, 117],[183, 174, 105],[178, 130, 187],[173, 205, 131]};
+  for i=1:Q
+      plothist(info.projectedTest(test.targets==i),30,colors{i}/255);
+  end
+else
+  for i=1:Q
+      h = histogram(info.projectedTest(test.targets==i),30);
+  end
 end
+
 y1=get(gca,'ylim');
 for i=1:size(info.model.thresholds,1)
     line([info.model.thresholds(i) info.model.thresholds(i)],y1,'Color',[1 0 0]);    

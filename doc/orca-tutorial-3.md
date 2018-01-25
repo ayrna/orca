@@ -30,7 +30,7 @@ Because of this, there are many threshold model proposals in the literature, and
 - One discriminant analysis proposal (KDLOR) [5].
 - One ensemble model (ORBoost) [6].
 
-The corresponding script for this tutorial, ([exampleMelanomaTM.m](../src/code-examples/exampleMelanomaTM.m)), can be found and run in the [code example](../src/code-examples).
+The corresponding script for this tutorial, ([exampleMelanomaTM.m](../src/code-examples/exampleMelanomaTM.m)), can be found and run in the [code example](../src/code-examples). Octave code is not shown here to simplify code, but it is included in ([exampleMelanomaTM.m](../src/code-examples/exampleMelanomaTM.m)).
 
 ## Proportional odds model (POM)
 

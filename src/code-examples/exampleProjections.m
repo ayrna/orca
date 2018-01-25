@@ -1,4 +1,5 @@
 addpath ../Algorithms/
+addpath ../Measures/
 
 % Load the different partitions of the dataset
 load ../../exampledata/1-holdout/toy/matlab/train_toy.0
@@ -32,8 +33,13 @@ amaeTest2 = AMAE.calculateMetric(test.targets,info2.predictedTest);
 msg{2} = sprintf('KDLOR k=%f. AMAE=%f', param.k, amaeTest2);
 
 figure; hold on;
-h1 = histogram(info1.projectedTest,30);
-h2 = histogram(info2.projectedTest,30);
+if (exist ('OCTAVE_VERSION', 'builtin') > 0)
+  plothist(info1.projectedTest,30,[102 170 215]/255);
+  plothist(info2.projectedTest,30,[232, 152, 117]/255);
+else
+  h1 = histogram(info1.projectedTest,30);
+  h2 = histogram(info2.projectedTest,30);
+end
 legend(msg)
 legend('Location','NorthWest')
 hold off;
