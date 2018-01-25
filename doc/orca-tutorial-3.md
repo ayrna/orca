@@ -88,6 +88,7 @@ end
 hold off;
 ```
 which generates the following figure:
+
 ![Projections of POM for melanoma](tutorial/images/POMMelanomaProjections.png)
 
 As can be checked no pattern is projected beyond the last threshold, so that the last class is ignored. Note that POM is a linear model and this can limit its accuracy. We can check this in the confusion matrix:
@@ -120,6 +121,7 @@ legend(arrayfun(@(num) sprintf('C%d', num), 1:Q, 'UniformOutput', false))
 hold off;
 ```
 which generates the plot:
+
 ![Projections of POM for melanoma with colours](tutorial/images/POMMelanomaProjectionsColours.png)
 
 As can be observed the three patterns from the last class are never correctly classified.
@@ -140,6 +142,7 @@ for i=1:size(info.model.thresholds,1)
 end
 hold off;
 ```
+
 ![Cumulative probabilities by this set of thresholds](tutorial/images/POMMelanomaCumProb.png)
 
 ```MATLAB
@@ -154,6 +157,7 @@ for i=1:size(info.model.thresholds,1)
 end
 hold off;
 ```
+
 ![Individual probabilities by this set of thresholds](tutorial/images/POMMelanomaProb.png)
 
 As can be seen, those projections close to the thresholds can be classified in different classes according to the probability distribution. However, following the spirit of threshold models, the implementation of POM included in ORCA classify the patterns according to their position with respect to the thresholds.
@@ -342,6 +346,7 @@ end
 legend('SVOREX');
 hold off;
 ```
+
 ![Comparison of SVORIM and SVOREX](tutorial/images/SVORIM_SVOREX.png)
 
 Fine tuning a bit the parameters, we can improve the results:
@@ -383,50 +388,46 @@ fprintf('REDSVM Accuracy: %f\n', CCR.calculateMetric(test.targets,info.predicted
 fprintf('REDSVM MAE: %f\n', MAE.calculateMetric(test.targets,info.predictedTest));
 ```
 
-To better understand the relevance of parameters selection process, the following code optimizes parameters `k` and `k` using a pair of train and validation data. Then, it plots corresponding heatmaps for `Acc` and `AMAE`. Note that the optimal combination may differ depending of the selected performance metric.
+To better understand the relevance of parameters selection process, the following code optimizes parameters `k` and `C` using a 3Fold for each combination. Then, it plots corresponding validation results for `Acc` and `AMAE`. Note that the optimal combination may differ depending of the selected performance metric. Depending on your version of Matlab, a `contourf` or a `heatmap` is used for each metric.
 
 ```MATLAB
-%% REDSVM optimization
-clear T Ts;
-
-Metrics = {@MZE,@AMAE};
-Ts = cell(size(Metrics,2),1);
-for m = 1:size(Metrics,2)
-    mObj = Metrics{m}();
-    fprintf('Grid search to optimize %s for REDSVM\n', mObj.name);
-    bestError=Inf;
-    T = table();
-    for C=10.^(-3:1:3)
-        for k=10.^(-3:1:3)
-            param = struct('C',C,'k',k);
-            info = algorithmObj.runAlgorithm(train,test,param);
-            error = mObj.calculateMetric(test.targets,info.predictedTest);
-
-            if error < bestError
-                bestError = error;
-                bestParam = param;
-            end
-            param.error = error;
-            T = [T; struct2table(param)];
-            fprintf('.');
-        end
+>> if verLessThan('matlab', '2017a')
+    % Use contours
+    figure;
+    hold on;
+    for m = 1:size(Metrics,2)
+        mObj = Metrics{m}();
+        subplot(size(Metrics,2),1,m)
+        x = Ts{m}{:,1};
+        y = Ts{m}{:,2};
+        z = Ts{m}{:,3};
+        numPoints=100;
+        [xi, yi] = meshgrid(linspace(min(x),max(x),numPoints),linspace(min(y),max(y),numPoints));
+        zi = griddata(x,y,z, xi,yi);
+        contourf(xi,yi,zi,15);
+        set(gca, 'XScale', 'log');
+        set(gca, 'YScale', 'log');
+        colorbar;
+        title([mObj.name ' optimization for REDSVM']);
     end
-    Ts{m} = T;
-    fprintf('\nBest Results REDSVM C %f, k %f --> %s: %f\n', bestParam.C, bestParam.k, mObj.name, bestError);
+    hold off;
+else
+    % Use heatmaps
+    fprintf('Generating heat maps\n');
+    figure;
+    subplot(2,1,1)
+    heatmap(Ts{1},'C','k','ColorVariable','error');
+    title('MZE optimization for REDSVM');
+
+    subplot(2,1,2)
+    heatmap(Ts{2},'C','k','ColorVariable','error');
+    title('AMAE optimization for REDSVM');
 end
-
-fprintf('Generating heat maps\n');
-figure;
-subplot(2,1,1)
-h = heatmap(Ts{1},'C','k','ColorVariable','error');
-title('MZE optimization for REDSVM');
-
-subplot(2,1,2)
-h = heatmap(Ts{2},'C','k','ColorVariable','error');
-title('AMAE optimization for REDSVM');
 ```
 
-![REDSVM heapmap to show crossvalidation](tutorial/images/redsvm-melanoma-heatmap.png)
+![REDSVM heatmap to show crossvalidation](tutorial/images/redsvm-melanoma-heatmap.png)
+
+![REDSVM contourf to show crossvalidation](tutorial/images/redsvm-melanoma-contour.png)
 
 ## Kernel discriminant learning for ordinal regression (KDLOR)
 
@@ -492,6 +493,7 @@ end
 legend(arrayfun(@(num) sprintf('C%d', num), 1:Q, 'UniformOutput', false))
 hold off;
 ```
+
 ![Projection of KDLOR for the melanoma dataset](tutorial/images/KDLORProjectionMelanoma.png)
 ---
 
@@ -558,16 +560,20 @@ If we check the dataset used for POM:
 >> scatter(newTrain.patterns(:,1),newTrain.patterns(:,2),7,newTrain.targets);
 
 ```
+
 ![Intermediate dataset of the custom ensemble](tutorial/images/ensembleMelanoma.png)
 we can see that, although the correlation of both projections is quite high, some patterns can be refined by considering both projections.
 
 ---
 
-***Exercise 3***: construct a similar ensemble but using different SVORIM projections with different parameters for the `C` value. The number of members of the ensemble should be a parameter.
+***Exercise 4***: construct a similar ensemble but using different SVORIM projections with different subsets of input variables (a 40% of randomly chosen variables). The number of members of the ensemble should be as a parameter (try 50).
+
+----
+
+***Exercise 5***: construct a similar ensemble but using different SVORIM projections with different parameters for the `C` value.
 
 ---
 
-***Exercise 4***: construct a similar ensemble but using different SVORIM projections with different subsets of patterns and different subsets of input variables (randomization). The number of members of the ensemble should remain as a parameter.
 
 # References
 
