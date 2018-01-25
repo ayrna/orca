@@ -177,14 +177,17 @@ fprintf('REDSVM MAE: %f\n', MAE.calculateMetric(test.targets,info.predictedTest)
 clear T Ts;
 
 Metrics = {@MZE,@AMAE};
-Ts = cell(size(Metrics,2),1);
+setC = 10.^(-3:1:3);
+setk = 10.^(-3:1:3);
+Ts = cell(size(Metrics,2),1); 
+
 for m = 1:size(Metrics,2)
     mObj = Metrics{m}();
     fprintf('Grid search to optimize %s for REDSVM\n', mObj.name);
     bestError=Inf;
     T = table();
-    for C=10.^(-3:1:3)
-        for k=10.^(-3:1:3)
+    for C=setC
+        for k=setk
             param = struct('C',C,'k',k);
             info = algorithmObj.runAlgorithm(train,test,param);
             error = mObj.calculateMetric(test.targets,info.predictedTest);
@@ -202,14 +205,33 @@ for m = 1:size(Metrics,2)
     fprintf('\nBest Results REDSVM C %f, k %f --> %s: %f\n', bestParam.C, bestParam.k, mObj.name, bestError);
 end
 
+% Depending on matlab version we perform a different plot
 fprintf('Generating heat maps\n');
 figure;
 subplot(2,1,1)
-h = heatmap(Ts{1},'C','k','ColorVariable','error');
+if verLessThan('matlab','9.2')
+    Data = zeros(length(setC), length(setk));
+    for i=1:length(setC)
+        Data(i,:)= Ts{1}.error(Ts{1}.k==setk(i));
+    end
+    imagesc(Data);
+    colorbar;
+else
+    heatmap(Ts{1},'C','k','ColorVariable','error');
+end
 title('MZE optimization for REDSVM');
 
 subplot(2,1,2)
-h = heatmap(Ts{2},'C','k','ColorVariable','error');
+if verLessThan('matlab','9.2')
+    Data = zeros(length(setC), length(setk));
+    for i=1:length(setC)
+        Data(i,:)= Ts{2}.error(Ts{2}.k==setk(i));
+    end
+    imagesc(Data);
+    colorbar;
+else
+   heatmap(Ts{2},'C','k','ColorVariable','error');
+end
 title('AMAE optimization for REDSVM');
 
 
