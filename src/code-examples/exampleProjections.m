@@ -5,7 +5,7 @@ addpath ../Measures/
 load ../../exampledata/1-holdout/toy/matlab/train_toy.0
 load ../../exampledata/1-holdout/toy/matlab/test_toy.0
 
-% "patterns" refers to the input variables and targets to the output one
+% patterns refers to the input variables and targets to the output one
 train.patterns = train_toy(:,1:end-1);
 train.targets = train_toy(:,end);
 test.patterns = test_toy(:,1:end-1);

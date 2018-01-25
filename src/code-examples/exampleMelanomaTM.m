@@ -5,9 +5,9 @@ addpath ../Algorithms
 if (exist ('OCTAVE_VERSION', 'builtin') > 0)
   pkg load statistics
   try
-    graphics_toolkit ("gnuplot")
+    graphics_toolkit ('gnuplot')
   catch
-    error("This code uses gnuplot for plotting. Please install gnuplot and restart Octave to run this code.")
+    error('This code uses gnuplot for plotting. Please install gnuplot and restart Octave to run this code.')
   end
 end
 
