@@ -566,11 +566,11 @@ we can see that, although the correlation of both projections is quite high, som
 
 ---
 
-***Exercise 3***: construct a similar ensemble but using different SVORIM projections with different subsets of input variables (a 40% of randomly chosen variables). The number of members of the ensemble should be as a parameter (try 50).
+***Exercise 4***: construct a similar ensemble but using different SVORIM projections with different subsets of input variables (a 40% of randomly chosen variables). The number of members of the ensemble should be as a parameter (try 50).
 
 ----
 
-***Exercise 4***: construct a similar ensemble but using different SVORIM projections with different parameters for the `C` value.
+***Exercise 5***: construct a similar ensemble but using different SVORIM projections with different parameters for the `C` value.
 
 ---
 
