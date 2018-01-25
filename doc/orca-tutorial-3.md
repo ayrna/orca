@@ -391,7 +391,54 @@ fprintf('REDSVM MAE: %f\n', MAE.calculateMetric(test.targets,info.predictedTest)
 To better understand the relevance of parameters selection process, the following code optimizes parameters `k` and `C` using a 3Fold for each combination. Then, it plots corresponding validation results for `Acc` and `AMAE`. Note that the optimal combination may differ depending of the selected performance metric. Depending on your version of Matlab, a `contourf` or a `heatmap` is used for each metric.
 
 ```MATLAB
->> if verLessThan('matlab', '2017a')
+>> %% REDSVM optimization
+clear T Ts;
+
+Metrics = {@MZE,@AMAE};
+setC = 10.^(-3:1:3);
+setk = 10.^(-3:1:3);
+% TODO: fix for Octave since table() is not supported
+Ts = cell(size(Metrics,2),1);
+nFolds = 3;
+CVO = cvpartition(train.targets,'KFold',nFolds);
+for m = 1:size(Metrics,2)
+    mObj = Metrics{m}();
+    fprintf('Grid search to optimize %s for REDSVM\n', mObj.name);
+    bestError=Inf;
+    if (~exist ('OCTAVE_VERSION', 'builtin') > 0)
+      T = table();
+    end
+    for C=10.^(-3:1:3)
+        for k=10.^(-3:1:3)
+            error=0;
+            for ff = 1:nFolds
+                param = struct('C',C,'k',k);
+                info = algorithmObj.runAlgorithm(train,test,param);
+                error = error + mObj.calculateMetric(test.targets,info.predictedTest);
+
+            end
+            error = error / nFolds;
+            if error < bestError
+                bestError = error;
+                bestParam = param;
+            end
+            param.error = error;
+            if (~exist ('OCTAVE_VERSION', 'builtin') > 0)
+              T = [T; struct2table(param)];
+            end
+            fprintf('.');
+        end
+    end
+    if (~exist ('OCTAVE_VERSION', 'builtin') > 0)
+      Ts{m} = T;
+    end
+    fprintf('\nBest Results REDSVM C %f, k %f --> %s: %f\n', bestParam.C, bestParam.k, mObj.name, bestError);
+end
+
+if (exist ('OCTAVE_VERSION', 'builtin') > 0)
+  fprintf('This type of graphic is not supported in Octave\n');
+else
+if verLessThan('matlab', '9.2')
     % Use contours
     figure;
     hold on;
@@ -423,6 +470,18 @@ else
     heatmap(Ts{2},'C','k','ColorVariable','error');
     title('AMAE optimization for REDSVM');
 end
+end
+
+
+Grid search to optimize Mean Zero Error for REDSVM
+.................................................
+Best Results REDSVM C 1.000000, k 0.010000 --> Mean Zero Error: 0.303571
+Grid search to optimize Average Mean Absolute Error for REDSVM
+.................................................
+Best Results REDSVM C 10.000000, k 0.001000 --> Average Mean Absolute Error: 0.879355
+
+
+
 ```
 
 ![REDSVM heatmap to show crossvalidation](tutorial/images/redsvm-melanoma-heatmap.png)
@@ -495,6 +554,7 @@ hold off;
 ```
 
 ![Projection of KDLOR for the melanoma dataset](tutorial/images/KDLORProjectionMelanoma.png)
+
 ---
 
 ***Exercise 3***: Compare the results obtained in KDLOR by using different kernel functions.
@@ -508,7 +568,7 @@ Ordinal regression boosting (ORBoost) is a thresholded-ensemble model, which is 
 As proposed by the authors, the total number of ensemble members is set to `T=2000`, and normalised sigmoid functions are used as the base classifier, where the smoothness parameter is `gamma=4`. Large margin bounds of the classification error and the absolute error are derived, from which two algorithms are presented: ORBoost with all margins and ORBoost with left-right margins. The `weights` parameter in the constructor configures whether the All margins versions is used (`weights=true`) or the Left-Right margin is used (`weights=false`).
 
 This is the code for running ORBoost with the melanoma diagnosis dataset:
-```
+```MATLAB
 >> %% Apply the ORBoost model
 % Create the ORBoost object
 algorithmObj = ORBoost('weights',true);
@@ -562,7 +622,8 @@ If we check the dataset used for POM:
 ```
 
 ![Intermediate dataset of the custom ensemble](tutorial/images/ensembleMelanoma.png)
-we can see that, although the correlation of both projections is quite high, some patterns can be refined by considering both projections.
+
+We can see that, although the correlation of both projections is quite high, some patterns can be refined by considering both projections.
 
 ---
 
