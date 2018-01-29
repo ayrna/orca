@@ -537,7 +537,11 @@ BOOL smo_Loadfile ( Data_List * pairs, char * inputfilename, int inputdim )
 	pairs->datatype = CLASSIFICATION ; 
 
 	rewind( smo_stream ) ;
-	fgets( buf, LENGTH, smo_stream ) ;
+    if (fgets( buf, LENGTH, smo_stream ) == NULL)
+    {
+        printf("\nError reading %s ...  \n", inputfilename) ;
+        exit(1);
+    }
 	do
 	{
 
