@@ -71,8 +71,7 @@ classdef Experiment < handle
                 totalResults = obj.method.runAlgorithm(train, test);
             end
             
-            obj.saveResults(totalResults);
-            
+            obj.saveResults(totalResults);            
         end
         
         function obj = process(obj,fname)

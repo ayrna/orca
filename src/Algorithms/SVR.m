@@ -58,7 +58,6 @@ classdef SVR < Algorithm
             weights = ones(size(auxTrain.targets));
             model.libsvmModel = svmtrain(weights, auxTrain.targets, auxTrain.patterns, svrParameters);
             model.scaledLabelSet = unique(auxTrain.targets);
-            model.algorithm = 'SVR';
             model.parameters = parameters;
             
             [projectedTrain, predictedTrain] = obj.predict(auxTrain.patterns,model);

@@ -54,7 +54,6 @@ classdef REDSVM < Algorithm
             end
             options = ['-s 5 -t 2 -c ' num2str(param.C) ' -g ' num2str(param.k) ' -q'];
             model.libsvmModel = svmtrain(train.targets, train.patterns, options);
-            model.algorithm = 'REDSVM';
             model.parameters = param;
             [predictedTrain, acc, projectedTrain] = svmpredict(train.targets,train.patterns,model.libsvmModel, '');
             if ~isempty(strfind(path,obj.algorithmMexPath))

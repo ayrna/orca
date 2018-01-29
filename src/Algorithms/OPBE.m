@@ -2,8 +2,8 @@ classdef OPBE < Algorithm
     %OPBE Ordinal Projection Based Ensemble (OPBE)[1]. This class derives
     %from the Algorithm Class and implements the OPBE method with the best
     %configuration found (product combiner, SVM base methodology, logit
-    %function and equal distribution of probabilities). This class uses
-    % SVORIM implementation: http://www.gatsby.ucl.ac.uk/~chuwei/svor.htm
+    %function and equal distribution of probabilities). By default, this class uses
+    %SVORIM implementation, but potentially any ORCA model can be used. 
     %
     %   OPBE methods:
     %      runAlgorithm               - runs the corresponding algorithm,
@@ -18,7 +18,8 @@ classdef OPBE < Algorithm
     %     https://doi.org/10.1109/TCYB.2013.2266336
     
     %   This file is part of ORCA: https://github.com/ayrna/orca
-    %   Original authors: María Pérez Ortiz
+    %   Original author: María Pérez Ortiz
+    %   Contributors: Pedro A. Gutiérrez, Javier Sánchez-Monedero
     %   Citation: If you use this code, please cite the associated papers
     %      - http://www.uco.es/grupos/ayrna/elor2013
     %      - http://www.uco.es/grupos/ayrna/orreview
@@ -60,7 +61,6 @@ classdef OPBE < Algorithm
             for i=1:nOfClasses
                 n(i) = sum(train.targets == i);
             end
-            baseAlgorithm = SVORIM;
             
             % Sort patterns
             orderedPatterns = train.patterns(train.targets==1,:);
@@ -96,8 +96,8 @@ classdef OPBE < Algorithm
                 auxtrain.targets = currentTargets;
                 
                 % Train each label decomposition
-                [model, projectedTrain] = baseAlgorithm.fit(auxtrain, param);
-                models(i) = model;
+                [baseModel, projectedTrain] = obj.baseMethod.fit(auxtrain, param);
+                models(i) = baseModel;
                 
                 % Estimate probabilities
                 probTrain = obj.calculateProbabilities(projectedTrain, models(i).thresholds');
@@ -146,6 +146,7 @@ classdef OPBE < Algorithm
             
             % Compute final prediction
             [projected, trainTargets] = max(classBelongingProbTrain);
+            projected = projected';
             trainTargets = trainTargets';
             
         end
@@ -209,6 +210,7 @@ classdef OPBE < Algorithm
             
             % Compute final prediction
             [projected, testTargets] = max(classBelongingProbTest);
+            projected = projected';
             testTargets = testTargets';
             
             

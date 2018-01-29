@@ -78,7 +78,6 @@ classdef ORBoost < Algorithm
             s = s{1};
             fclose(fid);
             
-            model.algorithm = 'OREnsemble';
             model.textInformation = s;
             model.weights = obj.weights;
             [projectedTrain,predictedTrain] = obj.predict(train.patterns,model);

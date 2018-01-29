@@ -84,7 +84,6 @@ classdef SVMOP < Algorithm
             end
             
             model.models=models;
-            model.algorithm = 'SVMOP';
             model.parameters = param;
             model.weights = obj.weights;
             model.nOfClasses = nOfClasses;
@@ -114,6 +113,7 @@ classdef SVMOP < Algorithm
             probts(model.nOfClasses,:) =  projected(model.nOfClasses-1,:);
             [aux, predicted] = max(probts);
             predicted = predicted';
+            projected = projected';
             if ~isempty(strfind(path,obj.algorithmMexPath))
                 rmpath(obj.algorithmMexPath);
             end

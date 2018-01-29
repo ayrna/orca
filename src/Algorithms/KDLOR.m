@@ -198,12 +198,11 @@ classdef KDLOR < Algorithm
             model.thresholds = thresholds;
             model.parameters = parameters;
             model.kernelType = obj.kernelType;
-            model.algorithm = 'KDLOR';
             model.train = trainPatterns;
             projectedTrain = model.projection'*kernelMatrix;
             predictedTrain = assignLabels(obj, projectedTrain, model.thresholds');
             
-            
+            projectedTrain = projectedTrain';
         end
         
         function [projected, predicted] = predict(obj, testPatterns, model)
@@ -213,7 +212,7 @@ classdef KDLOR < Algorithm
             projected = model.projection'*kernelMatrix;
             
             predicted = assignLabels(obj, projected, model.thresholds');
-            
+            projected = projected';
         end
         
         function predicted = assignLabels(obj, projected, thresholds)

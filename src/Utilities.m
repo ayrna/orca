@@ -406,8 +406,7 @@ classdef Utilities < handle
             %       and models for all the partitions. All the resources are
             %       created int exp-DIRSUFFIX folder.
             if( ~(exist(expFile,'file')))
-                fprintf('The file %s does not exist\n',expFile);
-                return;
+                error('The file %s does not exist\n',expFile);
             end
             
             logsDir = ['Experiments' '/' 'exp-' dirSuffix];

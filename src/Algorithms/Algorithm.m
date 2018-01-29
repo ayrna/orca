@@ -87,6 +87,7 @@ classdef Algorithm < handle
             end
             c1 = clock;
             [model,mInf.projectedTrain, mInf.predictedTrain] = obj.fit(train,param);
+            model.algorithm = class(obj);
             c2 = clock;
             mInf.trainTime = etime(c2,c1);
             

@@ -56,7 +56,6 @@ classdef CSSVC < Algorithm
                 models{i} = svmtrain(weights,labels, train.patterns, options);
             end
             model = struct('models', {models}, 'labelSet', labelSet);
-            model.algorithm = 'CSSVC';
             model.parameters = param;
             [projectedTrain,predictedTrain] = obj.predict(train.patterns,model);
             if ~isempty(strfind(path,obj.algorithmMexPath))
