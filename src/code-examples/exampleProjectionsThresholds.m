@@ -4,7 +4,7 @@ addpath ../Algorithms/
 load ../../exampledata/1-holdout/toy/matlab/train_toy.0
 load ../../exampledata/1-holdout/toy/matlab/test_toy.0
 
-% "patterns" refers to the input variables and targets to the output one
+% patterns refers to the input variables and targets to the output one
 train.patterns = train_toy(:,1:end-1);
 train.targets = train_toy(:,end);
 test.patterns = test_toy(:,1:end-1);
@@ -27,10 +27,14 @@ msg{1} = sprintf('KDLOR k=%f. AMAE=%f', param.k, amaeTest1);
 msg{2} = 'Thresholds';
 
 figure; hold on;
-h1 = histogram(info1.projectedTest,30);
+if (exist ('OCTAVE_VERSION', 'builtin') > 0)
+  hist(info1.projectedTest,30);
+else
+  h1 = histogram(info1.projectedTest,30);
+end
 plot(info1.model.thresholds, ...
     zeros(length(info1.model.thresholds),1),...
-    'r+', 'MarkerSize', 10)
+    'r+', 'MarkerSize', 10, 'LineWidth', 2)
 legend(msg)
 legend('Location','NorthWest')
 hold off;

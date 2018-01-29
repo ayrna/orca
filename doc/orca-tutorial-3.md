@@ -6,6 +6,7 @@
 	- [Proportional odds model (POM)](#proportional-odds-model-pom)
 	- [Neural network based on POM (NNPOM)](#neural-network-based-on-pom-nnpom)
 	- [Support vector for ordinal regression (SVOREX and SVORIM)](#support-vector-for-ordinal-regression-svorex-and-svorim)
+	- [Reduction from ordinal regression to binary SVM classifiers (REDSVM)](#reduction-from-ordinal-regression-to-binary-svm-classifiers-redsvm)
 	- [Kernel discriminant learning for ordinal regression (KDLOR)](#kernel-discriminant-learning-for-ordinal-regression-kdlor)
 	- [Ordinal regression boosting (ORBoost)](#ordinal-regression-boosting-orboost)
 	- [Custom Ensemble based on several projections](#custom-ensemble-based-on-several-projections)
@@ -25,10 +26,11 @@ Because of this, there are many threshold model proposals in the literature, and
 - One linear model (POM) [1].
 - One neural network model (NNPOM) [1,2].
 - Two support vector machine proposals (SVOREX and SVORIM) [3].
-- One discriminant analysis proposal (KDLOR) [4].
-- One ensemble model (ORBoost) [5].
+- One reduction from ordinal regression to binary SVM (REDSVM) [4].
+- One discriminant analysis proposal (KDLOR) [5].
+- One ensemble model (ORBoost) [6].
 
-The corresponding script for this tutorial, ([exampleMelanomaTM.m](../src/code-examples/exampleMelanomaTM.m)), can be found and run in the [code example](../src/code-examples).
+The corresponding script for this tutorial, ([exampleMelanomaTM.m](../src/code-examples/exampleMelanomaTM.m)), can be found and run in the [code example](../src/code-examples). Octave code is not shown here to simplify code, but it is included in ([exampleMelanomaTM.m](../src/code-examples/exampleMelanomaTM.m)).
 
 ## Proportional odds model (POM)
 
@@ -86,6 +88,7 @@ end
 hold off;
 ```
 which generates the following figure:
+
 ![Projections of POM for melanoma](tutorial/images/POMMelanomaProjections.png)
 
 As can be checked no pattern is projected beyond the last threshold, so that the last class is ignored. Note that POM is a linear model and this can limit its accuracy. We can check this in the confusion matrix:
@@ -118,6 +121,7 @@ legend(arrayfun(@(num) sprintf('C%d', num), 1:Q, 'UniformOutput', false))
 hold off;
 ```
 which generates the plot:
+
 ![Projections of POM for melanoma with colours](tutorial/images/POMMelanomaProjectionsColours.png)
 
 As can be observed the three patterns from the last class are never correctly classified.
@@ -138,6 +142,7 @@ for i=1:size(info.model.thresholds,1)
 end
 hold off;
 ```
+
 ![Cumulative probabilities by this set of thresholds](tutorial/images/POMMelanomaCumProb.png)
 
 ```MATLAB
@@ -152,6 +157,7 @@ for i=1:size(info.model.thresholds,1)
 end
 hold off;
 ```
+
 ![Individual probabilities by this set of thresholds](tutorial/images/POMMelanomaProb.png)
 
 As can be seen, those projections close to the thresholds can be classified in different classes according to the probability distribution. However, following the spirit of threshold models, the implementation of POM included in ORCA classify the patterns according to their position with respect to the thresholds.
@@ -340,6 +346,7 @@ end
 legend('SVOREX');
 hold off;
 ```
+
 ![Comparison of SVORIM and SVOREX](tutorial/images/SVORIM_SVOREX.png)
 
 Fine tuning a bit the parameters, we can improve the results:
@@ -362,6 +369,124 @@ SVORIM method improved
 SVORIM Accuracy: 0.660714
 SVORIM MAE: 0.464286
 ```
+
+## Reduction from ordinal regression to binary SVM classifiers (REDSVM)
+
+The reduction from ordinal regression to binary SVM classifiers (REDSVM) [4] is a method that can be categorized both as threshold method or as decomposition method. The hyper-parameters are the wellknown `k` and `C` of SVM variants.
+
+```MATLAB
+%% Apply the REDSVM model
+% Create the REDSVM object
+algorithmObj = REDSVM();
+
+% Train REDSVM
+info = algorithmObj.runAlgorithm(train,test,struct('C',10,'k',0.001));
+
+% Evaluate the model
+fprintf('REDSVM method\n---------------\n');
+fprintf('REDSVM Accuracy: %f\n', CCR.calculateMetric(test.targets,info.predictedTest));
+fprintf('REDSVM MAE: %f\n', MAE.calculateMetric(test.targets,info.predictedTest));
+```
+
+To better understand the relevance of parameters selection process, the following code optimizes parameters `k` and `C` using a 3Fold for each combination. Then, it plots corresponding validation results for `Acc` and `AMAE`. Note that the optimal combination may differ depending of the selected performance metric. Depending on your version of Matlab, a `contourf` or a `heatmap` is used for each metric.
+
+```MATLAB
+>> %% REDSVM optimization
+clear T Ts;
+
+Metrics = {@MZE,@AMAE};
+setC = 10.^(-3:1:3);
+setk = 10.^(-3:1:3);
+% TODO: fix for Octave since table() is not supported
+Ts = cell(size(Metrics,2),1);
+nFolds = 3;
+CVO = cvpartition(train.targets,'KFold',nFolds);
+for m = 1:size(Metrics,2)
+    mObj = Metrics{m}();
+    fprintf('Grid search to optimize %s for REDSVM\n', mObj.name);
+    bestError=Inf;
+    if (~exist ('OCTAVE_VERSION', 'builtin') > 0)
+      T = table();
+    end
+    for C=10.^(-3:1:3)
+        for k=10.^(-3:1:3)
+            error=0;
+            for ff = 1:nFolds
+                param = struct('C',C,'k',k);
+                info = algorithmObj.runAlgorithm(train,test,param);
+                error = error + mObj.calculateMetric(test.targets,info.predictedTest);
+
+            end
+            error = error / nFolds;
+            if error < bestError
+                bestError = error;
+                bestParam = param;
+            end
+            param.error = error;
+            if (~exist ('OCTAVE_VERSION', 'builtin') > 0)
+              T = [T; struct2table(param)];
+            end
+            fprintf('.');
+        end
+    end
+    if (~exist ('OCTAVE_VERSION', 'builtin') > 0)
+      Ts{m} = T;
+    end
+    fprintf('\nBest Results REDSVM C %f, k %f --> %s: %f\n', bestParam.C, bestParam.k, mObj.name, bestError);
+end
+
+if (exist ('OCTAVE_VERSION', 'builtin') > 0)
+  fprintf('This type of graphic is not supported in Octave\n');
+else
+if verLessThan('matlab', '9.2')
+    % Use contours
+    figure;
+    hold on;
+    for m = 1:size(Metrics,2)
+        mObj = Metrics{m}();
+        subplot(size(Metrics,2),1,m)
+        x = Ts{m}{:,1};
+        y = Ts{m}{:,2};
+        z = Ts{m}{:,3};
+        numPoints=100;
+        [xi, yi] = meshgrid(linspace(min(x),max(x),numPoints),linspace(min(y),max(y),numPoints));
+        zi = griddata(x,y,z, xi,yi);
+        contourf(xi,yi,zi,15);
+        set(gca, 'XScale', 'log');
+        set(gca, 'YScale', 'log');
+        colorbar;
+        title([mObj.name ' optimization for REDSVM']);
+    end
+    hold off;
+else
+    % Use heatmaps
+    fprintf('Generating heat maps\n');
+    figure;
+    subplot(2,1,1)
+    heatmap(Ts{1},'C','k','ColorVariable','error');
+    title('MZE optimization for REDSVM');
+
+    subplot(2,1,2)
+    heatmap(Ts{2},'C','k','ColorVariable','error');
+    title('AMAE optimization for REDSVM');
+end
+end
+
+
+Grid search to optimize Mean Zero Error for REDSVM
+.................................................
+Best Results REDSVM C 1.000000, k 0.010000 --> Mean Zero Error: 0.303571
+Grid search to optimize Average Mean Absolute Error for REDSVM
+.................................................
+Best Results REDSVM C 10.000000, k 0.001000 --> Average Mean Absolute Error: 0.879355
+
+
+
+```
+
+![REDSVM heatmap to show crossvalidation](tutorial/images/redsvm-melanoma-heatmap.png)
+
+![REDSVM contourf to show crossvalidation](tutorial/images/redsvm-melanoma-contour.png)
 
 ## Kernel discriminant learning for ordinal regression (KDLOR)
 
@@ -427,7 +552,9 @@ end
 legend(arrayfun(@(num) sprintf('C%d', num), 1:Q, 'UniformOutput', false))
 hold off;
 ```
+
 ![Projection of KDLOR for the melanoma dataset](tutorial/images/KDLORProjectionMelanoma.png)
+
 ---
 
 ***Exercise 3***: Compare the results obtained in KDLOR by using different kernel functions.
@@ -441,7 +568,7 @@ Ordinal regression boosting (ORBoost) is a thresholded-ensemble model, which is 
 As proposed by the authors, the total number of ensemble members is set to `T=2000`, and normalised sigmoid functions are used as the base classifier, where the smoothness parameter is `gamma=4`. Large margin bounds of the classification error and the absolute error are derived, from which two algorithms are presented: ORBoost with all margins and ORBoost with left-right margins. The `weights` parameter in the constructor configures whether the All margins versions is used (`weights=true`) or the Left-Right margin is used (`weights=false`).
 
 This is the code for running ORBoost with the melanoma diagnosis dataset:
-```
+```MATLAB
 >> %% Apply the ORBoost model
 % Create the ORBoost object
 algorithmObj = ORBoost('weights',true);
@@ -493,21 +620,27 @@ If we check the dataset used for POM:
 >> scatter(newTrain.patterns(:,1),newTrain.patterns(:,2),7,newTrain.targets);
 
 ```
+
 ![Intermediate dataset of the custom ensemble](tutorial/images/ensembleMelanoma.png)
-we can see that, although the correlation of both projections is quite high, some patterns can be refined by considering both projections.
+
+We can see that, although the correlation of both projections is quite high, some patterns can be refined by considering both projections.
 
 ---
 
-***Exercise 3***: construct a similar ensemble but using different SVORIM projections with different parameters for the `C` value. The number of members of the ensemble should be a parameter.
+***Exercise 4***: construct a similar ensemble but using different SVORIM projections with different subsets of input variables (a 40% of randomly chosen variables). The number of members of the ensemble should be as a parameter (try 50).
+
+----
+
+***Exercise 5***: construct a similar ensemble but using different SVORIM projections with different parameters for the `C` value.
 
 ---
 
-***Exercise 4***: construct a similar ensemble but using different SVORIM projections with different subsets of patterns and different subsets of input variables (randomization). The number of members of the ensemble should remain as a parameter.
 
 # References
 
 1. P. McCullagh, "Regression models for ordinal data",  Journal of the Royal Statistical Society. Series B (Methodological), vol. 42, no. 2, pp. 109–142, 1980.
 1. M. J. Mathieson, "Ordinal models for neural networks", in Proc. 3rd Int. Conf. Neural Netw. Capital Markets, 1996, pp. 523-536.
 1. W. Chu and S. S. Keerthi, "Support Vector Ordinal Regression", Neural Computation, vol. 19, no. 3, pp. 792–815, 2007. http://10.1162/neco.2007.19.3.792
+1. H.-T. Lin and L. Li, "Reduction from cost-sensitive ordinal ranking to weighted binary classification" Neural Computation, vol. 24, no. 5, pp. 1329-1367, 2012. http://10.1162/NECO_a_00265
 1. B.-Y. Sun, J. Li, D. D. Wu, X.-M. Zhang, and W.-B. Li, "Kernel discriminant learning for ordinal regression", IEEE Transactions on Knowledge and Data Engineering, vol. 22, no. 6, pp. 906-910, 2010. https://doi.org/10.1109/TKDE.2009.170
 1. H.-T. Lin and L. Li, "Large-margin thresholded ensembles for ordinal regression: Theory and practice", in Proc. of the 17th Algorithmic Learning Theory International Conference, ser. Lecture Notes in Artificial Intelligence (LNAI), J. L. Balcazar, P. M. Long, and F. Stephan, Eds., vol. 4264. Springer-Verlag, October 2006, pp. 319-333.
