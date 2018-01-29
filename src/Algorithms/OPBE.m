@@ -137,7 +137,6 @@ classdef OPBE < Algorithm
             end
             model.ensembleModels = models;
             model.parameters = param;
-            model.algorithm = 'OPBE';
             
             % Join weights and probabilities into a final
             % decision label
@@ -147,6 +146,7 @@ classdef OPBE < Algorithm
             
             % Compute final prediction
             [projected, trainTargets] = max(classBelongingProbTrain);
+            projected = projected';
             trainTargets = trainTargets';
             
         end
@@ -210,6 +210,7 @@ classdef OPBE < Algorithm
             
             % Compute final prediction
             [projected, testTargets] = max(classBelongingProbTest);
+            projected = projected';
             testTargets = testTargets';
             
             

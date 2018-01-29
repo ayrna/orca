@@ -228,7 +228,6 @@ classdef ELMOP < Algorithm
             end
             
             model.OutputWeight = OutputWeight;
-            model.algorithm = 'ELMOP';
             model.parameters = parameters;
             model.labelSet = unique(train.targetsOrelm,'rows');
             model.nOfClasses = train.nOfClasses;
@@ -318,12 +317,10 @@ classdef ELMOP < Algorithm
             
             clear TV.P;             %   Release input of testing data            
             
-            TY=(H_test' * model.OutputWeight)';                       %   TY: the actual output of the testing data            
+            TY=(H_test' * model.OutputWeight);                       %   TY: the actual output of the testing data            
             clear H_test;
             
-            TestPredictedY = obj.orelmToLabel(TY', model.labelSet);
-            TestPredictedY = TestPredictedY';
-            
+            TestPredictedY = obj.orelmToLabel(TY, model.labelSet);            
         end
         
     end
@@ -345,7 +342,6 @@ classdef ELMOP < Algorithm
             end
             
             [minVal,predL] = min(eLosses,[],2);
-            predL = predL';
         end
         
         %TODO: This method should work only with a dataset partition. 

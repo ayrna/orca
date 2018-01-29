@@ -52,8 +52,8 @@ classdef SVORIM < Algorithm
             model.projection = alpha;
             model.thresholds = thresholds;
             model.parameters = parameters;
-            model.algorithm = 'SVORIM';
-            model.train = train.patterns;
+            model.train = train.patterns;            
+            projectedTrain = projectedTrain';
             if ~isempty(strfind(path,obj.algorithmMexPath))
                 rmpath(obj.algorithmMexPath);
             end
@@ -65,6 +65,7 @@ classdef SVORIM < Algorithm
             projected = model.projection*kernelMatrix;
             
             predicted = assignLabels(obj, projected, model.thresholds);
+            projected = projected';
         end
         
         function predicted = assignLabels(obj, projected, thresholds)

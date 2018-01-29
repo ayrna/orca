@@ -53,12 +53,11 @@ classdef SVOREX < Algorithm
             model.projection = alpha;
             model.thresholds = thresholds;
             model.parameters = parameters;
-            model.algorithm = 'SVOREX';
             model.train = train.patterns;
+            projectedTrain = projectedTrain';
             if ~isempty(strfind(path,obj.algorithmMexPath))
                 rmpath(obj.algorithmMexPath);
             end
-            
         end
         
         function [projected, predicted] = predict(obj, test, model)
@@ -67,6 +66,7 @@ classdef SVOREX < Algorithm
             projected = model.projection*kernelMatrix;
             
             predicted = assignLabels(obj, projected, model.thresholds);
+            projected = projected';
         end
         
         function predicted = assignLabels(obj, projected, thresholds)
@@ -94,7 +94,6 @@ classdef SVOREX < Algorithm
         end
         
     end
-    
     
 end
 
