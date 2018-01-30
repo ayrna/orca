@@ -35,19 +35,20 @@ classdef LRLIBLINEAR < Algorithm
     %       available at http://www.gnu.org/licenses/gpl-3.0.html
     properties
         solver = 0;
-        parameters = struct('c', 0.1);
+        parameters = struct('C', 0.1);
         algorithmMexPath = fullfile(pwd,'Algorithms','liblinear-2.20','matlab');
         %algorithmMexPath = fullfile(pwd,'Algorithms','liblinear-1.96','matlab');
     end
     
     methods
         
-        function obj = LRLIBLINEAR()
+        function obj = LRLIBLINEAR(varargin)
             %LRLIBLINEAR constructs an object of the class LRLIBLINEAR.
             %Default solver is '0' (L2-regularized logistic regression
             %(primal)). Parameter c have to be optimized in order to obtain
             %suitable model fitting
             obj.name = 'Logistic Regression with liblinear solver';
+            obj.parseArgs(varargin);
         end
         
         function [model, projectedTrain, predictedTrain]= fit( obj, train, param)
@@ -57,9 +58,8 @@ classdef LRLIBLINEAR < Algorithm
                 addpath(obj.algorithmMexPath);
             end
             
-            options = ['-s ' num2str(obj.solver) ' -c ' num2str(param.c) ' -q'];
+            options = ['-s ' num2str(obj.solver) ' -c ' num2str(param.C) ' -q'];
             model.libsvmModel = svmtrain(train.targets, sparse(train.patterns), options);
-            model.algorithm = 'LRLIBLINEAR';
             model.parameters = param;
             [projectedTrain,predictedTrain] = obj.predict(train.patterns,model);
             
