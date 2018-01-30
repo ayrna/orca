@@ -9,20 +9,20 @@ if nargin < 1
                 setenv('CFLAGS','-std=gnu99 -O3 -Wno-unused-result')
                 setenv('CC','gcc')
             else
-                setenv('CFLAGS','-std=gnu99 -O3 -fstack-protector-strong -Wno-unused-result -Wformat -Werror=format-security')
+                setenv('CFLAGS','-std=gnu99 -O3 -fstack-protector-strong -Wformat -Werror=format-security -Wno-unused-result')
                 setenv('CC','gcc')
             end
             mex libsvmread.c
             mex libsvmwrite.c
-            mex -I.. svmtrain.c ../svm.cpp svm_model_matlab.c
-            mex -I.. svmpredict.c ../svm.cpp svm_model_matlab.c
+            mex -I.. -Wno-unused-result svmtrain.c ../svm.cpp svm_model_matlab.c
+            mex -I.. -Wno-unused-result svmpredict.c ../svm.cpp svm_model_matlab.c
             delete *.o
         % This part is for MATLAB
         % Add -largeArrayDims on 64-bit machines of MATLAB
         else
             if ispc
-                mex COMPFLAGS="\$COMPFLAGS -std=c99 -O3 -Wno-unused-result" -largeArrayDims libsvmread.c
-                mex COMPFLAGS="\$COMPFLAGS -std=c99 -O3 -Wno-unused-result" -largeArrayDims libsvmwrite.c
+                mex COMPFLAGS="\$COMPFLAGS -std=c99 -O3" -largeArrayDims libsvmread.c
+                mex COMPFLAGS="\$COMPFLAGS -std=c99 -O3" -largeArrayDims libsvmwrite.c
                 mex COMPFLAGS="\$COMPFLAGS -std=c99 -O3 -Wno-unused-result" -I.. -largeArrayDims svmtrain.c ../svm.cpp svm_model_matlab.c
                 mex COMPFLAGS="\$COMPFLAGS -std=c99 -O3 -Wno-unused-result" -I.. -largeArrayDims svmpredict.c ../svm.cpp svm_model_matlab.c
             else
