@@ -9,7 +9,7 @@ if nargin < 1
                 setenv('CFLAGS','-std=gnu99 -O3 -Wno-unused-result')
                 setenv('CC','gcc')
             else
-                setenv('CFLAGS','-std=gnu99 -O3 -fstack-protector-strong -Wformat -Werror=format-security -Wno-unused-result')
+                setenv('CFLAGS','-std=gnu99 -O3 -Wno-unused-result')
                 setenv('CC','gcc')
             end
             mex libsvmread.c

@@ -11,8 +11,8 @@ if nargin < 1
             else
                 setenv('CFLAGS','-std=gnu99 -O3 -Wno-unused-result')
             end
-            %mex libsvmread.c
-            %mex libsvmwrite.c
+            mex libsvmread.c
+            mex libsvmwrite.c
             mex -I.. -Wno-unused-result svmtrain.c ../svm.cpp svm_model_matlab.c
             mex -I.. -Wno-unused-result svmpredict.c ../svm.cpp svm_model_matlab.c
             delete *.o
