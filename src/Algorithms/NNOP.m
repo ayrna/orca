@@ -120,7 +120,6 @@ classdef NNOP < Algorithm
             model.m = m;
             
             [projectedTrain, predictedTrain] = obj.predict(train.patterns, model);
-            model.algorithm = 'NNOP';
             model.parameters = parameters;
             
         end

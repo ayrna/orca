@@ -87,13 +87,13 @@ classdef NNPOM < Algorithm
             % Hidden layer weigths (with bias)
             initial_Theta1 = obj.randInitializeWeights(input_layer_size+1, hidden_layer_size);
             % Output layer weigths (without bias, the biases will be the
-            %                       Thresholds)
+            %                       thresholds)
             initial_Theta2 = obj.randInitializeWeights(hidden_layer_size, 1);
             % Class thresholds parameters
-            initial_Thresholds = obj.randInitializeWeights((num_labels-1),1);
+            initial_thresholds = obj.randInitializeWeights((num_labels-1),1);
 
             % Pack parameters
-            initial_nn_params = [initial_Theta1(:) ; initial_Theta2(:) ; initial_Thresholds(:)];      
+            initial_nn_params = [initial_Theta1(:) ; initial_Theta2(:) ; initial_thresholds(:)];      
             
             % Set regularization parameter
             lambda = parameters.lambda;
@@ -118,15 +118,14 @@ classdef NNPOM < Algorithm
 
             
             % Unpack the parameters
-            [Theta1, Theta2, Thresholds_param] = obj.unpackParameters(nn_params,input_layer_size,hidden_layer_size,num_labels);
+            [Theta1, Theta2, thresholds_param] = obj.unpackParameters(nn_params,input_layer_size,hidden_layer_size,num_labels);
             model.Theta1=Theta1;
             model.Theta2=Theta2;
-            model.Thresholds=obj.convertThresholds(Thresholds_param,num_labels);
+            model.thresholds=obj.convertthresholds(thresholds_param,num_labels);
             model.num_labels=num_labels;
             model.m = m;
             
             [projectedTrain, predictedTrain] = obj.predict(train.patterns, model);
-            model.algorithm = 'NNPOM';
             model.parameters = parameters;
             
         end
@@ -139,7 +138,7 @@ classdef NNPOM < Algorithm
             a2 =  1.0 ./ (1.0 + exp(-z2));
             projected=a2*model.Theta2';
             
-            z3=repmat(model.Thresholds,m,1)-repmat(projected,1,model.num_labels-1);
+            z3=repmat(model.thresholds,m,1)-repmat(projected,1,model.num_labels-1);
             a3T =  1.0 ./ (1.0 + exp(-z3));
             a3 = [a3T ones(m,1)];
             a3(:,2:end) = a3(:,2:end) - a3(:,1:(end-1));
@@ -150,8 +149,8 @@ classdef NNPOM < Algorithm
     
     methods(Access = private)
         
-        function [Theta1, Theta2, Thresholds_param] = unpackParameters(obj,nn_params,input_layer_size,hidden_layer_size,num_labels)
-            % UNPACKPARAMETERS obtains Theta1, Theta2 and Thresholds_param
+        function [Theta1, Theta2, thresholds_param] = unpackParameters(obj,nn_params,input_layer_size,hidden_layer_size,num_labels)
+            % UNPACKPARAMETERS obtains Theta1, Theta2 and thresholds_param
             % back from the whole array nn_params
             nTheta1 = hidden_layer_size * (input_layer_size + 1);
             Theta1 = reshape(nn_params(1:nTheta1), ...
@@ -159,7 +158,7 @@ classdef NNPOM < Algorithm
             nTheta2 = hidden_layer_size;
             Theta2 = reshape(nn_params((1+nTheta1):(nTheta1+nTheta2)), ...
                              1, (hidden_layer_size));
-            Thresholds_param = reshape(nn_params((nTheta1+nTheta2+1):end), ...
+            thresholds_param = reshape(nn_params((nTheta1+nTheta2+1):end), ...
                              (num_labels-1), 1);
         end
         
@@ -169,18 +168,18 @@ classdef NNPOM < Algorithm
             W = rand(L_out, L_in)*2*obj.epsilonInit - obj.epsilonInit;
         end
         
-        function Thresholds = convertThresholds(obj, Thresholds_param,num_labels)        
+        function thresholds = convertthresholds(obj, thresholds_param,num_labels)        
             % CONVERTTHRESHOLDS transforms thresholds to perform 
             % unconstrained optimization
-            % Thresholds(1) = Thresholds_param(1)
-            % Thresholds(2) = Thresholds_param(1) + Thresholds_param(1)^2
-            % Thresholds(3) = Thresholds_param(1) + Thresholds_param(1)^2
-            %               + Thresholds_param(2)^2
+            % thresholds(1) = thresholds_param(1)
+            % thresholds(2) = thresholds_param(1) + thresholds_param(1)^2
+            % thresholds(3) = thresholds_param(1) + thresholds_param(1)^2
+            %               + thresholds_param(2)^2
             % ...
-            Thresholds_pquad=Thresholds_param.^2;
-            Thresholds = sum(tril(ones(num_labels-1,num_labels-1)).*...
-                repmat([Thresholds_param(1);Thresholds_pquad(2:end)],1,num_labels-1)',2);
-            Thresholds = Thresholds';
+            thresholds_pquad=thresholds_param.^2;
+            thresholds = sum(tril(ones(num_labels-1,num_labels-1)).*...
+                repmat([thresholds_param(1);thresholds_pquad(2:end)],1,num_labels-1)',2);
+            thresholds = thresholds';
         end
             
         function [J,grad] = nnPOMCostFunction(obj, nn_params, ...
@@ -192,12 +191,12 @@ classdef NNPOM < Algorithm
             %corresponding derivatives.
             
             % Unroll all the parameters
-            [Theta1, Theta2, Thresholds_param] = unpackParameters(obj,...
+            [Theta1, Theta2, thresholds_param] = unpackParameters(obj,...
                 nn_params,input_layer_size,hidden_layer_size,num_labels);
             
             
             % Convert threhsolds
-            Thresholds = obj.convertThresholds(Thresholds_param,num_labels);
+            thresholds = obj.convertthresholds(thresholds_param,num_labels);
             
             % Setup some useful variables
             m = size(X, 1);
@@ -206,7 +205,7 @@ classdef NNPOM < Algorithm
             a1 = [ones(m, 1) X];
             z2 = a1*Theta1';
             a2 =  1.0 ./ (1.0 + exp(-z2));
-            z3=repmat(Thresholds,m,1)-repmat(a2*Theta2',1,num_labels-1);
+            z3=repmat(thresholds,m,1)-repmat(a2*Theta2',1,num_labels-1);
             a3T =  1.0 ./ (1.0 + exp(-z3));
             a3 = [a3T ones(m,1)];
             h = [a3(:,1) (a3(:,2:end) - a3(:,1:(end-1)))];
@@ -250,7 +249,7 @@ classdef NNPOM < Algorithm
                 ThreshGradMatrix=[triu(ones(num_labels-1)) ones(num_labels-1,1)].*repmat(sum(gGradients,1),num_labels-1,1);
                 ThreshGradMatrix((num_labels+1):num_labels:end) = ThreshGradMatrix((num_labels+1):num_labels:end) + sum(errorDer(:,2:(num_labels-1)).*fGradients(:,1:(num_labels-2)));
                 Threshold_grad=sum(ThreshGradMatrix,2)/m;
-                Threshold_grad(2:end) = 2 * (Threshold_grad(2:end) .* Thresholds_param(2:end));
+                Threshold_grad(2:end) = 2 * (Threshold_grad(2:end) .* thresholds_param(2:end));
                                
                 % Unroll gradients
                 grad = [Theta1_grad(:) ; Theta2_grad(:); Threshold_grad(:)];

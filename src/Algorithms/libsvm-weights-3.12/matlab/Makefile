@@ -6,7 +6,7 @@ MATLABDIR ?= /usr/local/matlab/
 
 CXX ?= gcc
 #CXX = g++-4.1
-CFLAGS = -Wall -Wconversion -O3 -fPIC -I$(MATLABDIR)/extern/include -I..
+CFLAGS = -Wconversion -Wno-unused-result -O3 -fPIC -I$(MATLABDIR)/extern/include -I..
 
 MEX = $(MATLABDIR)/bin/mex
 MEX_OPTION = CC="$(CXX)" CXX="$(CXX)" CFLAGS="$(CFLAGS)" CXXFLAGS="$(CFLAGS)"

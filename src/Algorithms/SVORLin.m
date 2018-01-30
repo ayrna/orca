@@ -52,8 +52,8 @@ classdef SVORLin < Algorithm
             model.projection = alpha;
             model.thresholds = thresholds;
             model.parameters = parameters;
-            model.algorithm = 'SVORLin';
             model.train = train.patterns;
+            projectedTrain = projectedTrain';
             if ~isempty(strfind(path,obj.algorithmMexPath))
                 rmpath(obj.algorithmMexPath);
             end
@@ -64,10 +64,11 @@ classdef SVORLin < Algorithm
             kernelMatrix = computeKernelMatrix(model.train',test','linear',1);
             projected = model.projection*kernelMatrix;
             
-            predicted = assignLabels(obj, projected, model.thresholds);            
+            predicted = assignLabels(obj, projected, model.thresholds);
+            projected = projected';
         end
         
-        function predicted = assignLabels(obj, projected, thresholds)            
+        function predicted = assignLabels(obj, projected, thresholds)
             numClasses = size(thresholds,2)+1;
             %TEST assign the labels from projections and thresholds
             project2 = repmat(projected, numClasses-1,1);

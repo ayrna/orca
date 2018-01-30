@@ -1,4 +1,4 @@
-all: untar
+all: 
 	make -e -C orensemble
 	mv orensemble/boostrank-predict .
 	mv orensemble/boostrank-train .

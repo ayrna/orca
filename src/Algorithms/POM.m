@@ -54,8 +54,9 @@ classdef POM < Algorithm
             %FIT trains the model for the POM method with TRAIN data and
             %vector of parameters PARAMETERS. Return the learned model.
             nOfClasses = numel(unique(train.targets));
+            % TODO: Debug size octave
             if exist ('OCTAVE_VERSION', 'builtin') > 0
-                [model.thresholds, model.projection] = logistic_regression(train.targets, train.patterns);
+                [model.thresholds, model.projection] = logistic_regression(train.targets, train.patterns);    
             else
                 % Obtain coefficients of the ordinal regression model
                 betaHatOrd = mnrfit(train.patterns,train.targets,'model','ordinal','interactions','off');
@@ -63,21 +64,20 @@ classdef POM < Algorithm
                 model.thresholds = betaHatOrd(1:nOfClasses-1);
                 model.projection = -betaHatOrd(nOfClasses:end);
             end
-            
+            model.thresholds = model.thresholds';
             [projectedTrain, predictedTrain] = obj.predict(train.patterns, model);
-            model.algorithm = 'POM';
         end
         
         function [ projected, predicted ] = predict( obj, testPatterns, model)
             %PREDICT predict labels of TEST patterns labels using MODEL.
-            numClasses = size(model.thresholds,1)+1;
+            numClasses = size(model.thresholds,2)+1;
             projected = model.projection' * testPatterns';
             
             % We calculate the projected patterns minus each threshold, and then with
             % the following decision rule we can compute the class to which each pattern
             % belongs to.
             projected2 = repmat(projected, numClasses-1,1);
-            projected2 = projected2 - model.thresholds*ones(1,size(projected2,2));
+            projected2 = projected2 - model.thresholds'*ones(1,size(projected2,2));
             
             % Asignation of the class
             % f(x) = max {Wx-bk<0} or Wx - b_(K-1) > 0
@@ -94,6 +94,7 @@ classdef POM < Algorithm
             % pattern belongs to the last class.
             predicted(isnan(maximum(:,:)))=numClasses;
             
+            projected = projected';
             predicted = predicted';
             
         end

@@ -8,7 +8,7 @@ MATLABDIR ?= /usr/local/matlab/
 
 CXX ?= gcc
 
-CFLAGS = -Wall -Wconversion -O3 -fPIC -I$(MATLABDIR)/extern/include -I..
+CFLAGS = -Wno-unused-result -O3 -fPIC -I$(MATLABDIR)/extern/include -I..
 MEX = $(MATLABDIR)/bin/mex
 MEX_OPTION = CC="$(CXX)" CXX="$(CXX)" CFLAGS="$(CFLAGS)" CXXFLAGS="$(CFLAGS)"
 # comment the following line if you use MATLAB on 32-bit computer

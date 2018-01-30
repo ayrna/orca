@@ -63,7 +63,6 @@ classdef SVC1VA < Algorithm
             end
             
             model = struct('models', {models}, 'labelSet', labelSet);
-            model.algorithm = 'SVC1VA';
             model.parameters = param;
             [projectedTrain, predictedTrain] = obj.predict(train.patterns,model);
             if ~isempty(strfind(path,obj.algorithmMexPath))

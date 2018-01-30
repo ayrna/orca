@@ -71,8 +71,7 @@ classdef Experiment < handle
                 totalResults = obj.method.runAlgorithm(train, test);
             end
             
-            obj.saveResults(totalResults);
-            
+            obj.saveResults(totalResults);            
         end
         
         function obj = process(obj,fname)
@@ -293,11 +292,12 @@ classdef Experiment < handle
             pkeys = mapObj.keys;
             varargs = cell(1,cast(mapObj.Count,'int32')*2);
             
-            for p=1:2:cast(mapObj.Count*2,'int32')
-                keyasstr = pkeys(p);
+            for p=1:2:mapObj.Count
+                p = cast(p,'int32');
+                keyasstr = pkeys(p/2);
                 keyasstr = keyasstr{:};
                 value = mapObj(keyasstr);
-                varargs{1,p} = sprintf('%s', pkeys{p});
+                varargs{1,p} = sprintf('%s', pkeys{p/2});
                 % Check numerical values
                 valuenum = str2double(value);
                 if isnan(valuenum) % we have a string

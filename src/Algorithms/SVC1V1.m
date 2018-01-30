@@ -54,7 +54,6 @@ classdef SVC1V1 < Algorithm
             options = ['-t 2 -c ' num2str(param.C) ' -g ' num2str(param.k) ' -q'];
             model.libsvmModel = svmtrain(weights, train.targets, train.patterns, options);
             [predictedTrain, acc, projectedTrain] = svmpredict(train.targets,train.patterns,model.libsvmModel, '');
-            model.algorithm = 'SVC1V1';
             model.parameters = param;
             if ~isempty(strfind(path,obj.algorithmMexPath))
                 rmpath(obj.algorithmMexPath);
