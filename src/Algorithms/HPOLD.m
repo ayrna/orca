@@ -13,9 +13,9 @@ classdef HPOLD < Algorithm
     %
     %   References:
     %     [1] J. Sánchez-Monedero, M. Pérez-Ortiz, A. Sáez, P.A. Gutiérrez,
-    %         and C. Hervás-Martínez. Partial order label decomposition
-    %         approaches for melanoma diagnosis. Applied Soft Computing. In
-    %         Press. 2017.
+    %         and C. Hervás-Martínez. "Partial order label decomposition
+    %         approaches for melanoma diagnosis". Applied Soft Computing. 
+    %         Volume 64, March 2018, Pages 341-355. 
     %         https://doi.org/10.1016/j.asoc.2017.11.042
     %
     %   This file is part of ORCA: https://github.com/ayrna/orca
@@ -26,12 +26,10 @@ classdef HPOLD < Algorithm
     %       available at http://www.gnu.org/licenses/gpl-3.0.html
     properties
         %C penalty coefficient and the kernel parameters (both for the binary
-        %and ordinal methods)
-        parameters = struct('c', 0.1, 'k', 0.1);
-        
+        %and ordinal methods). 
+        parameters = struct('C', 0.1, 'k', 0.1);
         binaryMethod = 'SVC1V1';
         ordinalMethod = 'SVORIM';
-        kernelType = 'rbf';
     end
     
     properties(Access = private)
@@ -44,11 +42,12 @@ classdef HPOLD < Algorithm
     methods
         
         % TODO: update doc
-        function obj = HPOLD()
+        function obj = HPOLD(varargin)
             %HPOLD constructs an object of the class HPOLD and sets its default
             %   characteristics
             %   OBJ = HPOLD() builds HPOLD 
             obj.name = 'Hierarchical Partial Order Label Decomposition';
+            obj.parseArgs(varargin);
         end
         
         function [model, projectedTrain, predictedTrain] = fit( obj, train, param)
@@ -73,17 +72,18 @@ classdef HPOLD < Algorithm
             % Create and train binary classifier
             switch(lower(obj.binaryMethod))
                 case 'svc1v1'
-                    parambi.c = param(1);
-                    parambi.k = param(2);
-                    obj.objBI = SVC1V1(obj.kernelType);
+                    parambi.C = param.C;
+                    parambi.k = param.k;
+                    obj.objBI = SVC1V1();
                     obj.modelBI = obj.objBI.fit(trainBi, parambi);
                 case 'csvc1v1'
-                    parambi.c = param(1);
-                    parambi.k = param(2);
-                    obj.objBI = CSVC(obj.kernelType);
+                    error('TODO')
+                    parambi.C = param.C;
+                    parambi.k = param.k;
+                    obj.objBI = CSVC();
                     obj.modelBI = obj.objBI.fit(trainBi, parambi);
                 case 'lrliblinear'
-                    parambi.c = param(1);
+                    parambi.C = param.C;
                     obj.objBI = LRLIBLINEAR();
                     obj.modelBI = obj.objBI.fit(trainBi, parambi);
                 otherwise
@@ -94,9 +94,9 @@ classdef HPOLD < Algorithm
             % Create and train ordinal classifier
             switch(lower(obj.ordinalMethod))
                 case 'svorim'
-                    obj.objOR = SVORIM(obj.kernelType);
-                    paramor.c = param(1);
-                    paramor.k = param(2);
+                    obj.objOR = SVORIM();
+                    paramor.C = param.C;
+                    paramor.k = param.k;
                     obj.modelOR = obj.objOR.fit(trainOr,paramor);
                     %obj.objOR.model = obj.objOR.fit(trainOr,paramor);
                 case 'pom'
@@ -106,95 +106,25 @@ classdef HPOLD < Algorithm
                 otherwise
                     error(['Unknown ordinal classifier method:', obj.ordinalMethod])
             end
+                      
+            % Save model and parameters
+            model.parameters = param;
+            model.modelBI = obj.modelBI;
+            model.modelOR = obj.modelOR ;
             
-            model.modelBI = obj.objBI.model;
-            model.modelOR = obj.objOR.model;
+            [projectedTrain, predictedTrain] = obj.predict(train.patterns,model);
         end
         
-        function [projected, predTargets]= predict(obj, test, model)%, model_mc)
+        function [projected, predTargets]= predict(obj, testPatterns, model)
             %PREDICT predict labels of TEST patterns labels using MODEL.
-            
-            projected = -1*ones(size(test.targets));% dummy value
-            
+            projected = -1*ones(size(testPatterns,1),1);% dummy value
             % Binary prediction: classes 1/2
-            [projectedTest_bi,predTargets] = obj.objBI.predict(test,model.modelBI);
-            
-            %%%% DEBUG
-            %predTargetsBiOnly = predTargets;
-            
-            % Ordinal prediction for patterns of class ~= class 1
-            testOr.patterns = test.patterns(predTargets~=1,:);
-            testOr.targets = test.targets(predTargets~=1,:);
-            
-            [projectedTest_or, predictedTest_or] = obj.objOR.predict(testOr,model.modelOR);
-            
-            %             switch(lower(obj.ordinalMethod))
-            %                 case 'svorim'
-            %                     [projectedTest_or, predictedTest_or] = obj.objOR.predict(testOr,model.modelOR);
-            %                 case 'pom'
-            %                     [projectedTest_or, predictedTest_or] = obj.objOR.predict(testOr,model.modelOR);
-            %                 otherwise
-            %                     error(['Unknown ordinal classifier method:', obj.ordinalMethod])
-            %             end
-            
+            [projectedTest_bi,predTargets] = obj.objBI.predict(testPatterns,model.modelBI);
+            % Ordinal prediction for patterns of class ~= class 1         
+            [projectedTest_or, predictedTest_or] = obj.objOR.predict(testPatterns(predTargets~=1,:),model.modelOR);
+            % +1 to correct label numbering
             predictedTest_or = predictedTest_or + 1;
-            predTargets(predTargets~=obj.binClass,:) = predictedTest_or;
-            
-            %%%%%%%%%%%% DEBUG:
-            %  BINARY prediction
-            %             if false
-            %             J = length(unique(test.targets));
-            %             testTargetsBi = ones(size(test.targets));
-            %             testTargetsBi(test.targets>=2)=2;
-            %
-            %             testBi.patterns = test.patterns;
-            %             testBi.targets = testTargetsBi;
-            %
-            %             [projectedTest_bi,predTargetsBi] = obj.objBI.predict(testBi,model_bi);
-            
-            %             %%%%%%%%%% DEBUG: MULTICLASS prediction
-            %             [projectedTest_mc,predTargetsMC] = obj.obj_mc.predict(test,model_mc);
-            %
-            %             cm = confusionmat(test.targets, predTargets);
-            %             cm_bi = confusionmat(testBi.targets, predTargetsBi);
-            %             cm_mc = confusionmat(test.targets, predTargetsMC);
-            %
-            %
-            %             fid = fopen('prueba_HPOLD.txt', 'a+');
-            %             %fprintf(fid, 'BI only:\tCCR %.3f,\tMAE %.3f,\tAMAE %.3f\n', CCR.calculateMetric(testBi.targets, predTargetsBiOnly), ...
-            %             %    MAE.calculateMetric(testBi.targets, predTargetsBiOnly), AMAE.calculateMetric(testBi.targets, predTargetsBiOnly));
-            %             fprintf(fid, 'BI+OR:\tCCR %.3f,\tMAE %.3f,\tAMAE %.3f\n', CCR.calculateMetric(test.targets, predTargets), ...
-            %                 MAE.calculateMetric(test.targets, predTargets), AMAE.calculateMetric(test.targets, predTargets));
-            %             for h = 1:size(cm,1),
-            %                 for z = 1:size(cm,2),
-            %                     fprintf(fid, '%d\t', cm(h,z));
-            %                 end
-            %                 fprintf(fid,'\n');
-            %             end
-            %
-            %             fprintf(fid, 'BI:\tCCR %.3f,\tMAE %.3f,\tAMAE %.3f\n', CCR.calculateMetric(testBi.targets, predTargetsBi), ...
-            %                 MAE.calculateMetric(testBi.targets, predTargetsBi), AMAE.calculateMetric(testBi.targets, predTargetsBi));
-            %             for h = 1:size(cm_bi,1),
-            %                 for z = 1:size(cm_bi,2),
-            %                     fprintf(fid, '%d\t', cm_bi(h,z));
-            %                 end
-            %                 fprintf(fid,'\n');
-            %             end
-            %
-            %             fprintf(fid, 'MC:\tCCR %.3f,\tMAE %.3f,\tAMAE %.3f\n', CCR.calculateMetric(test.targets, predTargetsMC), ...
-            %                 MAE.calculateMetric(test.targets, predTargetsMC), AMAE.calculateMetric(test.targets, predTargetsMC));
-            %
-            %             for h = 1:size(cm_mc,1),
-            %                 for z = 1:size(cm_mc,2),
-            %                     fprintf(fid, '%d\t', cm_mc(h,z));
-            %                 end
-            %                 fprintf(fid,'\n');
-            %             end
-            %
-            %             fprintf(fid, '-----------\n');
-            %             fclose(fid);
-            %             end % if false
-            
+            predTargets(predTargets~=1,:) = predictedTest_or;
         end
         
     end

@@ -64,9 +64,7 @@ All the documentation is in the [doc](doc) folder:
 
 The [Algorithms](src/Algorithms) folder includes the MATLAB classes for the algorithms included and the original code (if applicable). [config-files](src/config-files) includes different configuration files for running all the algorithms. In order to use these files, you will need the [datasets](http://www.uco.es/grupos/ayrna/ucobigfiles/datasets-orreview.zip) of our review paper.
 
-The algorithms included in ORCA are:
-  - [SVC1V1](src/Algorithms/SVC1V1.m) [1]: Nominal Support Vector Machine performing the OneVsOne formulation (considered as a naïve approach for ordinal regression since it ignores the order information).
-  - [SVC1VA](src/Algorithms/SVC1VA.m) [1]: Nominal Support Vector Machine with the OneVsAll paradigm (considered as a naïve approach for ordinal regression since it ignores the order information).
+The ordinal classification algorithms included in ORCA are:
   - [SVR](src/Algorithms/SVR.m) [2]: Standard Support Vector Regression with normalised targets (considered as a naïve approach for ordinal regression since the assumption of equal distances between targets is done).
   - [CSSVC](src/Algorithms/CSSVC.m) [1]: This is a nominal SVM with the OneVsAll decomposition, where absolute costs are included as different weights for the negative class of each decomposition (it is considered as a naïve approach for ordinal regression since the assumption of equal distances between classes is done).
   - [SVMOP](src/Algorithms/SVMOP.m) [3,4]: Binary ordinal decomposition methodology with SVM as base method, it imposes explicit weights over the patterns and performs a probabilistic framework for the prediction.
@@ -81,6 +79,15 @@ The algorithms included in ORCA are:
   - [REDSVM](src/Algorithms/REDSVM.m) [11]: Augmented Binary Classification framework that solves the Ordinal Regression problem by a single binary model (SVM is applied in this case).
   - [ORBoost](src/Algorithms/ORBoost.m) [12]: This is an ensemble model based on the threshold model structure, where normalised sigmoid functions are used as the base classifier. The *weights* parameters configures whether the All margins versions is used (`weights=true`) or the Left-Right margin is used (`weights=false`).
   - [OPBE](src/Algorithms/OPBE.m) [13]: This method implements an ordinal projection based ensemble (OPBE) based on three-class decompositions, following the ordinal structure. A specific method for fusing the probabilities returned by the different three-class classifiers is implemented (product combiner, logit function and equal distribution of the probabilities). The base classifier is SVORIM but potentially any of the methods in ORCA can be setup as base classifier.
+
+Partial order methods:
+  - [HPOLD](src/Algorithms/HPOLD.m) [16]: Hierarchical Partial Order Label Decomposition with linear and non-linear base methods.
+
+In addition, nominal learners are available to ease comparison:
+
+  - [SVC1V1](src/Algorithms/SVC1V1.m) [1]: Nominal Support Vector Machine performing the OneVsOne formulation (considered as a naïve approach for ordinal regression since it ignores the order information).
+  - [SVC1VA](src/Algorithms/SVC1VA.m) [1]: Nominal Support Vector Machine with the OneVsAll paradigm (considered as a naïve approach for ordinal regression since it ignores the order information).
+  - [LRLIBLINEAR](src/Algorithms/LRLIBLINEAR.m) : Provides implementation of logistic regression and linear SVM based on [LIBLINEAR](https://www.csie.ntu.edu.tw/~cjlin/liblinear/).
 
 # Performance metrics
 
@@ -136,3 +143,4 @@ Apart from the authors of the paper and the authors of the implementations refer
 - [13] M. Pérez-Ortiz, P. A. Gutiérrez y C. Hervás-Martínez. “Projection based ensemble learning for ordinal regression”, IEEE Transactions on Cybernetics, Vol. 44, May, 2014, pp. 681-694.
 - [14] M. Cruz-Ramírez, C. Hervás-Martínez, J. Sánchez-Monedero and P. A. Gutiérrez. “Metrics to guide a multi-objective evolutionary algorithm for ordinal classification,” Neurocomputing, Vol. 135, July, 2014, pp. 21-31.
 - [15] J. C. Fernandez-Caballero, F. J. Martínez-Estudillo, C. Hervás-Martínez and P. A. Gutiérrez. “Sensitivity Versus Accuracy in Multiclass Problems Using Memetic Pareto Evolutionary Neural Networks,” IEEE Transacctions on Neural Networks, Vol. 21. 2010, pp. 750-770.
+- [16] J. Sánchez-Monedero, M. Pérez-Ortiz, A. Sáez, P.A. Gutiérrez and C. Hervás-Martínez. "Partial order label decomposition approaches for melanoma diagnosis". Applied Soft Computing. Vol. 64, March 2018, pp. 341-355.
