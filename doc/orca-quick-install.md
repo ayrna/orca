@@ -1,3 +1,12 @@
+<!-- TOC depthFrom:1 depthTo:6 withLinks:1 updateOnSave:1 orderedList:1 -->
+
+1. [Installing ORCA](#installing-orca)
+	1. [Installation requirements](#installation-requirements)
+	2. [Download ORCA](#download-orca)
+	3. [Compilation of `mex` files](#compilation-of-mex-files)
+	4. [Installation testing](#installation-testing)
+
+<!-- /TOC -->
 # Installing ORCA
 
 This is a **quick install** guide. If you experiment problems, please read the [detailed install guide](orca-install.md). ORCA has been developed and tested in GNU/Linux systems and ported to Windows. It has been tested in MATLAB R2009a-R2017b and Octave >4.0.

@@ -1,16 +1,16 @@
 ![ORCA logo](orca_small.png)
 
-<!-- TOC depthFrom:1 depthTo:6 withLinks:1 updateOnSave:1 orderedList:0 -->
+<!-- TOC depthFrom:1 depthTo:6 withLinks:1 updateOnSave:1 orderedList:1 -->
 
-- [Threshold models](#threshold-models)
-	- [Proportional odds model (POM)](#proportional-odds-model-pom)
-	- [Neural network based on POM (NNPOM)](#neural-network-based-on-pom-nnpom)
-	- [Support vector for ordinal regression (SVOREX and SVORIM)](#support-vector-for-ordinal-regression-svorex-and-svorim)
-	- [Reduction from ordinal regression to binary SVM classifiers (REDSVM)](#reduction-from-ordinal-regression-to-binary-svm-classifiers-redsvm)
-	- [Kernel discriminant learning for ordinal regression (KDLOR)](#kernel-discriminant-learning-for-ordinal-regression-kdlor)
-	- [Ordinal regression boosting (ORBoost)](#ordinal-regression-boosting-orboost)
-	- [Custom Ensemble based on several projections](#custom-ensemble-based-on-several-projections)
-- [References](#references)
+1. [Threshold models](#threshold-models)
+	1. [Proportional odds model (POM)](#proportional-odds-model-pom)
+	2. [Neural network based on POM (NNPOM)](#neural-network-based-on-pom-nnpom)
+	3. [Support vector for ordinal regression (SVOREX and SVORIM)](#support-vector-for-ordinal-regression-svorex-and-svorim)
+	4. [Reduction from ordinal regression to binary SVM classifiers (REDSVM)](#reduction-from-ordinal-regression-to-binary-svm-classifiers-redsvm)
+	5. [Kernel discriminant learning for ordinal regression (KDLOR)](#kernel-discriminant-learning-for-ordinal-regression-kdlor)
+	6. [Ordinal regression boosting (ORBoost)](#ordinal-regression-boosting-orboost)
+	7. [Custom Ensemble based on several projections](#custom-ensemble-based-on-several-projections)
+2. [References](#references)
 
 <!-- /TOC -->
 

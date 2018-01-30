@@ -1,18 +1,22 @@
 ![ORCA logo](doc/orca_small.png)
-<!-- TOC depthFrom:1 depthTo:6 withLinks:1 updateOnSave:1 orderedList:0 -->
+<!-- TOC depthFrom:1 depthTo:6 withLinks:1 updateOnSave:1 orderedList:1 -->
 
-- [ORCA](#orca)
-- [Cite ORCA](#cite-orca)
-- [Install, tutorials and documentation](#install-tutorials-and-documentation)
-- [Methods](#methods)
-- [Performance metrics](#performance-metrics)
-- [Utilities, classes and scripts](#utilities-classes-and-scripts)
-- [Experiments parallelization with HTCondor](#experiments-parallelization-with-htcondor)
-- [External software](#external-software)
-- [Other contributors](#other-contributors)
-- [References](#references)
+1. [ORCA](#orca)
+2. [Cite ORCA](#cite-orca)
+3. [Install, tutorials and documentation](#install-tutorials-and-documentation)
+4. [Methods](#methods)
+	1. [Ordinal regression algorithms](#ordinal-regression-algorithms)
+	2. [Partial order methods](#partial-order-methods)
+	3. [Nominal methods](#nominal-methods)
+5. [Performance metrics](#performance-metrics)
+6. [Utilities, classes and scripts](#utilities-classes-and-scripts)
+7. [Experiments parallelization with HTCondor](#experiments-parallelization-with-htcondor)
+8. [External software](#external-software)
+9. [Other contributors](#other-contributors)
+10. [References](#references)
 
 <!-- /TOC -->
+
 # ORCA
 ORCA (Ordinal Regression and Classification Algorithms) is a MATLAB framework including a wide set of ordinal regression methods associated to the paper ["Ordinal regression methods: survey and experimental study"](http://dx.doi.org/10.1109/TKDE.2015.2457911) published in *IEEE Transactions on Knowledge and Data Engineering*. ORCA provides implementation and integration of ordinal classification algorithms and performance metrics for ordinal regression. In addition, it helps to accelerate classifier experimental comparison with automatic fold execution, experiment paralellisation and performance reports. You can find a basic definition of ordinal regression at [Wikipedia](https://en.wikipedia.org/wiki/Ordinal_regression).
 
@@ -64,7 +68,8 @@ All the documentation is in the [doc](doc) folder:
 
 The [Algorithms](src/Algorithms) folder includes the MATLAB classes for the algorithms included and the original code (if applicable). [config-files](src/config-files) includes different configuration files for running all the algorithms. In order to use these files, you will need the [datasets](http://www.uco.es/grupos/ayrna/ucobigfiles/datasets-orreview.zip) of our review paper.
 
-The ordinal classification algorithms included in ORCA are:
+## Ordinal regression algorithms
+
   - [SVR](src/Algorithms/SVR.m) [2]: Standard Support Vector Regression with normalised targets (considered as a naïve approach for ordinal regression since the assumption of equal distances between targets is done).
   - [CSSVC](src/Algorithms/CSSVC.m) [1]: This is a nominal SVM with the OneVsAll decomposition, where absolute costs are included as different weights for the negative class of each decomposition (it is considered as a naïve approach for ordinal regression since the assumption of equal distances between classes is done).
   - [SVMOP](src/Algorithms/SVMOP.m) [3,4]: Binary ordinal decomposition methodology with SVM as base method, it imposes explicit weights over the patterns and performs a probabilistic framework for the prediction.
@@ -80,10 +85,10 @@ The ordinal classification algorithms included in ORCA are:
   - [ORBoost](src/Algorithms/ORBoost.m) [12]: This is an ensemble model based on the threshold model structure, where normalised sigmoid functions are used as the base classifier. The *weights* parameters configures whether the All margins versions is used (`weights=true`) or the Left-Right margin is used (`weights=false`).
   - [OPBE](src/Algorithms/OPBE.m) [13]: This method implements an ordinal projection based ensemble (OPBE) based on three-class decompositions, following the ordinal structure. A specific method for fusing the probabilities returned by the different three-class classifiers is implemented (product combiner, logit function and equal distribution of the probabilities). The base classifier is SVORIM but potentially any of the methods in ORCA can be setup as base classifier.
 
-Partial order methods:
+## Partial order methods
   - [HPOLD](src/Algorithms/HPOLD.m) [16]: Hierarchical Partial Order Label Decomposition with linear and non-linear base methods.
 
-In addition, nominal learners are available to ease comparison:
+## Nominal methods
 
   - [SVC1V1](src/Algorithms/SVC1V1.m) [1]: Nominal Support Vector Machine performing the OneVsOne formulation (considered as a naïve approach for ordinal regression since it ignores the order information).
   - [SVC1VA](src/Algorithms/SVC1VA.m) [1]: Nominal Support Vector Machine with the OneVsAll paradigm (considered as a naïve approach for ordinal regression since it ignores the order information).
