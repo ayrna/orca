@@ -1,18 +1,18 @@
 % Reference performance
-accTestRef = 0.293333;
+accTestRef = 0.9866;
 allowedError = 0.001;
-method = 'LRLIBLINEAR';
+method = 'HPOLD';
 
 % Create the algorithm object
-algorithmObj = LRLIBLINEAR();
+algorithmObj = HPOLD();
 
 % Clear parameter struct
 clear param;
 
 % Parameter C (Cost)
-param.C = 0.10;
+param.C = 10;
 
-param.k = 0.10;
+param.k = 10;
 
 % Running the algorithm
 info = algorithmObj.runAlgorithm(train,test,param);
