@@ -297,7 +297,7 @@ classdef Experiment < handle
             pkeys = mapObj.keys;
             varargs = cell(1,cast(mapObj.Count,'int32')*2);
             
-            for p=1:2:(cast(mapObj.Count,'int32')+1)
+            for p=1:2:(cast(mapObj.Count,'int32')*2)
                 p = cast(p,'int32');
                 keyasstr = pkeys(p/2);
                 keyasstr = keyasstr{:};
