@@ -74,6 +74,36 @@ classdef Algorithm < handle
             end
         end
         
+        function setParam(obj,param)
+            %SETPARAM(PARAM) set parameters contained in param and keep default
+            %values of class parameters field. It throws different exceptions if
+            %the field does not exits on the class or if the type assignement is not consistent.
+            %paramNames = fieldnames(obj.parameters);
+            paramNames = fieldnames(param);
+            
+            for i = 1:length(paramNames)
+                inpName = paramNames{i};
+                if isfield(obj.parameters,inpName)
+                    % check type
+                    if strcmp(class(obj.parameters.(inpName)), class(param.(inpName)))
+                        obj.parameters.(inpName) = param.(inpName);
+                    else
+                        % Check boolean
+                        if islogical(obj.parameters.(inpName)) && ...
+                                (strcmp(param.(inpName),'true') || strcmp(param.(inpName),'false'))
+                            obj.parameters.(inpName) = eval(pair{2});
+                        else
+                            msg = sprintf('Data type of property ''%s'' (%s) not compatible with data type (%s) of assigned value in configuration file', ...
+                                inpName, class(obj.parameters.(inpName)), class(param.(inpName)));
+                            error(msg);
+                        end
+                    end
+                else
+                    error('Error ''%s'' is not a recognized class parameter name',inpName)
+                end
+            end
+        end
+        
         function mInf = runAlgorithm(obj,train, test, param)
             %RUNALGORITHM runs the corresponding algorithm, fitting the
             %model and testing it in a dataset.
@@ -84,7 +114,12 @@ classdef Algorithm < handle
             %   returns predictions and model in mInf structure.
             if nargin == 3
                 param = [];
+            else
+                % Mix parameters with default
+                obj.setParam(param)
             end
+            param = obj.parameters;           
+            
             c1 = clock;
             [model,mInf.projectedTrain, mInf.predictedTrain] = obj.fit(train,param);
             model.algorithm = class(obj);

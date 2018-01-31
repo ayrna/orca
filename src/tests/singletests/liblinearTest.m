@@ -12,8 +12,6 @@ clear param;
 % Parameter C (Cost)
 param.C = 0.10;
 
-param.k = 0.10;
-
 % Running the algorithm
 info = algorithmObj.runAlgorithm(train,test,param);
 
