@@ -1,17 +1,18 @@
 % Reference performance
-accTestRef = 0.920000;
-% Increase the error due to method's variability
-allowedError = 0.5; 
-method = 'ELMOP';
+accTestRef = 0.9866;
+allowedError = 0.001;
+method = 'HPOLD';
 
 % Create the algorithm object
-algorithmObj = ELMOP();
+algorithmObj = HPOLD();
 
 % Clear parameter struct
 clear param;
 
-% Parameter hiddenN (Number of neurons in the hidden layer)
-param.hiddenN = 50;
+% Parameter C (Cost)
+param.C = 10;
+
+param.k = 10;
 
 % Running the algorithm
 info = algorithmObj.runAlgorithm(train,test,param);

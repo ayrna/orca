@@ -1,20 +1,20 @@
 ![ORCA logo](orca_small.png)
 
-<!-- TOC depthFrom:1 depthTo:6 withLinks:1 updateOnSave:1 orderedList:0 -->
+<!-- TOC depthFrom:1 depthTo:6 withLinks:1 updateOnSave:1 orderedList:1 -->
 
-- [Naive approaches and decomposition methods in orca](#naive-approaches-and-decomposition-methods-in-orca)
-	- [Loading the dataset and performing some preliminary experiments](#loading-the-dataset-and-performing-some-preliminary-experiments)
-	- [Naive approaches](#naive-approaches)
-		- [Regression (SVR)](#regression-svr)
-		- [Nominal classification (SVC1V1 and SVC1VA)](#nominal-classification-svc1v1-and-svc1va)
-		- [Cost sensitive classification (CSSVC)](#cost-sensitive-classification-cssvc)
-		- [Summary of results for naive approaches](#summary-of-results-for-naive-approaches)
-	- [Binary decomposition methods](#binary-decomposition-methods)
-		- [SVM with ordered partitions (SVMOP)](#svm-with-ordered-partitions-svmop)
-		- [Neural network approaches (ELMOP and NNOP)](#neural-network-approaches-elmop-and-nnop)
-		- [Summary of results for binary decompositions](#summary-of-results-for-binary-decompositions)
-	- [Ternary decomposition](#ternary-decomposition)
-- [References](#references)
+1. [Naive approaches and decomposition methods in orca](#naive-approaches-and-decomposition-methods-in-orca)
+	1. [Loading the dataset and performing some preliminary experiments](#loading-the-dataset-and-performing-some-preliminary-experiments)
+	2. [Naive approaches](#naive-approaches)
+		1. [Regression (SVR)](#regression-svr)
+		2. [Nominal classification (SVC1V1 and SVC1VA)](#nominal-classification-svc1v1-and-svc1va)
+		3. [Cost sensitive classification (CSSVC)](#cost-sensitive-classification-cssvc)
+		4. [Summary of results for naive approaches](#summary-of-results-for-naive-approaches)
+	3. [Binary decomposition methods](#binary-decomposition-methods)
+		1. [SVM with ordered partitions (SVMOP)](#svm-with-ordered-partitions-svmop)
+		2. [Neural network approaches (ELMOP and NNOP)](#neural-network-approaches-elmop-and-nnop)
+		3. [Summary of results for binary decompositions](#summary-of-results-for-binary-decompositions)
+	4. [Ternary decomposition](#ternary-decomposition)
+2. [References](#references)
 
 <!-- /TOC -->
 

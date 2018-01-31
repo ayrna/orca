@@ -1,4 +1,4 @@
-SUBDIRS = libsvm-rank-2.81/matlab libsvm-weights-3.12/matlab orensemble SVORIM SVOREX
+SUBDIRS = libsvm-rank-2.81/matlab libsvm-weights-3.12/matlab liblinear-2.20/matlab orensemble SVORIM SVOREX
 
 export MATLABDIR = /usr/local/MATLAB/R2017b/
 

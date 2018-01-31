@@ -1,17 +1,16 @@
 % Reference performance
-accTestRef = 0.920000;
-% Increase the error due to method's variability
-allowedError = 0.5; 
-method = 'ELMOP';
+accTestRef = 0.2933;
+allowedError = 0.001;
+method = 'SVR';
 
 % Create the algorithm object
-algorithmObj = ELMOP();
+algorithmObj = LRLIBLINEAR();
 
 % Clear parameter struct
 clear param;
 
-% Parameter hiddenN (Number of neurons in the hidden layer)
-param.hiddenN = 50;
+% Parameter C (Cost)
+param.C = 0.01;
 
 % Running the algorithm
 info = algorithmObj.runAlgorithm(train,test,param);
