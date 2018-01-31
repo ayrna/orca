@@ -28,7 +28,7 @@ classdef KDLOR < Algorithm
     %       available at http://www.gnu.org/licenses/gpl-3.0.html
     
     properties
-        optimizationMethod = 'quadprog';
+        optimizationMethod = 'quadprog'; %TODO: more to add
         parameters = struct('C', 0.1, 'k', 0.1, 'u', 0.01);
         kernelType = 'rbf';
     end
@@ -50,10 +50,20 @@ classdef KDLOR < Algorithm
             %SET.OPTIMIZATIONMETHOD verifies if the value for the variable
             %optimizationMethod is correct. Returns value for the variable
             %|optimizationMethod|.
-            if ~(strcmpi(value,'quadprog') || strcmpi(value,'qp') || strcmpi(value,'cvx'))
+            % TODO: look for free optimizer for matlab 
+            %if ~(strcmpi(value,'quadprog') || strcmpi(value,'qp') || strcmpi(value,'cvx'))
+            if ~strcmpi(value,'quadprog')
                 error('Invalid value for optimizer');
             else
                 obj.optimizationMethod = value;
+            end
+        end
+        
+        function obj = set.kernelType(obj, value)
+            if ~(strcmpi(value,'rbf') || strcmpi(value,'sigmoid') || strcmpi(value,'linear'))
+                error('Invalid value for kernelType');
+            else
+                obj.kernelType = value;
             end
         end
         
@@ -150,30 +160,6 @@ classdef KDLOR < Algorithm
                     [alpha, fval, how] = quadprog(Q,c,A,b,E,d,vlb,vub,x0,options);
                     if exist ('OCTAVE_VERSION', 'builtin') > 0
                         pkg unload optim;
-                    end
-                case 'CVX'
-                    %                         rmpath ../cvx/sets
-                    %                         rmpath ../cvx/keywords
-                    %                         addpath ../cvx
-                    %                         addpath ../cvx/structures
-                    %                         addpath ../cvx/lib
-                    %                         addpath ../cvx/functions
-                    %                         addpath ../cvx/commands
-                    %                         addpath ../cvx/builtins
-                    
-                    cvx_begin
-                    cvx_quiet(true)
-                    variables alpha(numClasses-1)
-                    minimize( 0.5*alpha'*Q*alpha );
-                    subject to
-                    (ones(1,numClasses-1)*alpha) == d;
-                    alpha >= 0;
-                    cvx_end
-                case 'QP'
-                    if exist ('OCTAVE_VERSION', 'builtin') > 0
-                        alpha = qp(x0, Q, c, E, d, vlb, vub);
-                    else
-                        alpha = qp(Q, c, E, d, vlb, vub,x0,1,0);
                     end
                 otherwise
                     error('Invalid value for optimizer\n');
