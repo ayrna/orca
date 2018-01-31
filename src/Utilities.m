@@ -96,9 +96,10 @@ classdef Utilities < handle
             
             disp('Calculating results...');
             % Train results (note last argument)
-            Utilities.results([logsDir '/' 'Results'],1);
+            
+            Utilities.results([logsDir '/' 'Results'],'report_sum', myExperiment.report_sum, 'train', true);
             % Test results
-            Utilities.results([logsDir '/' 'Results']);
+            Utilities.results([logsDir '/' 'Results'], 'report_sum', myExperiment.report_sum);
             %rmpath('Measures');
             %rmpath('Algorithms');
             
@@ -116,7 +117,7 @@ classdef Utilities < handle
             end
         end
         
-        function results(experiment_folder,train)
+        function results(experiment_folder,varargin)
             % RESULTS Function for computing the results
             %   RESULTS(EXPERIMENT_FOLDER) computes results of predictions
             %   stored in EXPERIMENT_FOLDER. It generates CSV files with
@@ -131,7 +132,7 @@ classdef Utilities < handle
             %       confussion matrices of the _k_ experiments (as Weka does). Each column
             %       presents the performance of this single matrix.
             %
-            %   RESULTS(EXPERIMENT_FOLDER,TRAIN) same as
+            %   RESULTS(EXPERIMENT_FOLDER,'TRAIN', true) same as
             %   RESULTS(EXPERIMENT_FOLDER) but calculates performance in train
             %   data. It can be usefull to evaluate overfitting.
             %
@@ -142,16 +143,13 @@ classdef Utilities < handle
             addpath(fullfile(fileparts(which('Utilities.m')),'Measures'));
             addpath(fullfile(fileparts(which('Utilities.m')),'Algorithms'));
             
-            if nargin < 2
-                train = 0;
-            elseif nargin == 1
-                train = train;
-            end
+            opt.train = false;
+            opt.report_sum = false;
+            
+            opt = Utilities.parseVarArgs(opt, varargin);
+
             experiments = dir(experiment_folder);
-            
-            %idx=strfind(experiment_folder,'Results');
-            %scriptpath = [experiment_folder(1:idx-1)];
-            
+                        
             for i=1:numel(experiments)
                 if ~(any(strcmp(experiments(i).name, {'.', '..'}))) && experiments(i).isdir
                     disp([experiment_folder '/' experiments(i).name '/' 'dataset'])
@@ -159,7 +157,7 @@ classdef Utilities < handle
                     datasetPath = fgetl(fid);
                     fclose(fid);
                     
-                    if train == 1
+                    if opt.train
                         predicted_files = dir([experiment_folder '/' experiments(i).name '/' 'Predictions' '/' 'train_*']);
                     else
                         predicted_files = dir([experiment_folder '/' experiments(i).name '/' 'Predictions' '/' 'test_*']);
@@ -175,19 +173,11 @@ classdef Utilities < handle
                     time_files = dir([experiment_folder '/' experiments(i).name '/' 'Times' '/' '*.*']);
                     hyp_files = dir([experiment_folder '/' experiments(i).name '/' 'OptHyperparams' '/' '*.*']);
                     
-                    if train == 1
+                    if opt.train
                         guess_files = dir([experiment_folder '/' experiments(i).name '/' 'Guess' '/' 'train_*']);
                     else
                         guess_files = dir([experiment_folder '/' experiments(i).name '/' 'Guess' '/' 'test_*']);
                     end
-                    
-                    %str=predicted_files(1).name;
-                    %[matchstart,matchend] = regexp( str,'_(.+)\.\d+');
-                    %dataset=str(matchstart+1:matchend-2);
-                    
-                    %auxscript =  experimentos(i).name;
-                    %[matchstart,matchend]=regexp(auxscript,dataset);
-                    %basescript = ['exp-' auxscript(matchend+2:end) '-' dataset '-'];
                     
                     % Discard "." and ".."
                     if ~(exist ('OCTAVE_VERSION', 'builtin') > 0)
@@ -195,7 +185,7 @@ classdef Utilities < handle
                         hyp_files = hyp_files(3:numel(hyp_files));
                     end
                     
-                    if train == 1
+                    if opt.train
                         real_files = dir([datasetPath '/' 'train_*']);
                     else
                         real_files = dir([datasetPath '/' 'test_*']);
@@ -263,7 +253,7 @@ classdef Utilities < handle
                     results_matrix = results_matrix';
                     
                     % Results for the independent dataset
-                    if train == 1
+                    if opt.train
                         fid = fopen([experiment_folder '/' experiments(i).name '/' 'results_train.csv'],'w');
                     else
                         fid = fopen([experiment_folder '/' experiments(i).name '/' 'results_test.csv'],'w');
@@ -284,9 +274,8 @@ classdef Utilities < handle
                     fclose(fid);
                     
                     % Confusion matrices and sum of confusion matrices
-                    % TODO PARAMETRIZAR
-                    if false
-                         if train == 1
+                    if opt.report_sum
+                         if opt.train
                              fid = fopen([experiment_folder '/' experiments(i).name '/' 'matrices_train.txt'],'w');
                          else
                              fid = fopen([experiment_folder '/' experiments(i).name '/' 'matrices_test.txt'],'w');
@@ -326,7 +315,7 @@ classdef Utilities < handle
                     means = mean(results_matrix,1);
                     stdev = std(results_matrix,0,1);
                     
-                    if train == 1
+                    if opt.train
                         if ~exist([experiment_folder '/' 'mean-results_train.csv'],'file')
                             add_head = 1;
                         else
@@ -363,9 +352,8 @@ classdef Utilities < handle
                     
                     
                     % Confusion matrices and sum of confusion matrices
-                    % TODO PARAMETRIZAR
-                    if false
-                         if train == 1
+                    if opt.report_sum
+                         if opt.train
                              fid = fopen([experiment_folder '/' 'mean-results_matrices_sum_train.csv'],'at');
                          else
                              fid = fopen([experiment_folder '/' 'mean-results_matrices_sum_test.csv'],'at');
@@ -503,22 +491,6 @@ classdef Utilities < handle
             dbs(1) = [];
             validDataSets = 1;
             
-            % Currently, 'all' is not working
-            %if strcmpi(dataSetNames{1}, 'all')
-            %    trainFileNames = cell(size(dbs,1),1);
-            %    testFileNames = cell(size(dbs,1),1);
-            %    for dd=1:size(dbs,1)
-            %        % get directory
-            %        if dbs(dd).isdir,
-            %            ejemplo = [directory '/' dbs(dd).name '/' 'matlab' '/' 'train_' dbs(dd).name '.*'];
-            %            trainFileNames{validDataSets} = dir(ejemplo);
-            %            ejemplo = [directory '/' dbs(dd).name '/' 'matlab' '/' 'test_' dbs(dd).name '.*'];
-            %            testFileNames{validDataSets} = dir(ejemplo);
-            %            validDataSets = validDataSets + 1;
-            %        end
-            %
-            %    end
-            %else
             trainFileNames = cell(numel(dataSetNames),1);
             testFileNames = cell(numel(dataSetNames),1);
             for j=1:numel(dataSetNames)
@@ -531,7 +503,6 @@ classdef Utilities < handle
                     validDataSets = validDataSets + 1;
                 end
             end
-            %end
         end
         
         function checkDatasets(basedir, datasets)
@@ -647,39 +618,48 @@ classdef Utilities < handle
             % - 'closepool': whether to close or not the pool after 
             %    experiments. Default 'true'
             % Solution adapted from https://stackoverflow.com/questions/2775263/how-to-deal-with-name-value-pairs-of-function-arguments-in-matlab#2776238
+            
             if (exist ('OCTAVE_VERSION', 'builtin') > 0)
                 maximum_ncores = nproc;
             else
                 maximum_ncores = feature('numCores');
             end
             
-            varargin = varargin{1};
-            
             options = struct('parallel',false,'numcores',maximum_ncores,'closepool',true);
             
-            %# read the acceptable names
-            optionNames = fieldnames(options);
-            
-            %# count arguments
-            nArgs = length(varargin);
-            if mod(nArgs,2)
-                error('parseParArgs needs propertyName/propertyValue pairs')
-            end
-            
-            for pair = reshape(varargin,2,[]) %# pair is {propName;propValue}
-                inpName = lower(pair{1}); %# make case insensitive
-                
-                if any(strcmp(inpName,optionNames))
-                    %# overwrite options.
-                    options.(inpName) = pair{2};
-                else
-                    error('%s is not a recognized parameter name',inpName)
+            varargin = varargin{:};
+            if ~isempty(varargin)
+                options = Utilities.parseVarArgs(options, varargin);
+                if options.parallel && options.numcores <2
+                    disp('Number of cores to low, setting to default number of cores')
+                    options.numcores = maximum_ncores;
                 end
             end
-            
-            if options.parallel && options.numcores <2
-                disp('Number of cores to low, setting to default number of cores')
-                options.numcores = maximum_ncores;
+        end
+        
+        function options = parseVarArgs(options, varargin)
+            if ~isempty(varargin{:})
+                par = varargin{:};
+
+                % read the acceptable names
+                optionNames = fieldnames(options);
+
+                % count arguments
+                nArgs = length(par);
+                if mod(nArgs,2)
+                    error('parseVarArgs needs propertyName/propertyValue pairs')
+                end
+
+                for pair = reshape(par,2,[]) % pair is {propName;propValue}
+                    inpName = lower(pair{1}); % make case insensitive
+
+                    if any(strcmp(inpName,optionNames))
+                        % overwrite options.
+                        options.(inpName) = pair{2};
+                    else
+                        error('%s is not a recognized parameter name',inpName)
+                    end
+                end
             end
         end
     end

@@ -28,6 +28,9 @@ classdef Experiment < handle
         cvCriteria = MAE;
         crossvalide = 0;
         resultsDir = '';
+        % calculate metrics with the sum of matrices (only suitable for 
+        % k-fold experimental design)
+        report_sum = 0; 
         seed = 1;
         parameters; % parameters to optimize
     end
@@ -81,7 +84,6 @@ classdef Experiment < handle
             % Copy ini values to corresponding object properties
             
             % General experiment properties
-            % TODO: check robustness and document behaviour of ini file
             if expObj.general.isKey('num_folds')
                 obj.data.nOfFolds = str2num(expObj.general('num_folds'));
             end
@@ -94,6 +96,9 @@ classdef Experiment < handle
             end
             if expObj.general.isKey('seed')
                 obj.seed = str2num(expObj.general('seed'));
+            end
+            if expObj.general.isKey('report_sum')
+                obj.report_sum = str2num(expObj.general('report_sum'));
             end
             
             try

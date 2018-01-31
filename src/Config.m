@@ -80,22 +80,6 @@ classdef Config
                 
                 obj.exps{i}=eObj;
             end
-            
-            
-            %             % TODO
-            %             if Config.validateconfig(exps)
-            %                 return
-            %             else
-            %                 error('Invalid INI file %s', confFile)
-            %             end
-        end
-    end
-    
-    methods(Static = true, Access = private)
-        
-        function valid = validateconfig(exps)
-            %VALIDATECONFIG Validates set of experiments
-            %TODO         
         end
     end
 end

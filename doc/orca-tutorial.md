@@ -228,6 +228,7 @@ ORCA uses the `Experiments` folder to store all the results of the different exp
         - Optimal hyper-parameters values obtained after nested cross-validation ('OptHyperparams').
         - Computational time results ('Times').
 
+If you provide the option `report_sum = true` in `{general-conf}`, additionally the same metrics will be calculated with a matrix that is the sum of the generalization matrices (as Weka does). **Note that this only makes sense in the case of a k-fold experimental design**. With this option active, two additional reports will be generated (`mean-results_matrices_sum_train.csv` and `mean-results_matrices_sum_test.csv`)
 
 ## Running algorithms with ORCA API
 

@@ -203,7 +203,7 @@ elseif nargin < 2
     error('Not enough input arguments');
 end
 
-%TODO. Supress Octave Warnings
+% Supress Octave Warnings
 if (exist ('OCTAVE_VERSION', 'builtin') > 0)
 warning('off', 'Octave:possible-matlab-short-circuit-operator');
 warning('off', 'Octave:num-to-str');
