@@ -4,6 +4,7 @@
 *.mexw64
 *.exe
 *.dll
+*.a
 src/Experiments
 src/Algorithms/orensemble/boostrank-*
 *~
