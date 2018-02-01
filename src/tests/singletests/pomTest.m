@@ -1,10 +1,10 @@
 % Reference performance
-accTestRef = 0.293333;
+accTestRef = 0.333333;
 allowedError = 0.001;
 method = 'POM';
 
 % Create the algorithm object
-algorithmObj = POM();
+algorithmObj = POM('linkFunction','logit');
 
 % Clear parameter struct
 clear param;
