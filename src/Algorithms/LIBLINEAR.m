@@ -1,14 +1,14 @@
 classdef LIBLINEAR < Algorithm
-    %LRLIBLINEAR liblinear [1] implementation of regularized logistic
+    %LIBLINEAR liblinear [1] implementation of regularized logistic
     %regression, more information at https://www.csie.ntu.edu.tw/~cjlin/liblinear/.
     %
-    %   LRLIBLINEAR methods:
+    %   LIBLINEAR methods:
     %      runAlgorithm               - runs the corresponding algorithm,
     %                                   fitting the model and testing it in a dataset.
     %      fit                        - Fits a model from training data
     %      predict                    - Performs label prediction
     %
-    %   LRLIBLINEAR parameters are:
+    %   LIBLINEAR parameters are:
     %   - parameters.c: penalty cost of misclassification
     %   - solver: the type of solver (default 0), options are the liblinear
     %     options for '-s' for multi-class classification:
@@ -44,8 +44,8 @@ classdef LIBLINEAR < Algorithm
     
     methods
         
-        function obj = LRLIBLINEAR(varargin)
-            %LRLIBLINEAR constructs an object of the class LRLIBLINEAR.
+        function obj = LIBLINEAR(varargin)
+            %LIBLINEAR constructs an object of the class LIBLINEAR.
             %Default solver is '0' (L2-regularized logistic regression
             %(primal)). Parameter c have to be optimized in order to obtain
             %suitable model fitting
@@ -53,7 +53,7 @@ classdef LIBLINEAR < Algorithm
         end
         
         function [model, projectedTrain, predictedTrain]= fit( obj, train, param)
-            %FIT trains the model for the LRLIBLINEAR method with TRAIN data and
+            %FIT trains the model for the LIBLINEAR method with TRAIN data and
             %vector of parameters PARAMETERS. Return the learned model.
             if isempty(strfind(path,obj.algorithmMexPath))
                 addpath(obj.algorithmMexPath);

@@ -39,6 +39,7 @@ classdef POM < Algorithm
     %                       no. 2, pp. 109–142, 1980.
     
     properties
+        description = 'Linear Proportional Odds Model for Ordinal Regression';
         parameters = [];
     end
     
@@ -46,7 +47,6 @@ classdef POM < Algorithm
         function obj = POM(varargin)
             %POM constructs an object of the class POM. This method does not
             %have any parameters
-            obj.name = 'Linear Proportional Odds Model for Ordinal Regression';
             obj.parseArgs(varargin);
         end
 
