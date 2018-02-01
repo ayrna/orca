@@ -55,4 +55,4 @@ linear_model_matlab.o: linear_model_matlab.c ../linear.h
 
 clean:
 	make -C ../blas clean
-	rm -f *~ *.o *.mex* *.obj ../linear.o ../tron.o
+	rm -f *~ *.o *.obj ../linear.o ../tron.o
