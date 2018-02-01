@@ -81,9 +81,9 @@ classdef HPOLD < Algorithm
                     parambi.k = param.k;
                     obj.objBI = CSVC();
                     obj.modelBI = obj.objBI.fit(trainBi, parambi);
-                case 'lrliblinear'
+                case 'liblinear'
                     parambi.C = param.C;
-                    obj.objBI = LRLIBLINEAR();
+                    obj.objBI = LIBLINEAR();
                     obj.modelBI = obj.objBI.fit(trainBi, parambi);
                 otherwise
                     error(['Unknown binary classifier method:', obj.binaryMethod])
