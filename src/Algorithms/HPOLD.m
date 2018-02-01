@@ -14,8 +14,8 @@ classdef HPOLD < Algorithm
     %   References:
     %     [1] J. Sánchez-Monedero, M. Pérez-Ortiz, A. Sáez, P.A. Gutiérrez,
     %         and C. Hervás-Martínez. "Partial order label decomposition
-    %         approaches for melanoma diagnosis". Applied Soft Computing. 
-    %         Volume 64, March 2018, Pages 341-355. 
+    %         approaches for melanoma diagnosis". Applied Soft Computing.
+    %         Volume 64, March 2018, Pages 341-355.
     %         https://doi.org/10.1016/j.asoc.2017.11.042
     %
     %   This file is part of ORCA: https://github.com/ayrna/orca
@@ -25,13 +25,13 @@ classdef HPOLD < Algorithm
     %       This software is released under the The GNU General Public License v3.0 licence
     %       available at http://www.gnu.org/licenses/gpl-3.0.html
     properties
+        description = 'Hierarchical Partial Order Label Decomposition';
         %C penalty coefficient and the kernel parameters (both for the binary
-        %and ordinal methods). 
+        %and ordinal methods).
         parameters = struct('C', 0.1, 'k', 0.1);
         binaryMethod = 'SVC1V1';
         ordinalMethod = 'SVORIM';
     end
-    
     properties(Access = private)
         objBI;
         objOR;
@@ -45,8 +45,7 @@ classdef HPOLD < Algorithm
         function obj = HPOLD(varargin)
             %HPOLD constructs an object of the class HPOLD and sets its default
             %   characteristics
-            %   OBJ = HPOLD() builds HPOLD 
-            obj.name = 'Hierarchical Partial Order Label Decomposition';
+            %   OBJ = HPOLD() builds HPOLD
             obj.parseArgs(varargin);
         end
         
@@ -82,9 +81,9 @@ classdef HPOLD < Algorithm
                     parambi.k = param.k;
                     obj.objBI = CSVC();
                     obj.modelBI = obj.objBI.fit(trainBi, parambi);
-                case 'lrliblinear'
+                case 'liblinear'
                     parambi.C = param.C;
-                    obj.objBI = LRLIBLINEAR();
+                    obj.objBI = LIBLINEAR();
                     obj.modelBI = obj.objBI.fit(trainBi, parambi);
                 otherwise
                     error(['Unknown binary classifier method:', obj.binaryMethod])
@@ -106,7 +105,7 @@ classdef HPOLD < Algorithm
                 otherwise
                     error(['Unknown ordinal classifier method:', obj.ordinalMethod])
             end
-                      
+            
             % Save model and parameters
             model.parameters = param;
             model.modelBI = obj.modelBI;
@@ -120,7 +119,7 @@ classdef HPOLD < Algorithm
             projected = -1*ones(size(testPatterns,1),1);% dummy value
             % Binary prediction: classes 1/2
             [projectedTest_bi,predTargets] = obj.objBI.predict(testPatterns,model.modelBI);
-            % Ordinal prediction for patterns of class ~= class 1         
+            % Ordinal prediction for patterns of class ~= class 1
             [projectedTest_or, predictedTest_or] = obj.objOR.predict(testPatterns(predTargets~=1,:),model.modelOR);
             % +1 to correct label numbering
             predictedTest_or = predictedTest_or + 1;

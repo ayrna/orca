@@ -13,7 +13,7 @@ classdef ELMOP < Algorithm
     %      activationFunction         - Activation function, default
     %                                   sigmoid. Available options are 'sig,
     %                                   'sin', 'hardlim','tribas', 'radbas',
-    %                                   'up','rbf'/'krbf', 'grbf'
+    %                                   'up','rbf', 'krbf', 'grbf'
     %                                   fitting the model and testing it in a dataset.
     %      parameters.hiddenN         - parameters.hiddenN is a vector of
     %                                   the number of hidden neural networks
@@ -39,6 +39,7 @@ classdef ELMOP < Algorithm
     %       available at http://www.gnu.org/licenses/gpl-3.0.html
     
     properties
+        description = 'Extreme Learning Machine for Ordinal Regression';
         activationFunction = 'sig';
         
         % Input Weights range
@@ -48,22 +49,27 @@ classdef ELMOP < Algorithm
         parameters = struct('hiddenN', 50);
     end
     
-    
     methods
-        
-        
         function obj = ELMOP(varargin)
             %ELMOP constructs an object of the class ELMOP and sets its default
             %   characteristics
-            %   OBJ = ELMOP('activationFunction', ) builds ELMOP with 
+            %   OBJ = ELMOP('activationFunction', ) builds ELMOP with
             %       activationFunction ('sig', 'rbf', 'krbf', 'grbf', 'up')
-            obj.name = 'Extreme Learning Machine for Ordinal Regression';
             obj.parseArgs(varargin);
-        end  
+        end
+        
+        function obj = set.activationFunction(obj,a)
+            b = {'sig';'sigmoid';'up';'rbf';'krbf';'grbf'};
+            if any(strcmp(a,b))
+                obj.activationFunction = a;
+            else
+                error('activationFunction ''%s'' not allowed', a)
+            end
+        end
         
         function [model, projectedTrain, predictedTrain] = fit( obj, train, parameters)
             %FIT trains the model for the ELMOP method with TRAIN data and
-            %vector of parameters PARAMETERS. Return the learned model. 
+            %vector of parameters PARAMETERS. Return the learned model.
             %TODO train.uniqueTargets = unique([test.targets ;train.targets]);
             train.uniqueTargets = unique(train.targets);
             train.nOfClasses = max(train.uniqueTargets);
@@ -235,9 +241,9 @@ classdef ELMOP < Algorithm
             [projectedTrain, predictedTrain] = obj.predict( train.patterns, model );
             
         end
-       
+        
         function [TY, TestPredictedY]= predict(obj, test, model)
-            %PREDICT predicts labels of TEST patterns labels using MODEL. 
+            %PREDICT predicts labels of TEST patterns labels using MODEL.
             nOfPatterns = size(test,1);
             
             TV.P = test';
@@ -315,12 +321,12 @@ classdef ELMOP < Algorithm
                     H_test = exp(-(numerator./denominator_extended));
             end
             
-            clear TV.P;             %   Release input of testing data            
+            clear TV.P;             %   Release input of testing data
             
-            TY=(H_test' * model.OutputWeight);                       %   TY: the actual output of the testing data            
+            TY=(H_test' * model.OutputWeight);                       %   TY: the actual output of the testing data
             clear H_test;
             
-            TestPredictedY = obj.orelmToLabel(TY, model.labelSet);            
+            TestPredictedY = obj.orelmToLabel(TY, model.labelSet);
         end
         
     end
@@ -329,10 +335,10 @@ classdef ELMOP < Algorithm
         function [predL,eLosses] = orelmToLabel(obj,predictions,labelSet)
             %ORELMTOLABEL computes the exponential loss and the final prediction
             %   [PREDL,ELOSSES] = ORELMTOLABEL(OBJ,PREDICTIONS,LABELSSET)
-            %   return final label prediction PREDL and exponential loss 
+            %   return final label prediction PREDL and exponential loss
             %   ELOSSES of PREDICTIONS matrix. PREDICTIONS is the set of
             %   output for each output neuron. LABELSSET is the set of
-            %   labels in the classification problem. 
+            %   labels in the classification problem.
             
             % Minimal Exponential Loss
             eLosses=zeros(size(predictions));
@@ -344,11 +350,11 @@ classdef ELMOP < Algorithm
             [minVal,predL] = min(eLosses,[],2);
         end
         
-        %TODO: This method should work only with a dataset partition. 
+        %TODO: This method should work only with a dataset partition.
         function [data] = labelToOrelm(obj,data)
-            %LABELTOORELM Compute the labels to the ordinal format. It 
-            %returns the two pattern structures (train and test)            
-            data.targetsOrelm = ones(data.nOfPatterns,data.nOfClasses);    
+            %LABELTOORELM Compute the labels to the ordinal format. It
+            %returns the two pattern structures (train and test)
+            data.targetsOrelm = ones(data.nOfPatterns,data.nOfClasses);
             for i=1:data.nOfClasses
                 data.targetsOrelm(data.targets<data.uniqueTargets(i),i) = -1;
             end

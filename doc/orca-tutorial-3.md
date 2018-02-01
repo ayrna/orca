@@ -403,7 +403,7 @@ nFolds = 3;
 CVO = cvpartition(train.targets,'KFold',nFolds);
 for m = 1:size(Metrics,2)
     mObj = Metrics{m}();
-    fprintf('Grid search to optimize %s for REDSVM\n', mObj.name);
+    fprintf('Grid search to optimize %s for REDSVM\n', mObj.description);
     bestError=Inf;
     if (~exist ('OCTAVE_VERSION', 'builtin') > 0)
       T = table();
@@ -432,7 +432,7 @@ for m = 1:size(Metrics,2)
     if (~exist ('OCTAVE_VERSION', 'builtin') > 0)
       Ts{m} = T;
     end
-    fprintf('\nBest Results REDSVM C %f, k %f --> %s: %f\n', bestParam.C, bestParam.k, mObj.name, bestError);
+    fprintf('\nBest Results REDSVM C %f, k %f --> %s: %f\n', bestParam.C, bestParam.k, mObj.description, bestError);
 end
 
 if (exist ('OCTAVE_VERSION', 'builtin') > 0)
@@ -455,7 +455,7 @@ if verLessThan('matlab', '9.2')
         set(gca, 'XScale', 'log');
         set(gca, 'YScale', 'log');
         colorbar;
-        title([mObj.name ' optimization for REDSVM']);
+        title([mObj.description ' optimization for REDSVM']);
     end
     hold off;
 else

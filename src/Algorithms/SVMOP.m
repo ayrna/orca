@@ -32,8 +32,11 @@ classdef SVMOP < Algorithm
     %       available at http://www.gnu.org/licenses/gpl-3.0.html
     
     properties
+        description = 'Frank Hall Support Vector Machines';
         parameters = struct('C', 0.1, 'k', 0.1);
         weights = true;
+    end
+    properties (Access = private)
         algorithmMexPath = fullfile(fileparts(which('Algorithm.m')),'libsvm-weights-3.12','matlab');
     end
     
@@ -43,8 +46,15 @@ classdef SVMOP < Algorithm
             %SVMOP SVMOP an object of the class SVMOP and sets its default
             %   characteristics
             %   OBJ = SVMOP(KERNEL) builds SVMOP with RBF as kernel function
-            obj.name = 'Frank Hall Support Vector Machines';
             obj.parseArgs(varargin);
+        end
+        
+        function obj = set.weights(obj,w)
+            if strcmp(class(obj.weights), class(w))
+                obj.weights= w;
+            else
+                error('weights type is ''%s'' and ''%s'' was provided', class(obj.weights), class(w))
+            end
         end
         
         function [model, projectedTrain, predictedTrain] = fit( obj, train, param)

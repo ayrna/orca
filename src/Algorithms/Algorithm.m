@@ -8,15 +8,8 @@ classdef Algorithm < handle
     %   Copyright:
     %       This software is released under the The GNU General Public License v3.0 licence
     %       available at http://www.gnu.org/licenses/gpl-3.0.html
-    properties
-        name
-    end
     
     methods
-        function name = getName(obj)
-            %GETNAME returns the name of the implemented algorithm.
-            name = obj.name;
-        end
         
         function name_parameters = getParameterNames(obj)
             if ~isempty(obj.parameters)
@@ -118,7 +111,7 @@ classdef Algorithm < handle
                 % Mix parameters with default
                 obj.setParam(param)
             end
-            param = obj.parameters;           
+            param = obj.parameters;
             
             c1 = clock;
             [model,mInf.projectedTrain, mInf.predictedTrain] = obj.fit(train,param);
@@ -151,5 +144,3 @@ classdef Algorithm < handle
     end
     
 end
-
-

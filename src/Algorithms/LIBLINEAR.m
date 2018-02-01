@@ -1,14 +1,14 @@
-classdef LRLIBLINEAR < Algorithm
-    %LRLIBLINEAR liblinear [1] implementation of regularized logistic
+classdef LIBLINEAR < Algorithm
+    %LIBLINEAR liblinear [1] implementation of regularized logistic
     %regression, more information at https://www.csie.ntu.edu.tw/~cjlin/liblinear/.
     %
-    %   LRLIBLINEAR methods:
+    %   LIBLINEAR methods:
     %      runAlgorithm               - runs the corresponding algorithm,
     %                                   fitting the model and testing it in a dataset.
     %      fit                        - Fits a model from training data
     %      predict                    - Performs label prediction
     %
-    %   LRLIBLINEAR parameters are:
+    %   LIBLINEAR parameters are:
     %   - parameters.c: penalty cost of misclassification
     %   - solver: the type of solver (default 0), options are the liblinear
     %     options for '-s' for multi-class classification:
@@ -34,25 +34,26 @@ classdef LRLIBLINEAR < Algorithm
     %       This software is released under the The GNU General Public License v3.0 licence
     %       available at http://www.gnu.org/licenses/gpl-3.0.html
     properties
+        description = 'Logistic Regression with liblinear solver';        
         solver = 0;
         parameters = struct('C', 0.1);
+    end
+    properties (Access = private)
         algorithmMexPath = fullfile(pwd,'Algorithms','liblinear-2.20','matlab');
-        %algorithmMexPath = fullfile(pwd,'Algorithms','liblinear-1.96','matlab');
     end
     
     methods
         
-        function obj = LRLIBLINEAR(varargin)
-            %LRLIBLINEAR constructs an object of the class LRLIBLINEAR.
+        function obj = LIBLINEAR(varargin)
+            %LIBLINEAR constructs an object of the class LIBLINEAR.
             %Default solver is '0' (L2-regularized logistic regression
             %(primal)). Parameter c have to be optimized in order to obtain
             %suitable model fitting
-            obj.name = 'Logistic Regression with liblinear solver';
             obj.parseArgs(varargin);
         end
         
         function [model, projectedTrain, predictedTrain]= fit( obj, train, param)
-            %FIT trains the model for the LRLIBLINEAR method with TRAIN data and
+            %FIT trains the model for the LIBLINEAR method with TRAIN data and
             %vector of parameters PARAMETERS. Return the learned model.
             if isempty(strfind(path,obj.algorithmMexPath))
                 addpath(obj.algorithmMexPath);

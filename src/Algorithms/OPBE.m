@@ -3,7 +3,7 @@ classdef OPBE < Algorithm
     %from the Algorithm Class and implements the OPBE method with the best
     %configuration found (product combiner, SVM base methodology, logit
     %function and equal distribution of probabilities). By default, this class uses
-    %SVORIM implementation, but potentially any ORCA model can be used. 
+    %SVORIM implementation, but potentially any ORCA model can be used.
     %
     %   OPBE methods:
     %      runAlgorithm               - runs the corresponding algorithm,
@@ -27,11 +27,12 @@ classdef OPBE < Algorithm
     %       This software is released under the The GNU General Public License v3.0 licence
     %       available at http://www.gnu.org/licenses/gpl-3.0.html
     properties
+        description = 'Ordinal Projection Based Ensemble';
         parameters = [];
         baseMethod = SVORIM;
         % Method name as str to allow loading from configuration file. The
-        % constructor will instanciate it via feval() 
-        base_algorithm = 'SVORIM'; 
+        % constructor will instanciate it via feval()
+        base_algorithm = 'SVORIM';
     end
     
     methods
@@ -39,17 +40,16 @@ classdef OPBE < Algorithm
         % TODO: Update and test parameter description
         function obj = OPBE(varargin)
             %OPBE constructs an object of the class OPBE and sets its
-            %default properties. 
+            %default properties.
             %   obj = OPBE('baseMethod', METHOD) sets METHOD as base
-            %   algorithm. 
-            obj.name = 'Ordinal Projection Based Ensemble';
+            %   algorithm.
             obj.parseArgs(varargin);
             % TODO: Pass varargin parameters to base algorithm?
             obj.baseMethod = feval(obj.base_algorithm);
             %obj.name_parameters = obj.baseMethod.getParameterNames();
             obj.parameters = obj.baseMethod.parameters;
         end
-
+        
         function [model, projected, trainTargets] = fit(obj, train, param)
             %FIT trains the model for the OPBE method with TRAIN data and
             %vector of parameters PARAMETERS. Return the learned model and

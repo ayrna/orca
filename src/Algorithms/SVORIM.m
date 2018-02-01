@@ -28,7 +28,10 @@ classdef SVORIM < Algorithm
     %       This software is released under the The GNU General Public License v3.0 licence
     %       available at http://www.gnu.org/licenses/gpl-3.0.html
     properties
+        description = 'Support Vector for Ordinal Regression (Implicit constraints)';
         parameters = struct('C', 0.1, 'k', 0.1);
+    end
+    properties (Access = private)
         algorithmMexPath = fullfile(fileparts(which('Algorithm.m')),'SVORIM');
     end
     
@@ -36,8 +39,7 @@ classdef SVORIM < Algorithm
         function obj = SVORIM(varargin)
             %SVORIM constructs an object of the class SVORIM and sets its default
             %   characteristics
-            %   OBJ = SVORIM(KERNEL) builds SVORIM with RBF as kernel function
-            obj.name = 'Support Vector for Ordinal Regression (Implicit constraints)';
+            %   OBJ = SVORIM() builds SVORIM with RBF as kernel function
             obj.parseArgs(varargin);
         end
         
@@ -52,7 +54,7 @@ classdef SVORIM < Algorithm
             model.projection = alpha;
             model.thresholds = thresholds;
             model.parameters = parameters;
-            model.train = train.patterns;            
+            model.train = train.patterns;
             projectedTrain = projectedTrain';
             if ~isempty(strfind(path,obj.algorithmMexPath))
                 rmpath(obj.algorithmMexPath);

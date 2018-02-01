@@ -28,7 +28,11 @@ classdef SVORLin < Algorithm
     %       This software is released under the The GNU General Public License v3.0 licence
     %       available at http://www.gnu.org/licenses/gpl-3.0.html
     properties
+        description = 'Support Vector for Ordinal Regression (Implicit constraints / Linear)';
         parameters = struct('C', 0.1);
+    end
+    
+    properties (Access = private)
         algorithmMexPath = fullfile(fileparts(which('Algorithm.m')),'SVORIM');
     end
     
@@ -38,7 +42,6 @@ classdef SVORLin < Algorithm
             %SVORLin constructs an object of the class SVORLin and sets its default
             %   characteristics
             %   OBJ = SVORLin() builds SVORLin object
-            obj.name = 'Support Vector for Ordinal Regression (Implicit constraints / Linear)';
         end
         
         function [model,projectedTrain,predictedTrain] = fit(obj,train,parameters)
@@ -60,7 +63,7 @@ classdef SVORLin < Algorithm
         end
         
         function [projected, predicted] = predict(obj, test, model)
-            %PREDICT predicts labels of TEST patterns labels using MODEL.            
+            %PREDICT predicts labels of TEST patterns labels using MODEL.
             kernelMatrix = computeKernelMatrix(model.train',test','linear',1);
             projected = model.projection*kernelMatrix;
             

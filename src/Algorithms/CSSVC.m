@@ -24,20 +24,21 @@ classdef CSSVC < Algorithm
     %       This software is released under the The GNU General Public License v3.0 licence
     %       available at http://www.gnu.org/licenses/gpl-3.0.html
     properties
+        description = 'Support Vector Machine Classifier with 1vsAll paradigm with ordinal weights';
         parameters = struct('C', 0.1, 'k', 0.1);
-        
+    end
+    properties (Access = private)
         algorithmMexPath = fullfile(fileparts(which('Algorithm.m')),'libsvm-weights-3.12','matlab');
     end
-
+    
     methods
         function obj = CSSVC(varargin)
             %CSSVC constructs an object of the class CSSVC and sets its default
             %   characteristics
             %   OBJ = CSSVC() builds CSSVC with RBF kernel function
-            obj.name = 'Support Vector Machine Classifier with 1vsAll paradigm with ordinal weights';
             obj.parseArgs(varargin);
         end
-
+        
         function [model, projectedTrain, predictedTrain] = fit( obj, train, param)
             %FIT trains the model for the CSSVC method with TRAIN data and
             %vector of parameters PARAM. Return the learned model.
@@ -45,11 +46,11 @@ classdef CSSVC < Algorithm
                 addpath(obj.algorithmMexPath);
             end
             options = ['-t 2 -c ' num2str(param.C) ' -g ' num2str(param.k) ' -q'];
-
+            
             labelSet = unique(train.targets);
             labelSetSize = length(labelSet);
             models = cell(labelSetSize,1);
-
+            
             for i=1:labelSetSize
                 labels = double(train.targets == labelSet(i));
                 weights = obj.ordinalWeights(i, train.targets);
@@ -62,7 +63,7 @@ classdef CSSVC < Algorithm
                 rmpath(obj.algorithmMexPath);
             end
         end
-
+        
         function [decv, pred]= predict(obj, test, model)
             %PREDICT predicts labels of TEST patterns labels using MODEL.
             if isempty(strfind(path,obj.algorithmMexPath))
@@ -72,19 +73,19 @@ classdef CSSVC < Algorithm
             labelSetSize = length(labelSet);
             models = model.models;
             decv= zeros(size(test, 1), labelSetSize);
-
+            
             for i=1:labelSetSize
                 [l,a,d] = svmpredict(zeros(size(test,1),1), test, models{i});
                 decv(:, i) = d * (2 * models{i}.Label(1) - 1);
             end
-
+            
             [tmp,pred] = max(decv, [], 2);
             pred = labelSet(pred);
             if ~isempty(strfind(path,obj.algorithmMexPath))
                 rmpath(obj.algorithmMexPath);
             end
         end
-
+        
         function [w] = ordinalWeights(obj, p, targets)
             %ORDINALWEIGHTS compute the weights to apply to the set of
             %training patterns.

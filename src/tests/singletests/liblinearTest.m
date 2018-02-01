@@ -1,10 +1,10 @@
 % Reference performance
 accTestRef = 0.293333;
 allowedError = 0.001;
-method = 'LRLIBLINEAR';
+method = 'LIBLINEAR';
 
 % Create the algorithm object
-algorithmObj = LRLIBLINEAR();
+algorithmObj = LIBLINEAR();
 
 % Clear parameter struct
 clear param;

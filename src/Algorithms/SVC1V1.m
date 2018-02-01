@@ -29,7 +29,10 @@ classdef SVC1V1 < Algorithm
     %       This software is released under the The GNU General Public License v3.0 licence
     %       available at http://www.gnu.org/licenses/gpl-3.0.html
     properties
+        description = 'Support Vector Machine Classifier with 1vs1 paradigm';
         parameters = struct('C', 0.1, 'k', 0.1);
+    end
+    properties (Access = private)
         algorithmMexPath = fullfile(fileparts(which('Algorithm.m')),'libsvm-weights-3.12','matlab');
     end
     
@@ -39,7 +42,6 @@ classdef SVC1V1 < Algorithm
             %SVC1V1 constructs an object of the class SVC1V1 and sets its default
             %   characteristics
             %   OBJ = SVC1V1(KERNEL) builds SVC1V1 with RBF as kernel function
-            obj.name = 'Support Vector Machine Classifier with 1vs1 paradigm';
             obj.parseArgs(varargin);
         end
         
