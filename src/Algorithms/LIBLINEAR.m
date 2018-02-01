@@ -1,4 +1,4 @@
-classdef LRLIBLINEAR < Algorithm
+classdef LIBLINEAR < Algorithm
     %LRLIBLINEAR liblinear [1] implementation of regularized logistic
     %regression, more information at https://www.csie.ntu.edu.tw/~cjlin/liblinear/.
     %
