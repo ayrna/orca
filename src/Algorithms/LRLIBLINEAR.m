@@ -34,10 +34,12 @@ classdef LRLIBLINEAR < Algorithm
     %       This software is released under the The GNU General Public License v3.0 licence
     %       available at http://www.gnu.org/licenses/gpl-3.0.html
     properties
+        description = 'Logistic Regression with liblinear solver';        
         solver = 0;
         parameters = struct('C', 0.1);
+    end
+    properties (Access = private)
         algorithmMexPath = fullfile(pwd,'Algorithms','liblinear-2.20','matlab');
-        %algorithmMexPath = fullfile(pwd,'Algorithms','liblinear-1.96','matlab');
     end
     
     methods
@@ -47,7 +49,6 @@ classdef LRLIBLINEAR < Algorithm
             %Default solver is '0' (L2-regularized logistic regression
             %(primal)). Parameter c have to be optimized in order to obtain
             %suitable model fitting
-            obj.name = 'Logistic Regression with liblinear solver';
             obj.parseArgs(varargin);
         end
         

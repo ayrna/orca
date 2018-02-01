@@ -32,7 +32,10 @@ classdef REDSVM < Algorithm
     %       available at http://www.gnu.org/licenses/gpl-3.0.html
     %
     properties
+        description = 'Reduction from OR to weighted binary classification (SVM)';
         parameters = struct('C', 0.1, 'k', 0.1);
+    end
+    properties (Access = private)
         algorithmMexPath = fullfile(fileparts(which('Algorithm.m')),'libsvm-rank-2.81','matlab');
     end
     
@@ -42,7 +45,6 @@ classdef REDSVM < Algorithm
             %REDSVM constructs an object of the class REDSVM and sets its default
             %   characteristics
             %   OBJ = REDSVM() builds REDSVM with RBF kernel function
-            obj.name = 'Reduction from OR to weighted binary classification (SVM)';
             obj.parseArgs(varargin);
         end
         

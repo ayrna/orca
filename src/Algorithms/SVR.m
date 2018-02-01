@@ -29,7 +29,11 @@ classdef SVR < Algorithm
     %       This software is released under the The GNU General Public License v3.0 licence
     %       available at http://www.gnu.org/licenses/gpl-3.0.html
     properties
+        description = 'Support Vector Regression';
         parameters = struct('C', 0.1, 'k', 0.1, 'e', 0.1);
+    end
+    
+    properties (Access = private)
         algorithmMexPath = fullfile(fileparts(which('Algorithm.m')),'libsvm-weights-3.12','matlab');
     end
     
@@ -38,8 +42,7 @@ classdef SVR < Algorithm
         function obj = SVR(varargin)
             %SVR constructs an object of the class SVR and sets its default
             %   characteristics
-            %   OBJ = SVR(KERNEL) builds SVR with RBF as kernel function
-            obj.name = 'Support Vector Regression';
+            %   OBJ = SVR() builds SVR with RBF as kernel function
         end
         
         function [model,projectedTrain,predictedTrain] = fit(obj,train,parameters)

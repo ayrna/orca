@@ -28,6 +28,7 @@ classdef KDLOR < Algorithm
     %       available at http://www.gnu.org/licenses/gpl-3.0.html
     
     properties
+        description = 'Kernel Discriminant Learning for Ordinal Regression';
         optimizationMethod = 'quadprog'; %TODO: more to add
         parameters = struct('C', 0.1, 'k', 0.1, 'u', 0.01);
         kernelType = 'rbf';
@@ -40,9 +41,8 @@ classdef KDLOR < Algorithm
             %'rbf' and default optimization method is 'quadprog'
             %
             %   OBJ = KDLOR('kernelType', kernel, 'optimizationMethod', opt)
-            %   builds KDLOR with KERNEL as kernel function and OPT as 
+            %   builds KDLOR with KERNEL as kernel function and OPT as
             %   optimization method.
-            obj.name = 'Kernel Discriminant Learning for Ordinal Regression';
             obj.parseArgs(varargin);
         end
         
@@ -50,7 +50,7 @@ classdef KDLOR < Algorithm
             %SET.OPTIMIZATIONMETHOD verifies if the value for the variable
             %optimizationMethod is correct. Returns value for the variable
             %|optimizationMethod|.
-            % TODO: look for free optimizer for matlab 
+            % TODO: look for free optimizer for matlab
             %if ~(strcmpi(value,'quadprog') || strcmpi(value,'qp') || strcmpi(value,'cvx'))
             if ~strcmpi(value,'quadprog')
                 error('Invalid value for optimizer');

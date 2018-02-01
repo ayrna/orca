@@ -29,7 +29,10 @@ classdef SVOREX < Algorithm
     %       available at http://www.gnu.org/licenses/gpl-3.0.html
     
     properties
+        description = 'Support Vector for Ordinal Regression (Explicit constraints)';        
         parameters = struct('C', 0.1, 'k', 0.1);
+    end
+    properties (Access = private)
         algorithmMexPath = fullfile(fileparts(which('Algorithm.m')),'SVOREX');
     end
     
@@ -38,7 +41,6 @@ classdef SVOREX < Algorithm
             %SVOREX constructs an object of the class SVOREX and sets its default
             %   characteristics
             %   OBJ = SVOREX(KERNEL) builds SVOREX with RBF as kernel function
-            obj.name = 'Support Vector for Ordinal Regression (Explicit constraints)';
             obj.parseArgs(varargin);
         end
         

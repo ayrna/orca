@@ -1,19 +1,19 @@
 classdef NNOP < Algorithm
-    %NNOP Neural Network with Ordered Partitions (NNOP). This model 
-    % considers the OrderedPartitions coding scheme for the labels and a 
-    % rule for decisions based on the first node whose output is higher 
+    %NNOP Neural Network with Ordered Partitions (NNOP). This model
+    % considers the OrderedPartitions coding scheme for the labels and a
+    % rule for decisions based on the first node whose output is higher
     % than a predefined threshold (T=0.5, in our experiments). The
     % model has one hidden layer with hiddenN neurons and one outputlayer
     % with as many neurons as the number of classes minus one. The learning
-    % is based on iRProp+ algorithm and the implementation provided by 
+    % is based on iRProp+ algorithm and the implementation provided by
     % Roberto Calandra in his toolbox Rprop Toolbox for {MATLAB}:
     % http://www.ias.informatik.tu-darmstadt.de/Research/RpropToolbox
-    % The model is adjusted by minimizing mean squared error. A regularization 
-    % parameter "lambda" is included based on L2, and the number of 
+    % The model is adjusted by minimizing mean squared error. A regularization
+    % parameter "lambda" is included based on L2, and the number of
     % iterations is specified by the "iter" parameter.
     %   NNPOM methods:
     %      runAlgorithm               - runs the corresponding algorithm,
-    %                                   fitting the model and testing it 
+    %                                   fitting the model and testing it
     %                                   in a dataset.
     %      fit                        - Fits a model from training data
     %      predict                    - Performs label prediction
@@ -27,8 +27,8 @@ classdef NNOP < Algorithm
     %      parameters.lambda          - Regularization parameter.
     %
     %   References:
-    %     [1] J. Cheng, Z. Wang, and G. Pollastri, "A neural network 
-    %         approach to ordinal regression," in Proc. IEEE Int. Joint 
+    %     [1] J. Cheng, Z. Wang, and G. Pollastri, "A neural network
+    %         approach to ordinal regression," in Proc. IEEE Int. Joint
     %         Conf. Neural Netw. (IEEE World Congr. Comput. Intell.), 2008,
     %         pp. 1279-1284.
     %     [2] P.A. Gutiérrez, M. Pérez-Ortiz, J. Sánchez-Monedero,
@@ -46,25 +46,21 @@ classdef NNOP < Algorithm
     %       available at http://www.gnu.org/licenses/gpl-3.0.html
     
     properties
-        
+        description = 'Neural Network with Ordered Partitions';
         % Weights range
         epsilonInit = 0.5;
-        
         parameters = struct('iter', 500,'hiddenN', 50,'lambda', 0.01);
     end
     
-    
     methods
-        
         
         function obj = NNOP(varargin)
             %NNOP constructs an object of the class NNOP and sets its default
             %   characteristics
             %   obj = NNOP('epsilonInit', 0.5) sets initialization of
             %   epsilon to 0.5
-            obj.name = 'Neural Network with Ordered Partitions';
             obj.parseArgs(varargin);
-        end  
+        end
         
         function [model, projectedTrain, predictedTrain] = fit( obj, train, parameters)
             %FIT trains the model for the NNOP method with TRAIN data and
@@ -75,7 +71,7 @@ classdef NNOP < Algorithm
             y = train.targets;
             input_layer_size  = size(X,2);
             hidden_layer_size = parameters.hiddenN;
-            num_labels = numel(unique(y));  
+            num_labels = numel(unique(y));
             m = size(X,1);
             
             % Recode y to Y using ordered partitions
@@ -86,19 +82,19 @@ classdef NNOP < Algorithm
             % Output layer weigths (without bias, the biases will be the
             %                       Thresholds)
             initial_Theta2 = obj.randInitializeWeights(hidden_layer_size+1, num_labels-1);
-
+            
             % Pack parameters
-            initial_nn_params = [initial_Theta1(:) ; initial_Theta2(:)];      
+            initial_nn_params = [initial_Theta1(:) ; initial_Theta2(:)];
             
             % Set regularization parameter
             lambda = parameters.lambda;
             
             % Create "short hand" for the cost function to be minimized
             costFunction = @(p) obj.nnOPCostFunction(p, ...
-                                               input_layer_size, ...
-                                               hidden_layer_size, ...
-                                               num_labels, X, Y, lambda);                                           
-                                           
+                input_layer_size, ...
+                hidden_layer_size, ...
+                num_labels, X, Y, lambda);
+            
             % RProp options
             p.verbosity = 0;                    % Increase indent
             p.MaxIter   = parameters.iter;     	% Maximum number of iterations
@@ -108,9 +104,9 @@ classdef NNOP < Algorithm
             
             % Running RProp
             [nn_params,cost,exitflag,stats1] = rprop(costFunction,initial_nn_params,p);
-
-%             options = optimoptions('fminunc','Algorithm','quasi-newton','SpecifyObjectiveGradient',true,'Diagnostics','on','Display','iter-detailed','UseParallel',true,'MaxIter', 1000,'CheckGradients',true);
-%             [nn_params, cost, exitflag, output] = fminunc(costFunction, initial_nn_params, options);
+            
+            %             options = optimoptions('fminunc','Algorithm','quasi-newton','SpecifyObjectiveGradient',true,'Diagnostics','on','Display','iter-detailed','UseParallel',true,'MaxIter', 1000,'CheckGradients',true);
+            %             [nn_params, cost, exitflag, output] = fminunc(costFunction, initial_nn_params, options);
             
             % Unpack the parameters
             [Theta1, Theta2] = obj.unpackParameters(nn_params,input_layer_size,hidden_layer_size,num_labels);
@@ -123,7 +119,7 @@ classdef NNOP < Algorithm
             model.parameters = parameters;
             
         end
-       
+        
         function [projected, predicted]= predict(obj,test,model)
             %PREDICT predicts labels of TEST patterns labels using MODEL.
             m = size(test,1);
@@ -136,7 +132,7 @@ classdef NNOP < Algorithm
             a3 = ([projected ones(m,1)] > 0.5).*repmat(1:model.num_labels,m,1);
             a3(a3==0)=model.num_labels+1;
             
-            predicted = min(a3,[],2);            
+            predicted = min(a3,[],2);
         end
         
     end
@@ -144,13 +140,13 @@ classdef NNOP < Algorithm
     methods(Access = private)
         
         function [Theta1, Theta2] = unpackParameters(obj,nn_params,input_layer_size,hidden_layer_size,num_labels)
-            % UNPACKPARAMETERS obtains Theta1 and Theta2 
+            % UNPACKPARAMETERS obtains Theta1 and Theta2
             % back from the whole array nn_params
             nTheta1 = hidden_layer_size * (input_layer_size + 1);
             Theta1 = reshape(nn_params(1:nTheta1), ...
-                             hidden_layer_size, (input_layer_size + 1));
+                hidden_layer_size, (input_layer_size + 1));
             Theta2 = reshape(nn_params((1+nTheta1):end), ...
-                             num_labels-1, (hidden_layer_size+1));
+                num_labels-1, (hidden_layer_size+1));
         end
         
         function W = randInitializeWeights(obj, L_in, L_out)
@@ -158,7 +154,7 @@ classdef NNOP < Algorithm
             %incoming connections and L_out outgoing connections
             W = rand(L_out, L_in)*2*obj.epsilonInit - obj.epsilonInit;
         end
-            
+        
         function [J,grad] = nnOPCostFunction(obj, nn_params, ...
                 input_layer_size, ...
                 hidden_layer_size, ...
@@ -174,7 +170,7 @@ classdef NNOP < Algorithm
             
             % Setup some useful variables
             m = size(X, 1);
-                        
+            
             % Neural Network model
             a1 = [ones(m, 1) X];
             z2 = a1*Theta1';
@@ -216,11 +212,11 @@ classdef NNOP < Algorithm
                 p2 = (lambda/m)*[zeros(size(Theta2, 1), 1) Theta2(:, 2:end)];
                 Theta1_grad = delta_1./m + p1;
                 Theta2_grad = delta_2./m + p2;
-                               
+                
                 % Unroll gradients
                 grad = [Theta1_grad(:) ; Theta2_grad(:)];
             end
-
+            
         end
     end
 end
