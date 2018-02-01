@@ -53,15 +53,23 @@ classdef NNPOM < Algorithm
         epsilonInit = 0.5;
         parameters = struct('iter', 500,'hiddenN', 50,'lambda', 0.01);
     end
-        
+    
     methods
-
+        
         function obj = NNPOM(varargin)
             %NNPOM constructs an object of the class NNPOM and sets its default
             %   characteristics
             %   obj = NNPOM('epsilonInit', 0.5) sets initialization of
             %   epsilon to 0.5
             obj.parseArgs(varargin);
+        end
+        
+        function obj = set.epsilonInit(obj,e)
+            if strcmp(class(obj.epsilonInit), class(e))
+                obj.epsilonInit= e;
+            else
+                error('epsilonInit type is ''%s'' and ''%s'' was provided', class(obj.epsilonInit), class(e))
+            end
         end
         
         function [model, projectedTrain, predictedTrain] = fit( obj, train, parameters)

@@ -13,7 +13,7 @@ classdef ELMOP < Algorithm
     %      activationFunction         - Activation function, default
     %                                   sigmoid. Available options are 'sig,
     %                                   'sin', 'hardlim','tribas', 'radbas',
-    %                                   'up','rbf'/'krbf', 'grbf'
+    %                                   'up','rbf', 'krbf', 'grbf'
     %                                   fitting the model and testing it in a dataset.
     %      parameters.hiddenN         - parameters.hiddenN is a vector of
     %                                   the number of hidden neural networks
@@ -56,6 +56,15 @@ classdef ELMOP < Algorithm
             %   OBJ = ELMOP('activationFunction', ) builds ELMOP with
             %       activationFunction ('sig', 'rbf', 'krbf', 'grbf', 'up')
             obj.parseArgs(varargin);
+        end
+        
+        function obj = set.activationFunction(obj,a)
+            b = {'sig';'sigmoid';'up';'rbf';'krbf';'grbf'};
+            if any(strcmp(a,b))
+                obj.activationFunction = a;
+            else
+                error('activationFunction ''%s'' not allowed', a)
+            end
         end
         
         function [model, projectedTrain, predictedTrain] = fit( obj, train, parameters)

@@ -50,6 +50,13 @@ classdef OPBE < Algorithm
             obj.parameters = obj.baseMethod.parameters;
         end
         
+        function obj = set.baseMethod(obj, b)
+            meta = metaclass(b);
+            if ~strcmp(meta.SuperclassList.Name, 'Algorithm')
+                error('baseMethod has to be an Algorithm')
+            end
+        end
+        
         function [model, projected, trainTargets] = fit(obj, train, param)
             %FIT trains the model for the OPBE method with TRAIN data and
             %vector of parameters PARAMETERS. Return the learned model and

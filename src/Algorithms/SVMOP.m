@@ -49,6 +49,14 @@ classdef SVMOP < Algorithm
             obj.parseArgs(varargin);
         end
         
+        function obj = set.weights(obj,w)
+            if strcmp(class(obj.weights), class(w))
+                obj.weights= w;
+            else
+                error('weights type is ''%s'' and ''%s'' was provided', class(obj.weights), class(w))
+            end
+        end
+        
         function [model, projectedTrain, predictedTrain] = fit( obj, train, param)
             %FIT trains the model for the SVMOP method with TRAIN data and
             %vector of parameters PARAMETERS. Return the learned model.

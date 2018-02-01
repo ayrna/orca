@@ -62,6 +62,14 @@ classdef NNOP < Algorithm
             obj.parseArgs(varargin);
         end
         
+        function obj = set.epsilonInit(obj,e)
+            if strcmp(class(obj.epsilonInit), class(e))
+                obj.epsilonInit= e;
+            else
+                error('epsilonInit type is ''%s'' and ''%s'' was provided', class(obj.epsilonInit), class(e))
+            end
+        end
+        
         function [model, projectedTrain, predictedTrain] = fit( obj, train, parameters)
             %FIT trains the model for the NNOP method with TRAIN data and
             %vector of parameters PARAMETERS. Return the learned model.
