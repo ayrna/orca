@@ -7,6 +7,11 @@ classdef POM < Algorithm
     %      fit                        - Fits a model from training data
     %      predict                    - Performs label prediction
     %
+    %   POM properties:
+    %      linkFunction               - Link function, default set to logit
+    %                                   Available options are 'logit',
+    %                                   'probit', 'comploglog' or 'loglog'.
+    %                                   Octave only supports 'logit'
     %   References:
     %     [1] P. McCullagh, Regression models for ordinal data,  Journal of
     %         the Royal Statistical Society. Series B (Methodological), vol. 42,
@@ -33,12 +38,13 @@ classdef POM < Algorithm
     %                       experimental study",
     %                       IEEE Transactions on Knowledge and Data
     %                       Engineering. Vol. Accepted
-    %                     * P. McCullagh, “Regression models for ordinal
-    %                       data,” Journal of the Royal Statistical
+    %                     * P. McCullagh, "Regression models for ordinal
+    %                       data," Journal of the Royal Statistical
     %                       Society. Series B (Methodological), vol. 42,
     %                       no. 2, pp. 109–142, 1980.
     
     properties
+        linkFunction = 'logit';
         parameters = [];
     end
     
@@ -48,6 +54,21 @@ classdef POM < Algorithm
             %have any parameters
             obj.name = 'Linear Proportional Odds Model for Ordinal Regression';
             obj.parseArgs(varargin);
+        end
+        
+        function obj = set.linkFunction(obj, value)
+            %SET.LINKFUNCTION verifies if the value for the variable
+            %linkFunction is correct. Returns class object wiht correct 
+            %value for the variable |linkFunction|.
+            if exist ('OCTAVE_VERSION', 'builtin') > 0 && ...
+                    ~strcmpi(value,'logit')
+                error('Invalid link function. Octave only supports logit link function');                
+            elseif ~(strcmpi(value,'logit') || strcmpi(value,'probit') || ...
+                 strcmpi(value,'comploglog') || strcmpi(value,'loglog'))
+                error('Invalid link function. Supported MATLAB link functions: logit, probit, comploglog, loglog');
+            else
+                obj.linkFunction = value;
+            end
         end
 
         function [model, projectedTrain, predictedTrain]= fit( obj,train,parameters)
@@ -59,10 +80,11 @@ classdef POM < Algorithm
                 [model.thresholds, model.projection] = logistic_regression(train.targets, train.patterns);    
             else
                 % Obtain coefficients of the ordinal regression model
-                betaHatOrd = mnrfit(train.patterns,train.targets,'model','ordinal','interactions','off');
+                betaHatOrd = mnrfit(train.patterns,train.targets,'model',...
+                    'ordinal','interactions','off','Link',obj.linkFunction);
                 
-                model.thresholds = betaHatOrd(1:nOfClasses-1);
-                model.projection = -betaHatOrd(nOfClasses:end);
+                model.thresholds = -betaHatOrd(1:nOfClasses-1);
+                model.projection = betaHatOrd(nOfClasses:end);
             end
             model.thresholds = model.thresholds';
             [projectedTrain, predictedTrain] = obj.predict(train.patterns, model);
@@ -70,33 +92,24 @@ classdef POM < Algorithm
         
         function [ projected, predicted ] = predict( obj, testPatterns, model)
             %PREDICT predict labels of TEST patterns labels using MODEL.
-            numClasses = size(model.thresholds,2)+1;
-            projected = model.projection' * testPatterns';
             
-            % We calculate the projected patterns minus each threshold, and then with
-            % the following decision rule we can compute the class to which each pattern
-            % belongs to.
-            projected2 = repmat(projected, numClasses-1,1);
-            projected2 = projected2 - model.thresholds'*ones(1,size(projected2,2));
-            
-            % Asignation of the class
-            % f(x) = max {Wx-bk<0} or Wx - b_(K-1) > 0
-            wx=projected2;
-            
-            % The procedure for that is the following:
-            % We assign the values > 0 to NaN
-            wx(wx(:,:)>0)=NaN;
-            
-            % Then, we choose the biggest one.
-            [maximum,predicted]=max(wx,[],1);
-            
-            % If a max is equal to NaN is because Wx-bk for all k is >0, so this
-            % pattern belongs to the last class.
-            predicted(isnan(maximum(:,:)))=numClasses;
-            
-            projected = projected';
-            predicted = predicted';
-            
+            if exist ('OCTAVE_VERSION', 'builtin') > 0              
+              numClasses = size(model.thresholds,2)+1;
+              m = size(testPatterns,1);
+              projected = model.projection' * testPatterns';
+              z3=repmat(model.thresholds,m,1)-repmat(projected',1,numClasses-1);
+              a3T =  1.0 ./ (1.0 + exp(-z3));
+              a3 = [a3T ones(m,1)];
+              a3(:,2:end) = a3(:,2:end) - a3(:,1:(end-1));
+              [M,predicted] = max(a3,[],2);
+            else                
+              prob = mnrval([-model.thresholds'; model.projection],...
+                  testPatterns,'model','ordinal','interactions','off',...
+                  'Link',obj.linkFunction);
+              [aux,predicted] = max(prob,[],2);
+              projected = model.projection' * testPatterns';
+              projected = projected';
+            end           
         end
     end
     
