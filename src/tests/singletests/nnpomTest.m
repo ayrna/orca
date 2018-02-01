@@ -1,7 +1,7 @@
 % Reference performance
 accTestRef = 0.950000;
 % Increase the error due to method's variability
-allowedError = 0.05; 
+allowedError = 0.10; 
 method = 'NNPOM';
 
 % Create the algorithm object
