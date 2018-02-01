@@ -93,23 +93,23 @@ classdef POM < Algorithm
         function [ projected, predicted ] = predict( obj, testPatterns, model)
             %PREDICT predict labels of TEST patterns labels using MODEL.
             
-            if exist ('OCTAVE_VERSION', 'builtin') > 0              
-              numClasses = size(model.thresholds,2)+1;
-              m = size(testPatterns,1);
-              projected = model.projection' * testPatterns';
-              z3=repmat(model.thresholds,m,1)-repmat(projected',1,numClasses-1);
-              a3T =  1.0 ./ (1.0 + exp(-z3));
-              a3 = [a3T ones(m,1)];
-              a3(:,2:end) = a3(:,2:end) - a3(:,1:(end-1));
-              [M,predicted] = max(a3,[],2);
-            else                
-              prob = mnrval([-model.thresholds'; model.projection],...
-                  testPatterns,'model','ordinal','interactions','off',...
-                  'Link',obj.linkFunction);
-              [aux,predicted] = max(prob,[],2);
-              projected = model.projection' * testPatterns';
-              projected = projected';
-            end           
+            if exist ('OCTAVE_VERSION', 'builtin') > 0
+                numClasses = size(model.thresholds,2)+1;
+                m = size(testPatterns,1);
+                projected = model.projection' * testPatterns';
+                z3=repmat(model.thresholds,m,1)-repmat(projected',1,numClasses-1);
+                a3T =  1.0 ./ (1.0 + exp(-z3));
+                a3 = [a3T ones(m,1)];
+                a3(:,2:end) = a3(:,2:end) - a3(:,1:(end-1));
+                [M,predicted] = max(a3,[],2);
+            else
+                prob = mnrval([-model.thresholds'; model.projection],...
+                    testPatterns,'model','ordinal','interactions','off',...
+                    'Link',obj.linkFunction);
+                [aux,predicted] = max(prob,[],2);
+                projected = model.projection' * testPatterns';
+                projected = projected';
+            end
         end
     end
     
