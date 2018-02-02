@@ -171,111 +171,15 @@ classdef Experiment < handle
             
         end
         
-        
         function optimals = crossValideParams(obj,train)
-            % CROSSVALIDE Function for performing the crossvalidation in a specific train partition.
+            % CROSSVALIDEPARAMS Function for performing the crossvalidation in a specific train partition.
             %
-            %   OPTIMALS = CROSSVALIDEPARAMS(TRAIN) Divides each the data in k-folds
-            %   (k defined by 'num fold' in configuration file). Returns vector OPTIMALS
-            %   with optimal parameter(s)
-            nOfFolds = obj.data.nOfFolds;
-            %parameters = obj.parameters;
-            %par = fieldnames(parameters);
-            
-            sets = struct2cell(obj.parameters);
-            name_parameters = fieldnames(obj.parameters);
-            nParam = numel(name_parameters);
-            
-            c = cell(1, numel(sets));
-            [c{:}] = ndgrid( sets{:} );
-            combinations = cell2mat( cellfun(@(v)v(:), c, 'UniformOutput',false) );
-            combinations = combinations';
-            
-            % Avoid problems with very low number of patterns for some
-            % classes
-            uniqueTargets = unique(train.targets);
-            nOfPattPerClass = sum(repmat(train.targets,1,size(uniqueTargets,1))==repmat(uniqueTargets',size(train.targets,1),1));
-            for i=1:size(uniqueTargets,1)
-                if(nOfPattPerClass(i)==1)
-                    train.patterns = [train.patterns; train.patterns(train.targets==uniqueTargets(i),:)];
-                    train.targets = [train.targets; train.targets(train.targets==uniqueTargets(i),:)];
-                    [train.targets,idx] = sort(train.targets);
-                    train.patterns = train.patterns(idx,:);
-                end
-            end
-            
-            % Use the seed
-            if (exist ('OCTAVE_VERSION', 'builtin') > 0)
-                rand('seed',obj.seed);
-            else
-                s = RandStream.create('mt19937ar','seed',obj.seed);
-                if verLessThan('matlab','8.0')
-                    RandStream.setDefaultStream(s);
-                else
-                    RandStream.setGlobalStream(s);
-                end
-            end
-            
-            if (exist ('OCTAVE_VERSION', 'builtin') > 0)
-                pkg load statistics;
-                CVO = cvpartition(train.targets,'KFold',nOfFolds);
-                numTests = get(CVO,'NumTestSets');
-            else
-                CVO = cvpartition(train.targets,'k',nOfFolds);
-                numTests = CVO.NumTestSets;
-            end
-            result = zeros(numTests,size(combinations,2));
-            
-            % Foreach fold
-            for ff = 1:numTests
-                % Build fold dataset
-                if (exist ('OCTAVE_VERSION', 'builtin') > 0)
-                    trIdx = training(CVO,ff);
-                    teIdx = test(CVO,ff);
-                else
-                    trIdx = CVO.training(ff);
-                    teIdx = CVO.test(ff);
-                end
-                
-                auxTrain.targets = train.targets(trIdx,:);
-                auxTrain.patterns = train.patterns(trIdx,:);
-                auxTest.targets = train.targets(teIdx,:);
-                auxTest.patterns = train.patterns(teIdx,:);
-                for i=1:size(combinations,2)
-                    % Extract the combination of parameters
-                    currentCombination = combinations(:,i);
-                    
-                    if nParam~= 0
-                        currentCombination = reshape(currentCombination,[1,nParam]);
-                        param = cell2struct(num2cell(currentCombination(1:nParam)),name_parameters,2);
-                    else
-                        param = [];
-                    end
-                    
-                    model = obj.method.runAlgorithm(auxTrain, auxTest, param);
-                    
-                    if strcmp(obj.cvCriteria.name,'Area under curve')
-                        result(ff,i) = obj.cvCriteria.calculateCrossvalMetric(auxTest.targets, model.projectedTest);
-                    else
-                        result(ff,i) = obj.cvCriteria.calculateCrossvalMetric(auxTest.targets, model.predictedTest);
-                    end
-                end
-                
-            end
-            if (exist ('OCTAVE_VERSION', 'builtin') > 0)
-                pkg unload statistics;
-            end
-            
-            [bestValue,bestIdx] = min(mean(result));
-            optimalCombination = combinations(:,bestIdx);
-            
-            if nParam~= 0
-                optimalCombination = reshape(optimalCombination,[1,nParam]);
-                optimals = cell2struct(num2cell(optimalCombination(1:nParam)),name_parameters,2);
-            else
-                optimals = [];
-            end
-            
+            %   OPTIMALS = CROSSVALIDEPARAMS(TRAIN) Divides the data in k-folds
+            %   (k defined by 'num fold' in configuration file). Returns 
+            %   structure OPTIMALS with optimal parameter(s)
+            optimals = paramopt(obj.method,obj.parameters,train, 'metric', obj.cvCriteria,...
+                                'nfolds', obj.data.nOfFolds, 'seed', obj.seed);
+
         end
         
     end
