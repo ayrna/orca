@@ -14,6 +14,7 @@ test.targets = test_toy(:,end);
 
 % Create the algorithm object
 algorithmObj = KDLOR();
+% Create vectors of values to test
 param.C = 10.^(-3:1:3);
 param.k = 10.^(-3:1:3);
 param.u = [0.01,0.001,0.0001,0.00001];

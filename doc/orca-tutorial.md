@@ -211,6 +211,36 @@ The directive for configuring the search process are included in the general sec
 - The list of hyper-parameters to be optimised and values considered for each parameter during the grid search are specified in subsection `{algorithm-hyper-parameters-to-cv}`;
     - `C`: add a new parameter with name `C` and a set of values of `10.^(-3:1:3)` (10<sup>-3</sup>,10<sup>-2</sup>,...,10<sup>3</sup>). The same apples for `k`.
 
+The parameter optimization can also be done by using the API (full example is in [exampleParamOptimization.m](../src/code-examples/exampleParamOptimization.m) script):
+
+```MATLAB
+% Assumes training set in structure 'train'
+% Create the algorithm object
+algorithmObj = KDLOR();
+% Create vectors of values to test
+param.C = 10.^(-3:1:3);
+param.k = 10.^(-3:1:3);
+param.u = [0.01,0.001,0.0001,0.00001];
+
+% Optimizing parameters for KDLOR with metric MAE (default metric)
+optimalp = paramopt(algorithmObj,param,train)
+optimalp =
+  struct with fields:
+    C: 1.0000e-03
+    k: 10
+    u: 1.0000e-03
+
+% Optimizing parameters for KDLOR with metric GM
+optimalp = paramopt(algorithmObj,param,train, 'metric', GM)
+
+optimalp =
+  struct with fields:
+
+    C: 1.0000e-03
+    k: 0.1000
+    u: 1.0000e-05
+
+```
 
 ### Experimental results and reports
 
