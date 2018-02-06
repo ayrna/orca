@@ -146,7 +146,7 @@ classdef Utilities < handle
             opt.train = false;
             opt.report_sum = false;
             
-            opt = Utilities.parseVarArgs(opt, varargin);
+            opt = parsevarargs(opt, varargin);
 
             experiments = dir(experiment_folder);
                         
@@ -629,7 +629,7 @@ classdef Utilities < handle
             
             varargin = varargin{:};
             if ~isempty(varargin)
-                options = Utilities.parseVarArgs(options, varargin);
+                options = parsevarargs(options, varargin);
                 if options.parallel && options.numcores <2
                     disp('Number of cores to low, setting to default number of cores')
                     options.numcores = maximum_ncores;
@@ -637,31 +637,6 @@ classdef Utilities < handle
             end
         end
         
-        function options = parseVarArgs(options, varargin)
-            if ~isempty(varargin{:})
-                par = varargin{:};
-
-                % read the acceptable names
-                optionNames = fieldnames(options);
-
-                % count arguments
-                nArgs = length(par);
-                if mod(nArgs,2)
-                    error('parseVarArgs needs propertyName/propertyValue pairs')
-                end
-
-                for pair = reshape(par,2,[]) % pair is {propName;propValue}
-                    inpName = lower(pair{1}); % make case insensitive
-
-                    if any(strcmp(inpName,optionNames))
-                        % overwrite options.
-                        options.(inpName) = pair{2};
-                    else
-                        error('%s is not a recognized parameter name',inpName)
-                    end
-                end
-            end
-        end
     end
 end
 

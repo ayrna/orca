@@ -53,11 +53,12 @@ classdef AMAE < Metric
             end
             
             if (exist ('OCTAVE_VERSION', 'builtin') > 0)
-                pkg load statistics;
-            end
-            amae = nanmean(mae);
-            if (exist ('OCTAVE_VERSION', 'builtin') > 0)
-                pkg unload statistics;
+              n = sum (~isnan(mae));
+              n(n == 0) = NaN;
+              mae(isnan(mae)) = 0;
+              amae = sum (mae) ./ n;
+            else
+              amae = nanmean(mae);
             end
         end
         

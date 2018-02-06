@@ -4,7 +4,7 @@ allowedError = 0.001;
 method = 'KDLOR';
 
 % Create the algorithm object
-algorithmObj = KDLOR('kernelType', 'rbf','optimizationMethod', 'quadprog');
+algorithmObj = KDLOR('kernelType', 'rbf');
 
 % Clear parameter struct
 clear param;
