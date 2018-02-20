@@ -21,7 +21,7 @@ classdef Spearman < Metric
     %       This software is released under the The GNU General Public License v3.0 licence
     %       available at http://www.gnu.org/licenses/gpl-3.0.html
     methods
-        function obj = MZE(obj)
+        function obj = Spearman(obj)
             obj.name = 'Rho Spearman';
         end
     end
