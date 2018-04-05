@@ -92,7 +92,7 @@ The [Algorithms](src/Algorithms) folder includes the MATLAB classes for the algo
 
   - [SVC1V1](src/Algorithms/SVC1V1.m) [1]: Nominal Support Vector Machine performing the OneVsOne formulation (considered as a naïve approach for ordinal regression since it ignores the order information).
   - [SVC1VA](src/Algorithms/SVC1VA.m) [1]: Nominal Support Vector Machine with the OneVsAll paradigm (considered as a naïve approach for ordinal regression since it ignores the order information).
-  - [LRLIBLINEAR](src/Algorithms/LRLIBLINEAR.m) : Provides implementation of logistic regression and linear SVM based on [LIBLINEAR](https://www.csie.ntu.edu.tw/~cjlin/liblinear/).
+  - [LIBLINEAR](src/Algorithms/LIBLINEAR.m) : Provides implementation of logistic regression and linear SVM based on [LIBLINEAR](https://www.csie.ntu.edu.tw/~cjlin/liblinear/).
 
 # Performance metrics
 
