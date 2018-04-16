@@ -63,7 +63,7 @@ All the documentation is in the [doc](doc) folder:
   - A [tutorial for threshold models](doc/orca-tutorial-3.md) centred on examining the differences of these models.
   - [Paralelize ORCA experiments](doc/orca-parallel.md).
   - [Use ORCA with HTCondor](doc/orca-condor.md).
-	- [Adding a new method to ORCA](doc/addmethod/addmethod.md).
+  - [Adding a new method to ORCA](doc/addmethod/addmethod.md).
 
 # Methods
 
