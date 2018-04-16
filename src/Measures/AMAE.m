@@ -63,10 +63,11 @@ classdef AMAE < Metric
         end
         
         function value = calculateCrossvalMetric(argum1,argum2)
-            %CALCULATEMETRIC Computes the evaluation metric
-            %   METRIC = CALCULATEMETRIC(CM) returns calculated metric from confussion
+            %CALCULATECROSSVALMETRIC Computes the evaluation metric as return it 
+            %   expressed as an error metric
+            %   METRIC = CALCULATECROSSVALMETRIC(CM) returns calculated metric from confussion
             %   matrix CM
-            %   METRIC = CALCULATEMETRIC(actual, pred) returns calculated metric from
+            %   METRIC = CALCULATECROSSVALMETRIC(actual, pred) returns calculated metric from
             %   real labels (ACTUAL) labels and predicted labels (PRED)
             if nargin == 2
                 value = AMAE.calculateMetric(argum1,argum2);

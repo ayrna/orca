@@ -28,7 +28,7 @@ classdef Metric < handle
             error('calculateMetric method should be implemented in all subclasses');
         end
         function value = calculateCrossvalMetric(argum1,argum2)
-            %CALCULATEMETRIC Computes the evaluation metric
+            %CALCULATECROSSVALMETRIC Computes the evaluation metric 
             %   METRIC = CALCULATEMETRIC(CM) returns calculated metric from confussion
             %   matrix CM
             %   METRIC = CALCULATEMETRIC(actual, pred) returns calculated metric from
