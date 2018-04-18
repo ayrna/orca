@@ -25,7 +25,7 @@ As a general experimental framework, the two main objectives of the framework ar
 1. To run many experiments as easily as possible to compare **many algorithms** and **many datasets**.
 2. To provide an easy way of including new algorithms into the framework by simply defining the parameters of the algorithms and the training and test methods.
 
-To help these purposes, ORCA is mainly used through **[scripts](doc/orca-tutorial.md#running-algorithms-with-orca-api#experiment-configuration)** that describe experiments, but the methods can be easily used through a common **[API](doc/orca-tutorial.md#running-algorithms-with-orca-api)**.
+To help these purposes, ORCA is mainly used through **[configuration files](doc/orca-tutorial.md#launch-experiments-through-ini-files)** that describe experiments, but the methods can be easily used through a common **[API](doc/orca-tutorial.md#running-algorithms-with-orca-api)**.
 
 # Cite ORCA
 
