@@ -87,11 +87,17 @@ classdef POM < Algorithm
                 model.projection = betaHatOrd(nOfClasses:end);
             end
             model.thresholds = model.thresholds';
-            [projectedTrain, predictedTrain] = obj.predict(train.patterns, model);
+            obj.model = model;
+            [projectedTrain, predictedTrain] = obj.predict(train.patterns);
         end
         
-        function [ projected, predicted ] = predict( obj, testPatterns, model)
-            %PREDICT predict labels of TEST patterns labels using MODEL.
+        function [ projected, predicted ] = predict( obj, testPatterns)
+            %PREDICT predict labels of TEST patterns labels using fitted model 
+            % or MODEL argument.
+            if isempty(obj.model)
+                error('Need to fit a model first')
+            end
+            model = obj.model;
             
             if exist ('OCTAVE_VERSION', 'builtin') > 0
                 numClasses = size(model.thresholds,2)+1;

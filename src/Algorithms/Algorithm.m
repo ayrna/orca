@@ -9,6 +9,9 @@ classdef Algorithm < handle
     %       This software is released under the The GNU General Public License v3.0 licence
     %       available at http://www.gnu.org/licenses/gpl-3.0.html
     
+    properties
+        model = [];
+    end
     methods
         
         function name_parameters = getParameterNames(obj)
@@ -114,30 +117,31 @@ classdef Algorithm < handle
             param = obj.parameters;
             
             c1 = clock;
-            [model,mInf.projectedTrain, mInf.predictedTrain] = obj.fit(train,param);
-            model.algorithm = class(obj);
+            [mInf.projectedTrain, mInf.predictedTrain] = obj.fit(train,param);
+            % Save the model type
+            obj.model.algorithm = class(obj);
             c2 = clock;
             mInf.trainTime = etime(c2,c1);
             
             c1 = clock;
-            [mInf.projectedTest, mInf.predictedTest] = obj.predict(test.patterns, model);
+            [mInf.projectedTest, mInf.predictedTest] = obj.predict(test.patterns);
             c2 = clock;
             mInf.testTime = etime(c2,c1);
-            mInf.model = model;
+            mInf.model = obj.model;
         end
         
         % Abstract methods: they have been implemented in this way to
         % ensure compatibility with Octave. An error is thrown if the method
         % is not implemented in child class.
         
-        function [model, projectedTrain, predictedTrain] = fit( obj,train,param)
+        function [projectedTrain, predictedTrain] = fit( obj,train,param)
             %FIT trains the model for the Algorithm method with TRAIN data and
             %vector of parameters PARAMETERS. Return the learned model.
             error('train method should be implemented in all subclasses');
         end
         
-        function [projected, predicted]= predict(obj,test,model)
-            %PREDICT predicts labels of TEST patterns labels using MODEL.
+        function [projected, predicted]= predict(obj,test)
+            %PREDICT predicts labels of TEST patterns labels using fitted MODEL.
             error('test method should be implemented in all subclasses');
         end
         
