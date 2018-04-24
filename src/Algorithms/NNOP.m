@@ -70,7 +70,7 @@ classdef NNOP < Algorithm
             end
         end
         
-        function [model, projectedTrain, predictedTrain] = fit( obj, train, parameters)
+        function [projectedTrain, predictedTrain] = privfit( obj, train, parameters)
             %FIT trains the model for the NNOP method with TRAIN data and
             %vector of parameters PARAMETERS. Return the learned model.
             
@@ -122,23 +122,22 @@ classdef NNOP < Algorithm
             model.Theta2=Theta2;
             model.num_labels=num_labels;
             model.m = m;
-            
-            [projectedTrain, predictedTrain] = obj.predict(train.patterns, model);
             model.parameters = parameters;
-            
+            obj.model = model;
+            [projectedTrain, predictedTrain] = obj.predict(train.patterns);
         end
         
-        function [projected, predicted]= predict(obj,test,model)
+        function [projected, predicted]= predict(obj,test)
             %PREDICT predicts labels of TEST patterns labels using MODEL.
             m = size(test,1);
             a1 = [ones(m, 1) test];
-            z2 = [ones(m, 1) a1*model.Theta1'];
+            z2 = [ones(m, 1) a1*obj.model.Theta1'];
             a2 =  1.0 ./ (1.0 + exp(-z2));
-            projected=a2*model.Theta2';
+            projected=a2*obj.model.Theta2';
             projected=1.0 ./ (1.0 + exp(-projected));
             
-            a3 = ([projected ones(m,1)] > 0.5).*repmat(1:model.num_labels,m,1);
-            a3(a3==0)=model.num_labels+1;
+            a3 = ([projected ones(m,1)] > 0.5).*repmat(1:obj.model.num_labels,m,1);
+            a3(a3==0)=obj.model.num_labels+1;
             
             predicted = min(a3,[],2);
         end

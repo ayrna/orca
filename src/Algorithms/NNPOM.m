@@ -72,7 +72,7 @@ classdef NNPOM < Algorithm
             end
         end
         
-        function [model, projectedTrain, predictedTrain] = fit( obj, train, parameters)
+        function [projectedTrain, predictedTrain] = privfit( obj, train, parameters)
             %FIT trains the model for the NNPOM method with TRAIN data and
             %vector of parameters PARAMETERS. Return the learned model.
             
@@ -127,21 +127,21 @@ classdef NNPOM < Algorithm
             model.thresholds=obj.convertthresholds(thresholds_param,num_labels);
             model.num_labels=num_labels;
             model.m = m;
-            
-            [projectedTrain, predictedTrain] = obj.predict(train.patterns, model);
             model.parameters = parameters;
-            
+            obj.model = model;
+
+            [projectedTrain, predictedTrain] = obj.predict(train.patterns);
         end
         
-        function [projected, predicted]= predict(obj,test,model)
+        function [projected, predicted]= privpredict(obj,test)
             %PREDICT predicts labels of TEST patterns labels using MODEL.
             m = size(test,1);
             a1 = [ones(m, 1) test];
-            z2 = a1*model.Theta1';
+            z2 = a1*obj.model.Theta1';
             a2 =  1.0 ./ (1.0 + exp(-z2));
-            projected=a2*model.Theta2';
+            projected=a2*obj.model.Theta2';
             
-            z3=repmat(model.thresholds,m,1)-repmat(projected,1,model.num_labels-1);
+            z3=repmat(obj.model.thresholds,m,1)-repmat(projected,1,obj.model.num_labels-1);
             a3T =  1.0 ./ (1.0 + exp(-z3));
             a3 = [a3T ones(m,1)];
             a3(:,2:end) = a3(:,2:end) - a3(:,1:(end-1));

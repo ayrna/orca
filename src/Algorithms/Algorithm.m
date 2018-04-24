@@ -153,10 +153,12 @@ classdef Algorithm < handle
             if isempty(obj.model)
                 error('The object does not have a fitted model')
             end
-            % Avoid typicall error os passing a structure containing labels
+            % Avoid typicall error of passing a structure instead of
+            % the matrix of independent variables 
             if ~isa(test,'double')
                 error('test parameter has to be a matrix')
             end
+            
             [projected, predicted]= privpredict(obj,test);
         end
         

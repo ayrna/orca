@@ -52,7 +52,7 @@ classdef LIBLINEAR < Algorithm
             obj.parseArgs(varargin);
         end
         
-        function [model, projectedTrain, predictedTrain]= fit( obj, train, param)
+        function [projectedTrain, predictedTrain]= privfit( obj, train, param)
             %FIT trains the model for the LIBLINEAR method with TRAIN data and
             %vector of parameters PARAMETERS. Return the learned model.
             if isempty(strfind(path,obj.algorithmMexPath))
@@ -60,22 +60,22 @@ classdef LIBLINEAR < Algorithm
             end
             
             options = ['-s ' num2str(obj.solver) ' -c ' num2str(param.C) ' -q'];
-            model.libsvmModel = svmtrain(train.targets, sparse(train.patterns), options);
-            model.parameters = param;
-            [projectedTrain,predictedTrain] = obj.predict(train.patterns,model);
+            obj.model.libsvmModel = svmtrain(train.targets, sparse(train.patterns), options);
+            obj.model.parameters = param;
+            [projectedTrain,predictedTrain] = obj.predict(train.patterns);
             
             if ~isempty(strfind(path,obj.algorithmMexPath))
                 rmpath(obj.algorithmMexPath);
             end
         end
         
-        function [projected, predicted]= predict(obj,test, model)
+        function [projected, predicted]= privpredict(obj,test)
             %PREDICT predicts labels of TEST patterns labels using MODEL.
             if isempty(strfind(path,obj.algorithmMexPath))
                 addpath(obj.algorithmMexPath);
             end
             
-            [predicted, acc, projected] = svmpredict(ones(size(test,1),1),sparse(test),model.libsvmModel);
+            [predicted, acc, projected] = svmpredict(ones(size(test,1),1),sparse(test),obj.model.libsvmModel);
             
             if ~isempty(strfind(path,obj.algorithmMexPath))
                 rmpath(obj.algorithmMexPath);

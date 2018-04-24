@@ -43,7 +43,7 @@ classdef SVORIM < Algorithm
             obj.parseArgs(varargin);
         end
         
-        function [model,projectedTrain,predictedTrain] = fit(obj, train, parameters)
+        function [projectedTrain,predictedTrain] = privfit(obj, train, parameters)
             %FIT trains the model for the SVORIM method with TRAIN data and
             %vector of parameters PARAMETERS. Return the learned model.
             if isempty(strfind(path,obj.algorithmMexPath))
@@ -55,22 +55,24 @@ classdef SVORIM < Algorithm
             model.thresholds = thresholds;
             model.parameters = parameters;
             model.train = train.patterns;
+            obj.model = model;
             projectedTrain = projectedTrain';
             if ~isempty(strfind(path,obj.algorithmMexPath))
                 rmpath(obj.algorithmMexPath);
             end
         end
         
-        function [projected, predicted] = predict(obj, test, model)
+        function [projected, predicted] = privpredict(obj, test)
             %PREDICT predicts labels of TEST patterns labels using MODEL.
-            kernelMatrix = computeKernelMatrix(model.train',test','rbf',model.parameters.k);
-            projected = model.projection*kernelMatrix;
+            kernelMatrix = computeKernelMatrix(obj.model.train',test','rbf',obj.model.parameters.k);
+            projected = obj.model.projection*kernelMatrix;
             
-            predicted = assignLabels(obj, projected, model.thresholds);
+            predicted = SVORIM.assignLabels(projected, obj.model.thresholds);
             projected = projected';
         end
-        
-        function predicted = assignLabels(obj, projected, thresholds)
+    end
+    methods (Static = true)
+        function predicted = assignLabels(projected, thresholds)
             numClasses = size(thresholds,2)+1;
             %TEST assign the labels from projections and thresholds
             project2 = repmat(projected, numClasses-1,1);

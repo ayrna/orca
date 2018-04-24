@@ -39,7 +39,7 @@ classdef CSSVC < Algorithm
             obj.parseArgs(varargin);
         end
         
-        function [model, projectedTrain, predictedTrain] = fit( obj, train, param)
+        function [projectedTrain, predictedTrain] = privfit( obj, train, param)
             %FIT trains the model for the CSSVC method with TRAIN data and
             %vector of parameters PARAM. Return the learned model.
             if isempty(strfind(path,obj.algorithmMexPath))
@@ -53,25 +53,26 @@ classdef CSSVC < Algorithm
             
             for i=1:labelSetSize
                 labels = double(train.targets == labelSet(i));
-                weights = obj.ordinalWeights(i, train.targets);
+                weights = CSSVC.ordinalWeights(i, train.targets);
                 models{i} = svmtrain(weights,labels, train.patterns, options);
             end
             model = struct('models', {models}, 'labelSet', labelSet);
             model.parameters = param;
-            [projectedTrain,predictedTrain] = obj.predict(train.patterns,model);
+            obj.model = model;
+            [projectedTrain,predictedTrain] = obj.predict(train.patterns);
             if ~isempty(strfind(path,obj.algorithmMexPath))
                 rmpath(obj.algorithmMexPath);
             end
         end
         
-        function [decv, pred]= predict(obj, test, model)
+        function [decv, pred]= privpredict(obj, test)
             %PREDICT predicts labels of TEST patterns labels using MODEL.
             if isempty(strfind(path,obj.algorithmMexPath))
                 addpath(obj.algorithmMexPath);
             end
-            labelSet = model.labelSet;
+            labelSet = obj.model.labelSet;
             labelSetSize = length(labelSet);
-            models = model.models;
+            models = obj.model.models;
             decv= zeros(size(test, 1), labelSetSize);
             
             for i=1:labelSetSize
@@ -85,8 +86,9 @@ classdef CSSVC < Algorithm
                 rmpath(obj.algorithmMexPath);
             end
         end
-        
-        function [w] = ordinalWeights(obj, p, targets)
+    end
+    methods (Static = true)
+        function [w] = ordinalWeights(p, targets)
             %ORDINALWEIGHTS compute the weights to apply to the set of
             %training patterns.
             %   [W] = ORDINALWEIGHTS(P, TARGETS) compute the weights of P,
