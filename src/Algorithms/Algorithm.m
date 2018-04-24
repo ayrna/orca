@@ -130,17 +130,48 @@ classdef Algorithm < handle
             mInf.model = obj.model;
         end
         
+        function [projectedTrain, predictedTrain] = fit( obj,train,param)
+            if nargin < 3
+                param = [];
+                if nargin < 2
+                    error('Please provide training data')
+                end
+            end
+            if ~all(isfield(train, {'patterns','targets'}))
+                error('Please provide a structure with train patterns and targets')
+            end
+            % check that dimensions agree
+            if ~size(train.patterns,1) == size(train.targets,1)
+                error('Number of train patterns and targets must agree')
+            end
+            
+            [projectedTrain, predictedTrain] = obj.privfit(train, param);
+        end
+
+        function [projected, predicted]= predict(obj,test)
+            % Check if there is a model
+            if isempty(obj.model)
+                error('The object does not have a fitted model')
+            end
+            % Avoid typicall error os passing a structure containing labels
+            if ~isa(test,'double')
+                error('test parameter has to be a matrix')
+            end
+            [projected, predicted]= privpredict(obj,test);
+        end
+        
+        %TODO: Update DOC
         % Abstract methods: they have been implemented in this way to
         % ensure compatibility with Octave. An error is thrown if the method
         % is not implemented in child class.
         
-        function [projectedTrain, predictedTrain] = fit( obj,train,param)
+        function [projectedTrain, predictedTrain] = privfit( obj,train,param)
             %FIT trains the model for the Algorithm method with TRAIN data and
             %vector of parameters PARAMETERS. Return the learned model.
             error('train method should be implemented in all subclasses');
         end
         
-        function [projected, predicted]= predict(obj,test)
+        function [projected, predicted]= privpredict(obj,test)
             %PREDICT predicts labels of TEST patterns labels using fitted MODEL.
             error('test method should be implemented in all subclasses');
         end

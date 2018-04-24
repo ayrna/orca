@@ -71,7 +71,7 @@ classdef POM < Algorithm
             end
         end
 
-        function [model, projectedTrain, predictedTrain]= fit( obj,train,parameters)
+        function [projectedTrain, predictedTrain]= privfit( obj,train,parameters)
             %FIT trains the model for the POM method with TRAIN data and
             %vector of parameters PARAMETERS. Return the learned model.
             nOfClasses = numel(unique(train.targets));
@@ -91,12 +91,8 @@ classdef POM < Algorithm
             [projectedTrain, predictedTrain] = obj.predict(train.patterns);
         end
         
-        function [ projected, predicted ] = predict( obj, testPatterns)
+        function [ projected, predicted ] = privpredict( obj, testPatterns)
             %PREDICT predict labels of TEST patterns labels using fitted model 
-            % or MODEL argument.
-            if isempty(obj.model)
-                error('Need to fit a model first')
-            end
             model = obj.model;
             
             if exist ('OCTAVE_VERSION', 'builtin') > 0
