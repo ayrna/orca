@@ -68,8 +68,8 @@ classdef ELMOP < Algorithm
         end
         
         function [projectedTrain, predictedTrain] = privfit( obj, train, parameters)
-            %FIT trains the model for the ELMOP method with TRAIN data and
-            %vector of parameters PARAMETERS. Return the learned model.
+            %PRIVFIT trains the model for the ELMOP method with TRAIN data and
+            %vector of parameters PARAM. 
             %TODO train.uniqueTargets = unique([test.targets ;train.targets]);
             train.uniqueTargets = unique(train.targets);
             train.nOfClasses = max(train.uniqueTargets);
@@ -244,7 +244,7 @@ classdef ELMOP < Algorithm
         end
         
         function [TY, TestPredictedY]= privpredict(obj, test)
-            %PREDICT predicts labels of TEST patterns labels using MODEL.
+            %PREDICT predicts labels of TEST patterns labels. The object needs to be fitted to the data first.
             nOfPatterns = size(test,1);
             
             TV.P = test';

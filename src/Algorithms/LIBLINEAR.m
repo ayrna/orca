@@ -53,8 +53,8 @@ classdef LIBLINEAR < Algorithm
         end
         
         function [projectedTrain, predictedTrain]= privfit( obj, train, param)
-            %FIT trains the model for the LIBLINEAR method with TRAIN data and
-            %vector of parameters PARAMETERS. Return the learned model.
+            %PRIVFIT trains the model for the LIBLINEAR method with TRAIN data and
+            %vector of parameters PARAM. 
             if isempty(strfind(path,obj.algorithmMexPath))
                 addpath(obj.algorithmMexPath);
             end
@@ -70,7 +70,7 @@ classdef LIBLINEAR < Algorithm
         end
         
         function [projected, predicted]= privpredict(obj,test)
-            %PREDICT predicts labels of TEST patterns labels using MODEL.
+            %PREDICT predicts labels of TEST patterns labels. The object needs to be fitted to the data first.
             if isempty(strfind(path,obj.algorithmMexPath))
                 addpath(obj.algorithmMexPath);
             end

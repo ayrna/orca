@@ -68,8 +68,9 @@ classdef KDLOR < Algorithm
         end
         
         function [projectedTrain, predictedTrain]= privfit( obj, train, parameters)
-            %FIT trains the model for the KDLOR method with TRAIN data and
-            %vector of parameters PARAMETERS. Return the learned model.
+            %PRIVFIT trains the model for the KDLOR method with TRAIN data and
+            %vector of parameters PARAM. 
+            
             trainPatterns = train.patterns';
             [dim,numTrain] = size(trainPatterns);
             
@@ -193,7 +194,7 @@ classdef KDLOR < Algorithm
         end
         
         function [projected, predicted] = predict(obj, testPatterns)
-            %PREDICT predicts labels of TEST patterns labels using MODEL.
+            %PREDICT predicts labels of TEST patterns labels. The object needs to be fitted to the data first.
             
             kernelMatrix = computeKernelMatrix(obj.model.train,testPatterns',obj.model.kernelType, obj.model.parameters.k);
             projected = obj.model.projection'*kernelMatrix;

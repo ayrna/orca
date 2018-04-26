@@ -44,9 +44,9 @@ classdef ORBoost < Algorithm
             obj.parseArgs(varargin);
         end
         
-        function [model, projectedTrain, predictedTrain] = fit(obj,train,parameters)
-            %FIT trains the model for the ORBoost method with TRAIN data and
-            %vector of parameters PARAMETERS. Return the learned model.
+        function [projectedTrain, predictedTrain] = privfit(obj,train,parameters)
+            %PRIVFIT trains the model for the ORBoost method with TRAIN data and
+            %vector of parameters PARAMETERS. 
             
             % Output model file
             modelFile = tempname();
@@ -80,14 +80,15 @@ classdef ORBoost < Algorithm
             
             model.textInformation = s;
             model.weights = obj.weights;
-            [projectedTrain,predictedTrain] = obj.predict(train.patterns,model);
+            obj.model = model;
+            [projectedTrain,predictedTrain] = obj.predict(train.patterns);
             % Delete temp files
             delete(trainFile);
             delete(modelFile);
         end
         
-        function [projected, predicted]= predict( obj,test,model)
-            %PREDICT predicts labels of TEST patterns labels using MODEL.
+        function [projected, predicted]= privpredict( obj,test)
+            %PREDICT predicts labels of TEST patterns labels. The object needs to be fitted to the data first.
             
             % Write test file
             testFile = tempname();
@@ -95,9 +96,9 @@ classdef ORBoost < Algorithm
             % Write model file
             modelFile = tempname();
             fid = fopen(modelFile,'w');
-            nLines = size(model.textInformation,1);
+            nLines = size(obj.model.textInformation,1);
             for iLine = 1:nLines
-                fprintf(fid,'%s\n',model.textInformation{iLine});
+                fprintf(fid,'%s\n',obj.model.textInformation{iLine});
             end
             fclose(fid);
             % Name of prediction file

@@ -73,8 +73,8 @@ classdef NNPOM < Algorithm
         end
         
         function [projectedTrain, predictedTrain] = privfit( obj, train, parameters)
-            %FIT trains the model for the NNPOM method with TRAIN data and
-            %vector of parameters PARAMETERS. Return the learned model.
+            %PRIVFIT trains the model for the NNPOM method with TRAIN data and
+            %vector of parameters PARAM. 
             
             % Aux variables
             X = train.patterns;
@@ -134,7 +134,7 @@ classdef NNPOM < Algorithm
         end
         
         function [projected, predicted]= privpredict(obj,test)
-            %PREDICT predicts labels of TEST patterns labels using MODEL.
+            %PREDICT predicts labels of TEST patterns labels. The object needs to be fitted to the data first.
             m = size(test,1);
             a1 = [ones(m, 1) test];
             z2 = a1*obj.model.Theta1';

@@ -1,4 +1,3 @@
-
 classdef REDSVM < Algorithm
     %REDSVM Reduction from ordinal regression to binary SVM classifiers [1].
     %The configuration used is the identity coding matrix, the absolute
@@ -48,27 +47,28 @@ classdef REDSVM < Algorithm
             obj.parseArgs(varargin);
         end
         
-        function [model, projectedTrain, predictedTrain]= fit( obj, train , param)
-            %FIT trains the model for the REDSVM method with TRAIN data and
-            %vector of parameters PARAMETERS. Return the learned model.
+        function [projectedTrain, predictedTrain]= privfit( obj, train , param)
+            %PRIVFIT trains the model for the REDSVM method with TRAIN data and
+            %vector of parameters PARAMETERS.
             if isempty(strfind(path,obj.algorithmMexPath))
                 addpath(obj.algorithmMexPath);
             end
             options = ['-s 5 -t 2 -c ' num2str(param.C) ' -g ' num2str(param.k) ' -q'];
             model.libsvmModel = svmtrain(train.targets, train.patterns, options);
             model.parameters = param;
+            obj.model = model;
             [predictedTrain, acc, projectedTrain] = svmpredict(train.targets,train.patterns,model.libsvmModel, '');
             if ~isempty(strfind(path,obj.algorithmMexPath))
                 rmpath(obj.algorithmMexPath);
             end
         end
         
-        function [projected, predicted]= predict(obj,test, model)
+        function [projected, predicted]= predict(obj,test)
             %PREDICT predict labels of TEST patterns labels using MODEL.
             if isempty(strfind(path,obj.algorithmMexPath))
                 addpath(obj.algorithmMexPath);
             end
-            [predicted, acc, projected] = svmpredict(ones(size(test,1),1),test,model.libsvmModel, '');
+            [predicted, acc, projected] = svmpredict(ones(size(test,1),1),test,obj.model.libsvmModel, '');
             if ~isempty(strfind(path,obj.algorithmMexPath))
                 rmpath(obj.algorithmMexPath);
             end

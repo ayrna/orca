@@ -40,8 +40,8 @@ classdef CSSVC < Algorithm
         end
         
         function [projectedTrain, predictedTrain] = privfit( obj, train, param)
-            %FIT trains the model for the CSSVC method with TRAIN data and
-            %vector of parameters PARAM. Return the learned model.
+            %PRIVFIT trains the model for the CSSVC method with TRAIN data and
+            %vector of parameters PARAM. 
             if isempty(strfind(path,obj.algorithmMexPath))
                 addpath(obj.algorithmMexPath);
             end
@@ -66,7 +66,7 @@ classdef CSSVC < Algorithm
         end
         
         function [decv, pred]= privpredict(obj, test)
-            %PREDICT predicts labels of TEST patterns labels using MODEL.
+            %PREDICT predicts labels of TEST patterns labels. The object needs to be fitted to the data first.
             if isempty(strfind(path,obj.algorithmMexPath))
                 addpath(obj.algorithmMexPath);
             end

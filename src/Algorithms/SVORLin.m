@@ -45,8 +45,8 @@ classdef SVORLin < Algorithm
         end
         
         function [projectedTrain,predictedTrain] = privfit(obj,train,parameters)
-            %FIT trains the model for the SVORLin method with TRAIN data and
-            %vector of parameters PARAMETERS. Return the learned model.
+            %PRIVFIT trains the model for the SVORLin method with TRAIN data and
+            %vector of parameters PARAMETERS. 
             if isempty(strfind(path,obj.algorithmMexPath))
                 addpath(obj.algorithmMexPath);
             end
@@ -64,7 +64,7 @@ classdef SVORLin < Algorithm
         end
         
         function [projected, predicted] = privpredict(obj, test)
-            %PREDICT predicts labels of TEST patterns labels using MODEL.
+            %PREDICT predicts labels of TEST patterns labels. The object needs to be fitted to the data first.
             kernelMatrix = computeKernelMatrix(obj.model.train',test','linear',1);
             projected = obj.model.projection*kernelMatrix;
             

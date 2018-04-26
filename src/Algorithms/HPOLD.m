@@ -35,8 +35,6 @@ classdef HPOLD < Algorithm
     properties(Access = private)
         objBI;
         objOR;
-        modelBI;
-        modelOR;
     end
     
     methods
@@ -49,9 +47,9 @@ classdef HPOLD < Algorithm
             obj.parseArgs(varargin);
         end
         
-        function [model, projectedTrain, predictedTrain] = fit( obj, train, param)
-            %FIT trains the model for the HPOLD method with TRAIN data and
-            %vector of parameters PARAMETERS. Returns the learned model.
+        function [projectedTrain, predictedTrain] = privfit( obj, train, param)
+            %PRIVFIT trains the model for the HPOLD method with TRAIN data and
+            %vector of parameters PARAM. 
             
             projectedTrain = -1*ones(length(train.targets),1);% dummy value
             predictedTrain = -1*ones(length(train.targets),1);% dummy value
@@ -74,17 +72,17 @@ classdef HPOLD < Algorithm
                     parambi.C = param.C;
                     parambi.k = param.k;
                     obj.objBI = SVC1V1();
-                    obj.modelBI = obj.objBI.fit(trainBi, parambi);
+                    obj.objBI.fit(trainBi, parambi);
                 case 'csvc1v1'
                     error('TODO')
                     parambi.C = param.C;
                     parambi.k = param.k;
                     obj.objBI = CSVC();
-                    obj.modelBI = obj.objBI.fit(trainBi, parambi);
+                    obj.objBI.fit(trainBi, parambi);
                 case 'liblinear'
                     parambi.C = param.C;
                     obj.objBI = LIBLINEAR();
-                    obj.modelBI = obj.objBI.fit(trainBi, parambi);
+                    obj.objBI.fit(trainBi, parambi);
                 otherwise
                     error(['Unknown binary classifier method:', obj.binaryMethod])
             end
@@ -96,11 +94,11 @@ classdef HPOLD < Algorithm
                     obj.objOR = SVORIM();
                     paramor.C = param.C;
                     paramor.k = param.k;
-                    obj.modelOR = obj.objOR.fit(trainOr,paramor);
+                    obj.objOR.fit(trainOr,paramor);
                     %obj.objOR.model = obj.objOR.fit(trainOr,paramor);
                 case 'pom'
                     obj.objOR = POM();
-                    obj.modelOR = obj.objOR.fit(trainOr);
+                    obj.objOR.fit(trainOr);
                     %obj.objOR.model = obj.objOR.fit(trainOr);
                 otherwise
                     error(['Unknown ordinal classifier method:', obj.ordinalMethod])
@@ -108,19 +106,19 @@ classdef HPOLD < Algorithm
             
             % Save model and parameters
             model.parameters = param;
-            model.modelBI = obj.modelBI;
-            model.modelOR = obj.modelOR ;
-            
-            [projectedTrain, predictedTrain] = obj.predict(train.patterns,model);
+            model.modelBI = obj.objBI.getModel();
+            model.modelOR = obj.objOR.getModel();
+            obj.model = model;
+            [projectedTrain, predictedTrain] = obj.predict(train.patterns);
         end
         
-        function [projected, predTargets]= predict(obj, testPatterns, model)
+        function [projected, predTargets]= privpredict(obj, testPatterns)
             %PREDICT predict labels of TEST patterns labels using MODEL.
             projected = -1*ones(size(testPatterns,1),1);% dummy value
             % Binary prediction: classes 1/2
-            [projectedTest_bi,predTargets] = obj.objBI.predict(testPatterns,model.modelBI);
+            [projectedTest_bi,predTargets] = obj.objBI.predict(testPatterns);
             % Ordinal prediction for patterns of class ~= class 1
-            [projectedTest_or, predictedTest_or] = obj.objOR.predict(testPatterns(predTargets~=1,:),model.modelOR);
+            [projectedTest_or, predictedTest_or] = obj.objOR.predict(testPatterns(predTargets~=1,:));
             % +1 to correct label numbering
             predictedTest_or = predictedTest_or + 1;
             predTargets(predTargets~=1,:) = predictedTest_or;

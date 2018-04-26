@@ -57,9 +57,9 @@ classdef SVMOP < Algorithm
             end
         end
         
-        function [model, projectedTrain, predictedTrain] = fit( obj, train, param)
-            %FIT trains the model for the SVMOP method with TRAIN data and
-            %vector of parameters PARAMETERS. Return the learned model.
+        function [projectedTrain, predictedTrain] = privfit( obj, train, param)
+            %PRIVFIT trains the model for the SVMOP method with TRAIN data and
+            %vector of parameters PARAMETERS. 
             if isempty(strfind(path,obj.algorithmMexPath))
                 addpath(obj.algorithmMexPath);
             end
@@ -97,30 +97,30 @@ classdef SVMOP < Algorithm
             model.parameters = param;
             model.weights = obj.weights;
             model.nOfClasses = nOfClasses;
-            [projectedTrain, predictedTrain] = obj.predict(train.patterns,model);
-            
+            obj.model = model;
+            [projectedTrain, predictedTrain] = obj.predict(train.patterns);
+
             if ~isempty(strfind(path,obj.algorithmMexPath))
                 rmpath(obj.algorithmMexPath);
             end
-            
         end
         
-        function [projected,predicted] = predict(obj,test,model)
-            %PREDICT predicts labels of TEST patterns labels using MODEL.
+        function [projected,predicted] = privpredict(obj,test)
+            %PREDICT predicts labels of TEST patterns labels. The object needs to be fitted to the data first.
             if isempty(strfind(path,obj.algorithmMexPath))
                 addpath(obj.algorithmMexPath);
             end
-            projected = zeros(model.nOfClasses, size(test,1));
-            for i = 2:model.nOfClasses
-                [pr, acc, probTs] = svmpredict(zeros(size(test,1),1),test,model.models{i},'-b 1');
+            projected = zeros(obj.model.nOfClasses, size(test,1));
+            for i = 2:obj.model.nOfClasses
+                [pr, acc, probTs] = svmpredict(zeros(size(test,1),1),test,obj.model.models{i},'-b 1');
                 
                 projected(i-1,:) = probTs(:,2)';
             end
             probts(1,:) = ones(size(projected(1,:))) - projected(1,:);
-            for i=2:model.nOfClasses
+            for i=2:obj.model.nOfClasses
                 probts(i,:) =  projected(i-1,:) -  projected(i,:);
             end
-            probts(model.nOfClasses,:) =  projected(model.nOfClasses-1,:);
+            probts(obj.model.nOfClasses,:) =  projected(obj.model.nOfClasses-1,:);
             [aux, predicted] = max(probts);
             predicted = predicted';
             projected = projected';

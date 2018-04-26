@@ -45,9 +45,9 @@ classdef SVC1VA < Algorithm
             obj.parseArgs(varargin);
         end
         
-        function [model, projectedTrain, predictedTrain]= fit( obj, train, param)
-            %FIT trains the model for the SVC1VA method with TRAIN data and
-            %vector of parameters PARAMETERS. Return the learned model.
+        function [projectedTrain, predictedTrain]= privfit( obj, train, param)
+            %PRIVFIT trains the model for the SVC1VA method with TRAIN data and
+            %vector of parameters PARAMETERS. 
             if isempty(strfind(path,obj.algorithmMexPath))
                 addpath(obj.algorithmMexPath);
             end
@@ -66,21 +66,22 @@ classdef SVC1VA < Algorithm
             
             model = struct('models', {models}, 'labelSet', labelSet);
             model.parameters = param;
-            [projectedTrain, predictedTrain] = obj.predict(train.patterns,model);
+            obj.model = model;
+            [projectedTrain, predictedTrain] = obj.predict(train.patterns);
             if ~isempty(strfind(path,obj.algorithmMexPath))
                 rmpath(obj.algorithmMexPath);
             end
             
         end
         
-        function [projected, predicted]= predict(obj, test, model)
-            %PREDICT predicts labels of TEST patterns labels using MODEL.
+        function [projected, predicted]= privpredict(obj, test)
+            %PREDICT predicts labels of TEST patterns labels. The object needs to be fitted to the data first.
             if isempty(strfind(path,obj.algorithmMexPath))
                 addpath(obj.algorithmMexPath);
             end
-            labelSet = model.labelSet;
+            labelSet = obj.model.labelSet;
             labelSetSize = length(labelSet);
-            models = model.models;
+            models = obj.model.models;
             projected= zeros(size(test, 1), labelSetSize);
             
             for i=1:labelSetSize
