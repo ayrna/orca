@@ -18,7 +18,7 @@
 
 This tutorial will cover how to apply threshold models in the framework ORCA. It is highly recommended to have previously completed the [how to tutorial](orca-tutorial.md).
 
-Moreover, we are going to work again with melanoma diagnosis dataset. You should complete at least [the second section of the second tutorial](orca-tutorial2.md#loading-the-dataset-and-performing-some-preliminary-experiments) in order to follow this third tutorial.
+Moreover, we are going to work again with melanoma diagnosis dataset. You should complete at least [the second section of the second tutorial](orca-tutorial-2.md#loading-the-dataset-and-performing-some-preliminary-experiments) in order to follow this third tutorial.
 
 All threshold models are designed with a very reasonable idea: the categories to be predicted in ordinal classification comes from the discretization of an underlying latent variable, so that we can try to model the latent variables and use a total of Q-1 thresholds (for Q classes) to divide this variable in categories. In this way, the order of categories will be taken into account, because the intervals defined for each will be arranged in the same order, and a lot of flexibility will be given to the model by simply moving these thresholds.
 
