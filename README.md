@@ -67,7 +67,7 @@ All the documentation is in the [doc](doc) folder:
 
 # Methods
 
-The [Algorithms](src/Algorithms) folder includes the MATLAB classes for the algorithms included and the original code (if applicable). [config-files](src/config-files) includes different configuration files for running all the algorithms. In order to use these files, you will need the [datasets](http://www.uco.es/grupos/ayrna/ucobigfiles/datasets-orreview.zip) of our review paper. To add your own method see [Adding a new method to ORCA](doc/addmethod/addmethod.md).
+The [Algorithms](src/Algorithms) folder includes the MATLAB classes for the algorithms included and the original code (if applicable). [config-files](src/config-files) includes different configuration files for running all the algorithms. In order to use these files, you will need the [datasets](http://www.uco.es/grupos/ayrna/ucobigfiles/datasets-orreview.zip) of our review paper. To add your own method see [Adding a new method to ORCA](doc/addmethod.md).
 
 ## Ordinal regression algorithms
 
