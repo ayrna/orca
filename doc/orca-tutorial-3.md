@@ -30,7 +30,7 @@ Because of this, there are many threshold model proposals in the literature, and
 - One discriminant analysis proposal (KDLOR) [5].
 - One ensemble model (ORBoost) [6].
 
-The corresponding script for this tutorial, ([exampleMelanomaTM.m](../src/code-examples/exampleMelanomaTM.m)), can be found and run in the [code example](../src/code-examples). Octave code is not shown here to simplify code, but it is included in ([exampleMelanomaTM.m](../src/code-examples/exampleMelanomaTM.m)).
+The corresponding script for this tutorial, ([exampleMelanomaTM.m](../src/code-examples/exampleMelanomaTM.m)), can be found and run in the [code example folder](../src/code-examples). Octave code is not shown here to simplify code, but it is included in ([exampleMelanomaTM.m](../src/code-examples/exampleMelanomaTM.m)).
 
 ## Proportional odds model (POM)
 
@@ -38,7 +38,7 @@ The POM arose from a statistical background, and it is based on an extension of 
 
 A strong probabilistic basis is inherent to this approach: each logistic function is modelling the cumulative probability that a pattern has of belonging to the corresponding class or any of the previous classes. Cumulative probabilities can be easily transformed to standard probabilities by simply subtracting them.
 
-We can try the POM model using the melanoma dataset to check its performance. This method does not involve any parameter. Run the following commands (from the [code-examples folder](/src/code-examples):
+We can try the POM model using the melanoma dataset to check its performance. This method does not involve any parameter. Run the following commands (from the [code-examples folder](/src/code-examples)):
 ```MATLAB
 >> addpath ../
 addpath ../Measures
