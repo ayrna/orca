@@ -63,11 +63,11 @@ All the documentation is in the [doc](doc) folder:
   - A [tutorial for threshold models](doc/orca-tutorial-3.md) centred on examining the differences of these models.
   - [Paralelize ORCA experiments](doc/orca-parallel.md).
   - [Use ORCA with HTCondor](doc/orca-condor.md).
-  - [Adding a new method to ORCA](doc/addmethod/addmethod.md).
+  - [Adding a new method to ORCA](doc/orca-addmethod.md).
 
 # Methods
 
-The [Algorithms](src/Algorithms) folder includes the MATLAB classes for the algorithms included and the original code (if applicable). [config-files](src/config-files) includes different configuration files for running all the algorithms. In order to use these files, you will need the [datasets](http://www.uco.es/grupos/ayrna/ucobigfiles/datasets-orreview.zip) of our review paper. To add your own method see [Adding a new method to ORCA](doc/addmethod/addmethod.md).
+The [Algorithms](src/Algorithms) folder includes the MATLAB classes for the algorithms included and the original code (if applicable). [config-files](src/config-files) includes different configuration files for running all the algorithms. In order to use these files, you will need the [datasets](http://www.uco.es/grupos/ayrna/ucobigfiles/datasets-orreview.zip) of our review paper. To add your own method see [Adding a new method to ORCA](doc/orca-addmethod.md).
 
 ## Ordinal regression algorithms
 
