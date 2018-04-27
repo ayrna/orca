@@ -201,15 +201,15 @@ NNPOM MAE: 0.500000
 The source code of NNPOM clearly shows hot the prediction is performed, which clarify a lot the model:
 
 ```MATLAB
-function [projected, predicted]= predict(obj,test,model)
-    %PREDICT predicts labels of TEST patterns labels using MODEL.
+function [projected, predicted]= privpredict(obj,test)
+    %PRIVPREDICT predicts labels of TEST patterns labels using fitted MODEL. 
     m = size(test,1);
     a1 = [ones(m, 1) test];
-    z2 = a1*model.Theta1';
+    z2 = a1*obj.model.Theta1';
     a2 =  1.0 ./ (1.0 + exp(-z2));
-    projected=a2*model.Theta2';
+    projected=a2*obj.model.Theta2';
 
-    z3=repmat(model.Thresholds,m,1)-repmat(projected,1,model.num_labels-1);
+    z3=repmat(obj.model.Thresholds,m,1)-repmat(projected,1,obj.model.num_labels-1);
     a3T =  1.0 ./ (1.0 + exp(-z3));
     a3 = [a3T ones(m,1)];
     a3(:,2:end) = a3(:,2:end) - a3(:,1:(end-1));
