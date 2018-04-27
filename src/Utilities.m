@@ -1,6 +1,6 @@
 classdef Utilities < handle
     %UTILITIES Static class that contains several methods for configurating
-    %   and running the experiments. It allows experiments CPU parallelization. 
+    %   and running the experiments. It allows experiments CPU parallelization.
     %   Examples of integration with HTCondor are provided src/condor folder.
     %
     %   UTILITIES methods:
@@ -32,16 +32,16 @@ classdef Utilities < handle
             %   [LOGSDIR] = RUNEXPERIMENTS(EXPFILE, options) runs
             %   experiments described in EXPFILE and returns the folder
             %   name LOGSDIR that stores all the results. Options are:
-            %       - 'parallel': 'false' or 'true' to activate CPU parallel 
+            %       - 'parallel': 'false' or 'true' to activate CPU parallel
             %         processing of databases's folds. Default is 'false'
-            %       - 'numcores': default maximum number of cores or desired 
+            %       - 'numcores': default maximum number of cores or desired
             %         number. If parallel = 1 and numcores <2 it sets the number
-            %         to maximum number of cores. 
-            %       - 'closepool': whether to close or not the pool after 
+            %         to maximum number of cores.
+            %       - 'closepool': whether to close or not the pool after
             %         experiments. Default 'true'. Disabling it can speed
             %         up consecutive calls to runExperiments.
-            %            
-            %  Examples: 
+            %
+            %  Examples:
             %
             %  Runs parallel folds with 3 workers:
             %   Utilities.runExperiments('tests/cvtests-30-holdout/kdlor.ini', 'parallel', 1, 'numcores', 3)
@@ -51,7 +51,7 @@ classdef Utilities < handle
             %  pool:
             %   Utilities.runExperiments('tests/cvtests-30-holdout/kdlor.ini', 'parallel', 1, 'closepool', false)
             %   Utilities.runExperiments('tests/cvtests-30-holdout/svorim.ini', 'parallel', 1, 'closepool', false)
-            % 
+            %
             addpath(fullfile(fileparts(which('Utilities.m')),'Measures'));
             addpath(fullfile(fileparts(which('Utilities.m')),'Algorithms'));
             
@@ -62,32 +62,30 @@ classdef Utilities < handle
             dirSuffix = [num2str(c(1)) '-' num2str(c(2)) '-'  num2str(c(3)) '-' num2str(c(4)) '-' num2str(c(5)) '-' num2str(uint8(c(6)))];
             logsDir = Utilities.configureExperiment(expFile,dirSuffix);
             expFiles = dir([logsDir '/' 'exp-*']);
-
+            
             % Parse options.
             op = Utilities.parseParArgs(varargin);
+            myExperiment = Experiment;
             
             if op.parallel
                 Utilities.preparePool(op.numcores)
                 if (exist ('OCTAVE_VERSION', 'builtin') > 0)
                     logsCell = cell(numel(expFiles),1);
-                    logsCell(:) = logsDir;                    
-                    parcellfun(op.numcores,@(varargin) Utilities.octaveParallelAuxFunction(varargin{:}),num2cell(expFiles),logsCell);                   
+                    logsCell(:) = logsDir;
+                    parcellfun(op.numcores,@(varargin) Utilities.octaveParallelAuxFunction(varargin{:}),num2cell(expFiles),logsCell);
                 else
-                  parfor i=1:numel(expFiles)
-                      if ~strcmp(expFiles(i).name(end), '~')
-                          myExperiment = Experiment;
-                          disp(['Running experiment ', expFiles(i).name]);
-                          myExperiment.launch([logsDir '/' expFiles(i).name]);
-                      end
-                  end
+                    parfor i=1:numel(expFiles)
+                        if ~strcmp(expFiles(i).name(end), '~')
+                            disp(['Running experiment ', expFiles(i).name]);
+                            myExperiment.launch([logsDir '/' expFiles(i).name]);
+                        end
+                    end
                 end
                 
                 Utilities.closePool()
             else
                 for i=1:numel(expFiles)
                     if ~strcmp(expFiles(i).name(end), '~')
-                        myExperiment = Experiment;
-                        
                         disp(['Running experiment ', expFiles(i).name]);
                         myExperiment.launch([logsDir '/' expFiles(i).name]);
                     end
@@ -111,7 +109,7 @@ classdef Utilities < handle
             %   OCTAVEPARALLELAUXFUNCTION(EXPERIMENT,LOGSDIR) run the experiment
             %   named EXPERIMENT and contained in the folder LOGSDIR
             if ~strcmp(experimentToRun.name(end), '~')
-                myExperiment = Experiment;                        
+                myExperiment = Experiment;
                 disp(['Running experiment ', experimentToRun.name]);
                 myExperiment.launch([logsDir '/' experimentToRun.name]);
             end
@@ -147,9 +145,9 @@ classdef Utilities < handle
             opt.report_sum = false;
             
             opt = parsevarargs(opt, varargin);
-
+            
             experiments = dir(experiment_folder);
-                        
+            
             for i=1:numel(experiments)
                 if ~(any(strcmp(experiments(i).name, {'.', '..'}))) && experiments(i).isdir
                     disp([experiment_folder '/' experiments(i).name '/' 'dataset'])
@@ -275,40 +273,40 @@ classdef Utilities < handle
                     
                     % Confusion matrices and sum of confusion matrices
                     if opt.report_sum
-                         if opt.train
-                             fid = fopen([experiment_folder '/' experiments(i).name '/' 'matrices_train.txt'],'w');
-                         else
-                             fid = fopen([experiment_folder '/' experiments(i).name '/' 'matrices_test.txt'],'w');
-                         end
-                         
-                         J = length(unique(act{1}));
-                         cm_sum = zeros(J);
-                         for h = 1:size(results_matrix,1)
-                             fprintf(fid, '%s\n----------\n', real_files(h).name);
-                             cm = confusionmat(act{h},pred{h});
-                             cm_sum = cm_sum + cm;
-                             for ii = 1:size(cm,1)
-                                 for jj = 1:size(cm,2)
-                                     fprintf(fid, '%d ', cm(ii,jj));
-                                 end
-                                 fprintf(fid, '\n');
-                             end
-                         end
-                         fclose(fid);
-                         
-                         % Calculate metrics with the sum of confusion matrices
-                         accs_sum = CCR.calculateMetric(cm_sum) * 100;
-                         gms_sum = GM.calculateMetric(cm_sum) * 100;
-                         mss_sum = MS.calculateMetric(cm_sum) * 100;
-                         maes_sum = MAE.calculateMetric(cm_sum);
-                         amaes_sum = AMAE.calculateMetric(cm_sum);
-                         maxmaes_sum = MMAE.calculateMetric(cm_sum);
-                         spearmans_sum = Spearman.calculateMetric(cm_sum);
-                         kendalls_sum = Tkendall.calculateMetric(cm_sum);
-                         wkappas_sum = Wkappa.calculateMetric(cm_sum);
-                         results_matrix_sum = [accs_sum; gms_sum; mss_sum; maes_sum; amaes_sum; maxmaes_sum; spearmans_sum; kendalls_sum; wkappas_sum; sum(times(1,:)); sum(times(2,:)); sum(times(3,:))];
-                         
-                         results_matrix_sum = results_matrix_sum';
+                        if opt.train
+                            fid = fopen([experiment_folder '/' experiments(i).name '/' 'matrices_train.txt'],'w');
+                        else
+                            fid = fopen([experiment_folder '/' experiments(i).name '/' 'matrices_test.txt'],'w');
+                        end
+                        
+                        J = length(unique(act{1}));
+                        cm_sum = zeros(J);
+                        for h = 1:size(results_matrix,1)
+                            fprintf(fid, '%s\n----------\n', real_files(h).name);
+                            cm = confusionmat(act{h},pred{h});
+                            cm_sum = cm_sum + cm;
+                            for ii = 1:size(cm,1)
+                                for jj = 1:size(cm,2)
+                                    fprintf(fid, '%d ', cm(ii,jj));
+                                end
+                                fprintf(fid, '\n');
+                            end
+                        end
+                        fclose(fid);
+                        
+                        % Calculate metrics with the sum of confusion matrices
+                        accs_sum = CCR.calculateMetric(cm_sum) * 100;
+                        gms_sum = GM.calculateMetric(cm_sum) * 100;
+                        mss_sum = MS.calculateMetric(cm_sum) * 100;
+                        maes_sum = MAE.calculateMetric(cm_sum);
+                        amaes_sum = AMAE.calculateMetric(cm_sum);
+                        maxmaes_sum = MMAE.calculateMetric(cm_sum);
+                        spearmans_sum = Spearman.calculateMetric(cm_sum);
+                        kendalls_sum = Tkendall.calculateMetric(cm_sum);
+                        wkappas_sum = Wkappa.calculateMetric(cm_sum);
+                        results_matrix_sum = [accs_sum; gms_sum; mss_sum; maes_sum; amaes_sum; maxmaes_sum; spearmans_sum; kendalls_sum; wkappas_sum; sum(times(1,:)); sum(times(2,:)); sum(times(3,:))];
+                        
+                        results_matrix_sum = results_matrix_sum';
                     end
                     
                     
@@ -353,27 +351,27 @@ classdef Utilities < handle
                     
                     % Confusion matrices and sum of confusion matrices
                     if opt.report_sum
-                         if opt.train
-                             fid = fopen([experiment_folder '/' 'mean-results_matrices_sum_train.csv'],'at');
-                         else
-                             fid = fopen([experiment_folder '/' 'mean-results_matrices_sum_test.csv'],'at');
-                         end
-                         
-                         if add_head
-                             fprintf(fid, 'Dataset-Experiment,');
-                             
-                             for h = 2:numel(names)
-                                 fprintf(fid, '%s,', names{h});
-                             end
-                             fprintf(fid,'\n');
-                         end
-                         
-                         fprintf(fid, '%s,', experiments(i).name);
-                         for h = 1:numel(results_matrix_sum)
-                             fprintf(fid, '%f,', results_matrix_sum(h));
-                         end
-                         fprintf(fid,'\n');
-                         fclose(fid);
+                        if opt.train
+                            fid = fopen([experiment_folder '/' 'mean-results_matrices_sum_train.csv'],'at');
+                        else
+                            fid = fopen([experiment_folder '/' 'mean-results_matrices_sum_test.csv'],'at');
+                        end
+                        
+                        if add_head
+                            fprintf(fid, 'Dataset-Experiment,');
+                            
+                            for h = 2:numel(names)
+                                fprintf(fid, '%s,', names{h});
+                            end
+                            fprintf(fid,'\n');
+                        end
+                        
+                        fprintf(fid, '%s,', experiments(i).name);
+                        for h = 1:numel(results_matrix_sum)
+                            fprintf(fid, '%f,', results_matrix_sum(h));
+                        end
+                        fprintf(fid,'\n');
+                        fclose(fid);
                     end
                     
                 end
@@ -550,7 +548,7 @@ classdef Utilities < handle
         function preparePool(numcores)
             %PREPAREPOOL(NUMCORES) creates a pool of workers. Function to
             %abstract code from different matlab versions. Adapt the pool
-            %to the desired number of cores. If there is a current pool with 
+            %to the desired number of cores. If there is a current pool with
             %desired number of cores do not open again to save time
             if (exist ('OCTAVE_VERSION', 'builtin') > 0)
                 maximum_ncores = nproc;
@@ -566,45 +564,45 @@ classdef Utilities < handle
             
             % Check size of the pool
             if (exist ('OCTAVE_VERSION', 'builtin') > 0)
-              pkg load parallel;
+                pkg load parallel;
             else
-              if verLessThan('matlab', '8.3')
-                  poolsize = matlabpool('size');
-                  if poolsize > 0
-                      if poolsize ~= numcores
-                          matlabpool close;
-                          matlabpool(numcores);
-                      end
-                  else
-                      matlabpool(numcores);
-                  end
-              else
-                  poolobj = gcp('nocreate'); % If no pool, do not create new one.
-                  if ~isempty(poolobj)
-                      if poolobj.NumWorkers ~= numcores
-                          numcores = poolobj.NumWorkers;
-                          delete(gcp('nocreate'))
-                          parpool(numcores);
-                      end
-                  else
-                      parpool(numcores);
-                  end
-              end
+                if verLessThan('matlab', '8.3')
+                    poolsize = matlabpool('size');
+                    if poolsize > 0
+                        if poolsize ~= numcores
+                            matlabpool close;
+                            matlabpool(numcores);
+                        end
+                    else
+                        matlabpool(numcores);
+                    end
+                else
+                    poolobj = gcp('nocreate'); % If no pool, do not create new one.
+                    if ~isempty(poolobj)
+                        if poolobj.NumWorkers ~= numcores
+                            numcores = poolobj.NumWorkers;
+                            delete(gcp('nocreate'))
+                            parpool(numcores);
+                        end
+                    else
+                        parpool(numcores);
+                    end
+                end
             end
         end
         
         function closePool()
             if (exist ('OCTAVE_VERSION', 'builtin') > 0)
-              pkg unload parallel;
+                pkg unload parallel;
             else
-              if verLessThan('matlab', '8.3')
-                  isOpen = matlabpool('size') > 0;
-                  if isOpen
-                      matlabpool close;
-                  end
-              else
-                  delete(gcp('nocreate'))
-              end
+                if verLessThan('matlab', '8.3')
+                    isOpen = matlabpool('size') > 0;
+                    if isOpen
+                        matlabpool close;
+                    end
+                else
+                    delete(gcp('nocreate'))
+                end
             end
         end
         
@@ -612,10 +610,10 @@ classdef Utilities < handle
             %OPTIONS = PARSEPARARGS(VARARGIN) parses parallelization
             %options with are:
             % - 'parallel': 'false' or 'true' to activate, default 'false'
-            % - 'numcores': default maximum number of cores or desired 
+            % - 'numcores': default maximum number of cores or desired
             %    number. If parallel = 1 and numcores <2 it sets the number
-            %    to maximum number of cores. 
-            % - 'closepool': whether to close or not the pool after 
+            %    to maximum number of cores.
+            % - 'closepool': whether to close or not the pool after
             %    experiments. Default 'true'
             % Solution adapted from https://stackoverflow.com/questions/2775263/how-to-deal-with-name-value-pairs-of-function-arguments-in-matlab#2776238
             
