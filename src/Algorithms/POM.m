@@ -71,9 +71,9 @@ classdef POM < Algorithm
             end
         end
 
-        function [model, projectedTrain, predictedTrain]= fit( obj,train,parameters)
-            %FIT trains the model for the POM method with TRAIN data and
-            %vector of parameters PARAMETERS. Return the learned model.
+        function [projectedTrain, predictedTrain]= privfit( obj,train,parameters)
+            %PRIVFIT trains the model for the POM method with TRAIN data and
+            %vector of parameters PARAMETERS. 
             nOfClasses = numel(unique(train.targets));
             % TODO: Debug size octave
             if exist ('OCTAVE_VERSION', 'builtin') > 0
@@ -87,11 +87,13 @@ classdef POM < Algorithm
                 model.projection = betaHatOrd(nOfClasses:end);
             end
             model.thresholds = model.thresholds';
-            [projectedTrain, predictedTrain] = obj.predict(train.patterns, model);
+            obj.model = model;
+            [projectedTrain, predictedTrain] = obj.predict(train.patterns);
         end
         
-        function [ projected, predicted ] = predict( obj, testPatterns, model)
-            %PREDICT predict labels of TEST patterns labels using MODEL.
+        function [projected, predicted ] = privpredict( obj, testPatterns)
+            %PREDICT predict labels of TEST patterns labels using fitted model 
+            model = obj.model;
             
             if exist ('OCTAVE_VERSION', 'builtin') > 0
                 numClasses = size(model.thresholds,2)+1;

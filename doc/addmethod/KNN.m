@@ -17,23 +17,23 @@ classdef KNN < Algorithm
             obj.parseArgs(varargin);
         end
         
-        function [model, projectedTrain, predictedTrain]= fit( obj, train, param)
+        function [projectedTrain, predictedTrain]= privfit( obj, train, param)
             if(nargin == 3)
                 obj.parameters.k = param.k;
             end
             
             % save train data in the model structure
-            model.train = train;
-            model.parameters = obj.parameters;
+            obj.model.train = train;
+            obj.model.parameters = obj.parameters;
             % Predict train labels
-            [projectedTrain, predictedTrain] = predict(obj, train.patterns, model);
+            [projectedTrain, predictedTrain] = predict(obj, train.patterns);
         end
         
-        function [projected, predicted] = predict(obj, testPatterns, model)
+        function [projected, predicted] = privpredict(obj, testPatterns)
             % Variables aliases
-            x = model.train.patterns;
-            xlabel = model.train.targets;
-            k = model.parameters.k;
+            x = obj.model.train.patterns;
+            xlabel = obj.model.train.targets;
+            k = obj.model.parameters.k;
 
             dist = pdist2(testPatterns,x);
             % indicies of nearest neighbors

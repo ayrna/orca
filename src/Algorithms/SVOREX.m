@@ -44,9 +44,9 @@ classdef SVOREX < Algorithm
             obj.parseArgs(varargin);
         end
         
-        function [model, projectedTrain, predictedTrain] = fit(obj,train,parameters)
-            %FIT trains the model for the SVOREX method with TRAIN data and
-            %vector of parameters PARAMETERS. Return the learned model.
+        function [projectedTrain, predictedTrain] = privfit(obj,train,parameters)
+            %PRIVFIT trains the model for the SVOREX method with TRAIN data and
+            %vector of parameters PARAMETERS. 
             if isempty(strfind(path,obj.algorithmMexPath))
                 addpath(obj.algorithmMexPath);
             end
@@ -56,22 +56,25 @@ classdef SVOREX < Algorithm
             model.thresholds = thresholds;
             model.parameters = parameters;
             model.train = train.patterns;
+            obj.model = model;
             projectedTrain = projectedTrain';
             if ~isempty(strfind(path,obj.algorithmMexPath))
                 rmpath(obj.algorithmMexPath);
             end
         end
         
-        function [projected, predicted] = predict(obj, test, model)
-            %PREDICT predicts labels of TEST patterns labels using MODEL.
-            kernelMatrix = computeKernelMatrix(model.train',test','rbf',model.parameters.k);
-            projected = model.projection*kernelMatrix;
+        function [projected, predicted] = privpredict(obj, test)
+            %PREDICT predicts labels of TEST patterns labels. The object needs to be fitted to the data first.
+            kernelMatrix = computeKernelMatrix(obj.model.train',test','rbf',obj.model.parameters.k);
+            projected = obj.model.projection*kernelMatrix;
             
-            predicted = assignLabels(obj, projected, model.thresholds);
+            predicted = SVOREX.assignLabels(projected, obj.model.thresholds);
             projected = projected';
         end
-        
-        function predicted = assignLabels(obj, projected, thresholds)
+    end
+    
+    methods (Static = true)
+        function predicted = assignLabels(projected, thresholds)
             numClasses = size(thresholds,2)+1;
             %TEST assign the labels from projections and thresholds
             project2 = repmat(projected, numClasses-1,1);
@@ -94,8 +97,6 @@ classdef SVOREX < Algorithm
             
             predicted = predicted';
         end
-        
-    end
-    
+    end 
 end
 

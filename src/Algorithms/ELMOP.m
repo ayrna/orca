@@ -67,9 +67,9 @@ classdef ELMOP < Algorithm
             end
         end
         
-        function [model, projectedTrain, predictedTrain] = fit( obj, train, parameters)
-            %FIT trains the model for the ELMOP method with TRAIN data and
-            %vector of parameters PARAMETERS. Return the learned model.
+        function [projectedTrain, predictedTrain] = privfit( obj, train, parameters)
+            %PRIVFIT trains the model for the ELMOP method with TRAIN data and
+            %vector of parameters PARAM. 
             %TODO train.uniqueTargets = unique([test.targets ;train.targets]);
             train.uniqueTargets = unique(train.targets);
             train.nOfClasses = max(train.uniqueTargets);
@@ -238,35 +238,36 @@ classdef ELMOP < Algorithm
             model.labelSet = unique(train.targetsOrelm,'rows');
             model.nOfClasses = train.nOfClasses;
             model.dim = train.dim;
-            [projectedTrain, predictedTrain] = obj.predict( train.patterns, model );
+            obj.model = model;
+            [projectedTrain, predictedTrain] = obj.predict( train.patterns);
             
         end
         
-        function [TY, TestPredictedY]= predict(obj, test, model)
-            %PREDICT predicts labels of TEST patterns labels using MODEL.
+        function [TY, TestPredictedY]= privpredict(obj, test)
+            %PREDICT predicts labels of TEST patterns labels. The object needs to be fitted to the data first.
             nOfPatterns = size(test,1);
             
             TV.P = test';
             
             %------Perform log(P) calculation once for UP
             % The calculation is done here for including it into the validation time
-            if strcmp(model.activationFunction, 'up')
+            if strcmp(obj.model.activationFunction, 'up')
                 TV.P = log(TV.P);
             end
             
             %%%%%%%%%%% Calculate the output of testing input
             
-            if strcmpi(model.activationFunction, 'sig')
-                tempH_test=model.InputWeight*TV.P;
+            if strcmpi(obj.model.activationFunction, 'sig')
+                tempH_test=obj.model.InputWeight*TV.P;
                 %Movido abajo
                 %clear TV.P;             %   Release input of testing data
                 ind=ones(1,nOfPatterns);
                 
-                BiasMatrix=model.BiasofHiddenNeurons(:,ind);              %   Extend the bias matrix BiasofHiddenNeurons to match the demention of H
+                BiasMatrix=obj.model.BiasofHiddenNeurons(:,ind);              %   Extend the bias matrix BiasofHiddenNeurons to match the demention of H
                 tempH_test=tempH_test + BiasMatrix;
             end
             
-            switch lower(model.activationFunction)
+            switch lower(obj.model.activationFunction)
                 case {'sig','sigmoid'}
                     %%%%%%%% Sigmoid
                     H_test = 1 ./ (1 + exp(-tempH_test));
@@ -286,14 +287,14 @@ classdef ELMOP < Algorithm
                 case {'up'}
                     
                     %TV.P = log(TV.P);
-                    H_test = zeros(model.hiddenN, nOfPatterns);
+                    H_test = zeros(obj.model.hiddenN, nOfPatterns);
                     
                     for i = 1 : nOfPatterns
-                        for j = 1 : model.hiddenN
-                            temp = zeros(model.dim,1);
-                            for n = 1: model.dim
+                        for j = 1 : obj.model.hiddenN
+                            temp = zeros(obj.model.dim,1);
+                            for n = 1: obj.model.dim
                                 %temp(n) = TV.P(n,i)^InputWeight(j,n);
-                                temp(n) = model.InputWeight(j,n)*TV.P(n,i);
+                                temp(n) = obj.model.InputWeight(j,n)*TV.P(n,i);
                             end
                             %H_predict(j,i) =  prod(temp);
                             H_predict(j,i) =  sum(temp);
@@ -302,11 +303,11 @@ classdef ELMOP < Algorithm
                     
                     clear temp;
                 case {'rbf','krbf'}
-                    H_test = zeros(nOfPatterns,model.hiddenN);
+                    H_test = zeros(nOfPatterns,obj.model.hiddenN);
                     TV.P = TV.P';
                     
-                    for j=1:model.hiddenN
-                        H_predict(:,j)=gaussian_func(TV.P,model.W1(j,:),model.W10(j,:));
+                    for j=1:obj.model.hiddenN
+                        H_predict(:,j)=gaussian_func(TV.P,obj.model.W1(j,:),obj.model.W10(j,:));
                     end
                     H_test = H_test';
                     
@@ -323,10 +324,10 @@ classdef ELMOP < Algorithm
             
             clear TV.P;             %   Release input of testing data
             
-            TY=(H_test' * model.OutputWeight);                       %   TY: the actual output of the testing data
+            TY=(H_test' * obj.model.OutputWeight);                       %   TY: the actual output of the testing data
             clear H_test;
             
-            TestPredictedY = obj.orelmToLabel(TY, model.labelSet);
+            TestPredictedY = obj.orelmToLabel(TY, obj.model.labelSet);
         end
         
     end

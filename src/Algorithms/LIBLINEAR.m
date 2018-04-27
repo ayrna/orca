@@ -52,30 +52,30 @@ classdef LIBLINEAR < Algorithm
             obj.parseArgs(varargin);
         end
         
-        function [model, projectedTrain, predictedTrain]= fit( obj, train, param)
-            %FIT trains the model for the LIBLINEAR method with TRAIN data and
-            %vector of parameters PARAMETERS. Return the learned model.
+        function [projectedTrain, predictedTrain]= privfit( obj, train, param)
+            %PRIVFIT trains the model for the LIBLINEAR method with TRAIN data and
+            %vector of parameters PARAM. 
             if isempty(strfind(path,obj.algorithmMexPath))
                 addpath(obj.algorithmMexPath);
             end
             
             options = ['-s ' num2str(obj.solver) ' -c ' num2str(param.C) ' -q'];
-            model.libsvmModel = svmtrain(train.targets, sparse(train.patterns), options);
-            model.parameters = param;
-            [projectedTrain,predictedTrain] = obj.predict(train.patterns,model);
+            obj.model.libsvmModel = svmtrain(train.targets, sparse(train.patterns), options);
+            obj.model.parameters = param;
+            [projectedTrain,predictedTrain] = obj.predict(train.patterns);
             
             if ~isempty(strfind(path,obj.algorithmMexPath))
                 rmpath(obj.algorithmMexPath);
             end
         end
         
-        function [projected, predicted]= predict(obj,test, model)
-            %PREDICT predicts labels of TEST patterns labels using MODEL.
+        function [projected, predicted]= privpredict(obj,test)
+            %PREDICT predicts labels of TEST patterns labels. The object needs to be fitted to the data first.
             if isempty(strfind(path,obj.algorithmMexPath))
                 addpath(obj.algorithmMexPath);
             end
             
-            [predicted, acc, projected] = svmpredict(ones(size(test,1),1),sparse(test),model.libsvmModel);
+            [predicted, acc, projected] = svmpredict(ones(size(test,1),1),sparse(test),obj.model.libsvmModel);
             
             if ~isempty(strfind(path,obj.algorithmMexPath))
                 rmpath(obj.algorithmMexPath);

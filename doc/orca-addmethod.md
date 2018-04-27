@@ -20,19 +20,24 @@ classdef NEWMETHOD < Algorithm
             obj.parseArgs(varargin);
         end
 
-        function [model, projectedTrain, predictedTrain]= fit( obj, train, param)
-            % fit the model and return prediction of train set
+        function [projectedTrain, predictedTrain]= privfit( obj, train, param)
+            % fit the model and return prediction of train set. It is called by
+            % super class Algorithm.fit() method.
+            ...
+            % Save the model
+            obj.model = model;
         end
 
-        function [projected, predicted] = predict(obj, testPatterns, model)
-            % predict unseen patterns with 'model' and return prediction and
+        function [projected, predicted] = privpredict(obj, testPatterns)
+            % predict unseen patterns with 'obj.model' and return prediction and
             % projection of patterns (for threshold models)
+            % It is called by super class Algorithm.predict() method.
         end
     end    
 end
 ```
 
-Where `train` is a structure with `train.patterns` being a matrix of patterns and `train.targets` being a vector with the corresponding labels. `model` stores the model built with the train data.
+Where `train` is a structure with `train.patterns` being a matrix of patterns and `train.targets` being a vector with the corresponding labels. `model` class property stores the model built with the train data.
 
 ## Example: adding KNN to ORCA
 
@@ -58,23 +63,23 @@ classdef KNN < Algorithm
             obj.parseArgs(varargin);
         end
 
-        function [model, projectedTrain, predictedTrain]= fit( obj, train, param)
+        function [projectedTrain, predictedTrain]= privfit( obj, train, param)
             if(nargin == 3)
                 obj.parameters.k = param.k;
             end
 
             % save train data in the model structure
-            model.train = train;
-            model.parameters = obj.parameters;
+            obj.model.train = train;
+            obj.model.parameters = obj.parameters;
             % Predict train labels
-            [projectedTrain, predictedTrain] = predict(obj, train.patterns, model);
+            [projectedTrain, predictedTrain] = predict(obj, train.patterns);
         end
 
-        function [projected, predicted] = predict(obj, testPatterns, model)
+        function [projected, predicted] = privpredict(obj, testPatterns)
             % Variables aliases
-            x = model.train.patterns;
-            xlabel = model.train.targets;
-            k = model.parameters.k;
+            x = obj.model.train.patterns;
+            xlabel = obj.model.train.targets;
+            k = obj.model.parameters.k;
 
             dist = pdist2(testPatterns,x);
             % indicies of nearest neighbors

@@ -45,9 +45,9 @@ classdef SVR < Algorithm
             %   OBJ = SVR() builds SVR with RBF as kernel function
         end
         
-        function [model,projectedTrain,predictedTrain] = fit(obj,train,parameters)
-            %FIT trains the model for the SVR method with TRAIN data and
-            %vector of parameters PARAMETERS. Return the learned model.
+        function [projectedTrain,predictedTrain] = privfit(obj,train,parameters)
+            %PRIVFIT trains the model for the SVR method with TRAIN data and
+            %vector of parameters PARAMETERS. 
             if isempty(strfind(path,obj.algorithmMexPath))
                 addpath(obj.algorithmMexPath);
             end
@@ -62,22 +62,23 @@ classdef SVR < Algorithm
             model.libsvmModel = svmtrain(weights, auxTrain.targets, auxTrain.patterns, svrParameters);
             model.scaledLabelSet = unique(auxTrain.targets);
             model.parameters = parameters;
+            obj.model = model;
             
-            [projectedTrain, predictedTrain] = obj.predict(auxTrain.patterns,model);
+            [projectedTrain, predictedTrain] = obj.predict(auxTrain.patterns);
             if ~isempty(strfind(path,obj.algorithmMexPath))
                 rmpath(obj.algorithmMexPath);
             end
         end
         
-        function [projected, predicted]= predict(obj, test,model)
+        function [projected, predicted]= privpredict(obj, test)
             %PREDICT predict labels of TEST patterns labels using MODEL.
             if isempty(strfind(path,obj.algorithmMexPath))
                 addpath(obj.algorithmMexPath);
             end
-            [projected err] = svmpredict(ones(size(test,1),1), test, model.libsvmModel);
+            [projected err] = svmpredict(ones(size(test,1),1), test, obj.model.libsvmModel);
             
-            classMembership = repmat(projected, 1,numel(model.scaledLabelSet));
-            classMembership = abs(classMembership -  ones(size(classMembership,1),1)*model.scaledLabelSet');
+            classMembership = repmat(projected, 1,numel(obj.model.scaledLabelSet));
+            classMembership = abs(classMembership -  ones(size(classMembership,1),1)*obj.model.scaledLabelSet');
             
             [m,predicted]=min(classMembership,[],2);
             if ~isempty(strfind(path,obj.algorithmMexPath))
