@@ -36,7 +36,7 @@ void exit_error(char** argv) {
   exit(-1);
 }
 
-int main (unsigned int argc, char* argv[]) {
+int main (int argc, char* argv[]) {
   if (argc < 9)
     exit_error(argv);
 
