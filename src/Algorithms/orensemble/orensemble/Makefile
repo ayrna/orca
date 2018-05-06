@@ -11,7 +11,11 @@ clean: $(addsuffix _clean, $(objs))
 include ${LEMGA}/Makefile
 
 VPATH = ${LEMGA}
-CC_FLAGS := -std=c++98 -static-libgcc -Wno-unused-result -w -I${LEMGA} ${CC_FLAGS}
+ifeq ($(shell uname -s),Darwin)
+	CC_FLAGS := -std=c++98 -Wno-unused-result -w -I${LEMGA} ${CC_FLAGS}
+else
+	CC_FLAGS := -std=c++98 -static-libgcc -Wno-unused-result -w -I${LEMGA} ${CC_FLAGS}
+endif
 
 softperc.o: softperc.cpp softperc.h
 	$(CC) $(CC_FLAGS) -O3 -c -o $@ $<

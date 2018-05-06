@@ -3,9 +3,15 @@ CC_FINAL = -D NDEBUG -O3
 CC_DEBUG = -O1
 CC_LIB_FLAGS = -lm
 
-CC_FLAGS = -std=c++98 -static-libgcc -Wall -Wshadow -Wcast-qual\
-	-Wpointer-arith -Wconversion -Wredundant-decls\
-	-Wwrite-strings -Woverloaded-virtual
+ifeq ($(shell uname -s),Darwin)
+	CC_FLAGS = -std=c++98 -Wall -Wshadow -Wcast-qual\
+		-Wpointer-arith -Wconversion -Wredundant-decls\
+		-Wwrite-strings -Woverloaded-virtual
+else
+	CC_FLAGS = -std=c++98 -static-libgcc -Wall -Wshadow -Wcast-qual\
+		-Wpointer-arith -Wconversion -Wredundant-decls\
+		-Wwrite-strings -Woverloaded-virtual
+endif
 CC_FINAL += -funroll-loops
 
 #ifeq ($(CC), g++)        # for GCC >= 3.2.x
