@@ -12,7 +12,9 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <malloc.h>
+#ifndef __MACH__
+    #include <malloc.h>
+#endif
 #include <string.h>
 #include <limits.h>
 #include <math.h>

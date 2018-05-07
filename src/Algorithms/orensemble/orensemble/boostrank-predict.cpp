@@ -17,7 +17,7 @@
 
 #include "softperc.h"
 
-int main (unsigned int argc, char* argv[]) {
+int main (int argc, char* argv[]) {
     if (argc < 7) {
         std::cerr << "Usage: " << argv[0] << " datafile n_test"
                   << " #_input modelfile iter valuefile\n";
