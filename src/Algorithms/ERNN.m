@@ -236,15 +236,9 @@ classdef ERNN < Algorithm
                 obj.activationFunction = value;
             end
         end
-                
-        %[InputWeight,BiasofHiddenNeurons,OutputWeight,Y,TrainingTime]
+        
         function [projectedTrain, predictedTrain] = privfit( obj,train, parameters)
-            % TODO [projectedTrain, predictedTrain]
-            %function [TrainingTime, ConfusionMatrixTrain, ConfusionMatrixTest, CCRTrain, MSTrain, CCRTest, MSTest...
-            %            NumberofInputNeurons,NumberofHiddenNeurons,NumberofOutputNeurons,InputWeight,OutputWeight,itResults] = ...
-            %        ERNN(train_data, test_data, Elm_Type, NumberofHiddenNeurons, obj.activationFunction, ...
-            %        wMin, wMax, CR, F, NP, itermax,refresh, strategy,tolerance,FitnessFunction,lambda)
-
+            
             obj.model.uniqueTargets = unique(train.targets);
             obj.model.nOfClasses = max(obj.model.uniqueTargets);
             obj.model.nOfTrPatterns = length(train.targets);
@@ -259,7 +253,7 @@ classdef ERNN < Algorithm
             
             if( strcmp(obj.activationFunction,'rbf') && parameters.hiddenN > obj.model.nOfTrPatterns)
                 disp(['User''s number of hidden neurons ' num2str(parameters.hiddenN) ...
-                      ' was too high and has been adjusted to the number of training patterns']);
+                    ' was too high and has been adjusted to the number of training patterns']);
                 obj.parameters.hiddenN = obj.model.nOfTrPatterns;
             else
                 obj.parameters.hiddenN = parameters.hiddenN;
@@ -273,15 +267,6 @@ classdef ERNN < Algorithm
             obj.lambda = obj.lambda;
             
             obj.activationFunction = obj.activationFunction;
-            %wMin = obj.wMin;
-            %wMax = obj.wMax;
-            %CR = obj.CR;
-            %NP = obj.NP;
-            %             obj.itermax = obj.itermax;
-            %             obj.refresh = obj.refresh;
-            %             obj.strategy = obj.strategy;
-            %             obj.F = obj.F;
-            %             obj.tolerance = obj.tolerance;
             
             P = train.patterns';
             
@@ -293,102 +278,17 @@ classdef ERNN < Algorithm
                     T = train.targetsOrelm;
             end
             
-            
             T = T';
             
             T_ceros = T;
             T_ceros(T_ceros==-1)=0;
             T_org = train.targets;
             
-            
-            %             %%%%%%%%%%% Load testing dataset
-            %             TV.T=test_data(:,1)';
-            %             TV.P=test_data(:,2:size(test_data,2))';
-            %             clear test_data;                                    %   Release raw testing data array
-            
             NumberofTrainingData=size(P,2);
-            %            NumberofTestingData=size(TV.P,2);
             NumberofInputNeurons=size(P,1);
-            %NumberofValidationData = round(NumberofTestingData / 2);
-            NumberofOutputNeurons = obj.model.nOfClasses;
-            
+            %NumberofOutputNeurons = obj.model.nOfClasses;
             
             D=NumberofHiddenNeurons*(NumberofInputNeurons+1);
-            
-            
-            
-            % %             if Elm_Type~=0
-            % %                 %%%%%%%%%%%% Preprocessing the data of classification
-            % %                 %sorted_target=sort(cat(2,T,TV.T),2);
-            % %                 sorted_target=sort(cat(2,T),2);
-            % %                 label=zeros(1,1);                               %   Find and save in 'label' class label from training and testing data sets
-            % %                 label(1,1)=sorted_target(1,1);
-            % %                 j=1;
-            % %                 %for i = 2:(NumberofTrainingData+NumberofTestingData)
-            % %                 for i = 2:(NumberofTrainingData)
-            % %                     if sorted_target(1,i) ~= label(1,j)
-            % %                         j=j+1;
-            % %                         label(1,j) = sorted_target(1,i);
-            % %                     end
-            % %                 end
-            % %                 number_class=j;
-            % %                 NumberofOutputNeurons=j;
-            
-            %%%%%%%%%% Processing the targets of training
-            % %                 temp_T=zeros(NumberofOutputNeurons, NumberofTrainingData);
-            % %                 for i = 1:NumberofTrainingData
-            % %                     for j = 1:number_class
-            % %                         if label(1,j) == T(1,i)
-            % %                             %nOfPatterns(j,1) = nOfPatterns(j,1) + 1;
-            % %                             break;
-            % %                         end
-            % %                     end
-            % %                     temp_T(j,i)=1;
-            % %                 end
-            % %
-            % %                 %pstar_train = min(nOfPatterns) / NumberofTrainingData;
-            % %
-            % %                 % TODO : controlar cuándo se normaliza esto
-            % %                 T_org = T;
-            % %                 T=temp_T*2-1; % Map tags values to -1, 1
-            % %
-            % %                 %%%%%%%%%% Processing the targets of testing
-            % % %                 temp_TV_T=zeros(NumberofOutputNeurons, NumberofTestingData);
-            % % %                 for i = 1:NumberofTestingData
-            % % %                     for j = 1:number_class
-            % % %                         if label(1,j) == TV.T(1,i)
-            % % %                             break;
-            % % %                         end
-            % % %                     end
-            % % %                     temp_TV_T(j,i)=1;
-            % % %                 end
-            % % %
-            % % %                 TV_org = TV.T;
-            % % %                 TV.T=temp_TV_T*2-1;
-            % %             end                                                 %   end if of Elm_Type
-            % %
-            % %             T_ceros = T;
-            % %             T_ceros(T_ceros==-1)=0;
-            % %
-            % % %             TV_ceros = TV.T;
-            % % %             TV_ceros(TV_ceros==-1)=0;
-            % %
-            % %             clear sorted_target;
-            % %             clear temp_T;
-            % %             clear temp_TV_T;
-            
-            
-            % VV.P = TV.P(:,1:NumberofValidationData);
-            % VV.T = TV.T(:,1:NumberofValidationData);
-            % TV.P(:,1:NumberofValidationData)=[];
-            % TV.T(:,1:NumberofValidationData)=[];
-            % NumberofTestingData = NumberofTestingData - NumberofValidationData;
-            
-            
-            %%%%%%%%%%% Calculate weights & biases
-            
-            
-            
             
             %------Perform log(P) calculation once for UP
             % The calculation is done here for including it into the validation time
@@ -426,24 +326,23 @@ classdef ERNN < Algorithm
                     %pop(i,:) = XVMin + rand(1,D).*(XVMax - XVMin);
                     pop(i,:) = obj.wMin + rand(1,D).*(obj.wMax- obj.wMin); %Debería ser esto
                 end
-            else if strcmp(obj.activationFunction,'rbf')
-                    P = P';
-                    for i=1:obj.NP
-                        if (NumberofTrainingData>2000)
-                            TY=pdist(P(randperm(2000),:));
-                        else
-                            TY=pdist(P);
-                        end
-                        a10=prctile(TY,20);
-                        a90=prctile(TY,60);
-                        MP=randperm(NumberofTrainingData);
-                        W1=P(MP(1:NumberofHiddenNeurons),:);
-                        W10=rand(1,NumberofHiddenNeurons)*(a90-a10)+a10;
-                        
-                        pop(i,:) = reshape([W1 W10'],D,1);
+            elseif strcmp(obj.activationFunction,'rbf')
+                P = P';
+                for i=1:obj.NP
+                    if (NumberofTrainingData>2000)
+                        TY=pdist(P(randperm(2000),:));
+                    else
+                        TY=pdist(P);
                     end
-                    P = P';
+                    a10=prctile(TY,20);
+                    a90=prctile(TY,60);
+                    MP=randperm(NumberofTrainingData);
+                    W1=P(MP(1:NumberofHiddenNeurons),:);
+                    W10=rand(1,NumberofHiddenNeurons)*(a90-a10)+a10;
+                    
+                    pop(i,:) = reshape([W1 W10'],D,1);
                 end
+                P = P';
             end
             
             popold    = zeros(size(pop));     % toggle population
@@ -592,40 +491,14 @@ classdef ERNN < Algorithm
                 bestmemit = bestmem;       % freeze the best member of this iteration for the coming
                 % iteration. This is needed for some of the strategies.
                 
-                %----Output section----------------------------------------------------------
-                
-                %  if (refresh > 0)
-                %    if (rem(iter,refresh) == 0)
-                %       fprintf(1,'Iteration: %d,  Best: %f,  F: %f,  CR: %f,  obj.NP: %d\n',iter,bestval,F,CR,obj.NP);
-                %%%        for n=1:D
-                %%%          fprintf(1,'best(%d) = %f\n',n,bestmem(n));
-                %%%        end
-                %    end
-                %  end
-                
-                %                if (rem(iter,obj.refresh) == 0)
-                %                   refreshIt = refreshIt + 1;
-                %
-                %                   [OutputWeight,CCRTrain, MSTrain,CCRTest, MSTest] = ...
-                %                     getBestEvaluation(bestmem,P,T,TV,T_org,TV_org,NumberofHiddenNeurons,obj.activationFunction,obj.FitnessFunction,obj.lambda,bestweight);
-                %
-                %                   itResults{refreshIt,1} = [iter obj.itermax mean(CCRTrain) std(CCRTrain) mean(MSTrain) std(MSTrain) ...
-                %                                     mean(CCRTest) std(CCRTest) mean(MSTest) std(MSTest)];
-                %                end
-                
                 iter = iter + 1;
             end %---end while ((iter < itermax) ...
             
             %%%%%%%%%%% Calculate output weights OutputWeight (beta_i)
-            
-            %OutputWeight=pinv(H') * T';                        % slower implementation
-            % OutputWeight=inv(H * H') * H * T';                         % faster implementation
-            
-            
             obj.model.activationFunction = obj.activationFunction;
             obj.model.hiddenN = obj.parameters.hiddenN;
             obj.model.parameters = parameters;
-
+            
             obj.model.InputWeight = bestmem;
             obj.model.OutputWeight = bestweight;
             
@@ -633,7 +506,7 @@ classdef ERNN < Algorithm
         end
         
         function [Y, TestPredictedY]= privpredict(obj, test)
-                        
+            
             % TODO: parametrice to allow regression models.
             Elm_Type = 1;
             
@@ -672,38 +545,26 @@ classdef ERNN < Algorithm
                     clear temp;
                     
                 case {'rbf'}
-                    P = P';
                     W10 = temp_weight_bias(:,NumberofInputNeurons+1)';
                     W1 = InputWeight;
-                    % TODO: Un hack
                     H = zeros(NumberofTrainingData,obj.model.hiddenN);
                     for j=1:obj.model.hiddenN
-                        H(:,j)=ERNN.gaussian_func(P,W1(j,:),W10(1,j));
-                        %KM.valueinit(:,j)=gaussian_func(x,W1(j,:),W10(1,j));
+                        H(:,j)=ERNN.gaussian_func(P',W1(j,:),W10(1,j));
                     end
                     H = H';
             end
             
             Y=(H' * obj.model.OutputWeight)';
-            %TY=(H_test' * obj.model.bestweight)';
             
             if Elm_Type == 0
                 TrainingAccuracy=sqrt(mse(T - Y));
-                %TestingAccuracy=sqrt(mse(TV.T - TY));            %   Calculate testing accuracy (RMSE) for regression case
             end
             
             switch (obj.classifier)
                 case {'nominal'}
                     [FOO, TestPredictedY] = max(Y);
-                    %TY = -1*ones(size(TestPredictedY)); % Dummy value
                 case {'ordinal'}
-                    % Otra alternativa
-                    % Q = size(obj.model.OutputWeight,2);
-                    % uniqueTargets = tril(2*ones(Q)) + -1*ones(Q);
-                    % TestPredictedY = ERNN.orelmToLabel(TY',uniqueTargets);
-                    
                     TestPredictedY = ERNN.orelmToLabel(Y', obj.model.uniqueTargetsOrelm);
-                    %TY = -1*ones(size(TestPredictedY)); % Dummy value
             end
             
             TestPredictedY = TestPredictedY';
@@ -713,7 +574,7 @@ classdef ERNN < Algorithm
     end
     
     methods(Access = private)
-
+        
         function [Fitness,OutputWeight] = ERNN_x (obj,Elm_Type, weight_bias, P, T, T_org, T_ceros, NumberofHiddenNeurons)
             
             NumberofInputNeurons=size(P, 1);
@@ -733,20 +594,14 @@ classdef ERNN < Algorithm
                     BiasMatrix=BiasofHiddenNeurons(:,ind);      %   Extend the bias matrix BiasofHiddenNeurons to match the demention of H
                     tempH=tempH+BiasMatrix;
                     H = 1 ./ (1 + exp(-Gain*tempH));
-                    %clear temp_weight_bias Gain BiasofHiddenNeurons ind BiasMatrix tempH;                    
                 case {'rbf'}
-                    P = P';
                     W10 = temp_weight_bias(:,NumberofInputNeurons+1)';
                     W1 = InputWeight;
-                    % TODO: Un hack
                     H = zeros(NumberofTrainingData,NumberofHiddenNeurons);
                     for j=1:NumberofHiddenNeurons
-                        H(:,j)=ERNN.gaussian_func(P,W1(j,:),W10(1,j));
-                        %KM.valueinit(:,j)=ERNN.gaussian_func(x,W1(j,:),W10(1,j));
+                        H(:,j)=ERNN.gaussian_func(P',W1(j,:),W10(1,j));
                     end
-                    P = P';
                     H = H';
-                    %InputWeight = [W1 W10'];
             end
             
             OutputWeight=pinv(H') * T';
@@ -854,9 +709,7 @@ classdef ERNN < Algorithm
                             we(pp,:) = c*error(pp,:)';
                         end
                         
-                        %sqrt(sum(sum(error)) / (NumberofInputNeurons*NumberofOutputNeurons) )
                         Fitness = sqrt(sum(sum(we)) / (NumberofInputNeurons*NumberofOutputNeurons));
-                        
                 end
                 
             else % regression
