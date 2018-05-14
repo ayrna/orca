@@ -115,9 +115,8 @@ The [Algorithms](src/Algorithms) folder includes the MATLAB classes for the algo
 - [DataSet.m](src/DataSet.m): Class for data preprocessing.
 - [Experiment.m](src/Experiment.m): Class that runs the different experiments.
 - [Utilities.m](src/Utilities.m): Class that pre-process the experiment files, run the different algorithms and produces the results.
-- [runtests.m](src/runtests.m): Script to run all the methods in order to check that the installation is correct.
-- [runtestssingle.m](src/runtests.m): Script to run all the methods using the ORCA API. Reference performance is compared with toy dataset in order to check that the installation is correct.
-- [runtestscv.m](src/runtests.m): This script runs full experiment tests using the ORCA configuration files to describe experiments.
+- [runtestssingle.m](src/runtestssingle.m): Script to run all the methods using the ORCA API. Reference performance is compared with toy dataset in order to check that the installation is correct.
+- [runtestscv.m](src/runtestscv.m): This script runs full experiment tests using the ORCA configuration files to describe experiments.
 
 # Experiments parallelization with HTCondor
 

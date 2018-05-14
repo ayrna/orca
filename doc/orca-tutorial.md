@@ -25,7 +25,7 @@
 
 ORCA is an experimental framework focused on productivity and experiments reproducibility for machine learning researchers. Initially created to collect ordinal classification methods, it is suitable for other type of classifiers.
 
-First, you should install the framework. To do so, please visit [ORCA Quick Install Guide](orca-quick-install,md). Note that you should be able to perform the test when the framework is successfully installed.
+First, you should install the framework. To do so, please visit [ORCA Quick Install Guide](orca-quick-install.md). Note that you should be able to perform the test when the framework is successfully installed.
 
 This tutorial uses four small datasets (`pasture`, `pyrim10`, `tae`, `toy`) contained in folder [example data](../exampledata/30-holdout). The datasets are already partitioned with a 30-holdout experimental design.
 
@@ -146,7 +146,7 @@ title('AMAE performance (smaller is better)')
 
 ### Syntax of `ini` files
 
-ORCA experiments are specified in configuration `ini` files, which run an algorithm for a collection of datasets (each dataset with a given number of partitions). The folder [src/config-files](src/config-files) contains example configuration files for running all the algorithms included in ORCA for all the algorithms and datasets of the [review paper](http://www.uco.es/grupos/ayrna/orreview). The following code is an example for running the Proportion Odds Model (POM), a.k.a. Ordinal Logistic Regression. Note that the execution of this `ini` file can take several hours:
+ORCA experiments are specified in configuration `ini` files, which run an algorithm for a collection of datasets (each dataset with a given number of partitions). The folder [src/config-files](../src/config-files) contains example configuration files for running all the algorithms included in ORCA for all the algorithms and datasets of the [review paper](http://www.uco.es/grupos/ayrna/orreview). The following code is an example for running the Proportion Odds Model (POM), a.k.a. Ordinal Logistic Regression. Note that the execution of this `ini` file can take several hours:
 ```INI
 ; Experiment ID
 [pom-real]
@@ -416,7 +416,7 @@ amae2 =
     0.0817
 ```
 
-The whole example is available at [exampleProjections.m](../code-examples/exampleProjections.m).
+The whole example is available at [exampleProjections.m](../src/code-examples/exampleProjections.m).
 
 ### Visualizing projections and decision thresholds
 
@@ -443,7 +443,7 @@ As can be checked, no pattern is projected in the region of the last class.
 
 ![Histogram of KDLOR projections](tutorial/images/kdlor-projection-hist-thresholds.png)
 
-The whole example is available at [exampleProjections.m](../code-examples/exampleProjectionsThresholds.m).
+The whole example is available at [exampleProjections.m](../src/code-examples/exampleProjectionsThresholds.m).
 
 
 ## Using ORCA with your own datasets
