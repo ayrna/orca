@@ -64,6 +64,7 @@ All the documentation is in the [doc](doc) folder:
   - [Paralelize ORCA experiments](doc/orca-parallel.md).
   - [Use ORCA with HTCondor](doc/orca-condor.md).
   - [Adding a new method to ORCA](doc/orca-addmethod.md).
+  - We have a branch to include other methods ready to use in ORCA. Visit [orca-extra-methods branch](https://github.com/ayrna/orca/tree/orca-extra-methods).
 
 # Methods
 
