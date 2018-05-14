@@ -25,7 +25,7 @@
 
 ORCA is an experimental framework focused on productivity and experiments reproducibility for machine learning researchers. Initially created to collect ordinal classification methods, it is suitable for other type of classifiers.
 
-First of all, you should install the framework. In order to do so, please visit [ORCA Quick Install Guide](orca-quick-install,md). Note that you should be able to perform the test when the framework is successfully installed.
+First, you should install the framework. To do so, please visit [ORCA Quick Install Guide](orca-quick-install,md). Note that you should be able to perform the test when the framework is successfully installed.
 
 This tutorial uses four small datasets (`pasture`, `pyrim10`, `tae`, `toy`) contained in folder [example data](../exampledata/30-holdout). The datasets are already partitioned with a 30-holdout experimental design.
 
@@ -113,7 +113,7 @@ SVC1V1 results ([download CSV](tutorial/reference-results/svc1v1-mean-results_te
 
 ---
 
-***Exercise 1***: apparently, POM is the slowest method, but here we are not taking into account the crossvalidation time. Check the detailed CSV results to conclude which is the costliest method (taking crossvalidation, training and test phases into account).
+***Exercise 1***: apparently, POM is the slowest method, but here we are not considering the crossvalidation time. Check the detailed CSV results to conclude which is the costliest method (taking crossvalidation, training and test phases into account).
 
 ---
 
@@ -146,7 +146,7 @@ title('AMAE performance (smaller is better)')
 
 ### Syntax of `ini` files
 
-ORCA experiments are specified in configuration `ini` files, which run an algorithm for a collections of datasets (each dataset with a given number of partitions). The folder [src/config-files](src/config-files) contains example configuration files for running all the algorithms included in ORCA for all the algorithms and datasets of the [review paper](http://www.uco.es/grupos/ayrna/orreview). The following code is an example for running the Proportion Odds Model (POM), a.k.a. Ordinal Logistic Regression. Note that the execution of this `ini` file can take several hours:
+ORCA experiments are specified in configuration `ini` files, which run an algorithm for a collection of datasets (each dataset with a given number of partitions). The folder [src/config-files](src/config-files) contains example configuration files for running all the algorithms included in ORCA for all the algorithms and datasets of the [review paper](http://www.uco.es/grupos/ayrna/orreview). The following code is an example for running the Proportion Odds Model (POM), a.k.a. Ordinal Logistic Regression. Note that the execution of this `ini` file can take several hours:
 ```INI
 ; Experiment ID
 [pom-real]
@@ -448,7 +448,7 @@ The whole example is available at [exampleProjections.m](../code-examples/exampl
 
 ## Using ORCA with your own datasets
 
-This section shows how to use ORCA with custom datasets. First of all, you should take into account the structure of the files and then the way you should include them in the corresponding folder.
+This section shows how to use ORCA with custom datasets. First, you should take into account the structure of the files and then the way you should include them in the corresponding folder.
 
 ### Data format
 
@@ -458,7 +458,7 @@ attr1 attr2 ... attrN label
 attr1 attr2 ... attrN label
 attr1 attr2 ... attrN label
 ```
-ORCA is intended to be used for ordinal regression problems, so the labels should be integer numbers: `1` for the first class in the ordinal scale, `2` for the second one, ..., `Q` for the last one, where `Q` is the number of classes of the problem. Please, take into account that all the attributes should be numeric, i.e. categorical variables needs to be transformed into several binary dummy variables before using ORCA.
+ORCA is intended to be used for ordinal regression problems, so the labels should be integer numbers: `1` for the first class in the ordinal scale, `2` for the second one, ..., `Q` for the last one, where `Q` is the number of classes of the problem. Please, consider that all the attributes should be numeric, i.e. categorical variables needs to be transformed into several binary dummy variables before using ORCA.
 
 ### Data partitions for the experiments
 
@@ -495,7 +495,7 @@ Now, we are going to generate the partitions for a given dataset. We will use th
 > candidates for a certain type of jobs. Unlike the ESL data set (enclosed)
 > which was collected from expert recruiters, this data set was collected
 > during a MBA academic course.
-> The input in the data set are features of a candidates such as past
+> The input in the data set are features of a candidate such as past
 > experience, verbal skills, etc., and the output is the subjective judgment of
 > a decision-maker to which degree he or she tends to accept the applicant to
 > the job or to reject him altogether (the lowest score means total tendency to
@@ -595,7 +595,7 @@ for ff = 1:h
     dlmwrite(fullfile(rootDir,sprintf('test-%s.%d',nameDataset,ff-1)),ERAData(teIdx,:),' ');
 end
 ```
-The source code of this example is in [exampleERAHHoldout.m](../src/code-examples/exampleERAHHoldout.m). As can be checked, the `cvpartition` function performs the partitions, receiving the target vector. The targets are used in order to obtain a stratified partition.
+The source code of this example is in [exampleERAHHoldout.m](../src/code-examples/exampleERAHHoldout.m). As can be checked, the `cvpartition` function performs the partitions, receiving the target vector. The targets are used to obtain a stratified partition.
 
 ---
 
@@ -609,7 +609,7 @@ The source code of this example is in [exampleERAHHoldout.m](../src/code-example
 
 ### Warning about highly imbalanced datasets
 
-ORCA is an tool to automate experiments for algorithm comparison. The default experimental setup is a n-hold-out (n=10). However, if your dataset has only less than 10-15 patterns in one or more classes, it is very likely that there will not be enough data to do the corresponding partitions, so there will be folds with varying number of classes. This can cause some errors since the confusion matrices dimensions do not agree.
+ORCA is a tool to automate experiments for algorithm comparison. The default experimental setup is a n-hold-out (n=10). However, if your dataset has only less than 10-15 patterns in one or more classes, it is very likely that there will not be enough data to do the corresponding partitions, so there will be folds with varying number of classes. This can cause some errors since the confusion matrices dimensions do not agree.
 
 # References
 

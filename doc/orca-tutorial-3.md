@@ -20,7 +20,7 @@ This tutorial will cover how to apply threshold models in the framework ORCA. It
 
 Moreover, we are going to work again with melanoma diagnosis dataset. You should complete at least [the second section of the second tutorial](orca-tutorial-2.md#loading-the-dataset-and-performing-some-preliminary-experiments) in order to follow this third tutorial.
 
-All threshold models are designed with a very reasonable idea: the categories to be predicted in ordinal classification comes from the discretization of an underlying latent variable, so that we can try to model the latent variables and use a total of Q-1 thresholds (for Q classes) to divide this variable in categories. In this way, the order of categories will be taken into account, because the intervals defined for each will be arranged in the same order, and a lot of flexibility will be given to the model by simply moving these thresholds.
+All threshold models are designed with a very reasonable idea: the categories to be predicted in ordinal classification comes from the discretization of an underlying latent variable, so that we can try to model the latent variables and use a total of Q-1 thresholds (for Q classes) to divide this variable in categories. In this way, the order of categories will be considered, because the intervals defined for each will be arranged in the same order, and a lot of flexibility will be given to the model by simply moving these thresholds.
 
 Because of this, there are many threshold model proposals in the literature, and ORCA includes some of the most popular ones:
 - One linear model (POM) [1].
@@ -34,7 +34,7 @@ The corresponding script for this tutorial, ([exampleMelanomaTM.m](../src/code-e
 
 ## Proportional odds model (POM)
 
-The POM arose from a statistical background, and it is based on an extension of binary logistic regression. Instead of using one single threshold to discriminate negative and positive class, the model include as many thresholds as the number of classes minus one. The model uses one logistic function for each class, where the thresholds are arranged in ascending order and the linear part (projection vector) is common for all of them.
+The POM arose from a statistical background, and it is based on an extension of binary logistic regression. Instead of using one single threshold to discriminate negative and positive class, the model includes as many thresholds as the number of classes minus one. The model uses one logistic function for each class, where the thresholds are arranged in ascending order and the linear part (projection vector) is common for all of them.
 
 A strong probabilistic basis is inherent to this approach: each logistic function is modelling the cumulative probability that a pattern has of belonging to the corresponding class or any of the previous classes. Cumulative probabilities can be easily transformed to standard probabilities by simply subtracting them.
 
@@ -176,10 +176,10 @@ Compare graphically the different results.
 
 The idea of NNPOM is to extend POM by considering a nonlinear projection, instead of a linear one. To do so, the projection function is a linear combination of nonlinear basis function (i.e. a neural network of one output node). As in NNOP, only one hidden layer is considered. Given that POM estimate a proper probability distribution, the cross entropy is used for gradient descent. The algorithm used for gradient descent is the iRProp+ algorithm.
 
-Three parameters have to be specified in this case:
+Three parameters must be specified in this case:
 - Parameter `hiddenN`, number of hidden neurons of the model.
 - Parameter `iter`, number of iterations for gradient descent.
-- Parameter `lambda`, regularization parameter in the error function (L2 regularizer), in order to avoid overfitting.
+- Parameter `lambda`, regularization parameter in the error function (L2 regularizer), to avoid overfitting.
 
 ```MATLAB
 >> % Create the NNPOM object
@@ -202,7 +202,7 @@ The source code of NNPOM clearly shows hot the prediction is performed, which cl
 
 ```MATLAB
 function [projected, predicted]= privpredict(obj,test)
-    %PRIVPREDICT predicts labels of TEST patterns labels using fitted MODEL. 
+    %PRIVPREDICT predicts labels of TEST patterns labels using fitted MODEL.
     m = size(test,1);
     a1 = [ones(m, 1) test];
     z2 = a1*obj.model.Theta1';
@@ -372,7 +372,7 @@ SVORIM MAE: 0.464286
 
 ## Reduction from ordinal regression to binary SVM classifiers (REDSVM)
 
-The reduction from ordinal regression to binary SVM classifiers (REDSVM) [4] is a method that can be categorized both as threshold method or as decomposition method. The hyper-parameters are the wellknown `k` and `C` of SVM variants.
+The reduction from ordinal regression to binary SVM classifiers (REDSVM) [4] is a method that can be categorized both as threshold method or as decomposition method. The hyper-parameters are the well-known `k` and `C` of SVM variants.
 
 ```MATLAB
 %% Apply the REDSVM model
@@ -490,7 +490,7 @@ Best Results REDSVM C 10.000000, k 0.001000 --> Average Mean Absolute Error: 0.8
 
 ## Kernel discriminant learning for ordinal regression (KDLOR)
 
-This method adapts discriminant learning to the context of ordinal classification. The original discriminant learning problem is transformed by considering the minimum difference between the averages of two consecutive classes (in the ordinal scale). If this minimum difference is positive, the the classes are correctly ranked according to the projection.
+This method adapts discriminant learning to the context of ordinal classification. The original discriminant learning problem is transformed by considering the minimum difference between the averages of two consecutive classes (in the ordinal scale). If this minimum difference is positive, the classes are correctly ranked according to the projection.
 
 After obtaining the projection, the thresholds are positioned in the mean point of the average projection of the classes they are separating. This makes the method quite sensitive to classes with low frequencies (being a good method for imbalanced ordinal regression problems).
 

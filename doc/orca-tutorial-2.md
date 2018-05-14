@@ -33,7 +33,7 @@ The dataset from [1] is included in this repository, in a specific [folder](/exa
 
 ## Loading the dataset and performing some preliminary experiments
 
-First of all, we are going to load the dataset and examine the label for some of the patterns.
+First, we are going to load the dataset and examine the label for some of the patterns.
 ```MATLAB
 >> trainMelanoma = load('../exampledata/10-fold/melanoma-5classes-abcd-100/matlab/train_melanoma-5classes-abcd-100.2');
 >> testMelanoma = load('../exampledata/10-fold/melanoma-5classes-abcd-100/matlab/test_melanoma-5classes-abcd-100.2');
@@ -53,7 +53,7 @@ ans =
      2
      2
 ```
-Although the data is prepared to perform a 10 fold experimental design, we are going to examine the properties of the whole set:
+Although the data is prepared to perform a 10-fold experimental design, we are going to examine the properties of the whole set:
 ```MATLAB
 >> melanoma = [trainMelanoma; testMelanoma];
 ```
@@ -155,7 +155,7 @@ ans =
               0.535714
 
 ```
-The results have not improved in this specific case. The static method `DataSet.standarizeData(train,test)` transform the training and test datasets and return a copy where all the input variables have zero mean and unit standard deviation. There are other preprocessing methods in the `DataSet` class which delete constant input attributes or non numeric attributes:
+The results have not improved in this specific case. The static method `DataSet.standarizeData(train,test)` transform the training and test datasets and return a copy where all the input variables have zero mean and unit standard deviation. There are other pre-processing methods in the `DataSet` class which delete constant input attributes or non numeric attributes:
 ```Matlab
 >> [train,test] = DataSet.deleteConstantAtributes(train,test);
 >> [train,test] = DataSet.standarizeData(train,test);
@@ -173,11 +173,11 @@ ans =
 
      0.535714
 ```
-Again, the results have not changed, as there were no attributes with these characteristics. However, in general, it is a good idea to apply standarisation of the input variables.
+Again, the results have not changed, as there were no attributes with these characteristics. However, in general, it is a good idea to apply standardisation of the input variables.
 
 ---
 
-***Exercise 2***: construct a function (`preprocess.m`) applying these three preprocessing steps (standarisation, removal of constant features and removal of non numeric values) for future uses.
+***Exercise 2***: construct a function (`preprocess.m`) applying these three pre-processing steps (standarisation, removal of constant features and removal of non numeric values) for future uses.
 
 ---
 
@@ -187,7 +187,7 @@ The first thing we will do is applying standard approaches for this ordinal regr
 
 ### Regression (SVR)
 
-One very simple way of solving an ordinal classification problem is applying regression. This is, we train a regressor to predict the number of the category (where categories are coded with real consecutive values, `1`, `2`, ..., `Q`, which are scaled between 0 and 1, `0/(Q-1)=0`, `1/(Q-1)`, ..., `(Q-1)/(Q-1)`). Then, in order to predict categories, we round the real values predicted by the regressor to the nearest integer.
+One very simple way of solving an ordinal classification problem is applying regression. This is, we train a regressor to predict the number of the category (where categories are coded with real consecutive values, `1`, `2`, ..., `Q`, which are scaled between 0 and 1, `0/(Q-1)=0`, `1/(Q-1)`, ..., `(Q-1)/(Q-1)`). Then, to predict categories, we round the real values predicted by the regressor to the nearest integer.
 
 ORCA includes one algorithm following this approach based on support vector machines: [Support Vector Regression (SVR)](../src/Algorithms/SVR.m). Note that SVR considers the epsilon-SVR model with an RBF kernel, involving three different parameters:
 - Parameter `C`, importance given to errors.
@@ -308,7 +308,7 @@ SVR C 1000.000000, k 1000.000000, e 100.000000 --> Accuracy: 0.178571, MAE: 1.42
 SVR C 1000.000000, k 1000.000000, e 1000.000000 --> Accuracy: 0.178571, MAE: 1.428571
 Best Results SVR C 10.000000, k 0.001000, e 0.010000 --> Accuracy: 0.678571
 ```
-As you can check, the best configuration leads to almost a 70% of accuracy, which is not very bad taking into account that we have 5 classes.
+As you can check, the best configuration leads to almost a 70% of accuracy, which is not very bad considering that we have 5 classes.
 
 This way of adjusting the parameters is not fair, as we can be overfitting the specific test set. The decision of the optimal parameters should be taken without checking test results. This can be done by using nested crossvalidation.
 
@@ -418,7 +418,7 @@ SVC1V1
 SVC1V1 Accuracy: 0.678571
 SVC1V1 MAE: 0.517857
 ```
-In SVC1V1, the decision values has `(Q(Q-1))/2` (the number of combinations of two classes from the set of `Q` possibilities) columns and majority voting is applied.
+In SVC1V1, the decision values have `(Q(Q-1))/2` (the number of combinations of two classes from the set of `Q` possibilities) columns and majority voting is applied.
 ```MATLAB
 >> info.projectedTest(1:10,:)
 
@@ -470,7 +470,7 @@ In this case, SVC1V1 obtains better results.
 
 ### Cost sensitive classification (CSSVC)
 
-This is a special case of approaching ordinal classification by nominal classifiers. We can include different misclassification costs in the optimization function, in order to penalyze more those mistakes which involve several categories in the ordinal scale. ORCA implements this methods using again SVC and specifically the SVC1VA alternative. The costs are included as weights in the patterns, in such a way that, when generating the `Q` binary problems, the patterns of the negative class are given a weight according to the absolute difference (in number of categories) between the positive class and the specific negative class.
+This is a special case of approaching ordinal classification by nominal classifiers. We can include different misclassification costs in the optimization function, in order to penalize more those mistakes which involve several categories in the ordinal scale. ORCA implements this method using again SVC and specifically the SVC1VA alternative. The costs are included as weights in the patterns, in such a way that, when generating the `Q` binary problems, the patterns of the negative class are given a weight according to the absolute difference (in number of categories) between the positive class and the specific negative class.
 
 The method is called [Cost Sensitive SVC (CSSVC)](../src/Algorithms/CSSVC.m) [3] and considers an RBF kernel with the following two parameters:
 - Parameter `C`, importance given to errors.
@@ -518,7 +518,7 @@ We can compare all the results obtained by naive methods in the third partition 
 - SVC1VA MAE: 0.535714
 - CSSVC MAE: 0.571429
 
-In this case, SVR has definitely obtained the best results. As can be checked, SVC1V1 accuracy is quite high, but it masking a not so good MAE value.
+In this case, SVR has definitely obtained the best results. As can be checked, SVC1V1 accuracy is quite high, but it is masking a not so good MAE value.
 
 
 ## Binary decomposition methods
@@ -539,7 +539,7 @@ All of them are based on an ordered partition decomposition, where the binary su
 
 ### SVM with ordered partitions (SVMOP)
 
-[SVMOP](../src/Algorithms/SVMOP) method is based on applying the ordered partition binary decomposition, together different weights according to the absolute distance between the class of the binary problem and the specific category being examined [4,5]. The models are trained independently and final prediction is based on the first model (in the ordinal scale) predicting a positive class. Again, the parameters of this model are:
+[SVMOP](../src/Algorithms/SVMOP) method is based on applying the ordered partition binary decomposition, together different weights according to the absolute distance between the class of the binary problem and the specific category being examined [4,5]. The models are trained independently, and final prediction is based on the first model (in the ordinal scale) predicting a positive class. Again, the parameters of this model are:
 - Parameter `C`, importance given to errors.
 - Parameter `k`, inverse of the width of the RBF kernel.
 
