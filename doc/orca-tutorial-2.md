@@ -539,7 +539,7 @@ All of them are based on an ordered partition decomposition, where the binary su
 
 ### SVM with ordered partitions (SVMOP)
 
-[SVMOP](../src/Algorithms/SVMOP) method is based on applying the ordered partition binary decomposition, together different weights according to the absolute distance between the class of the binary problem and the specific category being examined [4,5]. The models are trained independently, and final prediction is based on the first model (in the ordinal scale) predicting a positive class. Again, the parameters of this model are:
+[SVMOP](../src/Algorithms/SVMOP.m) method is based on applying the ordered partition binary decomposition, together different weights according to the absolute distance between the class of the binary problem and the specific category being examined [4,5]. The models are trained independently, and final prediction is based on the first model (in the ordinal scale) predicting a positive class. Again, the parameters of this model are:
 - Parameter `C`, importance given to errors.
 - Parameter `k`, inverse of the width of the RBF kernel.
 
