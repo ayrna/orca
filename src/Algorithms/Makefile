@@ -1,6 +1,6 @@
 SUBDIRS = libsvm-rank-2.81/matlab libsvm-weights-3.12/matlab liblinear-2.20/matlab orensemble SVORIM SVOREX
 
-export MATLABDIR = /usr/local/MATLAB/R2017b/
+export MATLABDIR = /usr/local/MATLAB/R2017a/
 
 # Use -std=c++11 for newer versions of Octave
 export OCTAVE_CFLAGS = -std=gnu99 -Wno-unused-result -O3 -fPIC -I$(OCTAVEDIR) -I..
@@ -11,15 +11,26 @@ SUBCLEAN = $(addsuffix .clean,$(SUBDIRS))
 SUBOCTAVE = $(addsuffix .octave,$(SUBDIRS))
 
 .PHONY: clean subdirs $(SUBDIRS)
-     
-all: subdirs clean
+
+all: | $(MATLABDIR) message subdirs clean
+
+$(MATLABDIR):
+	@echo "Folder $(MATLABDIR) does not exist. Please, set up MATLABDIR propertly"
+	false
+
+message:
+	@echo "*************************************************************************"
+	@echo " Note: some Matlab's versions have problems with libstdc++.so.6, which "
+	@echo " can cause compilation warnings. If this happens, we recommend to search "
+	@echo " for solutions in Matlab's forums for you specific Matlab ans OS version "
+	@echo "*************************************************************************"
 
 subdirs: $(SUBDIRS)
 
 clean: $(SUBCLEAN)
 
 octave: $(SUBOCTAVE) clean
- 
+
 $(SUBDIRS):
 	$(MAKE) -e -C $@
 
@@ -28,4 +39,3 @@ $(SUBCLEAN): %.clean:
 
 $(SUBOCTAVE): %.octave:
 	$(MAKE) -C $* octave
-
