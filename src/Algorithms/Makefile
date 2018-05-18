@@ -3,8 +3,8 @@ SUBDIRS = libsvm-rank-2.81/matlab libsvm-weights-3.12/matlab liblinear-2.20/matl
 export MATLABDIR = /usr/local/MATLAB/R2017a/
 
 # Use -std=c++11 for newer versions of Octave
-export OCTAVE_CFLAGS = -std=gnu99 -Wno-unused-result -O3 -fPIC -I$(OCTAVEDIR) -I..
-export OCTAVEDIR = /usr/include/octave-4.0.3/octave
+export OCTAVE_CFLAGS = -std=c++11 -std=gnu99 -Wno-unused-result -O3 -fPIC -I$(OCTAVEDIR) -I..
+export OCTAVEDIR = /usr/include/octave-4.0.3/octave/
 
 SUBCLEAN = $(addsuffix .clean,$(SUBDIRS))
 
@@ -29,7 +29,14 @@ subdirs: $(SUBDIRS)
 
 clean: $(SUBCLEAN)
 
-octave: $(SUBOCTAVE) clean
+octave: | $(OCTAVEDIR) message_octave $(SUBOCTAVE) clean
+
+$(OCTAVEDIR):
+	@echo "Folder $(OCTAVEDIR) does not exist. Please, set up OCTAVEDIR propertly"
+	false
+
+message_octave: 
+
 
 $(SUBDIRS):
 	$(MAKE) -e -C $@
