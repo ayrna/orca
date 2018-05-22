@@ -3,7 +3,7 @@
 
 1. [ORCA](#orca)
 2. [Cite ORCA](#cite-orca)
-3. [Install, tutorials and documentation](#install-tutorials-and-documentation)
+3. [Installation, tutorials and documentation](#install-tutorials-and-documentation)
 4. [Methods](#methods)
 	1. [Ordinal regression algorithms](#ordinal-regression-algorithms)
 	2. [Partial order methods](#partial-order-methods)
@@ -18,18 +18,18 @@
 <!-- /TOC -->
 
 # ORCA
-ORCA (Ordinal Regression and Classification Algorithms) is a MATLAB framework including a wide set of ordinal regression methods associated to the paper ["Ordinal regression methods: survey and experimental study"](http://dx.doi.org/10.1109/TKDE.2015.2457911) published in *IEEE Transactions on Knowledge and Data Engineering*. ORCA provides implementation and integration of ordinal classification algorithms and performance metrics for ordinal regression. In addition, it helps to accelerate classifier experimental comparison with automatic fold execution, experiment paralellisation and performance reports. You can find a basic definition of ordinal regression at [Wikipedia](https://en.wikipedia.org/wiki/Ordinal_regression).
+ORCA (Ordinal Regression and Classification Algorithms) is a MATLAB framework that implements and integrates a wide range of ordinal regression methods and performance metrics from the paper ["Ordinal regression methods: survey and experimental study"](http://dx.doi.org/10.1109/TKDE.2015.2457911) published in *IEEE Transactions on Knowledge and Data Engineering*. ORCA also helps to accelerate classifier experimental comparison with automatic fold execution, experiment paralellisation and performance reports. A basic definition of ordinal regression can be found at [Wikipedia](https://en.wikipedia.org/wiki/Ordinal_regression).
 
-As a general experimental framework, the two main objectives of the framework are:
+As a generic experimental framework, its two main objectives are:
 
-1. To run many experiments as easily as possible to compare **many algorithms** and **many datasets**.
-2. To provide an easy way of including new algorithms into the framework by simply defining the parameters of the algorithms and the training and test methods.
+1. To run experiments as easily as possible to facilitate the comparison between **algorithms** and **datasets**.
+2. To provide an easy way of including new algorithms into the framework by simply defining the training and test methods and the parameters of the algorithms.
 
-To help these purposes, ORCA is mainly used through **[configuration files](doc/orca-tutorial.md#launch-experiments-through-ini-files)** that describe experiments, but the methods can be easily used through a common **[API](doc/orca-tutorial.md#running-algorithms-with-orca-api)**.
+To help these purposes, ORCA is mainly used through **[configuration files](doc/orca-tutorial.md#launch-experiments-through-ini-files)** that describe experiments, but the methods can also be easily used through a common **[API](doc/orca-tutorial.md#running-algorithms-with-orca-api)**.
 
 # Cite ORCA
 
-The initial code of ORCA was released linked to the following work, if you use this framework please cite it:
+The initial code of ORCA was released as linked to the following work, if you use this framework please cite:
 
 ```
 P.A. Gutiérrez, M. Pérez-Ortiz, J. Sánchez-Monedero, F. Fernández-Navarro and C. Hervás-Martínez (2016),
@@ -52,19 +52,20 @@ Bibtex entry:
 ```
 
 For more information about the paper and the ordinal datasets used please visit the associated website: [http://www.uco.es/grupos/ayrna/orreview](http://www.uco.es/grupos/ayrna/orreview)
+
 For more information about our research group please visit [Learning and Artificial Neural Networks (AYRNA) website](http://www.uco.es/grupos/ayrna/index.php/en) at [University of Córdoba](http://www.uco.es/) (Spain).
 
-# Install, tutorials and documentation
+# Installation, tutorials and documentation
 
-All the documentation is in the [doc](doc) folder:
-  - A [quick install guide of ORCA](doc/orca-quick-install.md) and the associated [build troubleshooting](doc/orca-install.md).
-  - A first [how to tutorial](doc/orca-tutorial.md) to get started with ORCA.
-  - A specific [tutorial for naive approaches and decompositions](doc/orca-tutorial-2.md) covering the different considerations for this kind of methods.
-  - A [tutorial for threshold models](doc/orca-tutorial-3.md) centred on examining the differences of these models.
-  - [Paralelize ORCA experiments](doc/orca-parallel.md).
-  - [Use ORCA with HTCondor](doc/orca-condor.md).
-  - [Adding a new method to ORCA](doc/orca-addmethod.md).
-  - We have a branch to include other methods ready to use in ORCA. Visit [orca-extra-methods branch](https://github.com/ayrna/orca/tree/orca-extra-methods).
+The documentation can be found in the [doc](doc) folder and includes:
+  - A [quick installation guide of ORCA](doc/orca-quick-install.md) and the associated [build troubleshooting](doc/orca-install.md).
+  - A first ['how to' tutorial](doc/orca-tutorial.md) to get started with ORCA.
+  - A specific [tutorial for naive approaches and decomposition methods](doc/orca-tutorial-2.md) covering the different considerations needed for these methods.
+  - A [tutorial for threshold models](doc/orca-tutorial-3.md) examining the differences of these models.
+  - A tutorial on how to [paralelize ORCA experiments](doc/orca-parallel.md).
+  - A tutorial to [use ORCA with HTCondor](doc/orca-condor.md).
+  - An example of how to [add a new method to ORCA](doc/orca-addmethod.md).
+  - Additionally, there is a different branch that includes other methods ready to use in ORCA. Visit [orca-extra-methods branch](https://github.com/ayrna/orca/tree/orca-extra-methods).
 
 # Methods
 
