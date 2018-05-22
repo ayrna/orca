@@ -9,7 +9,7 @@
 <!-- /TOC -->
 # Installing ORCA
 
-This is a **quick install** guide. If you experiment problems, please read the [detailed install guide](orca-install.md). ORCA has been developed and tested in GNU/Linux systems and ported to Windows. It has been tested in MATLAB R2009a-R2017b and Octave >4.0.
+This is a **quick installation** guide. If you experiment any problems, please read the [detailed installation guide](orca-install.md). ORCA has been developed and tested in GNU/Linux systems and ported to Windows. It has been tested in MATLAB R2009a-R2017b and Octave >4.0.
 
 ## Installation requirements
 
@@ -18,7 +18,7 @@ In order to use ORCA you need:
 * `gcc` and `g++`
 * MATLAB/Octave (Octave >= 4.0), including `mex`.
   * MATLAB toolboxes: Statistics and Machine Learning
-  * Octave packages: statistics,optim,liboctave-dev. Can be easily installed with `pkg install -forge optim` and so on. Depending on your GNU/Linux distribution you may have to install `liboctave-dev` with your distribution package manager.
+  * Octave packages: statistics,optim,liboctave-dev. These can be easily installed with `pkg install -forge optim` and so on. Depending on your GNU/Linux distribution you may also have to install `liboctave-dev` with your distribution package manager.
 
 ## Download ORCA
 
@@ -79,4 +79,4 @@ Test passed for svr
 All tests ended successfully
 ```
 
-If any of these tests fail, please read the [detailed install guide](orca-install.md).
+If any of these tests fail, please read the [detailed installation guide](orca-install.md).
