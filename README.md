@@ -3,7 +3,7 @@
 
 1. [ORCA](#orca)
 2. [Cite ORCA](#cite-orca)
-3. [Installation, tutorials and documentation](#install-tutorials-and-documentation)
+3. [Installation, tutorials and documentation](#installation-tutorials-and-documentation)
 4. [Methods](#methods)
 	1. [Ordinal regression algorithms](#ordinal-regression-algorithms)
 	2. [Partial order methods](#partial-order-methods)
