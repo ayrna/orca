@@ -23,15 +23,15 @@
 
 # How to use ORCA
 
-ORCA is an experimental framework focused on productivity and experiments reproducibility for machine learning researchers. Initially created to collect ordinal classification methods, it is suitable for other type of classifiers.
+ORCA is an experimental framework focused on productivity and experiments reproducibility for machine learning researchers. Although initially created to collect ordinal classification methods, it is also suitable for other classifiers.
 
-First, you should install the framework. To do so, please visit [ORCA Quick Install Guide](orca-quick-install.md). Note that you should be able to perform the test when the framework is successfully installed.
+First, you will need to install the framework. To do so, please visit [ORCA Quick Install Guide](orca-quick-install.md). Note that you should be able to perform the test when the framework is successfully installed.
 
 This tutorial uses four small datasets (`pasture`, `pyrim10`, `tae`, `toy`) contained in folder [example data](../exampledata/30-holdout). The datasets are already partitioned with a 30-holdout experimental design.
 
-The tutorial is prepared for running the experiments in Matlab, although it should be easily adapted to Octave.
+This tutorial is prepared for running the experiments in Matlab, although it should be easily adapted to Octave.
 
-Very small datasets like the ones used in this tutorial are given to produce lot of warning messages such as:
+Small datasets like the ones used in this tutorial usually produce warning messages such as:
 ```MATLAB
 Warning: Matrix is close to singular or badly scaled. Results may be inaccurate. RCOND =
 1.747151e-17.
@@ -47,9 +47,9 @@ warning('off','stats:mnrfit:IterOrEvalLimit')
 
 ## Launch experiments through `ini` files
 
-In this section, we will run several experiments to compare the performance of three methods in a set of datasets: POM (Proportional Odds Model) [1], SVORIM (Support Vector Machines with IMplicit constrains) [2] and SVC1V1 (SVM classifier with 1-vs-1 binary decomposition) [3]. POM is a linear ordinal model, with limited performance but with easy interpretation. SVORIM is an ordinal nonlinear model, with one of the best performance values according to several studies. SVC1V1 is the nominal counterpart of SVORIM, so that we can check the benefits of considering ordinality. To learn more about ordinal performance metrics see [4].
+In this section, we run several experiments to compare the performance of three methods in a set of datasets: POM (Proportional Odds Model) [1], SVORIM (Support Vector Machines with IMplicit constrains) [2] and SVC1V1 (SVM classifier with 1-vs-1 binary decomposition) [3]. POM is a linear ordinal model, with limited performance but easy interpretation. SVORIM is an ordinal nonlinear model, with one of the most competitive performances according to several studies. SVC1V1 is the nominal counterpart of SVORIM, so that we can check the benefits of considering the order of the classes. To learn more about ordinal performance metrics see [4].
 
-From Matlab console, assuming you are on the `src` folder, the set of experiments described in INI file `../doc/tutorial/config-files/pom.ini` can be run by:
+From the Matlab console, assuming you are on the `src` folder, the set of experiments described in INI file `../doc/tutorial/config-files/pom.ini` can be run by:
 ```MATLAB
 Utilities.runExperiments('../doc/tutorial/config-files/pom.ini')
 ```
@@ -72,7 +72,7 @@ Experiments/exp-2018-1-19-20-0-11/Results/tae-pom-tutorial/dataset
 Experiments/exp-2018-1-19-20-0-11/Results/toy-pom-tutorial/dataset
 ```
 
-As can be observed, ORCA analyses all the files included in the folder of the dataset, where the training and test partitions are included (a pair of files `train_dataset.X` and `test_dataset.X` for each dataset, where `X` is the number of partition). For each partition, a model is trained using training data and tested using test data.
+As can be observed, ORCA analyses all the files included in the folder of the dataset, where training and test partitions are included (a pair of files `train_dataset.X` and `test_dataset.X` for each dataset, where `X` is the number of partition). For each partition, a model is trained on training data and tested on test data.
 
 After this, you can also run the experiments for SVORIM and SVC1V1:
 ```MATLAB
@@ -80,9 +80,9 @@ Utilities.runExperiments('../doc/tutorial/config-files/svorim.ini')
 Utilities.runExperiments('../doc/tutorial/config-files/svc1v1.ini')
 ```
 
-Once the experiments are finished, the corresponding results can be found in a `Experiments` subfolder, as described in the [corresponding section](orca-tutorial.md#experimental-results-and-reports) of this tutorial.
+Once the experiments are finished, the corresponding results can be found in the `Experiments` subfolder, as described in the [corresponding section](orca-tutorial.md#experimental-results-and-reports) of this tutorial.
 
-Each experiment has a different folder, and each folder should include two CSV files with results with results similar to the following (some columns are omitted):
+Each experiment has a different folder, and each folder should include two CSV files with results similar to the following (some columns are omitted):
 
 POM results ([download CSV](tutorial/reference-results/pom-mean-results_test.csv)):
 
@@ -113,11 +113,11 @@ SVC1V1 results ([download CSV](tutorial/reference-results/svc1v1-mean-results_te
 
 ---
 
-***Exercise 1***: apparently, POM is the slowest method, but here we are not considering the crossvalidation time. Check the detailed CSV results to conclude which is the costliest method (taking crossvalidation, training and test phases into account).
+***Exercise 1***: apparently, POM is the slowest method, but here we are not considering the crossvalidation time. Check the detailed CSV results to conclude which is the method with the lowest computational cost (taking crossvalidation, training and test phases into account).
 
 ---
 
-Finally, you can plot a bar plot to graphically compare the performance of the methods. Let analyse the `toy` dataset. This is a synthetic dataset proposed by Herbrich et al. in their paper "Support vector learning for ordinal regression" (1997):
+Finally, you can plot a bar plot to graphically compare the performance of the methods. Let's analyse for that the `toy` dataset. This is a synthetic dataset proposed by Herbrich et al. in their paper "Support vector learning for ordinal regression" (1997):
 ![Synthetic toy dataset](tutorial/images/toy.png)
 
 The following code (to be run from the `src` folder) plots the figure below:
@@ -136,17 +136,17 @@ title('AMAE performance (smaller is better)')
 
 ---
 
-***Exercise 2***: you should repeat this barplots but considering:
-- One `global` (i.e. a metric where the class a priori probability is not considered) **nominal** metric.
-- One `global` **ordinal** metric.
-- One **nominal** metric specifically designed for imbalanced datasets.
-- One **ordinal** metric specifically designed for imbalanced datasets.
+***Exercise 2***: you can repeat this barplot but now considering:
+- A `global` (i.e. a metric where the class a priori probability is not considered) **nominal** metric.
+- A `global` **ordinal** metric.
+- A **nominal** metric specifically designed for imbalanced datasets.
+- An **ordinal** metric specifically designed for imbalanced datasets.
 
 ---
 
 ### Syntax of `ini` files
 
-ORCA experiments are specified in configuration `ini` files, which run an algorithm for a collection of datasets (each dataset with a given number of partitions). The folder [src/config-files](../src/config-files) contains example configuration files for running all the algorithms included in ORCA for all the algorithms and datasets of the [review paper](http://www.uco.es/grupos/ayrna/orreview). The following code is an example for running the Proportion Odds Model (POM), a.k.a. Ordinal Logistic Regression. Note that the execution of this `ini` file can take several hours:
+ORCA experiments are specified in configuration `ini` files, which execute an algorithm for a collection of datasets (each dataset with a given number of partitions). The folder [src/config-files](../src/config-files) contains example configuration files for running all the algorithms included in ORCA for all the algorithms and datasets of the [review paper](http://www.uco.es/grupos/ayrna/orreview). The following code is an example for running the Proportion Odds Model (POM), a.k.a. Ordinal Logistic Regression. Note that the execution of this `ini` file can take several hours:
 ```INI
 ; Experiment ID
 [pom-real]
@@ -166,7 +166,7 @@ algorithm = POM
 
 `ini` files include **Subsections** to help organize the configuration. These sections are mandatory:
  - `{general-conf}`: generic parameters of the experiment, including the seed considered for random number generation, the directory containing the datasets, the datasets to be processed... All the parameters included here are the same for all the algorithms.
- - `{algorithm-parameters}`: here you can specify the algorithm to run and those parameters which are going to be fixed (not optimized through cross validation).
+ - `{algorithm-parameters}`: here you can specify the algorithm to run and the parameters which are going to be fixed (not optimized through cross validation).
  - `{algorithm-hyper-parameters-to-cv}`: algorithms' hyper-parameters to optimise. For more details, see [Hyper-parameter optimization](orca-tutorial.md#hyper-parameter-optimization).
 
 The above file tells ORCA to run the algorithm `POM` for all the datasets specified in the list `datasets`. You can also use `datasets = all` to process all the datasets in `basedir`). Each of these datasets should be found at folder `basedir`, in such a way that ORCA expects one subfolder for each dataset, where the name of the subfolder must match the name of the dataset. Other directives are:
