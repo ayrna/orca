@@ -20,7 +20,7 @@
 
 # Naive approaches and decomposition methods in orca
 
-This tutorial will cover how to apply naive approaches and decomposition methods in the framework ORCA. It is highly recommended to have previously completed the [how to tutorial](orca-tutorial.md).
+This tutorial covers how to apply naive approaches and decomposition methods in ORCA. It is highly recommended to have previously completed the ['how to' tutorial](orca-tutorial.md).
 
 We are going to test these methods using a melanoma diagnosis dataset based on dermatoscopic images. Melanoma is a type of cancer that develops from the pigment-containing cells known as melanocytes. Usually occurring on the skin, early detection and diagnosis is strongly related to survival rates. The dataset is aimed at predicting the severity of the lesion:
 - A total of `100` image descriptors are used as input features, including features related to shape, colour, pigment network and texture.
@@ -29,11 +29,11 @@ We are going to test these methods using a melanoma diagnosis dataset based on d
 ![Graphical representation of the Breslow index](tutorial/images/diagram-melanoma-stages.png)
 *Graphical representation of the Breslow index (source [1])*
 
-The dataset from [1] is included in this repository, in a specific [folder](/exampledata/10-fold/melanoma-5classes-abcd-100/matlab). The corresponding script for this tutorial, ([exampleMelanoma.m](../src/code-examples/exampleMelanoma.m)), can be found and run in the [code example](../src/code-examples).
+The dataset from [1] is included in this repository, in a specific [folder](/exampledata/10-fold/melanoma-5classes-abcd-100/matlab). The corresponding script for this tutorial, ([exampleMelanoma.m](../src/code-examples/exampleMelanoma.m)), can be found and run in the [code example](../src/code-examples) folder.
 
 ## Loading the dataset and performing some preliminary experiments
 
-First, we are going to load the dataset and examine the label for some of the patterns.
+First, we will load the dataset and examine the label for some of the patterns.
 ```MATLAB
 >> trainMelanoma = load('../exampledata/10-fold/melanoma-5classes-abcd-100/matlab/train_melanoma-5classes-abcd-100.2');
 >> testMelanoma = load('../exampledata/10-fold/melanoma-5classes-abcd-100/matlab/test_melanoma-5classes-abcd-100.2');
@@ -155,7 +155,7 @@ ans =
               0.535714
 
 ```
-The results have not improved in this specific case. The static method `DataSet.standarizeData(train,test)` transform the training and test datasets and return a copy where all the input variables have zero mean and unit standard deviation. There are other pre-processing methods in the `DataSet` class which delete constant input attributes or non numeric attributes:
+The results have not improved in this specific case. The static method `DataSet.standarizeData(train,test)` transforms the training and test datasets and returns a copy where all the input variables have zero mean and unit standard deviation. There are other pre-processing methods in the `DataSet` class which delete constant input attributes or non numeric attributes:
 ```Matlab
 >> [train,test] = DataSet.deleteConstantAtributes(train,test);
 >> [train,test] = DataSet.standarizeData(train,test);
@@ -187,7 +187,7 @@ The first thing we will do is applying standard approaches for this ordinal regr
 
 ### Regression (SVR)
 
-One very simple way of solving an ordinal classification problem is applying regression. This is, we train a regressor to predict the number of the category (where categories are coded with real consecutive values, `1`, `2`, ..., `Q`, which are scaled between 0 and 1, `0/(Q-1)=0`, `1/(Q-1)`, ..., `(Q-1)/(Q-1)`). Then, to predict categories, we round the real values predicted by the regressor to the nearest integer.
+A very simple way of solving an ordinal classification problem is to apply regression. This is, we train a regressor to predict the number of the category (where categories are coded with real consecutive values, `1`, `2`, ..., `Q`, which are scaled between 0 and 1, `0/(Q-1)=0`, `1/(Q-1)`, ..., `(Q-1)/(Q-1)`). Then, to predict categories, we round the real values predicted by the regressor to the nearest integer.
 
 ORCA includes one algorithm following this approach based on support vector machines: [Support Vector Regression (SVR)](../src/Algorithms/SVR.m). Note that SVR considers the epsilon-SVR model with an RBF kernel, involving three different parameters:
 - Parameter `C`, importance given to errors.
@@ -271,7 +271,7 @@ ans =
     0.9076
 ```
 
-As you can see, not very good performance is obtained. We can try different parameter values by using a `for` loop:
+As you can see, poor performance is obtained. We can try different parameter values by using a `for` loop:
 ```MATLAB
 >> fprintf('\nSupport Vector Regression parameters\n---------------\n');
 bestAccuracy=0;
@@ -310,7 +310,7 @@ Best Results SVR C 10.000000, k 0.001000, e 0.010000 --> Accuracy: 0.678571
 ```
 As you can check, the best configuration leads to almost a 70% of accuracy, which is not very bad considering that we have 5 classes.
 
-This way of adjusting the parameters is not fair, as we can be overfitting the specific test set. The decision of the optimal parameters should be taken without checking test results. This can be done by using nested crossvalidation.
+This way of adjusting the parameters is not fair, as we can be overfitting the test set. The decision of the optimal parameters should be taken without checking test results. This can be done by using nested crossvalidation.
 
 ---
 
@@ -390,12 +390,12 @@ ans =
 Experiments/exp-2018-1-20-17-38-22
 ```
 
-Note that the number of experiments is quite important, so that the execution can take a lot. To accelerate the experiments you can use multiple cores of your CPU (see this [page](orca-parallel.md)).
+Note that the number of experiments is crucial, so the execution can take a considerable amount of time. To accelerate the experiments you can use multiple cores of your CPU (see this [page](orca-parallel.md)).
 
 
 ### Nominal classification (SVC1V1 and SVC1VA)
 
-We can also approach ordinal classification by considering nominal classification, i.e. by ignoring ordering information. It has been shown that this can make the classifier need more data to learn the concept.
+We can also approach ordinal classification by considering nominal classification, i.e. by ignoring the ordering information. It has been shown that this can make the classifier need more data to learn.
 
 ORCA includes two approaches to perform ordinal classification by nominal classification, both based on the Support Vector Classifier:
 - [One-Vs-One (SVC1V1)](../src/Algorithms/SVC1V1.m) [3], where all pairs of classes are compared in different binary SVCs. The prediction is based on majority voting.
@@ -579,7 +579,7 @@ Neural networks allow solving all the binary subproblems using a single model wi
 - [Extreme learning machines with ordered partitions (ELMOP)](../src/Algorithms/ELMOP.m) [6].
 - [Neural network with ordered partitions (NNOP)](../src/Algorithms/NNOP.m) [7].
 
-ELMOP model is based on ELM, which are a quite popular type of neural network. In ELMs, the hidden weights are randomly set and the output weights are analytically set. The implementation in ORCA consider the ordered partition decomposition in the output layer. The prediction phase is tackled using an exponential loss based decoding process, where the class predicted is that with the minimum exponential loss with respect to the decision values.
+ELMOP model is based on ELMs, which are a quite popular type of neural network. In ELMs, the hidden weights are randomly set and the output weights are analytically set. The implementation in ORCA consider the ordered partition decomposition in the output layer. The prediction phase is tackled using an exponential loss based decoding process, where the class predicted is that with the minimum exponential loss with respect to the decision values.
 
 The algorithm can be configured using different activation functions for the hidden layer ('sig, 'sin', 'hardlim','tribas', 'radbas', 'up','rbf'/'krbf' or 'grbf'). During training, the user has to specify the following parameter in the `param` structure:
 - Parameter `hiddenN`: number of hidden nodes of the model. This is a decisive parameter for avoiding overfitting.
