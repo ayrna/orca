@@ -172,11 +172,11 @@ algorithm = POM
 The above file tells ORCA to run the algorithm `POM` for all the datasets specified in the list `datasets`. You can also use `datasets = all` to process all the datasets in `basedir`). Each of these datasets should be found at folder `basedir`, in such a way that ORCA expects one subfolder for each dataset, where the name of the subfolder must match the name of the dataset. Other directives are:
  - INI section `[pom-real]` sets the experiment identifier.
  - The `standarize` flag activates the standardization of the data (by using the mean and standard deviation of the train set).
- - Other parameters of the model depends on the specific algorithm (and they should be checked in the documentation of the algorithm). For instance, the kernel type is set up with `kernel` parameter.
+ - The rest of the parameters of the model depend on the specific algorithm (and they should be checked in the documentation of the algorithm). For instance, the kernel type is set up with `kernel` parameter.
 
 ### Hyper-parameter optimization
 
-Many machine learning methods are very sensitive to the value considered for the hyper-parameters (consider, for example, support vector machines and the two associated parameters, cost and kernel width). They depend on hyper-parameters to achieve optimal results. ORCA automates hyper-parameter optimization by using a grid search with an internal nested *k*-fold cross-validation considering only the training partition. Let see an example for the optimisation of the two hyper-parameters of SVORIM: cost (`C`) and kernel width parameter (`k`, a.k.a. *gamma*):
+Many machine learning methods are very sensitive to the value considered for the hyper-parameters (consider, for example, support vector machines and the two associated parameters, cost and kernel width). ORCA automates hyper-parameter optimization by using a grid search with an internal nested *k*-fold cross-validation considering only the training partition. Let see an example for the optimisation of the two hyper-parameters of SVORIM: cost (`C`) and kernel width parameter (`k`, a.k.a. *gamma*):
 ```ini
 ; Experiment ID
 [svorim-mae-real]
@@ -204,7 +204,7 @@ C = 10.^(-3:1:3)
 k = 10.^(-3:1:3)
 ```
 
-The directive for configuring the search process are included in the general section. The directives associated to hyper-parameter optimisation are:
+The directive for configuring the search process is included in the general section. The directives associated to hyper-parameter optimisation are:
 - `seed`: is the value to initialize MATLAB random number generator. This can be helpful to debug algorithms.
 - `num_folds`: *k* value for the nested *k*-fold cross validation over the training data.
 - `cvmetric`: metric used to select the best hyper-parameters in the grid search. The metrics available are: `AMAE`,`CCR`,`GM`,`MAE`,`MMAE`,`MS`,`MZE`,`Spearman`,`Tkendall` and `Wkappa`.
@@ -264,7 +264,7 @@ If you provide the option `report_sum = true` in `{general-conf}`, additionally 
 
 ### Run a pair of train-test files with runAlgorithm
 
-ORCA algorithms can be used from your own Matlab code. All algorithms included in the [Algorithms](../src/Algorithms) have a `runAlgorithm` method, which can be used for running the algorithms with your data. The method receives a structure with the matrix of training data and labels, the equivalent for test data and a structure with the values of the parameters associated to the method. With respect to other tools, parameters are a mandatory argument for method to avoid the use of default values.
+ORCA algorithms can be used from your own Matlab code. All algorithms included in the [Algorithms](../src/Algorithms) have a `runAlgorithm` method, which can be used for running the algorithms with your data. The method receives a structure with the matrix of training data and labels, the equivalent for test data and a structure with the values of the parameters associated to the method. With respect to other tools, parameters are a mandatory argument for the method to avoid the use of default values.
 
 For example, the [KDLOR (Kernel Discriminant Learning for Ordinal Regression)](../src/Algorithms/KDLOR.m) [5]  method has a total of five parameters. Two of them (the type of kernel, `kernelType`, and the optimisation routine considered, `optimizationMethod`) are received in the constructor of the corresponding class, and the other three parameters (cost, `C`, kernel parameter, `k`, and value to avoid singularities, `u`) are supposed to have to be fine-tuned for each dataset and partition, so they are received in a structure passed to the `runAlgorithm` method. This an example of execution of KDLOR from the Matlab console:
 ```MATLAB
@@ -546,7 +546,7 @@ end
 ```
 This will generate all the partitions for a `10`fold crossvalidation experimental design. The source code of this example is in [exampleERAKFold.m](../src/code-examples/exampleERAKFold.m).
 
-In order to obtain a `30`holdout design, the code will be a bit different. As MATLAB does not included a native way of repeating holdout, we will do it manually:
+In order to obtain a `30`holdout design, the code will be a bit different. As MATLAB does not include a native way of repeating holdout, we will do it manually:
 ```Matlab
 >> % Load data
 ERAData = table2array(readtable('../../exampledata/ERA.csv'));
@@ -599,7 +599,7 @@ The source code of this example is in [exampleERAHHoldout.m](../src/code-example
 
 ---
 
-***Exercise 3***: you should prepare a `30holdout` set of partitions for the dataset `ESL`, which is included in the folder [exampledata](/exampledata). Try to find the description of this dataset in the Internet and spot the main differences with respect to ERA.
+***Exercise 3***: prepare a `30holdout` set of partitions for the dataset `ESL`, which is included in the [exampledata](/exampledata) folder. Try to find the description of this dataset in the Internet and spot the main differences with respect to ERA.
 
 ---
 
@@ -609,7 +609,7 @@ The source code of this example is in [exampleERAHHoldout.m](../src/code-example
 
 ### Warning about highly imbalanced datasets
 
-ORCA is a tool to automate experiments for algorithm comparison. The default experimental setup is a n-hold-out (n=10). However, if your dataset has only less than 10-15 patterns in one or more classes, it is very likely that there will not be enough data to do the corresponding partitions, so there will be folds with varying number of classes. This can cause some errors since the confusion matrices dimensions do not agree.
+ORCA is a tool to automate experiments for algorithm comparison. The default experimental setup is a n-holdout (n=10). However, if your dataset has only less than 10-15 patterns in one or more classes, it is very likely that there will not be enough data to do the corresponding partitions, so there will be folds with varying number of classes. This can cause some errors since the confusion matrices dimensions do not agree.
 
 # References
 
