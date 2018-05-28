@@ -1,3 +1,4 @@
+% Note: this code should be run from orca/src/code-examples
 addpath ../
 addpath ../Measures
 addpath ../Algorithms
@@ -50,7 +51,7 @@ else
     h = histogram(info.projectedTest,30);
 end
 y1=get(gca,'ylim');
-for i=1:size(info.model.thresholds,1)
+for i=1:size(info.model.thresholds,2)
     line([info.model.thresholds(i) info.model.thresholds(i)],y1,'Color',[1 0 0]);
 end
 hold off;
@@ -60,7 +61,7 @@ confusionmat(test.targets,info.predictedTest)
 
 % Visualize the projection with colors
 figure; hold on;
-Q = size(info.model.thresholds,1)+1;
+Q = size(info.model.thresholds,2)+1;
 if (exist ('OCTAVE_VERSION', 'builtin') > 0)
   colors = {[102 170 215],[232, 152, 117],[183, 174, 105],[178, 130, 187],[173, 205, 131]};
   for i=1:Q
@@ -72,7 +73,7 @@ else
   end
 end
 y1=get(gca,'ylim');
-for i=1:size(info.model.thresholds,1)
+for i=1:size(info.model.thresholds,2)
     line([info.model.thresholds(i) info.model.thresholds(i)],y1,'Color',[1 0 0]);
 end
 %legend('C1','C2','C3','C4','C5');
@@ -83,11 +84,11 @@ hold off;
 figure; hold on;
 numPoints=300;
 x = linspace(min(info.model.thresholds-3),max(info.model.thresholds+3),numPoints);
-f = repmat(info.model.thresholds',numPoints,1) - repmat(x',1,Q-1);
+f = repmat(info.model.thresholds,numPoints,1) - repmat(x',1,Q-1);
 cumProb = [1./(1+exp(-f)) ones(numPoints,1)]; %logit function
 plot(x,cumProb,'-','LineWidth',1);
 y1=get(gca,'ylim');
-for i=1:size(info.model.thresholds,1)
+for i=1:size(info.model.thresholds,2)
     line([info.model.thresholds(i) info.model.thresholds(i)],y1,'Color',[1 0 0]);
 end
 hold off;
@@ -98,7 +99,7 @@ prob = cumProb;
 prob(:,2:end) = prob(:,2:end) - prob(:,1:(end-1));
 plot(x,prob,'-','LineWidth',1);
 y1=get(gca,'ylim');
-for i=1:size(info.model.thresholds,1)
+for i=1:size(info.model.thresholds,2)
     line([info.model.thresholds(i) info.model.thresholds(i)],y1,'Color',[1 0 0]);
 end
 hold off;
@@ -292,7 +293,7 @@ confusionmat(test.targets,info.predictedTest)
 
 % Visualize the projection with colors
 figure; hold on;
-Q = size(info.model.thresholds,1)+1;
+Q = size(info.model.thresholds,2)+1;
 if (exist ('OCTAVE_VERSION', 'builtin') > 0)
   colors = {[102 170 215],[232, 152, 117],[183, 174, 105],[178, 130, 187],[173, 205, 131]};
   for i=1:Q
@@ -305,7 +306,7 @@ else
 end
 
 y1=get(gca,'ylim');
-for i=1:size(info.model.thresholds,1)
+for i=1:size(info.model.thresholds,2)
     line([info.model.thresholds(i) info.model.thresholds(i)],y1,'Color',[1 0 0]);
 end
 %legend('C1','C2','C3','C4','C5');
@@ -331,9 +332,9 @@ confusionmat(test.targets,info.predictedTest)
 
 %% Make an ensemble with SVORIM and SVOREX. The final decission by POM
 % Construct a new dataset with the projections
-newTrain.patterns = [svorexProjectionsTrain' svorimProjectionsTrain'];
+newTrain.patterns = [svorexProjectionsTrain svorimProjectionsTrain];
 newTrain.targets = train.targets;
-newTest.patterns = [svorexProjections' svorimProjections'];
+newTest.patterns = [svorexProjections svorimProjections];
 newTest.targets = train.targets;
 % Preprocess the dataset
 [newTrain,newTest] = DataSet.deleteConstantAtributes(newTrain,newTest);
@@ -348,4 +349,3 @@ fprintf('SVORIM+SVOREX+POM Accuracy: %f\n', CCR.calculateMetric(test.targets,inf
 fprintf('SVORIM+SVOREX+POM MAE: %f\n', MAE.calculateMetric(test.targets,info.predictedTest));
 
 scatter(newTrain.patterns(:,1),newTrain.patterns(:,2),7,newTrain.targets);
-
