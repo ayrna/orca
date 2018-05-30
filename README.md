@@ -58,7 +58,7 @@ For more information about our research group please visit [Learning and Artific
 # Installation, tutorials and documentation
 
 The documentation can be found in the [doc](doc) folder and includes:
-  - A [quick installation guide of ORCA](doc/orca-quick-install.md) and the associated [build troubleshooting](doc/orca-install.md).
+  - A [quick installation guide of ORCA](doc/orca-quick-install.md) and the associated [build troubleshooting](doc/orca-install.md). Binaries are available for downloading in the [release page](https://github.com/ayrna/orca/releases). 
   - A first ['how to' tutorial](doc/orca-tutorial.md) to get started with ORCA.
   - A specific [tutorial for naive approaches and decomposition methods](doc/orca-tutorial-2.md) covering the different considerations needed for these methods.
   - A [tutorial for threshold models](doc/orca-tutorial-3.md) examining the differences of these models.
