@@ -3,19 +3,20 @@
 1. [Installing ORCA](#installing-orca)
 	1. [Installation requirements](#installation-requirements)
 	2. [Download ORCA](#download-orca)
-	3. [Compilation of `mex` files](#compilation-of-mex-files)
-	4. [Installation testing](#installation-testing)
+	3. [Binaries](#binaries)
+	4. [Compilation of `mex` files](#compilation-of-mex-files)
+	5. [Installation testing](#installation-testing)
 
 <!-- /TOC -->
 # Installing ORCA
 
-This is a **quick installation** guide. If you experiment any problems, please read the [detailed installation guide](orca-install.md). ORCA has been developed and tested in GNU/Linux systems and ported to Windows. It has been tested in MATLAB R2009a-R2017b and Octave >4.0.
+This is a **quick installation** guide. If you experiment any problems, please read the [detailed installation guide](orca-install.md). ORCA has been developed and tested in GNU/Linux systems and ported to Windows. It works in Mac using GNU compilers. It has been tested in MATLAB R2009a-R2017b and Octave >4.0.
 
 ## Installation requirements
 
 In order to use ORCA you need:
 
-* `gcc` and `g++`
+* GNU `gcc` and `g++`
 * MATLAB/Octave (Octave >= 4.0), including `mex`.
   * MATLAB toolboxes: Statistics and Machine Learning
   * Octave packages: statistics,optim,liboctave-dev. These can be easily installed with `pkg install -forge optim` and so on. Depending on your GNU/Linux distribution you may also have to install `liboctave-dev` with your distribution package manager.
@@ -27,6 +28,10 @@ To download ORCA you can simply clone this GitHub repository by using the follow
 $ git clone https://github.com/ayrna/orca
 ```
 All the contents of the repository can also be downloaded from the GitHub site by using the "Download ZIP" button.
+
+## Binaries
+
+We provide binary files for several platforms (Debian based and CentOS GNU/Linux and Windows). The compressed files include the git files, so git pull should work. Binaries can be downloaded in the [release page](https://github.com/ayrna/orca/releases). 
 
 ## Compilation of `mex` files
 
