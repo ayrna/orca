@@ -29,7 +29,7 @@ To help these purposes, ORCA is mainly used through **[configuration files](doc/
 
 # Cite ORCA
 
-The initial code of ORCA was released as linked to the following work, if you use this framework please cite:
+We have written a scientific software paper (unpublished). In the meanwhile, if you use this framework please cite the following work 
 
 ```
 P.A. Gutiérrez, M. Pérez-Ortiz, J. Sánchez-Monedero, F. Fernández-Navarro and C. Hervás-Martínez (2016),
