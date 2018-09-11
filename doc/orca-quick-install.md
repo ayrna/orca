@@ -1,13 +1,15 @@
-<!-- TOC depthFrom:1 depthTo:6 withLinks:1 updateOnSave:1 orderedList:1 -->
+<!-- TOC depthFrom:1 depthTo:6 withLinks:1 updateOnSave:1 orderedList:0 -->
 
-1. [Installing ORCA](#installing-orca)
-	1. [Installation requirements](#installation-requirements)
-	2. [Download ORCA](#download-orca)
-	3. [Binaries](#binaries)
-	4. [Compilation of `mex` files](#compilation-of-mex-files)
-	5. [Installation testing](#installation-testing)
+- [Installing ORCA](#installing-orca)
+	- [Installation requirements](#installation-requirements)
+	- [Download ORCA](#download-orca)
+	- [Binaries](#binaries)
+	- [Compilation of `mex` files from the MATLAB/Octave console (RECOMMENDED)](#compilation-of-mex-files-from-the-matlaboctave-console-recommended)
+	- [Compilation of `mex` files from system shell](#compilation-of-mex-files-from-system-shell)
+	- [Installation testing](#installation-testing)
 
 <!-- /TOC -->
+
 # Installing ORCA
 
 This is a **quick installation** guide. If you experiment any problems, please read the [detailed installation guide](orca-install.md). ORCA has been developed and tested in GNU/Linux systems and ported to Windows. It works in Mac using GNU compilers. It has been tested in MATLAB R2009a-R2017b and Octave >4.0.
@@ -31,13 +33,13 @@ All the contents of the repository can also be downloaded from the GitHub site b
 
 ## Binaries
 
-We provide binary files for several platforms (Debian based and CentOS GNU/Linux and Windows). The compressed files include the git files, so git pull should work. Binaries can be downloaded in the [release page](https://github.com/ayrna/orca/releases). 
+We provide binary files for several platforms (Debian based and CentOS GNU/Linux and Windows). The compressed files include the git files, so git pull should work. Binaries can be downloaded in the [release page](https://github.com/ayrna/orca/releases).
 
-## Compilation of `mex` files
+## Compilation of `mex` files from the MATLAB/Octave console (RECOMMENDED)
 
 ORCA is programmed in MATLAB, but many of the classification algorithms are implemented in C/C++. Because of this, these methods have to be compiled and/or packaged into the corresponding `mex` files.
 
-In Windows and GNU/Linux, you can build ORCA directly from the MATLAB/Octave console. Just enter in the `scr` directory and type `make`.
+In Windows and GNU/Linux, you can build ORCA directly **from the MATLAB/Octave console**. Just enter in the `scr` directory and type `make`.
 ```MATLAB
 >> cd src/Algorithms
 >> make
@@ -46,6 +48,14 @@ After building, you can clean the objects files with `make clean`:
 ```MATLAB
 >> make clean
 ```
+
+## Compilation of `mex` files from system shell
+
+If you prefer to build `mex` files from the Linux shell, you can use standard `make` tool at `src/Algorithms` directory:
+
+1. Set up the proper path for `MATLABDIR` or `OCTAVEDIR` variables, see examples at [../src/Algorithms/Makefile](../src/Algorithms/Makefile)
+1. Run `make` for MATLAB or `make octave` for GNU Octave.  
+
 
 ## Installation testing
 
