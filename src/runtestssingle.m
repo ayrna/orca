@@ -30,6 +30,7 @@ test.patterns = test_toy(:,1:end-1);
 test.targets = test_toy(:,end);
 
 for i=1:length(files)
+    fprintf('==============================================\n');
     cmd = files(i).name;
     fprintf('Processing %s...\n', cmd);
     eval(cmd(1:end-2))
