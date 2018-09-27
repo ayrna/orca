@@ -18,6 +18,8 @@ param.k = 1;
 % Run the algorithm
 info = algorithmObj.runAlgorithm(train,test,param);
 
+clear algorithmObj;
+
 trainCM = confusionmat(info.predictedTrain,train.targets);
 testCM = confusionmat(info.predictedTest,test.targets);
 

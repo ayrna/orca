@@ -11,6 +11,7 @@ if nargin < 1
             setenv('CFLAGS','-O3 -fstack-protector-strong -Wformat -Werror=format-security -Wno-unused-result')
             setenv('CC','g++')
             system('make'); 
+            unsetenv('CC')
           else
             system('make'); 
           end

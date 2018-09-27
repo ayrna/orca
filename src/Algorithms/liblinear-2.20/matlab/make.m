@@ -1,5 +1,5 @@
 % This make.m is for MATLAB and OCTAVE under Windows, Mac, and Unix
-function make()
+function make(opt)
 if nargin < 1
     try
         % This part is for OCTAVE
@@ -9,10 +9,10 @@ if nargin < 1
                 setenv('CFLAGS','-std=gnu99 -O3')
                 setenv('CC','gcc')
             else
-                setenv('CFLAGS','-std=gnu99 -O3 -fstack-protector-strong -Wformat -Werror=format-security')
+                setenv('CFLAGS','-O3 -fstack-protector-strong -Wformat -Werror=format-security')
             end
-            mex libsvmread.c
-            mex libsvmwrite.c
+            %mex libsvmread.c
+            %mex libsvmwrite.c
             mex -I.. svmtrain.c linear_model_matlab.c ../linear.cpp ../tron.cpp ../blas/daxpy.c ../blas/ddot.c ../blas/dnrm2.c ../blas/dscal.c
             mex -I.. svmpredict.c linear_model_matlab.c ../linear.cpp ../tron.cpp ../blas/daxpy.c ../blas/ddot.c ../blas/dnrm2.c ../blas/dscal.c
             delete *.o
@@ -20,13 +20,13 @@ if nargin < 1
             % Add -largeArrayDims on 64-bit machines of MATLAB
         else
             if ispc
-                mex COMPFLAGS="\$COMPFLAGS -std=c99 -O3" -largeArrayDims libsvmread.c
-                mex COMPFLAGS="\$COMPFLAGS -std=c99 -O3" -largeArrayDims libsvmwrite.c
+                %mex COMPFLAGS="\$COMPFLAGS -std=c99 -O3" -largeArrayDims libsvmread.c
+                %mex COMPFLAGS="\$COMPFLAGS -std=c99 -O3" -largeArrayDims libsvmwrite.c
                 mex COMPFLAGS="\$COMPFLAGS -O3" -I.. -largeArrayDims svmtrain.c linear_model_matlab.c ../linear.cpp ../tron.cpp ../blas/daxpy.c ../blas/ddot.c ../blas/dnrm2.c ../blas/dscal.c
                 mex COMPFLAGS="\$COMPFLAGS -O3" -I.. -largeArrayDims svmpredict.c linear_model_matlab.c ../linear.cpp ../tron.cpp ../blas/daxpy.c ../blas/ddot.c ../blas/dnrm2.c ../blas/dscal.c
             else
-                mex CFLAGS="\$CFLAGS -std=c99" -largeArrayDims libsvmread.c
-                mex CFLAGS="\$CFLAGS -std=c99" -largeArrayDims libsvmwrite.c
+                %mex CFLAGS="\$CFLAGS -std=c99" -largeArrayDims libsvmread.c
+                %mex CFLAGS="\$CFLAGS -std=c99" -largeArrayDims libsvmwrite.c
                 mex CFLAGS="\$CFLAGS" -I.. -largeArrayDims svmtrain.c linear_model_matlab.c ../linear.cpp ../tron.cpp ../blas/daxpy.c ../blas/ddot.c ../blas/dnrm2.c ../blas/dscal.c
                 mex CFLAGS="\$CFLAGS" -I.. -largeArrayDims svmpredict.c linear_model_matlab.c ../linear.cpp ../tron.cpp ../blas/daxpy.c ../blas/ddot.c ../blas/dnrm2.c ../blas/dscal.c
             end

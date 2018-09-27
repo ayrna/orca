@@ -6,29 +6,23 @@ if nargin < 1
         if (exist ('OCTAVE_VERSION', 'builtin'))
             % Use -std=c++11 for newer versions of Octave
             if ispc
-                setenv('CFLAGS','-std=gnu99 -O3 -Wno-unused-result')
+                setenv('CFLAGS','-std=c++11 -O3 -Wno-unused-result')
                 setenv('CC','gcc')
             else
-                setenv('CFLAGS','-std=gnu99 -O3 -Wno-unused-result')
+                setenv('CFLAGS','-std=c++11 -largeArrayDims -O3 -Wno-unused-result')
             end
-            mex libsvmread.c
-            mex libsvmwrite.c
-            mex -I.. -Wno-unused-result svmtrain.c ../svm.cpp svm_model_matlab.c
-            mex -I.. -Wno-unused-result svmpredict.c ../svm.cpp svm_model_matlab.c
+	    mex -I.. -std=c++11 -O3  -Wno-unused-result svmtrain.cpp ../svm.cpp svm_model_matlab.cpp
+            mex -I.. -std=c++11 -O3  -Wno-unused-result svmpredict.cpp ../svm.cpp svm_model_matlab.cpp
             delete *.o
             % This part is for MATLAB
             % Add -largeArrayDims on 64-bit machines of MATLAB
         else
             if ispc
-                mex COMPFLAGS="\$COMPFLAGS -std=c++98 -O3" -largeArrayDims libsvmread.c
-                mex COMPFLAGS="\$COMPFLAGS -std=c++98 -O3" -largeArrayDims libsvmwrite.c
-                mex COMPFLAGS="\$COMPFLAGS -std=c++98 -O3 -Wno-unused-result" -I.. -largeArrayDims svmtrain.c ../svm.cpp svm_model_matlab.c
-                mex COMPFLAGS="\$COMPFLAGS -std=c++98 -O3 -Wno-unused-result" -I.. -largeArrayDims svmpredict.c ../svm.cpp svm_model_matlab.c
+                mex COMPFLAGS="\$COMPFLAGS -std=c++98 -O3 -Wno-unused-result" -I.. -largeArrayDims svmtrain.cpp ../svm.cpp svm_model_matlab.cpp
+                mex COMPFLAGS="\$COMPFLAGS -std=c++98 -O3 -Wno-unused-result" -I.. -largeArrayDims svmpredict.cpp ../svm.cpp svm_model_matlab.cpp
             else
-                mex CFLAGS="\$CFLAGS -O3" -largeArrayDims libsvmread.c
-                mex CFLAGS="\$CFLAGS -O3" -largeArrayDims libsvmwrite.c
-                mex CFLAGS="\$CFLAGS -std=c++98 -O3 -Wno-unused-result" -I.. -largeArrayDims svmtrain.c ../svm.cpp svm_model_matlab.c
-                mex CFLAGS="\$CFLAGS -std=c++98 -O3 -Wno-unused-result" -I.. -largeArrayDims svmpredict.c ../svm.cpp svm_model_matlab.c
+		mex CFLAGS="\$CFLAGS -std=c++98 -O3 -Wno-unused-result" -I.. -largeArrayDims svmtrain.cpp ../svm.cpp svm_model_matlab.cpp
+                mex CFLAGS="\$CFLAGS -std=c++98 -O3 -Wno-unused-result" -I.. -largeArrayDims svmpredict.cpp ../svm.cpp svm_model_matlab.cpp
             end
         end
     catch err
