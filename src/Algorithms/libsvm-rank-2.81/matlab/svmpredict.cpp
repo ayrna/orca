@@ -92,7 +92,7 @@ void predict(mxArray *plhs[], const mxArray *prhs[], struct svm_model *model, co
 			/* precomputed kernel requires dense matrix, so we make one*/
 			mxArray *rhs[1], *lhs[1];
 			rhs[0] = mxDuplicateArray(prhs[1]);
-			if(mexCallMATLAB(1, lhs, 1, rhs, "full"))
+			if(mexCallMATLABWithTrap(1, lhs, 1, rhs, "full"))
 			{
 				mexPrintf("Error: cannot full testing instance matrix\n");
 				fake_answer(plhs);
@@ -105,7 +105,7 @@ void predict(mxArray *plhs[], const mxArray *prhs[], struct svm_model *model, co
 		{
 			mxArray *pprhs[1];
 			pprhs[0] = mxDuplicateArray(prhs[1]);
-			if(mexCallMATLAB(1, pplhs, 1, pprhs, "transpose"))
+			if(mexCallMATLABWithTrap(1, pplhs, 1, pprhs, "transpose"))
 			{
 				mexPrintf("Error: cannot transpose testing instance matrix\n");
 				fake_answer(plhs);

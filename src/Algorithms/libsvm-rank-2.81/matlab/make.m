@@ -11,8 +11,8 @@ if nargin < 1
             else
                 setenv('CFLAGS','-std=c++11 -largeArrayDims -O3 -Wno-unused-result')
             end
-	    mex -I.. -std=c++11 -O3  -Wno-unused-result svmtrain.cpp ../svm.cpp svm_model_matlab.cpp
-            mex -I.. -std=c++11 -O3  -Wno-unused-result svmpredict.cpp ../svm.cpp svm_model_matlab.cpp
+	    mex -I.. -std=c++11  -Wno-unused-result svmtrain.cpp ../svm.cpp svm_model_matlab.cpp
+            mex -I.. -std=c++11  -Wno-unused-result svmpredict.cpp ../svm.cpp svm_model_matlab.cpp
             delete *.o
             % This part is for MATLAB
             % Add -largeArrayDims on 64-bit machines of MATLAB

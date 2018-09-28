@@ -176,7 +176,7 @@ const char *model_to_matlab_structure(mxArray *plhs[], int num_of_feature, struc
 		}
 		// transpose back to SV in row
 		pprhs[0] = rhs[out_id];
-		if(mexCallMATLAB(1, pplhs, 1, pprhs, "transpose"))
+		if(mexCallMATLABWithTrap(1, pplhs, 1, pprhs, "transpose"))
 			return "cannot transpose SV matrix";
 		rhs[out_id] = pplhs[0];
 		out_id++;
@@ -306,7 +306,7 @@ struct svm_model *matlab_matrix_to_model(const mxArray *matlab_struct, const cha
 
 		// transpose SV
 		pprhs[0] = rhs[id];
-		if(mexCallMATLAB(1, pplhs, 1, pprhs, "transpose")) 
+		if(mexCallMATLABWithTrap(1, pplhs, 1, pprhs, "transpose")) 
 		{
 			svm_free_and_destroy_model(&model);
 			*msg = "cannot transpose SV matrix";

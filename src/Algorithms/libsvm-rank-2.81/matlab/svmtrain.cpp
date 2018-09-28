@@ -328,7 +328,7 @@ int read_problem_sparse(const mxArray *label_vec, const mxArray *instance_mat)
 	{
 		mxArray *prhs[1], *plhs[1];
 		prhs[0] = mxDuplicateArray(instance_mat);
-		if(mexCallMATLAB(1, plhs, 1, prhs, "transpose"))
+		if(mexCallMATLABWithTrap(1, plhs, 1, prhs, "transpose"))
 		{
 			mexPrintf("Error: cannot transpose training instance matrix\n");
 			return -1;
@@ -426,7 +426,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
 				mxArray *rhs[1], *lhs[1];
 
 				rhs[0] = mxDuplicateArray(prhs[1]);
-				if(mexCallMATLAB(1, lhs, 1, rhs, "full"))
+				if(mexCallMATLABWithTrap(1, lhs, 1, rhs, "full"))
 				{
 					mexPrintf("Error: cannot generate a full training instance matrix\n");
 					svm_destroy_param(&param);
