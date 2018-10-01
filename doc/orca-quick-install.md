@@ -21,8 +21,22 @@ In order to use ORCA you need:
 * GNU `gcc` and `g++`
 * MATLAB/Octave (Octave >= 4.0), including `mex`.
   * MATLAB toolboxes: Statistics and Machine Learning
-  * Octave packages: statistics,optim,liboctave-dev. These can be easily installed with `pkg install -forge optim` and so on. Depending on your GNU/Linux distribution you may also have to install `liboctave-dev` with your distribution package manager.
+  * Octave packages: statistics,optim,liboctave-dev. These can be easily installed with `pkg install -forge optim` and so on. Depending on your GNU/Linux distribution you may also have to install `liboctave-dev` with your distribution package manager. 
 
+For instance, to install Octave and the required packages in Ubuntu 18.10: 
+
+```bash
+$ sudo apt-get install Octave liboctave-dev
+```
+
+And then, in the Octave console: 
+
+```MATLAB
+> pkg install -forge struct
+> pkg install -forge io
+> pkg install -forge optim
+> pkg install -forge statistics
+```
 ## Download ORCA
 
 To download ORCA you can simply clone this GitHub repository by using the following commands:

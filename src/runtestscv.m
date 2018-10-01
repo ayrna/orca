@@ -35,6 +35,12 @@ files(1:2) = [];
 
 for i=1:length(files)
     disp(['Running ' tests_dir '/'  files(i).name])
+	% Clear (almost) all the variables to avoid issues with some mex files in Octave +4.2.2
+	if (exist ('OCTAVE_VERSION', 'builtin') > 0)
+		clear -x tests_dir files i
+    else
+		clearvars -except tests_dir
+    end
     exp_dir = Utilities.runExperiments([tests_dir '/'  files(i).name], 'parallel', false);
     try
         csv_result = [exp_dir filesep 'Results' filesep 'mean-results_test.csv'];
