@@ -13,8 +13,8 @@ if nargin < 1
             end
             %mex libsvmread.c
             %mex libsvmwrite.c
-            mex -I.. svmtrain.c linear_model_matlab.c ../linear.cpp ../tron.cpp ../blas/daxpy.c ../blas/ddot.c ../blas/dnrm2.c ../blas/dscal.c
-            mex -I.. svmpredict.c linear_model_matlab.c ../linear.cpp ../tron.cpp ../blas/daxpy.c ../blas/ddot.c ../blas/dnrm2.c ../blas/dscal.c
+            mex -I.. -O3 svmtrain.c linear_model_matlab.c ../linear.cpp ../tron.cpp ../blas/daxpy.c ../blas/ddot.c ../blas/dnrm2.c ../blas/dscal.c
+            mex -I.. -O3 svmpredict.c linear_model_matlab.c ../linear.cpp ../tron.cpp ../blas/daxpy.c ../blas/ddot.c ../blas/dnrm2.c ../blas/dscal.c
             delete *.o
             % This part is for MATLAB
             % Add -largeArrayDims on 64-bit machines of MATLAB
