@@ -29,14 +29,14 @@ static const char *field_names[] = {
 
 const char *model_to_matlab_structure(mxArray *plhs[], int num_of_feature, struct svm_model *model)
 {
-	int i, j, n, nr_class;
+	int i, j, n;
 	double *ptr;
 	mxArray *return_model, **rhs;
 	int out_id = 0;
 
 	rhs = (mxArray **)mxMalloc(sizeof(mxArray *)*NUM_OF_RETURN_FIELD);
 
-	/* Parameters*/
+	// Parameters
 	rhs[out_id] = mxCreateDoubleMatrix(5, 1, mxREAL);
 	ptr = mxGetPr(rhs[out_id]);
 	ptr[0] = model->param.svm_type;
@@ -46,51 +46,39 @@ const char *model_to_matlab_structure(mxArray *plhs[], int num_of_feature, struc
 	ptr[4] = model->param.coef0;
 	out_id++;
 
-	/* nr_class*/
+	// nr_class
 	rhs[out_id] = mxCreateDoubleMatrix(1, 1, mxREAL);
 	ptr = mxGetPr(rhs[out_id]);
 	ptr[0] = model->nr_class;
 	out_id++;
 
-	/* total SV*/
+	// total SV
 	rhs[out_id] = mxCreateDoubleMatrix(1, 1, mxREAL);
 	ptr = mxGetPr(rhs[out_id]);
 	ptr[0] = model->l;
 	out_id++;
 
-	/* rho*/
-	if ((model->param).svm_type != C_RNK && (model->param).svm_type != SVORIM){
-		n = model->nr_class*(model->nr_class-1)/2;
-		rhs[out_id] = mxCreateDoubleMatrix(n, 1, mxREAL);
-		ptr = mxGetPr(rhs[out_id]);
-		for(i = 0; i < n; i++)
-			ptr[i] = model->rho[i];
-		out_id++;
-		nr_class = model->nr_class;
-	}
-	else{
-		n = model->nr_class;
-		rhs[out_id] = mxCreateDoubleMatrix(n, 1, mxREAL);
-		ptr = mxGetPr(rhs[out_id]);
-		for(i = 0; i < n; i++)
-			ptr[i] = model->rho[i];
-		out_id++;	
-		nr_class = 2;
-	}
+	// rho
+	n = model->nr_class*(model->nr_class-1)/2;
+	rhs[out_id] = mxCreateDoubleMatrix(n, 1, mxREAL);
+	ptr = mxGetPr(rhs[out_id]);
+	for(i = 0; i < n; i++)
+		ptr[i] = model->rho[i];
+	out_id++;
 
-	/* Label*/
+	// Label
 	if(model->label)
 	{
-		rhs[out_id] = mxCreateDoubleMatrix(n, 1, mxREAL);
+		rhs[out_id] = mxCreateDoubleMatrix(model->nr_class, 1, mxREAL);
 		ptr = mxGetPr(rhs[out_id]);
-		for(i = 0; i < nr_class; i++)
+		for(i = 0; i < model->nr_class; i++)
 			ptr[i] = model->label[i];
 	}
 	else
 		rhs[out_id] = mxCreateDoubleMatrix(0, 0, mxREAL);
 	out_id++;
 
-	/* probA*/
+	// probA
 	if(model->probA != NULL)
 	{
 		rhs[out_id] = mxCreateDoubleMatrix(n, 1, mxREAL);
@@ -102,7 +90,7 @@ const char *model_to_matlab_structure(mxArray *plhs[], int num_of_feature, struc
 		rhs[out_id] = mxCreateDoubleMatrix(0, 0, mxREAL);
 	out_id ++;
 
-	/* probB*/
+	// probB
 	if(model->probB != NULL)
 	{
 		rhs[out_id] = mxCreateDoubleMatrix(n, 1, mxREAL);
@@ -114,27 +102,27 @@ const char *model_to_matlab_structure(mxArray *plhs[], int num_of_feature, struc
 		rhs[out_id] = mxCreateDoubleMatrix(0, 0, mxREAL);
 	out_id++;
 
-	/* nSV*/
+	// nSV
 	if(model->nSV)
 	{
-		rhs[out_id] = mxCreateDoubleMatrix(nr_class, 1, mxREAL);
+		rhs[out_id] = mxCreateDoubleMatrix(model->nr_class, 1, mxREAL);
 		ptr = mxGetPr(rhs[out_id]);
-		for(i = 0; i < nr_class; i++)
+		for(i = 0; i < model->nr_class; i++)
 			ptr[i] = model->nSV[i];
 	}
 	else
 		rhs[out_id] = mxCreateDoubleMatrix(0, 0, mxREAL);
 	out_id++;
 
-	/* sv_coef*/
-	rhs[out_id] = mxCreateDoubleMatrix(model->l, nr_class-1, mxREAL);
+	// sv_coef
+	rhs[out_id] = mxCreateDoubleMatrix(model->l, model->nr_class-1, mxREAL);
 	ptr = mxGetPr(rhs[out_id]);
-	for(i = 0; i < nr_class-1; i++)
+	for(i = 0; i < model->nr_class-1; i++)
 		for(j = 0; j < model->l; j++)
 			ptr[(i*(model->l))+j] = model->sv_coef[i][j];
 	out_id++;
 
-	/* SVs*/
+	// SVs
 	{
 		int ir_index, nonzero_element;
 		mwIndex *ir, *jc;
@@ -158,7 +146,7 @@ const char *model_to_matlab_structure(mxArray *plhs[], int num_of_feature, struc
 			}
 		}
 
-		/* SV in column, easier accessing*/
+		// SV in column, easier accessing
 		rhs[out_id] = mxCreateSparse(num_of_feature, model->l, nonzero_element, mxREAL);
 		ir = mxGetIr(rhs[out_id]);
 		jc = mxGetJc(rhs[out_id]);
@@ -168,7 +156,7 @@ const char *model_to_matlab_structure(mxArray *plhs[], int num_of_feature, struc
 		{
 			if(model->param.kernel_type == PRECOMPUTED)
 			{
-				/* make a (1 x model->l) matrix*/
+				// make a (1 x model->l) matrix
 				ir[ir_index] = 0; 
 				ptr[ir_index] = model->SV[i][0].value;
 				ir_index++;
@@ -186,9 +174,9 @@ const char *model_to_matlab_structure(mxArray *plhs[], int num_of_feature, struc
 				jc[i+1] = jc[i] + x_index;
 			}
 		}
-		/* transpose back to SV in row*/
+		// transpose back to SV in row
 		pprhs[0] = rhs[out_id];
-		if(mexCallMATLAB(1, pplhs, 1, pprhs, "transpose"))
+		if(mexCallMATLABWithTrap(1, pplhs, 1, pprhs, "transpose"))
 			return "cannot transpose SV matrix";
 		rhs[out_id] = pplhs[0];
 		out_id++;
@@ -233,7 +221,7 @@ struct svm_model *matlab_matrix_to_model(const mxArray *matlab_struct, const cha
 	model->probB = NULL;
 	model->label = NULL;
 	model->nSV = NULL;
-	model->free_sv = 1; /* XXX*/
+	model->free_sv = 1; // XXX
 
 	ptr = mxGetPr(rhs[id]);
 	model->param.svm_type = (int)ptr[0];
@@ -251,7 +239,7 @@ struct svm_model *matlab_matrix_to_model(const mxArray *matlab_struct, const cha
 	model->l = (int)ptr[0];
 	id++;
 
-	/* rho*/
+	// rho
 	n = model->nr_class * (model->nr_class-1)/2;
 	model->rho = (double*) malloc(n*sizeof(double));
 	ptr = mxGetPr(rhs[id]);
@@ -259,7 +247,7 @@ struct svm_model *matlab_matrix_to_model(const mxArray *matlab_struct, const cha
 		model->rho[i] = ptr[i];
 	id++;
 
-	/* label*/
+	// label
 	if(mxIsEmpty(rhs[id]) == 0)
 	{
 		model->label = (int*) malloc(model->nr_class*sizeof(int));
@@ -269,7 +257,7 @@ struct svm_model *matlab_matrix_to_model(const mxArray *matlab_struct, const cha
 	}
 	id++;
 
-	/* probA*/
+	// probA
 	if(mxIsEmpty(rhs[id]) == 0)
 	{
 		model->probA = (double*) malloc(n*sizeof(double));
@@ -279,7 +267,7 @@ struct svm_model *matlab_matrix_to_model(const mxArray *matlab_struct, const cha
 	}
 	id++;
 
-	/* probB*/
+	// probB
 	if(mxIsEmpty(rhs[id]) == 0)
 	{
 		model->probB = (double*) malloc(n*sizeof(double));
@@ -289,7 +277,7 @@ struct svm_model *matlab_matrix_to_model(const mxArray *matlab_struct, const cha
 	}
 	id++;
 
-	/* nSV*/
+	// nSV
 	if(mxIsEmpty(rhs[id]) == 0)
 	{
 		model->nSV = (int*) malloc(model->nr_class*sizeof(int));
@@ -299,7 +287,7 @@ struct svm_model *matlab_matrix_to_model(const mxArray *matlab_struct, const cha
 	}
 	id++;
 
-	/* sv_coef*/
+	// sv_coef
 	ptr = mxGetPr(rhs[id]);
 	model->sv_coef = (double**) malloc((model->nr_class-1)*sizeof(double));
 	for( i=0 ; i< model->nr_class -1 ; i++ )
@@ -309,16 +297,16 @@ struct svm_model *matlab_matrix_to_model(const mxArray *matlab_struct, const cha
 			model->sv_coef[i][j] = ptr[i*(model->l)+j];
 	id++;
 
-	/* SV*/
+	// SV
 	{
 		int sr, sc, elements;
 		int num_samples;
 		mwIndex *ir, *jc;
 		mxArray *pprhs[1], *pplhs[1];
 
-		/* transpose SV*/
+		// transpose SV
 		pprhs[0] = rhs[id];
-		if(mexCallMATLAB(1, pplhs, 1, pprhs, "transpose")) 
+		if(mexCallMATLABWithTrap(1, pplhs, 1, pprhs, "transpose")) 
 		{
 			svm_free_and_destroy_model(&model);
 			*msg = "cannot transpose SV matrix";
@@ -340,7 +328,7 @@ struct svm_model *matlab_matrix_to_model(const mxArray *matlab_struct, const cha
 		model->SV = (struct svm_node **) malloc(sr * sizeof(struct svm_node *));
 		x_space = (struct svm_node *)malloc(elements * sizeof(struct svm_node));
 
-		/* SV is in column*/
+		// SV is in column
 		for(i=0;i<sr;i++)
 		{
 			int low = (int)jc[i], high = (int)jc[i+1];

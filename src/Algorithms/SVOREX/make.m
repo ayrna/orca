@@ -8,9 +8,9 @@ if nargin < 1
           setenv('CFLAGS','-std=gnu99 -O3')
           setenv('CC','gcc')
         else
-          setenv('CFLAGS','-std=gnu99 -O3 -fstack-protector-strong -Wformat -Werror=format-security')
+          setenv('CFLAGS','-O3 -fstack-protector-strong -Wformat -Werror=format-security')
         end
-        mex mainSvorex.c alphas.c cachelist.c datalist.c def_settings.c kcv.c loadfile.c ordinal_takestep.c setandfi.c smo_kernel.c smo_routine.c smo_settings.c smo_timer.c svc_predict.c -output svorex
+        mex -O3 mainSvorex.c alphas.c cachelist.c datalist.c def_settings.c kcv.c loadfile.c ordinal_takestep.c setandfi.c smo_kernel.c smo_routine.c smo_settings.c smo_timer.c svc_predict.c -output svorex
         delete *.o
       % This part is for MATLAB
       else

@@ -31,7 +31,6 @@ accTrain = CCR.calculateMetric(trainCM);
 accTest  = CCR.calculateMetric(testCM);
 
 % Report accuracy
-fprintf('.........................\n');
 fprintf('Performing test for %s\n', method);
 fprintf('Accuracy Train %f, Accuracy Test %f\n',accTrain,accTest);
 

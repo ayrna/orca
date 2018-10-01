@@ -5,10 +5,10 @@ if nargin < 1
       if (exist ('OCTAVE_VERSION', 'builtin'))
 		% Use -std=c++11 for newer versions of Octave
         if ispc
-          setenv('CFLAGS','-std=gnu99 -O3')
+          setenv('CFLAGS','-std=c++11 -O3')
           setenv('CC','gcc')
         else
-          setenv('CFLAGS','-std=gnu99 -O3 -fstack-protector-strong -Wformat -Werror=format-security -Wno-unused-result')
+          setenv('CFLAGS','-O3 -fstack-protector-strong -Wformat -Werror=format-security -Wno-unused-result')
         end
         mex mainSvorim.c alphas.c cachelist.c datalist.c def_settings.c kcv.c loadfile.c ordinal_takestep.c setandfi.c smo_kernel.c smo_routine.c smo_settings.c smo_timer.c svc_predict.c -output svorim
         delete *.o
