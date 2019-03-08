@@ -120,7 +120,7 @@ The [measures](src/Measures) folder contains the MATLAB classes for the metrics 
 - [runtestssingle.m](src/runtestssingle.m): Script to run all the methods using the ORCA API. Reference performance is compared with toy dataset in order to check that the installation is correct.
 - [runtestscv.m](src/runtestscv.m): This script runs full experiment tests using the ORCA configuration files to describe experiments.
 
-# Datasets included
+# Datasets
 
 The [example-data](exampledata) folder includes partitions of several small ordinal datasets for code testing purposes. We have also collected 44 publicly available ordinal datasets from various sources. These can be downloaded from: [datasets-OR-review](www.uco.es/grupos/ayrna/ucobigfiles/datasets-orreview.zip). The link also contains data partitions as used in different papers in the literature to ease experimental comparison. The characteristics of these datasets are the following: 
 
