@@ -35,7 +35,7 @@ fprintf('Performing test for %s\n', method);
 fprintf('Accuracy Train %f, Accuracy Test %f\n',accTrain,accTest);
 
 if abs(accTestRef-accTest)<allowedError
-    fprintf('Test accuracy matchs reference accuracy\n');
+    fprintf('Test accuracy matches reference accuracy\n');
 else
     warning('Test accuracy does NOT match reference accuracy');
 end
