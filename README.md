@@ -10,10 +10,11 @@
 	3. [Nominal methods](#nominal-methods)
 5. [Performance metrics](#performance-metrics)
 6. [Utilities, classes and scripts](#utilities-classes-and-scripts)
-7. [Experiments parallelization with HTCondor](#experiments-parallelization-with-htcondor)
-8. [External software](#external-software)
-9. [Other contributors](#other-contributors)
-10. [References](#references)
+7. [Datasets](#datasets)
+8. [Experiments parallelization with HTCondor](#experiments-parallelization-with-htcondor)
+9. [External software](#external-software)
+10. [Other contributors](#other-contributors)
+11. [References](#references)
 
 <!-- /TOC -->
 
@@ -118,6 +119,10 @@ The [measures](src/Measures) folder contains the MATLAB classes for the metrics 
 - [Utilities.m](src/Utilities.m): Class that pre-process the experiment files, run the different algorithms and produces the results.
 - [runtestssingle.m](src/runtestssingle.m): Script to run all the methods using the ORCA API. Reference performance is compared with toy dataset in order to check that the installation is correct.
 - [runtestscv.m](src/runtestscv.m): This script runs full experiment tests using the ORCA configuration files to describe experiments.
+
+# Datasets included
+
+The [example-data](exampledata) folder includes partitions of several small ordinal datasets for code testing purposes. We have also collected 44 publicly available ordinal datasets from various sources. These can be downloaded from: [datasets-OR-review](www.uco.es/grupos/ayrna/ucobigfiles/datasets-orreview.zip). The link also contains data partitions as used in different papers in the literature to ease experimental comparison. The characteristics of these datasets are the following: 
 
 # Experiments parallelization with HTCondor
 
