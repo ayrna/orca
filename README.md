@@ -124,6 +124,58 @@ The [measures](src/Measures) folder contains the MATLAB classes for the metrics 
 
 The [example-data](exampledata) folder includes partitions of several small ordinal datasets for code testing purposes. We have also collected 44 publicly available ordinal datasets from various sources. These can be downloaded from: [datasets-OR-review](www.uco.es/grupos/ayrna/ucobigfiles/datasets-orreview.zip). The link also contains data partitions as used in different papers in the literature to ease experimental comparison. The characteristics of these datasets are the following: 
 
+| Dataset	|	\#Pat.	|	\#Attr.	|	\#Classes	|	Class distribution	|
+| --- | --- | --- | --- | --- |
+| pyrim5 (P5)	|	74	|	27	|	5	|	~15	 per class|
+| machine5 (M5)	|	209	|	7	|	5	|	~42	 per class|
+| housing5 (H5)	|	506	|	14	|	5	|	~101	 per class|
+| stock5 (S5)	|	700	|	9	|	5	|	140	 per class|
+| abalone5 (A5)	|	4177	|	11	|	5	|	~836	 per class|
+| bank5 (B5)	|	8192	|	8	|	5	|	~1639	 per class|
+| bank5' (BB5)	|	8192	|	32	|	5	|	~1639	 per class|
+| computer5 (C5)	|	8192	|	12	|	5	|	~1639	 per class|
+| computer5' (CC5)	|	8192	|	21	|	5	|	~1639	 per class|
+| cal.housing5 (CH5)	|	20640	|	8	|	5	|	4128	 per class|
+| census5 (CE5)	|	22784	|	8	|	5	|	~4557	 per class|
+| census5' (CEE5)	|	22784	|	16	|	5	|	~4557	 per class|
+| pyrim10 (P10)	|	74	|	27	|	10	|	~8	 per class|
+| machine10 (M10)	|	209	|	7	|	10	|	~21	 per class|
+| housing10 (H10)	|	506	|	14	|	10	|	~51	 per class|
+| stock10 (S10)	|	700	|	9	|	10	|	70	 per class|
+| abalone10 (A10)	|	4177	|	11	|	10	|	~418	 per class|
+| bank10 (B10)	|	8192	|	8	|	10	|	~820	 per class|
+| bank10' (BB10)	|	8192	|	32	|	10	|	~820	 per class|
+| computer10 (C10)	|	8192	|	12	|	10	|	~820	 per class|
+| computer10' (CC10)	|	8192	|	21	|	10	|	~820	 per class|
+| cal.housing (CH10)	|	20640	|	8	|	10	|	2064	 per class|
+| census10 (CE10)	|	22784	|	8	|	10	|	~2279	 per class|
+| census10' (CEE10)	|	22784	|	16	|	10	|	~2279	 per class|
+
+| Dataset	|	\#Pat.	|	\#Attr.	|	\#Classes	|	Class distribution	|
+| --- | --- | --- | --- | --- |
+| contact-lenses (CL)	|	24	|	6	|	3	|	(15,5,4)	|
+| pasture (PA)		|	36	|	25	|	3	|	(12,12,12)	|
+| squash-stored (SS)	|	52	|	51	|	3	|	(23,21,8)	|
+| squash-unstored (SU)	|	52	|	52	|	3	|	(24,24,4)	|
+| tae (TA)		|	151	|	54	|	3	|	(49,50,52)	|
+| newthyroid (NT)		|	215	|	5	|	3	|	(30,150,35)	|
+| balance-scale (BS)	|	625	|	4	|	3	|	(288,49,288)	|
+| SWD (SW)		|	1000	|	10	|	4	|	(32,352,399,217)	|
+| car (CA)		|	1728	|	21	|	4	|	(1210,384,69,65)	|
+| bondrate (BO)		|	57	|	37	|	5	|	(6,33,12,5,1)	|
+| toy (TO)		|	300	|	2	|	5	|	(35,87,79,68,31)	|
+| eucalyptus (EU)		|	736	|	91	|	5	|	(180,107,130,214,105)	|
+| LEV (LE)		|	1000	|	4	|	5	|	(93,280,403,197,27)	|
+| automobile (AU)		|	205	|	71	|	6	|	(3,22,67,54,32,27)	|
+| winequality-red (WR)	|	1599	|	11	|	6	|	(10,53,681,638,199,18)	|
+| ESL (ES)		|	488	|	4	|	9	|	(2,12,38,100,	|
+| 			|		|		|		|	116,135,62,19,4)	|
+| ERA (ER)		|	1000	|	4	|	9	|	(92,142,181,172,	|
+| 			|		|		|		|	158,118,88,31,18)	|
+| marketing	|	8993	|	74	|	9	|	(1745,775,667,813,722,1110,969,1308,884)	|
+| thyroid	|	7200	|	21	|	3	|	(6666,166,368)	|
+|  winequality-white	|	4898	|	11	|	7	|	(20,163,1457,2198,880,175,5)	|
+
 # Experiments parallelization with HTCondor
 
 The [condor](src/condor) folder contains the necessary files and steps for using [HTCondor](https://research.cs.wisc.edu/htcondor/) with our framework.
