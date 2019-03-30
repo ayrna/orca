@@ -77,7 +77,9 @@ classdef POM < Algorithm
             nOfClasses = numel(unique(train.targets));
             % TODO: Debug size octave
             if exist ('OCTAVE_VERSION', 'builtin') > 0
-                [model.thresholds, model.projection] = logistic_regression(train.targets, train.patterns);    
+                pkg load statistics;
+                [model.thresholds, model.projection] = logistic_regression(train.targets, train.patterns);
+                pkg unload statistics;
             else
                 % Obtain coefficients of the ordinal regression model
                 betaHatOrd = mnrfit(train.patterns,train.targets,'model',...
