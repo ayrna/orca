@@ -1,4 +1,5 @@
 function make(opt)
+fprintf('=> Building SVORIM.\n');
 if nargin < 1
     try
       % This part is for OCTAVE

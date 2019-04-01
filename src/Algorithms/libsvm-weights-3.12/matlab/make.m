@@ -1,5 +1,6 @@
 % This make.m is for MATLAB and OCTAVE under Windows, Mac, and Unix
 function make(opt)
+fprintf('=> Building libsvm-weights.\n');
 if nargin < 1
     try
         % This part is for OCTAVE
