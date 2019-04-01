@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/ayrna/orca.svg?branch=master)](https://travis-ci.org/ayrna/orca)
+
 ![ORCA logo](doc/orca_small.png)
 <!-- TOC depthFrom:1 depthTo:6 withLinks:1 updateOnSave:1 orderedList:1 -->
 
