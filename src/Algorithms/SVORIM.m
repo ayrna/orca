@@ -5,7 +5,7 @@ classdef SVORIM < Algorithm
     %   W. Chu et al (http://www.gatsby.ucl.ac.uk/~chuwei/svor.htm)
     %
     %   SVORIM methods:
-    %      runAlgorithm               - runs the corresponding algorithm,
+    %      fitpredict               - runs the corresponding algorithm,
     %                                   fitting the model and testing it in a dataset.
     %      fit                        - Fits a model from training data
     %      predict                    - Performs label prediction

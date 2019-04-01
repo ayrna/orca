@@ -3,7 +3,7 @@ classdef SVMOP < Algorithm
     % regression (by binary decomposition). This class uses libsvm-weights
     % for SVM training (https://www.csie.ntu.edu.tw/~cjlin/libsvm).
     %   SVMOP methods:
-    %      runAlgorithm               - runs the corresponding algorithm,
+    %      fitpredict               - runs the corresponding algorithm,
     %                                   fitting the model and testing it in a dataset.
     %      fit                        - Fits a model from training data
     %      predict                    - Performs label prediction

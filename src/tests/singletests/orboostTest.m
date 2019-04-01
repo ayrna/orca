@@ -10,7 +10,7 @@ algorithmObj = ORBoost();
 clear param;
 
 % Run the algorithm
-info = algorithmObj.runAlgorithm(train,test);
+info = algorithmObj.fitpredict(train,test);
 
 trainCM = confusionmat(info.predictedTrain,train.targets);
 testCM = confusionmat(info.predictedTest,test.targets);

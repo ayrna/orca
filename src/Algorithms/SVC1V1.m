@@ -4,7 +4,7 @@ classdef SVC1V1 < Algorithm
     %It uses libSVM-weight SVM implementation.
     %
     %   SVC1V1 methods:
-    %      runAlgorithm               - runs the corresponding algorithm,
+    %      fitpredict               - runs the corresponding algorithm,
     %                                   fitting the model and testing it in a dataset.
     %      fit                        - Fits a model from training data
     %      predict                    - Performs label prediction

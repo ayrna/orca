@@ -12,7 +12,7 @@ classdef NNOP < Algorithm
     % parameter "lambda" is included based on L2, and the number of
     % iterations is specified by the "iter" parameter.
     %   NNPOM methods:
-    %      runAlgorithm               - runs the corresponding algorithm,
+    %      fitpredict               - runs the corresponding algorithm,
     %                                   fitting the model and testing it
     %                                   in a dataset.
     %      fit                        - Fits a model from training data

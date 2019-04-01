@@ -14,7 +14,7 @@ clear param;
 param.hiddenN = 50;
 
 % Run the algorithm
-info = algorithmObj.runAlgorithm(train,test,param);
+info = algorithmObj.fitpredict(train,test,param);
 
 trainCM = confusionmat(info.predictedTrain,train.targets);
 testCM = confusionmat(info.predictedTest,test.targets);

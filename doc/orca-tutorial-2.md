@@ -81,7 +81,7 @@ We can apply a simple method, [POM](../src/Algorithms/POM.m) [2], to check the a
 >> test.targets = testMelanoma(:,end);
 >> addpath Algorithms;
 >> algorithmObj = POM();
->> info = algorithmObj.runAlgorithm(train,test);
+>> info = algorithmObj.fitpredict(train,test);
 >> addpath Measures
 >> CCR.calculateMetric(info.predictedTest,test.targets)
 
@@ -142,7 +142,7 @@ ans =
    -0.3708   -0.6797    0.8863    0.4503
    -0.7856   -0.8335   -1.5715   -1.0839
 
->> info = algorithmObj.runAlgorithm(trainStandarized,testStandarized);
+>> info = algorithmObj.fitpredict(trainStandarized,testStandarized);
 >> CCR.calculateMetric(info.predictedTest,test.targets)
 
     ans =
@@ -160,7 +160,7 @@ The results have not improved in this specific case. The static method `DataSet.
 >> [train,test] = DataSet.deleteConstantAtributes(train,test);
 >> [train,test] = DataSet.standarizeData(train,test);
 >> [train,test] = DataSet.deleteNonNumericValues(train,test);
->> info = algorithmObj.runAlgorithm(train,test);
+>> info = algorithmObj.fitpredict(train,test);
 >> CCR.calculateMetric(info.predictedTest,test.targets)
 
 ans =
@@ -197,7 +197,7 @@ ORCA includes one algorithm following this approach based on support vector mach
 We can check the performance of this model in the melanoma dataset:
 ```Matlab
 >> algorithmObj = SVR();
-info = algorithmObj.runAlgorithm(train,test,struct('C',10,'k',0.001,'e',0.01));
+info = algorithmObj.fitpredict(train,test,struct('C',10,'k',0.001,'e',0.01));
 fprintf('\nSupport Vector Regression\n---------------\n');
 fprintf('SVR Accuracy: %f\n', CCR.calculateMetric(test.targets,info.predictedTest));
 fprintf('SVR MAE: %f\n', MAE.calculateMetric(test.targets,info.predictedTest));
@@ -279,7 +279,7 @@ for C=10.^(-3:1:3)
    for k=10.^(-3:1:3)
        for e=10.^(-3:1:3)
            param = struct('C',C,'k',k,'e',e);
-           info = algorithmObj.runAlgorithm(train,test,param);
+           info = algorithmObj.fitpredict(train,test,param);
            accuracy = CCR.calculateMetric(test.targets,info.predictedTest);
            if accuracy > bestAccuracy
                bestAccuracy = accuracy;
@@ -408,7 +408,7 @@ Both methods consider an RBF kernel with the following two parameters:
 Now, we run the SVC1V1 method:
 ```MATLAB
 >> algorithmObj = SVC1V1();
-info = algorithmObj.runAlgorithm(train,test,struct('C',10,'k',0.001));
+info = algorithmObj.fitpredict(train,test,struct('C',10,'k',0.001));
 fprintf('\nSVC1V1\n---------------\n');
 fprintf('SVC1V1 Accuracy: %f\n', CCR.calculateMetric(test.targets,info.predictedTest));
 fprintf('SVC1V1 MAE: %f\n', MAE.calculateMetric(test.targets,info.predictedTest));
@@ -439,7 +439,7 @@ ans =
 We can also check SVC1VA:
 ```MATLAB
 >> algorithmObj = SVC1VA();
-info = algorithmObj.runAlgorithm(train,test,struct('C',10,'k',0.001));
+info = algorithmObj.fitpredict(train,test,struct('C',10,'k',0.001));
 fprintf('\nSVC1VA\n---------------\n');
 fprintf('SVC1VA Accuracy: %f\n', CCR.calculateMetric(test.targets,info.predictedTest));
 fprintf('SVC1VA MAE: %f\n', MAE.calculateMetric(test.targets,info.predictedTest));
@@ -478,7 +478,7 @@ The method is called [Cost Sensitive SVC (CSSVC)](../src/Algorithms/CSSVC.m) [3]
 
 ```MATLAB
 >> algorithmObj = CSSVC();
-info = algorithmObj.runAlgorithm(train,test,struct('C',10,'k',0.001));
+info = algorithmObj.fitpredict(train,test,struct('C',10,'k',0.001));
 fprintf('\nCSSVC\n---------------\n');
 fprintf('CSSVC Accuracy: %f\n', CCR.calculateMetric(test.targets,info.predictedTest));
 fprintf('CSSVC MAE: %f\n', MAE.calculateMetric(test.targets,info.predictedTest));
@@ -547,7 +547,7 @@ The same parameter values are considered for all subproblems, although the resul
 
 ```MATLAB
 >> algorithmObj = SVMOP();
-info = algorithmObj.runAlgorithm(train,test,struct('C',10,'k',0.001));
+info = algorithmObj.fitpredict(train,test,struct('C',10,'k',0.001));
 fprintf('\nSVMOP\n---------------\n');
 fprintf('SVMOP Accuracy: %f\n', CCR.calculateMetric(test.targets,info.predictedTest));
 fprintf('SVMOP MAE: %f\n', MAE.calculateMetric(test.targets,info.predictedTest));
@@ -587,7 +587,7 @@ The algorithm can be configured using different activation functions for the hid
 Now, we perform a test for training ELMOP (note that ELMOP is not deterministic, this is, the results may vary among different runs of the algorithm):
 ```MATLAB
 >> algorithmObj = ELMOP('activationFunction','sig');
-info = algorithmObj.runAlgorithm(train,test,struct('hiddenN',20));
+info = algorithmObj.fitpredict(train,test,struct('hiddenN',20));
 fprintf('\nELMOP\n---------------\n');
 fprintf('ELMOP Accuracy: %f\n', CCR.calculateMetric(test.targets,info.predictedTest));
 fprintf('ELMOP MAE: %f\n', MAE.calculateMetric(test.targets,info.predictedTest));
@@ -631,7 +631,7 @@ Three parameters have to be specified in this case:
 This is an example of execution of NNOP (note that results may vary among different runs):
 ```MATLAB
 >> algorithmObj = NNOP();
-info = algorithmObj.runAlgorithm(train,test,struct('hiddenN',20,'iter',500,'lambda',0.1));
+info = algorithmObj.fitpredict(train,test,struct('hiddenN',20,'iter',500,'lambda',0.1));
 fprintf('\nNNOP\n---------------\n');
 fprintf('NNOP Accuracy: %f\n', CCR.calculateMetric(test.targets,info.predictedTest));
 fprintf('NNOP MAE: %f\n', MAE.calculateMetric(test.targets,info.predictedTest));
@@ -682,7 +682,7 @@ The base algorithm used can be configured by the user in the constructor, but it
 
 ```MATLAB
 >> algorithmObj = OPBE('base_algorithm','SVORIM');
-info = algorithmObj.runAlgorithm(train,test,struct('C',10,'k',0.001));
+info = algorithmObj.fitpredict(train,test,struct('C',10,'k',0.001));
 fprintf('\nOPBE\n---------------\n');
 fprintf('OPBE Accuracy: %f\n', CCR.calculateMetric(test.targets,info.predictedTest));
 fprintf('OPBE MAE: %f\n', MAE.calculateMetric(test.targets,info.predictedTest));

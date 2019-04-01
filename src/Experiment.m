@@ -68,10 +68,10 @@ classdef Experiment < handle
                 Optimals = obj.crossValideParams(train);
                 c2 = clock;
                 crossvaltime = etime(c2,c1);
-                totalResults = obj.method.runAlgorithm(train, test, Optimals);
+                totalResults = obj.method.fitpredict(train, test, Optimals);
                 totalResults.crossvaltime = crossvaltime;
             else
-                totalResults = obj.method.runAlgorithm(train, test);
+                totalResults = obj.method.fitpredict(train, test);
             end
             
             obj.saveResults(totalResults);            

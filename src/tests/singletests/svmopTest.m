@@ -22,7 +22,7 @@ param.C = 10;
 param.k = 10;
 
 % Run the algorithm
-info = algorithmObj.runAlgorithm(train,test,param);
+info = algorithmObj.fitpredict(train,test,param);
 
 trainCM = confusionmat(info.predictedTrain,train.targets);
 testCM = confusionmat(info.predictedTest,test.targets);

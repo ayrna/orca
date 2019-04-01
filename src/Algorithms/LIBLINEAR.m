@@ -3,7 +3,7 @@ classdef LIBLINEAR < Algorithm
     %regression, more information at https://www.csie.ntu.edu.tw/~cjlin/liblinear/.
     %
     %   LIBLINEAR methods:
-    %      runAlgorithm               - runs the corresponding algorithm,
+    %      fitpredict               - runs the corresponding algorithm,
     %                                   fitting the model and testing it in a dataset.
     %      fit                        - Fits a model from training data
     %      predict                    - Performs label prediction
