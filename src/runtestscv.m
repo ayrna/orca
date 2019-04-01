@@ -39,7 +39,7 @@ for i=1:length(files)
 	if (exist ('OCTAVE_VERSION', 'builtin') > 0)
 		clear -x tests_dir files i
     else
-		clearvars -except tests_dir
+		clearvars -except tests_dir files i
     end
     exp_dir = Utilities.runExperiments([tests_dir '/'  files(i).name], 'parallel', false);
     try

@@ -32,9 +32,9 @@ test.targets = test_toy(:,end);
 for i=1:length(files)
     % Clear (almost) all the variables to avoid issues with some mex files in Octave +4.2.2
     if (exist ('OCTAVE_VERSION', 'builtin') > 0)
-		clear -x tests_dir files i train test
+      clear -x tests_dir files i train test
     else
-		clearvars -except tests_dir files i train test 
+		  clearvars -except tests_dir files i train test 
     end
     fprintf('==============================================\n');
     cmd = files(i).name;
