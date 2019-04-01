@@ -97,7 +97,7 @@ for ff = 1:numTests
             param = [];
         end
         
-        model = alg.runAlgorithm(auxTrain, auxTest, param);
+        model = alg.fitpredict(auxTrain, auxTest, param);
         
         result(ff,i) = opt.metric.calculateCrossvalMetric(auxTest.targets, model.predictedTest);
     end

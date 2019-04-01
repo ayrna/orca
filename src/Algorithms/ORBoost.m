@@ -3,7 +3,7 @@ classdef ORBoost < Algorithm
     %uses orensemble implementation at http://www.work.caltech.edu/~htlin/program/orensemble/
     %
     %   ORBoost methods:
-    %      runAlgorithm               - runs the corresponding algorithm,
+    %      fitpredict               - runs the corresponding algorithm,
     %                                   fitting the model and testing it in a dataset.
     %      fit                        - Fits a model from training data
     %      predict                    - Performs label prediction

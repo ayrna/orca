@@ -63,7 +63,7 @@ test.targets = testMelanoma(:,end);
 algorithmObj = POM();
 
 % Train POM
-info = algorithmObj.runAlgorithm(train,test);
+info = algorithmObj.fitpredict(train,test);
 
 % Evaluate the model
 fprintf('POM method\n---------------\n');
@@ -186,8 +186,8 @@ Three parameters must be specified in this case:
 algorithmObj = NNPOM();
 
 % Train NNPOM
-info = algorithmObj.runAlgorithm(train,test,struct('hiddenN',20,'iter',500,'lambda',0.1));
-info = algorithmObj.runAlgorithm(train,test,struct('hiddenN',20,'iter',500,'lambda',0.1));
+info = algorithmObj.fitpredict(train,test,struct('hiddenN',20,'iter',500,'lambda',0.1));
+info = algorithmObj.fitpredict(train,test,struct('hiddenN',20,'iter',500,'lambda',0.1));
 
 
 % Evaluate the model
@@ -287,7 +287,7 @@ We are going to test both methods:
 algorithmObj = SVORIM();
 
 % Train SVORIM
-info = algorithmObj.runAlgorithm(train,test,struct('C',10,'k',0.001));
+info = algorithmObj.fitpredict(train,test,struct('C',10,'k',0.001));
 
 % Evaluate the model
 fprintf('SVORIM method\n---------------\n');
@@ -304,7 +304,7 @@ svorimThresholds = info.model.thresholds;
 algorithmObj = SVOREX();
 
 % Train SVOREX
-info = algorithmObj.runAlgorithm(train,test,struct('C',10,'k',0.001));
+info = algorithmObj.fitpredict(train,test,struct('C',10,'k',0.001));
 
 % Evaluate the model
 fprintf('SVOREX method\n---------------\n');
@@ -359,7 +359,7 @@ Fine tuning a bit the parameters, we can improve the results:
 algorithmObj = SVORIM();
 
 % Train SVORIM
-info = algorithmObj.runAlgorithm(train,test,struct('C',200,'k',0.001));
+info = algorithmObj.fitpredict(train,test,struct('C',200,'k',0.001));
 
 % Evaluate the model
 fprintf('SVORIM method improved\n---------------\n');
@@ -382,7 +382,7 @@ The reduction from ordinal regression to binary SVM classifiers (REDSVM) [4] is 
 algorithmObj = REDSVM();
 
 % Train REDSVM
-info = algorithmObj.runAlgorithm(train,test,struct('C',10,'k',0.001));
+info = algorithmObj.fitpredict(train,test,struct('C',10,'k',0.001));
 
 % Evaluate the model
 fprintf('REDSVM method\n---------------\n');
@@ -415,7 +415,7 @@ for m = 1:size(Metrics,2)
             error=0;
             for ff = 1:nFolds
                 param = struct('C',C,'k',k);
-                info = algorithmObj.runAlgorithm(train,test,param);
+                info = algorithmObj.fitpredict(train,test,param);
                 error = error + mObj.calculateMetric(test.targets,info.predictedTest);
 
             end
@@ -508,7 +508,7 @@ Let try KDLOR in the melanoma dataset:
 algorithmObj = KDLOR('kernelType','rbf');
 
 % Train KDLOR
-info = algorithmObj.runAlgorithm(train,test,struct('C',1,'k',0.001,'u',0.01));
+info = algorithmObj.fitpredict(train,test,struct('C',1,'k',0.001,'u',0.01));
 
 % Evaluate the model
 fprintf('KDLOR method\n---------------\n');
@@ -576,7 +576,7 @@ This is the code for running ORBoost with the melanoma diagnosis dataset:
 algorithmObj = ORBoost('weights',true);
 
 % Train ORBoost
-info = algorithmObj.runAlgorithm(train,test);
+info = algorithmObj.fitpredict(train,test);
 
 % Evaluate the model
 fprintf('ORBoost method\n---------------\n');
@@ -606,7 +606,7 @@ newTest.targets = train.targets;
 [newTrain,newTest] = DataSet.deleteNonNumericValues(newTrain,newTest);
 % Train the final POM model
 algorithmObj = POM();
-info = algorithmObj.runAlgorithm(newTrain,newTest);
+info = algorithmObj.fitpredict(newTrain,newTest);
 % Evaluate the ensemble
 fprintf('SVORIM+SVOREX+POM method\n---------------\n');
 fprintf('SVORIM+SVOREX+POM Accuracy: %f\n', CCR.calculateMetric(test.targets,info.predictedTest));

@@ -13,10 +13,10 @@ classdef Algorithm < handle
         model = [];
     end
     methods
-        function mInf = runAlgorithm(obj,train, test, param)
-            %RUNALGORITHM runs the corresponding algorithm, fitting the
+        function mInf = fitpredict(obj,train, test, param)
+            %FITPREDICT runs the corresponding algorithm, fitting the
             %model and testing it in a dataset.
-            %   mInf = RUNALGORITHM(OBJ, TRAIN, TEST, PARAMETERS) learns a
+            %   mInf = FITPREDICT(OBJ, TRAIN, TEST, PARAMETERS) learns a
             %   model with TRAIN data and PARAMETERS as hyper-parameter
             %   structure of values for the method. It tests the
             %   generalization performance with TRAIN and TEST data and

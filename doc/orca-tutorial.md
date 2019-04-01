@@ -8,7 +8,7 @@
 		2. [Hyper-parameter optimization](#hyper-parameter-optimization)
 		3. [Experimental results and reports](#experimental-results-and-reports)
 	2. [Running algorithms with ORCA API](#running-algorithms-with-orca-api)
-		1. [Run a pair of train-test files with runAlgorithm](#run-a-pair-of-train-test-files-with-runalgorithm)
+		1. [Run a pair of train-test files with fitpredict](#run-a-pair-of-train-test-files-with-runalgorithm)
 		2. [Using performance metrics](#using-performance-metrics)
 		3. [Visualizing projections](#visualizing-projections)
 		4. [Visualizing projections and decision thresholds](#visualizing-projections-and-decision-thresholds)
@@ -262,11 +262,11 @@ If you provide the option `report_sum = true` in `{general-conf}`, additionally 
 
 ## Running algorithms with ORCA API
 
-### Run a pair of train-test files with runAlgorithm
+### Run a pair of train-test files with fitpredict
 
-ORCA algorithms can be used from your own Matlab code. All algorithms included in the [Algorithms](../src/Algorithms) have a `runAlgorithm` method, which can be used for running the algorithms with your data. The method receives a structure with the matrix of training data and labels, the equivalent for test data and a structure with the values of the parameters associated to the method. With respect to other tools, parameters are a mandatory argument for the method to avoid the use of default values.
+ORCA algorithms can be used from your own Matlab code. All algorithms included in the [Algorithms](../src/Algorithms) have a `fitpredict` method, which can be used for running the algorithms with your data. The method receives a structure with the matrix of training data and labels, the equivalent for test data and a structure with the values of the parameters associated to the method. With respect to other tools, parameters are a mandatory argument for the method to avoid the use of default values.
 
-For example, the [KDLOR (Kernel Discriminant Learning for Ordinal Regression)](../src/Algorithms/KDLOR.m) [5]  method has a total of five parameters. Two of them (the type of kernel, `kernelType`, and the optimisation routine considered, `optimizationMethod`) are received in the constructor of the corresponding class, and the other three parameters (cost, `C`, kernel parameter, `k`, and value to avoid singularities, `u`) are supposed to have to be fine-tuned for each dataset and partition, so they are received in a structure passed to the `runAlgorithm` method. This an example of execution of KDLOR from the Matlab console:
+For example, the [KDLOR (Kernel Discriminant Learning for Ordinal Regression)](../src/Algorithms/KDLOR.m) [5]  method has a total of five parameters. Two of them (the type of kernel, `kernelType`, and the optimisation routine considered, `optimizationMethod`) are received in the constructor of the corresponding class, and the other three parameters (cost, `C`, kernel parameter, `k`, and value to avoid singularities, `u`) are supposed to have to be fine-tuned for each dataset and partition, so they are received in a structure passed to the `fitpredict` method. This an example of execution of KDLOR from the Matlab console:
 ```MATLAB
 >> cd src/
 >> addpath Algorithms/
@@ -298,7 +298,7 @@ param =
     C: 10
     k: 0.1000
     u: 1.0000e-03
->> info = kdlorAlgorithm.runAlgorithm(train,test,param);
+>> info = kdlorAlgorithm.fitpredict(train,test,param);
 >> info
 
 info =
@@ -395,10 +395,10 @@ Many ordinal regression methods belong to the category of threshold methods, whi
 
 ```MATLAB
 figure; hold on;
-info1 = kdlorAlgorithm.runAlgorithm(train,test,param);
+info1 = kdlorAlgorithm.fitpredict(train,test,param);
 h1 = histogram(info1.projectedTest,30);
 param.k = 10;
-info2 = kdlorAlgorithm.runAlgorithm(train,test,param);
+info2 = kdlorAlgorithm.fitpredict(train,test,param);
 h2 = histogram(info2.projectedTest,30);
 legend('KDLOR k=0.1','KDLOR k=10', 'Location','NorthWest')
 hold off;
@@ -424,7 +424,7 @@ The `model` structure stores decision thresholds in the field thresholds. Starti
 
 ```MATLAB
 % Run algorithm
-info1 = kdlorAlgorithm.runAlgorithm(train,test,param);
+info1 = kdlorAlgorithm.fitpredict(train,test,param);
 amaeTest1 = AMAE.calculateMetric(test.targets,info1.predictedTest);
 % Build legend text
 msg{1} = sprintf('KDLOR k=%f. AMAE=%f', param.k, amaeTest1);

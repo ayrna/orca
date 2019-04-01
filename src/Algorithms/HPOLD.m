@@ -6,7 +6,7 @@ classdef HPOLD < Algorithm
     %regression and suport vector machine. For additional details see [1].
     %
     %   SVR methods:
-    %      runAlgorithm               - runs the corresponding algorithm,
+    %      fitpredict               - runs the corresponding algorithm,
     %                                   fitting the model and testing it in a dataset.
     %      fit                        - Fits a model from training data
     %      predict                    - Performs label prediction

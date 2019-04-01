@@ -2,6 +2,11 @@ language: c
 group: travis_latest
 dist: xenial
 
+# safelist
+branches:
+  only:
+  - master
+  
 before_install:
   - sudo add-apt-repository ppa:octave/stable -y
   - sudo apt-get update -q
