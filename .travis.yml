@@ -1,6 +1,10 @@
 language: c
 group: travis_latest
 dist: xenial
+
+before_install:
+  - sudo add-apt-repository ppa:octave/stable -y
+  - sudo apt-get update -q
   
 addons:
   apt:
@@ -16,6 +20,5 @@ matrix:
   
 script:
 - gcc --version
-- g++ --version
 - octave-cli --version
 - octave-cli install_octave.m
