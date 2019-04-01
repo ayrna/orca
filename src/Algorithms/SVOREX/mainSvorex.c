@@ -436,7 +436,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 		}
 
 	}*/
-	for(i=0;i<4;i++)
+	for(i=0;i<nlhs;i++)
 	{
 	
 		if(i==0)
