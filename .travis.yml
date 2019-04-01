@@ -1,0 +1,21 @@
+language: c
+group: travis_latest
+dist: xenial
+  
+addons:
+  apt:
+    packages:
+    - octave
+    - liboctave-dev
+    - gcc
+    - g++
+
+matrix:
+  include:
+  - os: linux
+  
+script:
+- gcc --version
+- g++ --version
+- octave-cli --version
+- octave-cli install_octave.m
