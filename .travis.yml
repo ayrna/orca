@@ -6,6 +6,7 @@ dist: xenial
 branches:
   only:
   - master
+  - develop
   
 before_install:
   - sudo add-apt-repository ppa:octave/stable -y
