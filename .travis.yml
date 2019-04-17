@@ -7,7 +7,12 @@ branches:
   only:
   - master
   - develop
-  
+
+# blocklist
+branches:
+  except:
+  - jupyter-tutorials
+
 before_install:
   - sudo add-apt-repository ppa:octave/stable -y
   - sudo apt-get update -q
