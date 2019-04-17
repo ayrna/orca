@@ -16,7 +16,7 @@
 
 # Threshold models
 
-This tutorial will cover how to apply threshold models in the framework ORCA. It is highly recommended to have previously completed the [how to tutorial](orca-tutorial.md).
+This tutorial will cover how to apply threshold models in the framework ORCA. It is highly recommended to have previously completed the [how to tutorial](orca-tutorial-1.md).
 
 Moreover, we are going to work again with melanoma diagnosis dataset. You should complete at least [the second section of the second tutorial](orca-tutorial-2.md#loading-the-dataset-and-performing-some-preliminary-experiments) in order to follow this third tutorial.
 

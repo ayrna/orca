@@ -73,7 +73,7 @@ If you prefer to build `mex` files from the Linux shell, you can use standard `m
 
 ## Installation testing
 
-We provide a set of basic tests to for checking that all the algorithms work, both using ORCA's API and experiment scripts (see [tutorial](orca-tutorial.md) for more information).
+We provide a set of basic tests to for checking that all the algorithms work, both using ORCA's API and experiment scripts (see [tutorial](orca-tutorial-1.md) for more information).
 
 The way to run the tests checking the API (see [single test scripts](../src/tests/singletests/)) is the following (running time is ~12 seconds):
 
