@@ -20,6 +20,8 @@ before_install:
   - pip install --upgrade pip
   - pip install --user jupyter
   - pip install --user octave_kernel
+  - pip install --user jupyter_contrib_nbextensions
+
   
 addons:
   apt:
