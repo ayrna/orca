@@ -74,7 +74,7 @@ classdef POM < Algorithm
         function [projectedTrain, predictedTrain]= privfit( obj,train,parameters)
             %PRIVFIT trains the model for the POM method with TRAIN data and
             %vector of parameters PARAMETERS. 
-            nOfClasses = numel(unique(train.targets));
+            nOfClasses = numel(unique(train.targetas));
             % TODO: Debug size octave
             if exist ('OCTAVE_VERSION', 'builtin') > 0
                 pkg load statistics;
