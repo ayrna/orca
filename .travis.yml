@@ -39,5 +39,10 @@ script:
 - gcc --version
 - octave-cli --version
 - octave-cli install_octave.m
-- cd doc && ./test_notebooks.sh
+- cd doc
+- jupyter nbconvert --to script orca-tutorial-1.ipynb
+- octave-cli orca-tutorial-1.m
+- jupyter nbconvert --to script orca-tutorial-2.ipynb
+- octave-cli orca-tutorial-2.m
+
 
