@@ -15,8 +15,8 @@ end
 
 disp('== Compile C/C++ source... ==')
 cd src/Algorithms
-%make
-%make clean
+make
+make clean
 cd ..
 
 disp('== Run basic tests... == ')
