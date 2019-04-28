@@ -5,5 +5,6 @@ if ~isempty(errmsg)
 \nApparently this is the only way to return an error code to \
 \nthe operating system.\n")
     printf("==\n")
-	exit(1)
+    printf("%s\n", lasterr());
+    exit(1)
 end
