@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/ayrna/orca.svg?branch=master)](https://travis-ci.org/ayrna/orca)
+[![LICENSE](https://img.shields.io/badge/license-Anti%20996-blue.svg)](https://github.com/996icu/996.ICU/blob/master/LICENSE)
 
 ![ORCA logo](doc/orca_small.png)
 <!-- TOC depthFrom:1 depthTo:6 withLinks:1 updateOnSave:1 orderedList:1 -->
