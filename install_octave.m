@@ -18,15 +18,3 @@ cd src/Algorithms
 make
 make clean
 cd ..
-
-disp('== Run basic tests... == ')
-
-runtestssingle
-
-if isempty(lasterr())
-	printf('== All test passed! == \n')
-else
-	printf('== ERRORS found. Exit with error code == \n')
-	printf('%s ', lasterr())
-	exit(1)
-end
