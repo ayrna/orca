@@ -61,18 +61,18 @@ For more information about our research group please visit [Learning and Artific
 # Installation, tutorials and documentation
 
 The documentation can be found in the [doc](doc) folder and includes:
-  - A [quick installation guide of ORCA](doc/orca-quick-install.md) and the associated [build troubleshooting](doc/orca-install.md). Binaries are available for downloading in the [release page](https://github.com/ayrna/orca/releases).
+  - A [quick installation guide of ORCA](doc/orca_quick_install.md) and the associated [build troubleshooting](doc/orca_install.md). Binaries are available for downloading in the [release page](https://github.com/ayrna/orca/releases).
   - A first ['how to' tutorial](doc/orca-tutorial-1.md) to get started with ORCA.
   - A specific [tutorial for naive approaches and decomposition methods](doc/orca-tutorial-2.md) covering the different considerations needed for these methods.
   - A [tutorial for threshold models](doc/orca-tutorial-3.md) examining the differences of these models.
-  - A tutorial on how to [paralelize ORCA experiments](doc/orca-parallel.md).
-  - A tutorial to [use ORCA with HTCondor](doc/orca-condor.md).
-  - An example of how to [add a new method to ORCA](doc/orca-addmethod.md).
+  - A tutorial on how to [paralelize ORCA experiments](doc/orca_parallel.md).
+  - A tutorial to [use ORCA with HTCondor](doc/orca_condor.md).
+  - An example of how to [add a new method to ORCA](doc/orca_addmethod.md).
   - An additional branch that includes other methods ready to use in ORCA. Visit [orca-extra-methods branch](https://github.com/ayrna/orca/tree/orca-extra-methods).
 
 # Methods included
 
-The [Algorithms](src/Algorithms) folder includes the MATLAB classes for the algorithms included and the original code (if applicable). The [config-files](src/config-files) folder includes different configuration files for running all the algorithms. In order to use these files, the [datasets](http://www.uco.es/grupos/ayrna/ucobigfiles/datasets-orreview.zip) used in the previously cited review paper are needed. To add your own method see [Adding a new method to ORCA](doc/orca-addmethod.md).
+The [Algorithms](src/Algorithms) folder includes the MATLAB classes for the algorithms included and the original code (if applicable). The [config-files](src/config-files) folder includes different configuration files for running all the algorithms. In order to use these files, the [datasets](http://www.uco.es/grupos/ayrna/ucobigfiles/datasets-orreview.zip) used in the previously cited review paper are needed. To add your own method see [Adding a new method to ORCA](doc/orca_addmethod.md).
 
 ## Ordinal regression algorithms
 

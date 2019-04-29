@@ -1,6 +1,6 @@
 # ORCA detailed build and troubleshooting
 
-This a detailed install guide. If you have not done it yet, please try the [Quick Install steps](orca-quick-install.md) before continuing. After this, if you are here, that means that there have been some errors when building the `mex` files.
+This a detailed install guide. If you have not done it yet, please try the [Quick Install steps](orca_quick_install.md) before continuing. After this, if you are here, that means that there have been some errors when building the `mex` files.
 
 ## Building `mex` files in GNU/Linux
 

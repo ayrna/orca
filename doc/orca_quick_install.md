@@ -12,7 +12,7 @@
 
 # Installing ORCA
 
-This is a **quick installation** guide. If you experiment any problems, please read the [detailed installation guide](orca-install.md). ORCA has been developed and tested in GNU/Linux systems and ported to Windows. It works in Mac using GNU compilers. It has been tested in MATLAB R2009a-R2017b and Octave >4.0.
+This is a **quick installation** guide. If you experiment any problems, please read the [detailed installation guide](orca_install.md). ORCA has been developed and tested in GNU/Linux systems and ported to Windows. It works in Mac using GNU compilers. It has been tested in MATLAB R2009a-R2017b and Octave >4.0.
 
 ## Installation requirements
 
@@ -108,4 +108,4 @@ Test passed for svr
 All tests ended successfully
 ```
 
-If any of these tests fail, please read the [detailed installation guide](orca-install.md).
+If any of these tests fail, please read the [detailed installation guide](orca_install.md).

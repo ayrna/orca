@@ -390,7 +390,7 @@ ans =
 Experiments/exp-2018-1-20-17-38-22
 ```
 
-Note that the number of experiments is crucial, so the execution can take a considerable amount of time. To accelerate the experiments you can use multiple cores of your CPU (see this [page](orca-parallel.md)).
+Note that the number of experiments is crucial, so the execution can take a considerable amount of time. To accelerate the experiments you can use multiple cores of your CPU (see this [page](orca_parallel.md)).
 
 
 ### Nominal classification (SVC1V1 and SVC1VA)
