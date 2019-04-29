@@ -20,7 +20,7 @@ then
   echo "Test simple OK in logs"
 else
   echo "Test simple ERROR in logs!" 
-  exit $status
+  exit $n_errors
 fi
 
 ## Test notebooks
@@ -45,7 +45,7 @@ then
   echo "Test notebook 1 OK in logs"
 else
   echo "Test notebook 1 ERROR in logs!" 
-  exit $status
+  exit $n_errors
 fi
 
 # Test notebook 2
@@ -67,5 +67,5 @@ then
   echo "Test notebook 2 OK in logs"
 else
   echo "Test notebook 2 ERROR in logs!" 
-  exit $status
+  exit $n_errors
 fi
