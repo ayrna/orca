@@ -1,11 +1,15 @@
 #!/bin/bash
 ## runtestssingle.m is already tested in install_octave.m and install_matlab.m
 ## Test notebooks
-cd doc
 
-for i in {1..3}
-	jupyter nbconvert --to script orca_tutorial_$i.ipynb
-	octave-cli orca_tutorial_$i.m 2> test.err
+FILES=*.ipynb
+let i=1
+
+for file in $FILES
+do
+	name=`echo "$file" | cut -d'.' -f1`
+	jupyter nbconvert --to script $name.ipynb
+	octave-cli $name.m 2> test.err
 	status=$?
 	if [ $status -eq 0 ]
 	then
@@ -26,4 +30,6 @@ for i in {1..3}
 	  echo "Test notebook $i ERROR in logs!" 
 	  exit $n_errors
 	fi
-do
+	
+	((i++))
+done
