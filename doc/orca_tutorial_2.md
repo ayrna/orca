@@ -20,7 +20,7 @@
 
 # Naive approaches and decomposition methods in orca
 
-This tutorial covers how to apply naive approaches and decomposition methods in ORCA. It is highly recommended to have previously completed the ['how to' tutorial](orca-tutorial.md).
+This tutorial covers how to apply naive approaches and decomposition methods in ORCA. It is highly recommended to have previously completed the ['how to' tutorial](orca-tutorial-1.md).
 
 We are going to test these methods using a melanoma diagnosis dataset based on dermatoscopic images. Melanoma is a type of cancer that develops from the pigment-containing cells known as melanocytes. Usually occurring on the skin, early detection and diagnosis is strongly related to survival rates. The dataset is aimed at predicting the severity of the lesion:
 - A total of `100` image descriptors are used as input features, including features related to shape, colour, pigment network and texture.
@@ -390,7 +390,7 @@ ans =
 Experiments/exp-2018-1-20-17-38-22
 ```
 
-Note that the number of experiments is crucial, so the execution can take a considerable amount of time. To accelerate the experiments you can use multiple cores of your CPU (see this [page](orca-parallel.md)).
+Note that the number of experiments is crucial, so the execution can take a considerable amount of time. To accelerate the experiments you can use multiple cores of your CPU (see this [page](orca_parallel.md)).
 
 
 ### Nominal classification (SVC1V1 and SVC1VA)

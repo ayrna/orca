@@ -25,7 +25,7 @@
 
 ORCA is an experimental framework focused on productivity and experiments reproducibility for machine learning researchers. Although initially created to collect ordinal classification methods, it is also suitable for other classifiers.
 
-First, you will need to install the framework. To do so, please visit [ORCA Quick Install Guide](orca-quick-install.md). Note that you should be able to perform the test when the framework is successfully installed.
+First, you will need to install the framework. To do so, please visit [ORCA Quick Install Guide](orca_quick_install.md). Note that you should be able to perform the test when the framework is successfully installed.
 
 This tutorial uses four small datasets (`pasture`, `pyrim10`, `tae`, `toy`) contained in folder [example data](../exampledata/30-holdout). The datasets are already partitioned with a 30-holdout experimental design.
 
@@ -53,7 +53,7 @@ From the Matlab console, assuming you are on the `src` folder, the set of experi
 ```MATLAB
 Utilities.runExperiments('../doc/tutorial/config-files/pom.ini')
 ```
-The syntax of these files will be explained in the [next subsection](orca-tutorial.md#syntax-of-ini-files). This should produce an output like this:
+The syntax of these files will be explained in the [next subsection](orca-tutorial-1.md#syntax-of-ini-files). This should produce an output like this:
 ```MATLAB
 >> Utilities.runExperiments('../doc/tutorial/config-files/pom.ini')
 Setting up experiments...
@@ -80,7 +80,7 @@ Utilities.runExperiments('../doc/tutorial/config-files/svorim.ini')
 Utilities.runExperiments('../doc/tutorial/config-files/svc1v1.ini')
 ```
 
-Once the experiments are finished, the corresponding results can be found in the `Experiments` subfolder, as described in the [corresponding section](orca-tutorial.md#experimental-results-and-reports) of this tutorial.
+Once the experiments are finished, the corresponding results can be found in the `Experiments` subfolder, as described in the [corresponding section](orca-tutorial-1.md#experimental-results-and-reports) of this tutorial.
 
 Each experiment has a different folder, and each folder should include two CSV files with results similar to the following (some columns are omitted):
 
@@ -167,7 +167,7 @@ algorithm = POM
 `ini` files include **Subsections** to help organize the configuration. These sections are mandatory:
  - `{general-conf}`: generic parameters of the experiment, including the seed considered for random number generation, the directory containing the datasets, the datasets to be processed... All the parameters included here are the same for all the algorithms.
  - `{algorithm-parameters}`: here you can specify the algorithm to run and the parameters which are going to be fixed (not optimized through cross validation).
- - `{algorithm-hyper-parameters-to-cv}`: algorithms' hyper-parameters to optimise. For more details, see [Hyper-parameter optimization](orca-tutorial.md#hyper-parameter-optimization).
+ - `{algorithm-hyper-parameters-to-cv}`: algorithms' hyper-parameters to optimise. For more details, see [Hyper-parameter optimization](orca-tutorial-1.md#hyper-parameter-optimization).
 
 The above file tells ORCA to run the algorithm `POM` for all the datasets specified in the list `datasets`. You can also use `datasets = all` to process all the datasets in `basedir`). Each of these datasets should be found at folder `basedir`, in such a way that ORCA expects one subfolder for each dataset, where the name of the subfolder must match the name of the dataset. Other directives are:
  - INI section `[pom-real]` sets the experiment identifier.
@@ -603,7 +603,7 @@ The source code of this example is in [exampleERAHHoldout.m](../src/code-example
 
 ---
 
-***Exercise 4***: train classifiers for both `ERA` and `ESL` datasets, using the same experimental design you used in the [experiment section](orca-tutorial.md#launch-experiments-through-ini-files). Compare the results obtained for both datasets. Generate bar plots for comparing accuracy and AMAE. Which one is better classified? Which one is better ordered?
+***Exercise 4***: train classifiers for both `ERA` and `ESL` datasets, using the same experimental design you used in the [experiment section](orca-tutorial-1.md#launch-experiments-through-ini-files). Compare the results obtained for both datasets. Generate bar plots for comparing accuracy and AMAE. Which one is better classified? Which one is better ordered?
 
 ---
 

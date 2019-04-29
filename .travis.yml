@@ -7,11 +7,21 @@ branches:
   only:
   - master
   - develop
-  
+
+# blocklist
+branches:
+  except:
+  - jupyter-tutorials
+
 before_install:
   - sudo add-apt-repository ppa:octave/stable -y
   - sudo apt-get update -q
-  - sudo apt-get install octave liboctave-dev -y
+  - sudo apt-get install octave liboctave-dev gnuplot-qt python-pip -y
+  - pip install --user --upgrade pip
+  - pip install --user jupyter
+  - pip install --user octave_kernel
+  - pip install --user jupyter_contrib_nbextensions
+
   
 addons:
   apt:
@@ -29,3 +39,5 @@ script:
 - gcc --version
 - octave-cli --version
 - octave-cli install_octave.m
+- cd doc
+- ./test_notebooks.sh
