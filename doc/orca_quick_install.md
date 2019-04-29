@@ -12,7 +12,7 @@
 
 # Installing ORCA
 
-This is a **quick installation** guide. If you experiment any problems, please read the [detailed installation guide](orca-install.md). ORCA has been developed and tested in GNU/Linux systems and ported to Windows. It works in Mac using GNU compilers. It has been tested in MATLAB R2009a-R2017b and Octave >4.0.
+This is a **quick installation** guide. If you experiment any problems, please read the [detailed installation guide](orca_install.md). ORCA has been developed and tested in GNU/Linux systems and ported to Windows. It works in Mac using GNU compilers. It has been tested in MATLAB R2009a-R2017b and Octave >4.0.
 
 ## Installation requirements
 
@@ -21,23 +21,9 @@ In order to use ORCA you need:
 * GNU `gcc` and `g++`
 * MATLAB/Octave (Octave >= 4.0), including `mex`.
   * MATLAB toolboxes: Statistics and Machine Learning
-  * Octave packages: statistics,optim,liboctave-dev. These can be easily installed with `pkg install -forge optim` and so on. Depending on your GNU/Linux distribution you may also have to install `liboctave-dev` with your distribution package manager. 
+  * Octave packages (ORCA will install them for you): statistics, optim and dependencies io, struct. Depending on your GNU/Linux distribution you may also have to install `liboctave-dev` with your distribution package manager.
 
-For instance, to install Octave and the required packages in Ubuntu 18.10: 
-
-```bash
-$ sudo apt-get install Octave liboctave-dev
-```
-
-And then, in the Octave console: 
-
-```MATLAB
-> pkg install -forge struct
-> pkg install -forge io
-> pkg install -forge optim
-> pkg install -forge statistics
-```
-## Download ORCA
+## Download and install ORCA
 
 To download ORCA you can simply clone this GitHub repository by using the following commands:
 ```bash
@@ -45,6 +31,20 @@ $ git clone https://github.com/ayrna/orca
 ```
 All the contents of the repository can also be downloaded from the GitHub site by using the "Download ZIP" button.
 
+For instance, to install Octave, download and install ORCA in Ubuntu 18.10:
+
+```bash
+$ sudo apt-get install octave liboctave-dev
+$ git clone https://github.com/ayrna/orca.git
+$ cd orca
+$ octave-cli install_octave.m
+```
+
+To install ORCA for MATLAB, from MATLAB console go to ORCA directory and type:
+
+```MATLAB
+> install_matlab.m
+```
 ## Binaries
 
 We provide binary files for several platforms (Debian based and CentOS GNU/Linux and Windows). The compressed files include the git files, so git pull should work. Binaries can be downloaded in the [release page](https://github.com/ayrna/orca/releases).
@@ -108,4 +108,4 @@ Test passed for svr
 All tests ended successfully
 ```
 
-If any of these tests fail, please read the [detailed installation guide](orca-install.md).
+If any of these tests fail, please read the [detailed installation guide](orca_install.md).

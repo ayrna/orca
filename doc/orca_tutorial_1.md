@@ -25,7 +25,7 @@
 
 ORCA is an experimental framework focused on productivity and experiments reproducibility for machine learning researchers. Although initially created to collect ordinal classification methods, it is also suitable for other classifiers.
 
-First, you will need to install the framework. To do so, please visit [ORCA Quick Install Guide](orca-quick-install.md). Note that you should be able to perform the test when the framework is successfully installed.
+First, you will need to install the framework. To do so, please visit [ORCA Quick Install Guide](orca_quick_install.md). Note that you should be able to perform the test when the framework is successfully installed.
 
 This tutorial uses four small datasets (`pasture`, `pyrim10`, `tae`, `toy`) contained in folder [example data](../exampledata/30-holdout). The datasets are already partitioned with a 30-holdout experimental design.
 

@@ -2,7 +2,7 @@
 <html>
 <head><meta charset="utf-8" />
 
-<title>orca-tutorial-2</title>
+<title>orca_tutorial_1</title>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
@@ -13138,16 +13138,33 @@ $( document ).ready(function(){
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Naive-approaches-and-decomposition-methods-in-orca">Naive approaches and decomposition methods in orca<a class="anchor-link" href="#Naive-approaches-and-decomposition-methods-in-orca">&#182;</a></h1><p>This tutorial covers how to apply naive approaches and decomposition methods in ORCA. It is highly recommended to have previously completed the <a href="orca-tutorial-1.ipynb">'how to' tutorial (Notebook)</a>/<a href="orca-tutorial-1.html">'how to' tutorial (HTML)</a>.</p>
-<p>We are going to test these methods using a melanoma diagnosis dataset based on dermatoscopic images. Melanoma is a type of cancer that develops from the pigment-containing cells known as melanocytes. Usually occurring on the skin, early detection and diagnosis is strongly related to survival rates. The dataset is aimed at predicting the severity of the lesion:</p>
-<ul>
-<li>A total of <code>100</code> image descriptors are used as input features, including features related to shape, colour, pigment network and texture.</li>
-<li>The severity is assessed in terms of melanoma thickness, measured by the Breslow index. The problem is tackled as a five-class classification problem, where the first class represents benign lesions, and the remaining four classes represent the different stages of the melanoma (0, I, II and III, where III is the thickest one and the most dangerous).</li>
-</ul>
-<p><img src="tutorial/images/diagram-melanoma-stages.png" alt="Graphical representation of the Breslow index">
-<em>Graphical representation of the Breslow index (source [1])</em></p>
-<p>The dataset from [1] is included in this repository, in a specific <a href="/exampledata/10-fold/melanoma-5classes-abcd-100/matlab">folder</a>. The corresponding script for this tutorial, (<a href="../src/code-examples/exampleMelanoma.m">exampleMelanoma.m</a>), can be found and run in the <a href="../src/code-examples">code example</a> folder.</p>
-<h2 id="Loading-the-dataset-and-performing-some-preliminary-experiments">Loading the dataset and performing some preliminary experiments<a class="anchor-link" href="#Loading-the-dataset-and-performing-some-preliminary-experiments">&#182;</a></h2><p>First, we will load the dataset and examine the label for some of the patterns:</p>
+<h1 id="How-to-use-ORCA">How to use ORCA<a class="anchor-link" href="#How-to-use-ORCA">&#182;</a></h1><p>ORCA is an experimental framework focused on productivity and experiments reproducibility for machine learning researchers. Although initially created to collect ordinal classification methods, it is also suitable for other classifiers.</p>
+<p>First, you will need to install the framework. To do so, please visit <a href="orca-quick-install.md">ORCA Quick Install Guide</a>. Note that you should be able to perform the test when the framework is successfully installed.</p>
+<p>This tutorial uses tree small datasets (<code>pasture</code>, <code>tae</code>, <code>toy</code>) contained in folder <a href="../exampledata/30-holdout">example data</a>. The datasets are already partitioned with a 30-holdout experimental design.</p>
+<p>This tutorial is prepared for running the experiments in Matlab, although it should be easily adapted to Octave.</p>
+<p><em>NOTE:</em></p>
+<p>Small datasets like the ones used in this tutorial usually produce warning messages such as:</p>
+<div class="highlight"><pre><span></span><span class="n">Warning</span><span class="p">:</span> <span class="n">Matrix</span> <span class="n">is</span> <span class="n">close</span> <span class="n">to</span> <span class="n">singular</span> <span class="n">or</span> <span class="n">badly</span> <span class="n">scaled</span><span class="p">.</span> <span class="n">Results</span> <span class="n">may</span> <span class="n">be</span> <span class="n">inaccurate</span><span class="p">.</span> <span class="n">RCOND</span> <span class="p">=</span>
+<span class="mf">1.747151e-17</span><span class="p">.</span>
+<span class="n">Warning</span><span class="p">:</span> <span class="n">Maximum</span> <span class="n">likelihood</span> <span class="n">estimation</span> <span class="n">did</span> <span class="n">not</span> <span class="n">converge</span><span class="p">.</span>  <span class="n">Iteration</span> <span class="n">limit</span>
+<span class="n">exceeded</span><span class="p">.</span>  <span class="n">You</span> <span class="n">may</span> <span class="n">need</span> <span class="n">to</span> <span class="n">merge</span> <span class="n">categories</span> <span class="n">to</span> <span class="n">increase</span> <span class="n">observed</span> <span class="n">counts</span><span class="p">.</span>
+</pre></div>
+<p>You can disable these messages by using the following code in Matlab:</p>
+<div class="highlight"><pre><span></span><span class="n">warning</span><span class="p">(</span><span class="s">&#39;off&#39;</span><span class="p">,</span><span class="s">&#39;MATLAB:nearlySingularMatrix&#39;</span><span class="p">)</span>
+<span class="n">warning</span><span class="p">(</span><span class="s">&#39;off&#39;</span><span class="p">,</span><span class="s">&#39;stats:mnrfit:IterOrEvalLimit&#39;</span><span class="p">)</span>
+</pre></div>
+<p>In Octave, to disable <code>warning: matrix singular to machine precision</code> we need to disable all the warnings:</p>
+<div class="highlight"><pre><span></span><span class="n">warning</span><span class="p">(</span><span class="s">&#39;off&#39;</span><span class="p">,</span><span class="s">&#39;all&#39;</span><span class="p">);</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Launch-experiments-through-ini-files">Launch experiments through <code>ini</code> files<a class="anchor-link" href="#Launch-experiments-through-ini-files">&#182;</a></h2><p>In this section, we run several experiments to compare the performance of three methods in a set of datasets: POM (Proportional Odds Model) [1], SVORIM (Support Vector Machines with IMplicit constrains) [2] and SVC1V1 (SVM classifier with 1-vs-1 binary decomposition) [3]. POM is a linear ordinal model, with limited performance but easy interpretation. SVORIM is an ordinal nonlinear model, with one of the most competitive performances according to several studies. SVC1V1 is the nominal counterpart of SVORIM, so that we can check the benefits of considering the order of the classes. To learn more about ordinal performance metrics see [4].</p>
+<p>From the Octave console load packages and add orca files to path:</p>
 
 </div>
 </div>
@@ -13157,9 +13174,13 @@ $( document ).ready(function(){
 <div class="prompt input_prompt">In&nbsp;[1]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-octave"><pre><span></span><span class="n">trainMelanoma</span> <span class="p">=</span> <span class="nb">load</span><span class="p">(</span><span class="s">&#39;../exampledata/10-fold/melanoma-5classes-abcd-100-fs/matlab/train_melanoma-5classes-abcd-100-fs.2&#39;</span><span class="p">);</span>
-<span class="n">testMelanoma</span> <span class="p">=</span> <span class="nb">load</span><span class="p">(</span><span class="s">&#39;../exampledata/10-fold/melanoma-5classes-abcd-100-fs/matlab/test_melanoma-5classes-abcd-100-fs.2&#39;</span><span class="p">);</span>
-<span class="n">trainMelanoma</span><span class="p">([</span><span class="mi">1</span><span class="p">:</span><span class="mi">5</span> <span class="mi">300</span><span class="p">:</span><span class="mi">305</span><span class="p">],</span><span class="k">end</span><span class="p">)</span>
+<div class=" highlight hl-octave"><pre><span></span><span class="c">% Install dataframe, add src to path and disable some warnings</span>
+<span class="n">pkg</span> <span class="n">install</span> <span class="o">-</span><span class="n">forge</span> <span class="n">dataframe</span>
+<span class="nb">warning</span><span class="p">(</span><span class="s">&#39;off&#39;</span><span class="p">,</span><span class="s">&#39;all&#39;</span><span class="p">);</span>
+
+<span class="nb">addpath</span><span class="p">(</span><span class="s">&#39;../src/Algorithms/&#39;</span><span class="p">)</span>
+<span class="nb">addpath</span><span class="p">(</span><span class="s">&#39;../src/Measures/&#39;</span><span class="p">)</span>
+<span class="nb">addpath</span><span class="p">(</span><span class="s">&#39;../src/&#39;</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -13176,20 +13197,7 @@ $( document ).ready(function(){
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>ans =
-
-   1
-   1
-   1
-   1
-   1
-   2
-   2
-   2
-   2
-   2
-   2
-
+<pre>For information about changes from previous versions of the dataframe package, run &#39;news dataframe&#39;.
 </pre>
 </div>
 </div>
@@ -13201,7 +13209,7 @@ $( document ).ready(function(){
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Although the data is prepared to perform a 10-fold experimental design, we are going to examine the properties of the whole set:</p>
+<p>The set of experiments described in INI file <code>tutorial/config-files/pom.ini</code> can be run by (the syntax of these files will be explained in the <a href="#Syntax-of-ini-files">next subsection</a>):</p>
 
 </div>
 </div>
@@ -13211,10 +13219,126 @@ $( document ).ready(function(){
 <div class="prompt input_prompt">In&nbsp;[2]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-octave"><pre><span></span><span class="n">melanoma</span> <span class="p">=</span> <span class="p">[</span><span class="n">trainMelanoma</span><span class="p">;</span> <span class="n">testMelanoma</span><span class="p">];</span>
+<div class=" highlight hl-octave"><pre><span></span><span class="n">Utilities</span><span class="p">.</span><span class="n">runExperiments</span><span class="p">(</span><span class="s">&#39;tutorial/config-files/pom.ini&#39;</span><span class="p">)</span>
 </pre></div>
 
     </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Setting up experiments...
+Running experiment exp-pom-tutorial-pasture-1.ini
+Running experiment exp-pom-tutorial-pasture-10.ini
+Running experiment exp-pom-tutorial-pasture-11.ini
+Running experiment exp-pom-tutorial-pasture-12.ini
+Running experiment exp-pom-tutorial-pasture-13.ini
+Running experiment exp-pom-tutorial-pasture-14.ini
+Running experiment exp-pom-tutorial-pasture-15.ini
+Running experiment exp-pom-tutorial-pasture-16.ini
+Running experiment exp-pom-tutorial-pasture-17.ini
+Running experiment exp-pom-tutorial-pasture-18.ini
+Running experiment exp-pom-tutorial-pasture-19.ini
+Running experiment exp-pom-tutorial-pasture-2.ini
+Running experiment exp-pom-tutorial-pasture-20.ini
+Running experiment exp-pom-tutorial-pasture-21.ini
+Running experiment exp-pom-tutorial-pasture-22.ini
+Running experiment exp-pom-tutorial-pasture-23.ini
+Running experiment exp-pom-tutorial-pasture-24.ini
+Running experiment exp-pom-tutorial-pasture-25.ini
+Running experiment exp-pom-tutorial-pasture-26.ini
+Running experiment exp-pom-tutorial-pasture-27.ini
+Running experiment exp-pom-tutorial-pasture-28.ini
+Running experiment exp-pom-tutorial-pasture-29.ini
+Running experiment exp-pom-tutorial-pasture-3.ini
+Running experiment exp-pom-tutorial-pasture-30.ini
+Running experiment exp-pom-tutorial-pasture-4.ini
+Running experiment exp-pom-tutorial-pasture-5.ini
+Running experiment exp-pom-tutorial-pasture-6.ini
+Running experiment exp-pom-tutorial-pasture-7.ini
+Running experiment exp-pom-tutorial-pasture-8.ini
+Running experiment exp-pom-tutorial-pasture-9.ini
+Running experiment exp-pom-tutorial-tae-1.ini
+Running experiment exp-pom-tutorial-tae-10.ini
+Running experiment exp-pom-tutorial-tae-11.ini
+Running experiment exp-pom-tutorial-tae-12.ini
+Running experiment exp-pom-tutorial-tae-13.ini
+Running experiment exp-pom-tutorial-tae-14.ini
+Running experiment exp-pom-tutorial-tae-15.ini
+Running experiment exp-pom-tutorial-tae-16.ini
+Running experiment exp-pom-tutorial-tae-17.ini
+Running experiment exp-pom-tutorial-tae-18.ini
+Running experiment exp-pom-tutorial-tae-19.ini
+Running experiment exp-pom-tutorial-tae-2.ini
+Running experiment exp-pom-tutorial-tae-20.ini
+Running experiment exp-pom-tutorial-tae-21.ini
+Running experiment exp-pom-tutorial-tae-22.ini
+Running experiment exp-pom-tutorial-tae-23.ini
+Running experiment exp-pom-tutorial-tae-24.ini
+Running experiment exp-pom-tutorial-tae-25.ini
+Running experiment exp-pom-tutorial-tae-26.ini
+Running experiment exp-pom-tutorial-tae-27.ini
+Running experiment exp-pom-tutorial-tae-28.ini
+Running experiment exp-pom-tutorial-tae-29.ini
+Running experiment exp-pom-tutorial-tae-3.ini
+Running experiment exp-pom-tutorial-tae-30.ini
+Running experiment exp-pom-tutorial-tae-4.ini
+Running experiment exp-pom-tutorial-tae-5.ini
+Running experiment exp-pom-tutorial-tae-6.ini
+Running experiment exp-pom-tutorial-tae-7.ini
+Running experiment exp-pom-tutorial-tae-8.ini
+Running experiment exp-pom-tutorial-tae-9.ini
+Running experiment exp-pom-tutorial-toy-1.ini
+Running experiment exp-pom-tutorial-toy-10.ini
+Running experiment exp-pom-tutorial-toy-11.ini
+Running experiment exp-pom-tutorial-toy-12.ini
+Running experiment exp-pom-tutorial-toy-13.ini
+Running experiment exp-pom-tutorial-toy-14.ini
+Running experiment exp-pom-tutorial-toy-15.ini
+Running experiment exp-pom-tutorial-toy-16.ini
+Running experiment exp-pom-tutorial-toy-17.ini
+Running experiment exp-pom-tutorial-toy-18.ini
+Running experiment exp-pom-tutorial-toy-19.ini
+Running experiment exp-pom-tutorial-toy-2.ini
+Running experiment exp-pom-tutorial-toy-20.ini
+Running experiment exp-pom-tutorial-toy-21.ini
+Running experiment exp-pom-tutorial-toy-22.ini
+Running experiment exp-pom-tutorial-toy-23.ini
+Running experiment exp-pom-tutorial-toy-24.ini
+Running experiment exp-pom-tutorial-toy-25.ini
+Running experiment exp-pom-tutorial-toy-26.ini
+Running experiment exp-pom-tutorial-toy-27.ini
+Running experiment exp-pom-tutorial-toy-28.ini
+Running experiment exp-pom-tutorial-toy-29.ini
+Running experiment exp-pom-tutorial-toy-3.ini
+Running experiment exp-pom-tutorial-toy-30.ini
+Running experiment exp-pom-tutorial-toy-4.ini
+Running experiment exp-pom-tutorial-toy-5.ini
+Running experiment exp-pom-tutorial-toy-6.ini
+Running experiment exp-pom-tutorial-toy-7.ini
+Running experiment exp-pom-tutorial-toy-8.ini
+Running experiment exp-pom-tutorial-toy-9.ini
+Calculating results...
+Experiments/exp-2019-4-29-22-40-60/Results/pasture-pom-tutorial/dataset
+Experiments/exp-2019-4-29-22-40-60/Results/tae-pom-tutorial/dataset
+Experiments/exp-2019-4-29-22-40-60/Results/toy-pom-tutorial/dataset
+Experiments/exp-2019-4-29-22-40-60/Results/pasture-pom-tutorial/dataset
+Experiments/exp-2019-4-29-22-40-60/Results/tae-pom-tutorial/dataset
+Experiments/exp-2019-4-29-22-40-60/Results/toy-pom-tutorial/dataset
+ans = Experiments/exp-2019-4-29-22-40-60
+</pre>
+</div>
+</div>
+
 </div>
 </div>
 
@@ -13222,7 +13346,8 @@ $( document ).ready(function(){
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>The dataset is quite imbalanced, as you can check with this code:</p>
+<p>As can be observed, ORCA analyses all the files included in the folder of the dataset, where training and test partitions are included (a pair of files <code>train_dataset.X</code> and <code>test_dataset.X</code> for each dataset, where <code>X</code> is the number of partition). For each partition, a model is trained on training data and tested on test data.</p>
+<p>After this, you can also run the experiments for SVORIM and SVC1V1:</p>
 
 </div>
 </div>
@@ -13232,10 +13357,239 @@ $( document ).ready(function(){
 <div class="prompt input_prompt">In&nbsp;[3]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-octave"><pre><span></span><span class="n">labels</span> <span class="p">=</span> <span class="p">{</span><span class="s">&#39;Non-melanoma&#39;</span><span class="p">,</span> <span class="s">&#39;In Situ&#39;</span><span class="p">,</span> <span class="s">&#39;I&#39;</span><span class="p">,</span> <span class="s">&#39;II&#39;</span><span class="p">,</span> <span class="s">&#39;III-IV&#39;</span><span class="p">};</span>
-<span class="n">nn</span> <span class="p">=</span> <span class="nb">hist</span><span class="p">(</span><span class="n">melanoma</span><span class="p">(:,</span><span class="k">end</span><span class="p">),</span><span class="mi">5</span><span class="p">);</span>
-<span class="nb">bar</span><span class="p">(</span><span class="n">nn</span><span class="p">)</span>
-<span class="k">set</span> <span class="p">(</span><span class="nb">gca</span><span class="p">,</span> <span class="s">&#39;xticklabel&#39;</span><span class="p">,</span><span class="n">labels</span><span class="p">)</span>
+<div class=" highlight hl-octave"><pre><span></span><span class="n">Utilities</span><span class="p">.</span><span class="n">runExperiments</span><span class="p">(</span><span class="s">&#39;tutorial/config-files/svorim-3holdout.ini&#39;</span><span class="p">)</span>
+<span class="n">Utilities</span><span class="p">.</span><span class="n">runExperiments</span><span class="p">(</span><span class="s">&#39;tutorial/config-files/svc1v1-3holdout.ini&#39;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Setting up experiments...
+Running experiment exp-svorim-mae-tutorial-pasture-1.ini
+Running experiment exp-svorim-mae-tutorial-pasture-2.ini
+Running experiment exp-svorim-mae-tutorial-pasture-3.ini
+Running experiment exp-svorim-mae-tutorial-tae-1.ini
+Running experiment exp-svorim-mae-tutorial-tae-2.ini
+Running experiment exp-svorim-mae-tutorial-tae-3.ini
+Running experiment exp-svorim-mae-tutorial-toy-1.ini
+Running experiment exp-svorim-mae-tutorial-toy-2.ini
+Running experiment exp-svorim-mae-tutorial-toy-3.ini
+Calculating results...
+Experiments/exp-2019-4-29-22-41-12/Results/pasture-svorim-mae-tutorial/dataset
+Experiments/exp-2019-4-29-22-41-12/Results/tae-svorim-mae-tutorial/dataset
+Experiments/exp-2019-4-29-22-41-12/Results/toy-svorim-mae-tutorial/dataset
+Experiments/exp-2019-4-29-22-41-12/Results/pasture-svorim-mae-tutorial/dataset
+Experiments/exp-2019-4-29-22-41-12/Results/tae-svorim-mae-tutorial/dataset
+Experiments/exp-2019-4-29-22-41-12/Results/toy-svorim-mae-tutorial/dataset
+ans = Experiments/exp-2019-4-29-22-41-12
+Setting up experiments...
+Running experiment exp-svc1v1-mae-tutorial-pasture-1.ini
+Running experiment exp-svc1v1-mae-tutorial-pasture-2.ini
+Running experiment exp-svc1v1-mae-tutorial-pasture-3.ini
+Running experiment exp-svc1v1-mae-tutorial-tae-1.ini
+Running experiment exp-svc1v1-mae-tutorial-tae-2.ini
+Running experiment exp-svc1v1-mae-tutorial-tae-3.ini
+Running experiment exp-svc1v1-mae-tutorial-toy-1.ini
+Running experiment exp-svc1v1-mae-tutorial-toy-2.ini
+Running experiment exp-svc1v1-mae-tutorial-toy-3.ini
+Calculating results...
+Experiments/exp-2019-4-29-22-41-17/Results/pasture-svc1v1-mae-tutorial/dataset
+Experiments/exp-2019-4-29-22-41-17/Results/tae-svc1v1-mae-tutorial/dataset
+Experiments/exp-2019-4-29-22-41-17/Results/toy-svc1v1-mae-tutorial/dataset
+Experiments/exp-2019-4-29-22-41-17/Results/pasture-svc1v1-mae-tutorial/dataset
+Experiments/exp-2019-4-29-22-41-17/Results/tae-svc1v1-mae-tutorial/dataset
+Experiments/exp-2019-4-29-22-41-17/Results/toy-svc1v1-mae-tutorial/dataset
+ans = Experiments/exp-2019-4-29-22-41-17
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Once the experiments are finished, the corresponding results can be found in the <code>Experiments</code> subfolder, as described in the <a href="#Experimental-results-and-reports">corresponding section</a> of this tutorial.</p>
+<p>Each experiment has a different folder, and each folder should include two CSV files with results similar to the following (some columns are omitted):</p>
+<p>POM results (<a href="tutorial/reference-results/pom-mean-results_test.csv">download CSV</a>):</p>
+<table>
+<thead><tr>
+<th>Dataset-Experiment</th>
+<th>MeanMAE</th>
+<th>StdMAE</th>
+<th>MeanAMAE</th>
+<th>StdAMAE</th>
+<th>MeanTrainTime</th>
+<th>StdTrainTime</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>pasture-pom-tutorial</td>
+<td>0.6</td>
+<td>0.230866</td>
+<td>0.6</td>
+<td>0.230866</td>
+<td>0.070958</td>
+<td>0.004822</td>
+</tr>
+<tr>
+<td>tae-pom-tutorial</td>
+<td>0.615789</td>
+<td>0.100766</td>
+<td>0.616952</td>
+<td>0.101876</td>
+<td>0.324884</td>
+<td>0.087447</td>
+</tr>
+<tr>
+<td>toy-pom-tutorial</td>
+<td>0.980889</td>
+<td>0.038941</td>
+<td>1.213242</td>
+<td>0.059357</td>
+<td>0.038949</td>
+<td>0.002738</td>
+</tr>
+</tbody>
+</table>
+<p>SVORIM results (<a href="tutorial/reference-results/svorim-mean-results_test.csv">download CSV</a>):</p>
+<table>
+<thead><tr>
+<th>Dataset-Experiment</th>
+<th>MeanMAE</th>
+<th>StdMAE</th>
+<th>MeanAMAE</th>
+<th>StdAMAE</th>
+<th>MeanTrainTime</th>
+<th>StdTrainTime</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>pasture-svorim-mae-real</td>
+<td>0.322222</td>
+<td>0.106614</td>
+<td>0.322222</td>
+<td>0.106614</td>
+<td>0.013843</td>
+<td>0.002601</td>
+</tr>
+<tr>
+<td>tae-svorim-mae-real</td>
+<td>0.475439</td>
+<td>0.069086</td>
+<td>0.473291</td>
+<td>0.068956</td>
+<td>0.042999</td>
+<td>0.023227</td>
+</tr>
+<tr>
+<td>toy-svorim-mae-real</td>
+<td>0.017778</td>
+<td>0.012786</td>
+<td>0.019631</td>
+<td>0.015726</td>
+<td>0.071385</td>
+<td>0.025767</td>
+</tr>
+</tbody>
+</table>
+<p>SVC1V1 results (<a href="tutorial/reference-results/svc1v1-mean-results_test.csv">download CSV</a>):</p>
+<table>
+<thead><tr>
+<th>Dataset-Experiment</th>
+<th>MeanMAE</th>
+<th>StdMAE</th>
+<th>MeanAMAE</th>
+<th>StdAMAE</th>
+<th>MeanTrainTime</th>
+<th>StdTrainTime</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>pasture-svc1v1-mae-tutorial</td>
+<td>0.314815</td>
+<td>0.127468</td>
+<td>0.314815</td>
+<td>0.127468</td>
+<td>0.014363</td>
+<td>0.003297</td>
+</tr>
+<tr>
+<td>tae-svc1v1-mae-tutorial</td>
+<td>0.534211</td>
+<td>0.108865</td>
+<td>0.533832</td>
+<td>0.110083</td>
+<td>0.017699</td>
+<td>0.004122</td>
+</tr>
+<tr>
+<td>toy-svc1v1-mae-tutorial</td>
+<td>0.051556</td>
+<td>0.023419</td>
+<td>0.044367</td>
+<td>0.022971</td>
+<td>0.015869</td>
+<td>0.003786</td>
+</tr>
+</tbody>
+</table>
+<hr>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<hr>
+<p><strong><em>Exercise 1</em></strong>: apparently, POM is the slowest method, but here we are not considering the crossvalidation time. Check the detailed CSV results to conclude which is the method with the lowest computational cost (taking crossvalidation, training and test phases into account).</p>
+<hr>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Finally, you can plot a bar plot to graphically compare the performance of the methods. Let's analyse for that the <code>toy</code> dataset. This is a synthetic dataset proposed by Herbrich et al. in their paper "Support vector learning for ordinal regression" (1997):
+<img src="tutorial/images/toy.png" alt="Synthetic toy dataset"></p>
+<p>The following code (to be run from the <code>src</code> folder) plots the figure below:</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[4]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-octave"><pre><span></span><span class="n">pkg</span> <span class="nb">load</span> <span class="n">dataframe</span>
+<span class="n">pomT</span> <span class="p">=</span> <span class="n">dataframe</span><span class="p">(</span><span class="s">&#39;../doc/tutorial/reference-results/pom-mean-results_test.csv&#39;</span><span class="p">);</span>
+<span class="n">svorimT</span> <span class="p">=</span> <span class="n">dataframe</span><span class="p">(</span><span class="s">&#39;../doc/tutorial/reference-results/svorim-mean-results_test.csv&#39;</span><span class="p">);</span>
+<span class="n">svc1v1T</span> <span class="p">=</span> <span class="n">dataframe</span><span class="p">(</span><span class="s">&#39;../doc/tutorial/reference-results/svc1v1-mean-results_test.csv&#39;</span><span class="p">);</span>
+<span class="n">datasets</span> <span class="p">=</span> <span class="p">{</span><span class="s">&#39;pasture&#39;</span><span class="p">,</span><span class="s">&#39;tae&#39;</span><span class="p">,</span><span class="s">&#39;toy&#39;</span><span class="p">};</span>
+
+<span class="nb">bar</span><span class="p">([</span><span class="n">pomT</span><span class="p">.</span><span class="n">MeanAMAE</span> <span class="n">svorimT</span><span class="p">.</span><span class="n">MeanAMAE</span> <span class="n">svc1v1T</span><span class="p">.</span><span class="n">MeanAMAE</span><span class="p">])</span>
+<span class="k">set</span> <span class="p">(</span><span class="nb">gca</span><span class="p">,</span> <span class="s">&#39;xticklabel&#39;</span><span class="p">,</span><span class="n">datasets</span><span class="p">)</span>
+<span class="nb">legend</span><span class="p">(</span><span class="s">&#39;POM  &#39;</span><span class="p">,</span> <span class="s">&#39;SVORIM&#39;</span><span class="p">,</span> <span class="s">&#39;SVC1V1&#39;</span><span class="p">)</span>
+<span class="nb">title</span><span class="p">(</span><span class="s">&#39;AMAE performance (smaller is better)&#39;</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -13254,7 +13608,7 @@ $( document ).ready(function(){
 
 
 <div class="output_png output_subarea ">
-<img src="orca-tutorial-2_files/orca-tutorial-2_5_0.png"
+<img src="orca_tutorial_1_files/orca_tutorial_1_10_0.png"
 >
 </div>
 
@@ -13268,60 +13622,93 @@ $( document ).ready(function(){
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <hr>
-<p><strong><em>Exercise 1</em></strong>: obtain the average imbalanced ratio for this dataset, where the imbalanced ratio of each class is the sum of the number of patterns of the rest of classes divided by the number of classes times the number of patterns of the class.</p>
+<p><strong><em>Exercise 2</em></strong>: you can repeat this barplot but now considering:</p>
+<ul>
+<li>A <code>global</code> (i.e. a metric where the class a priori probability is not considered) <strong>nominal</strong> metric.</li>
+<li>A <code>global</code> <strong>ordinal</strong> metric.</li>
+<li>A <strong>nominal</strong> metric specifically designed for imbalanced datasets.</li>
+<li>An <strong>ordinal</strong> metric specifically designed for imbalanced datasets.</li>
+</ul>
 <hr>
-<p>We can apply a simple method, <a href="../src/Algorithms/POM.m">POM</a> [2], to check the accuracy (CCR) and MAE obtained for this dataset:</p>
 
 </div>
 </div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[4]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-octave"><pre><span></span><span class="n">train</span><span class="p">.</span><span class="n">patterns</span> <span class="p">=</span> <span class="n">trainMelanoma</span><span class="p">(:,</span><span class="mi">1</span><span class="p">:(</span><span class="k">end</span><span class="o">-</span><span class="mi">1</span><span class="p">));</span>
-<span class="n">train</span><span class="p">.</span><span class="n">targets</span> <span class="p">=</span> <span class="n">trainMelanoma</span><span class="p">(:,</span><span class="k">end</span><span class="p">);</span>
-<span class="nb">test</span><span class="p">.</span><span class="n">patterns</span> <span class="p">=</span> <span class="n">testMelanoma</span><span class="p">(:,</span><span class="mi">1</span><span class="p">:(</span><span class="k">end</span><span class="o">-</span><span class="mi">1</span><span class="p">));</span>
-<span class="nb">test</span><span class="p">.</span><span class="n">targets</span> <span class="p">=</span> <span class="n">testMelanoma</span><span class="p">(:,</span><span class="k">end</span><span class="p">);</span>
-<span class="nb">addpath</span><span class="p">(</span><span class="s">&#39;../src/Algorithms/&#39;</span><span class="p">);</span>
-<span class="n">algorithmObj</span> <span class="p">=</span> <span class="n">POM</span><span class="p">();</span>
-<span class="nb">info</span> <span class="p">=</span> <span class="n">algorithmObj</span><span class="p">.</span><span class="n">fitpredict</span><span class="p">(</span><span class="n">train</span><span class="p">,</span><span class="nb">test</span><span class="p">);</span>
-<span class="nb">addpath</span><span class="p">(</span><span class="s">&#39;../src/Measures/&#39;</span><span class="p">);</span>
-<span class="n">CCR</span><span class="p">.</span><span class="n">calculateMetric</span><span class="p">(</span><span class="nb">info</span><span class="p">.</span><span class="n">predictedTest</span><span class="p">,</span><span class="nb">test</span><span class="p">.</span><span class="n">targets</span><span class="p">)</span>
-<span class="n">MAE</span><span class="p">.</span><span class="n">calculateMetric</span><span class="p">(</span><span class="nb">info</span><span class="p">.</span><span class="n">predictedTest</span><span class="p">,</span><span class="nb">test</span><span class="p">.</span><span class="n">targets</span><span class="p">)</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>epsilon
- 56909.29682
-ans =  0.66071
-ans =  0.51786
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>In the following code, we try to improve the results by considering standardization:</p>
+<h3 id="Syntax-of-ini-files">Syntax of <code>ini</code> files<a class="anchor-link" href="#Syntax-of-ini-files">&#182;</a></h3><p>ORCA experiments are specified in configuration <code>ini</code> files, which execute an algorithm for a collection of datasets (each dataset with a given number of partitions). The folder <a href="../src/config-files">src/config-files</a> contains example configuration files for running all the algorithms included in ORCA for all the algorithms and datasets of the <a href="http://www.uco.es/grupos/ayrna/orreview">review paper</a>. The following code is an example for running the Proportion Odds Model (POM), a.k.a. Ordinal Logistic Regression. Note that the execution of this <code>ini</code> file can take several hours:</p>
+<div class="highlight"><pre><span></span><span class="c1">; Experiment ID</span>
+<span class="na">[pom-real</span>
+<span class="na">{general-conf}</span>
+<span class="na">seed</span> <span class="o">=</span> <span class="s">1</span>
+<span class="c1">; Datasets path</span>
+<span class="na">basedir</span> <span class="o">=</span> <span class="s">../../../datasets/ordinal/real/30-holdout</span>
+<span class="c1">; Datasets to process (comma separated list or &#39;all&#39; to process all)</span>
+<span class="na">datasets</span> <span class="o">=</span> <span class="s">automobile,balance-scale,bondrate,car,contact-lenses,ERA,ESL,eucalyptus,LEV,marketing,newthyroid,pasture,squash-stored,squash-unstored,SWD,tae,thyroid,toy,winequality-red,winequality-white</span>
+<span class="c1">; Activate data standardization</span>
+<span class="na">standarize</span> <span class="o">=</span> <span class="s">true</span>
+
+<span class="c1">; Method: algorithm and parameter</span>
+<span class="na">{algorithm-parameters}</span>
+<span class="na">algorithm</span> <span class="o">=</span> <span class="s">POM</span>
+</pre></div>
+<p><code>ini</code> files include <strong>Subsections</strong> to help organize the configuration. These sections are mandatory:</p>
+<ul>
+<li><code>{general-conf}</code>: generic parameters of the experiment, including the seed considered for random number generation, the directory containing the datasets, the datasets to be processed... All the parameters included here are the same for all the algorithms.</li>
+<li><code>{algorithm-parameters}</code>: here you can specify the algorithm to run and the parameters which are going to be fixed (not optimized through cross validation).</li>
+<li><code>{algorithm-hyper-parameters-to-cv}</code>: algorithms' hyper-parameters to optimise. For more details, see <a href="#Hyper-parameter-optimization">Hyper-parameter optimization</a>.</li>
+</ul>
+<p>The above file tells ORCA to run the algorithm <code>POM</code> for all the datasets specified in the list <code>datasets</code>. You can also use <code>datasets = all</code> to process all the datasets in <code>basedir</code>). Each of these datasets should be found at folder <code>basedir</code>, in such a way that ORCA expects one subfolder for each dataset, where the name of the subfolder must match the name of the dataset. Other directives are:</p>
+<ul>
+<li>INI section <code>[pom-real]</code> sets the experiment identifier.</li>
+<li>The <code>standarize</code> flag activates the standardization of the data (by using the mean and standard deviation of the train set).</li>
+<li>The rest of the parameters of the model depend on the specific algorithm (and they should be checked in the documentation of the algorithm). For instance, the kernel type is set up with <code>kernel</code> parameter.</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Hyper-parameter-optimization">Hyper-parameter optimization<a class="anchor-link" href="#Hyper-parameter-optimization">&#182;</a></h3><p>Many machine learning methods are very sensitive to the value considered for the hyper-parameters (consider, for example, support vector machines and the two associated parameters, cost and kernel width). ORCA automates hyper-parameter optimization by using a grid search with an internal nested <em>k</em>-fold cross-validation considering only the training partition. Let see an example for the optimisation of the two hyper-parameters of SVORIM: cost (<code>C</code>) and kernel width parameter (<code>k</code>, a.k.a. <em>gamma</em>):</p>
+<div class="highlight"><pre><span></span><span class="c1">; Experiment ID</span>
+<span class="k">[svorim-mae-real]</span>
+<span class="na">{general-conf}</span>
+<span class="na">seed</span> <span class="o">=</span> <span class="s">1</span>
+<span class="c1">; Datasets path</span>
+<span class="na">basedir</span> <span class="o">=</span> <span class="s">datasets/ordinal/real/30-holdout</span>
+<span class="c1">; Datasets to process (comma separated list)</span>
+<span class="na">datasets</span> <span class="o">=</span> <span class="s">all</span>
+<span class="c1">; Activate data standardization</span>
+<span class="na">standarize</span> <span class="o">=</span> <span class="s">true</span>
+<span class="c1">; Number of folds for the parameters optimization</span>
+<span class="na">num_folds</span> <span class="o">=</span> <span class="s">5</span>
+<span class="c1">; Crossvalidation metric</span>
+<span class="na">cvmetric</span> <span class="o">=</span> <span class="s">mae</span>
+
+<span class="c1">; Method: algorithm and parameter</span>
+<span class="na">{algorithm-parameters}</span>
+<span class="na">algorithm</span> <span class="o">=</span> <span class="s">SVORIM</span>
+<span class="na">kernel</span> <span class="o">=</span> <span class="s">rbf</span>
+
+<span class="c1">; Method&#39;s hyper-parameter values to optimize</span>
+<span class="na">{algorithm-hyper-parameters-to-cv}</span>
+<span class="na">C</span> <span class="o">=</span> <span class="s">10.^(-3:1:3)</span>
+<span class="na">k</span> <span class="o">=</span> <span class="s">10.^(-3:1:3)</span>
+</pre></div>
+<p>The directive for configuring the search process is included in the general section. The directives associated to hyper-parameter optimisation are:</p>
+<ul>
+<li><code>seed</code>: is the value to initialize MATLAB random number generator. This can be helpful to debug algorithms.</li>
+<li><code>num_folds</code>: <em>k</em> value for the nested <em>k</em>-fold cross validation over the training data.</li>
+<li><code>cvmetric</code>: metric used to select the best hyper-parameters in the grid search. The metrics available are: <code>AMAE</code>,<code>CCR</code>,<code>GM</code>,<code>MAE</code>,<code>MMAE</code>,<code>MS</code>,<code>MZE</code>,<code>Spearman</code>,<code>Tkendall</code> and <code>Wkappa</code>.</li>
+<li>The list of hyper-parameters to be optimised and values considered for each parameter during the grid search are specified in subsection <code>{algorithm-hyper-parameters-to-cv}</code>;<ul>
+<li><code>C</code>: add a new parameter with name <code>C</code> and a set of values of <code>10.^(-3:1:3)</code> (10<sup>-3</sup>,10<sup>-2</sup>,...,10<sup>3</sup>). The same apples for <code>k</code>.</li>
+</ul>
+</li>
+</ul>
+<p>The parameter optimization can also be done by using the API (full example is in <a href="../src/code-examples/exampleParamOptimization.m">exampleParamOptimization.m</a> script):</p>
 
 </div>
 </div>
@@ -13331,12 +13718,29 @@ ans =  0.51786
 <div class="prompt input_prompt">In&nbsp;[5]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-octave"><pre><span></span><span class="nb">addpath</span><span class="p">(</span><span class="s">&#39;../src/&#39;</span><span class="p">);</span>
-<span class="p">[</span><span class="n">trainStandarized</span><span class="p">,</span><span class="n">testStandarized</span><span class="p">]</span> <span class="p">=</span> <span class="n">DataSet</span><span class="p">.</span><span class="n">standarizeData</span><span class="p">(</span><span class="n">train</span><span class="p">,</span><span class="nb">test</span><span class="p">);</span>
-<span class="nb">disp</span><span class="p">(</span><span class="s">&#39;Some patterns before standarizing&#39;</span><span class="p">)</span>
-<span class="n">train</span><span class="p">.</span><span class="n">patterns</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="mi">10</span><span class="p">,</span><span class="mi">2</span><span class="p">:</span><span class="mi">5</span><span class="p">)</span>
-<span class="nb">disp</span><span class="p">(</span><span class="s">&#39;The same patterns after standarizing&#39;</span><span class="p">)</span>
-<span class="n">trainStandarized</span><span class="p">.</span><span class="n">patterns</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="mi">10</span><span class="p">,</span><span class="mi">2</span><span class="p">:</span><span class="mi">5</span><span class="p">)</span>
+<div class=" highlight hl-octave"><pre><span></span><span class="c">% Load the different partitions of the dataset</span>
+<span class="nb">load</span> <span class="p">.</span><span class="o">./</span><span class="n">exampledata</span><span class="o">/</span><span class="mi">1</span><span class="o">-</span><span class="n">holdout</span><span class="o">/</span><span class="n">toy</span><span class="o">/</span><span class="n">matlab</span><span class="o">/</span><span class="n">train_toy</span><span class="p">.</span><span class="mi">0</span>
+<span class="nb">load</span> <span class="p">.</span><span class="o">./</span><span class="n">exampledata</span><span class="o">/</span><span class="mi">1</span><span class="o">-</span><span class="n">holdout</span><span class="o">/</span><span class="n">toy</span><span class="o">/</span><span class="n">matlab</span><span class="o">/</span><span class="n">test_toy</span><span class="p">.</span><span class="mi">0</span>
+
+<span class="c">% &quot;patterns&quot; refers to the input variables and targets to the output one</span>
+<span class="n">train</span><span class="p">.</span><span class="n">patterns</span> <span class="p">=</span> <span class="n">train_toy</span><span class="p">(:,</span><span class="mi">1</span><span class="p">:</span><span class="k">end</span><span class="o">-</span><span class="mi">1</span><span class="p">);</span>
+<span class="n">train</span><span class="p">.</span><span class="n">targets</span> <span class="p">=</span> <span class="n">train_toy</span><span class="p">(:,</span><span class="k">end</span><span class="p">);</span>
+<span class="nb">test</span><span class="p">.</span><span class="n">patterns</span> <span class="p">=</span> <span class="n">test_toy</span><span class="p">(:,</span><span class="mi">1</span><span class="p">:</span><span class="k">end</span><span class="o">-</span><span class="mi">1</span><span class="p">);</span>
+<span class="nb">test</span><span class="p">.</span><span class="n">targets</span> <span class="p">=</span> <span class="n">test_toy</span><span class="p">(:,</span><span class="k">end</span><span class="p">);</span>
+
+<span class="c">% Assumes training set in structure &#39;train&#39;</span>
+<span class="c">% Create the algorithm object</span>
+<span class="n">algorithmObj</span> <span class="p">=</span> <span class="n">KDLOR</span><span class="p">();</span>
+<span class="c">% Create vectors of values to test</span>
+<span class="n">param</span><span class="p">.</span><span class="n">C</span> <span class="p">=</span> <span class="mf">10.</span>^<span class="p">(</span><span class="o">-</span><span class="mi">3</span><span class="p">:</span><span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">);</span>
+<span class="n">param</span><span class="p">.</span><span class="n">k</span> <span class="p">=</span> <span class="mf">10.</span>^<span class="p">(</span><span class="o">-</span><span class="mi">3</span><span class="p">:</span><span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">);</span>
+<span class="n">param</span><span class="p">.</span><span class="n">u</span> <span class="p">=</span> <span class="p">[</span><span class="mf">0.01</span><span class="p">,</span><span class="mf">0.001</span><span class="p">,</span><span class="mf">0.0001</span><span class="p">,</span><span class="mf">0.00001</span><span class="p">];</span>
+
+<span class="c">% Optimizing parameters for KDLOR with metric MAE (default metric)</span>
+<span class="n">optimalp</span> <span class="p">=</span> <span class="n">paramopt</span><span class="p">(</span><span class="n">algorithmObj</span><span class="p">,</span><span class="n">param</span><span class="p">,</span><span class="n">train</span><span class="p">)</span>
+
+<span class="c">% Optimizing parameters for KDLOR with metric GM</span>
+<span class="n">optimalp</span> <span class="p">=</span> <span class="n">paramopt</span><span class="p">(</span><span class="n">algorithmObj</span><span class="p">,</span><span class="n">param</span><span class="p">,</span><span class="n">train</span><span class="p">,</span> <span class="s">&#39;metric&#39;</span><span class="p">,</span> <span class="n">GM</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -13353,70 +13757,22 @@ ans =  0.51786
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>Some patterns before standarizing
-ans =
+<pre>optimalp =
 
-      1.39817    266.63620     68.22989     66.71459
-      1.63949   1520.75100     77.41614     97.06574
-      1.50760    394.50550     58.38186      0.16893
-      1.27778    176.16820     83.20313      1.47513
-      1.44320    552.79690     34.28749     22.74991
-      1.25702     92.13424     52.84424     49.53449
-      1.40287    190.13010     76.44786     91.14979
-      1.59847   2333.85600     61.23107      0.00720
-      1.51663    454.34930     72.21953      0.00000
-      1.34062    149.19010     74.05859     77.66209
+  scalar structure containing the fields:
 
-The same patterns after standarizing
-ans =
+    C =  0.0010000
+    k =  10
+    u =  0.00010000
 
-  -0.0263804  -0.6159705   0.8400188   1.2639962
-   1.1899081   0.3464767   1.3279650   2.2296928
-   0.5251951  -0.5178396   0.3169205  -0.8533179
-  -0.6331613  -0.6853985   1.6353530  -0.8117580
-   0.2005954  -0.3963618  -0.9629005  -0.1348485
-  -0.7378061  -0.7498888   0.0227789   0.7173692
-  -0.0027065  -0.6746837   1.2765327   2.0414624
-   0.9831587   0.9704791   0.4682625  -0.8584636
-   0.5706981  -0.4719136   1.0519365  -0.8586928
-  -0.3164445  -0.7061023   1.1496218   1.6123181
+optimalp =
 
-</pre>
-</div>
-</div>
+  scalar structure containing the fields:
 
-</div>
-</div>
+    C =  0.0010000
+    k =  10
+    u =  0.010000
 
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[6]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-octave"><pre><span></span><span class="nb">info</span> <span class="p">=</span> <span class="n">algorithmObj</span><span class="p">.</span><span class="n">fitpredict</span><span class="p">(</span><span class="n">trainStandarized</span><span class="p">,</span><span class="n">testStandarized</span><span class="p">);</span>
-<span class="n">CCR</span><span class="p">.</span><span class="n">calculateMetric</span><span class="p">(</span><span class="nb">info</span><span class="p">.</span><span class="n">predictedTest</span><span class="p">,</span><span class="nb">test</span><span class="p">.</span><span class="n">targets</span><span class="p">)</span>
-<span class="n">MAE</span><span class="p">.</span><span class="n">calculateMetric</span><span class="p">(</span><span class="nb">info</span><span class="p">.</span><span class="n">predictedTest</span><span class="p">,</span><span class="nb">test</span><span class="p">.</span><span class="n">targets</span><span class="p">)</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>epsilon
- 0.11250
-ans =  0.66071
-ans =  0.51786
 </pre>
 </div>
 </div>
@@ -13428,7 +13784,80 @@ ans =  0.51786
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>The results have not improved in this specific case. The static method <code>DataSet.standarizeData(train,test)</code> transforms the training and test datasets and returns a copy where all the input variables have zero mean and unit standard deviation. There are other pre-processing methods in the <code>DataSet</code> class which delete constant input attributes or non numeric attributes:</p>
+<h3 id="Experimental-results-and-reports">Experimental results and reports<a class="anchor-link" href="#Experimental-results-and-reports">&#182;</a></h3><p>ORCA uses the <code>Experiments</code> folder to store all the results of the different experiments. Each report is placed in a subfolder of <code>Experiments</code> named with the current date, time and the name of the configuration file (for example 'exp-2015-7-14-10-5-57-pom'). After a successful experiment, this folder should contain the following information:</p>
+<ul>
+<li>Individual experiment configuration files for each dataset and partition.</li>
+<li>A <code>Results</code> folder with the following information:<ul>
+<li><code>mean-results_train.csv</code> and <code>mean-results_test.csv</code> which are the reports in CSV format (easily read by Excel or LibreOffice Calc). They contain the mean and standard deviation for each performance measure (<code>AMAE</code>,<code>CCR</code>,<code>GM</code>,<code>MAE</code>,<code>MMAE</code>,<code>MS</code>,<code>MZE</code>,<code>Spearman</code>,<code>Tkendall</code> and <code>Wkappa</code>) and the computational time. These averages and standard deviations are obtained for all the partitions of each algorithm and dataset.</li>
+<li>The <code>Results</code> folder contains one subfolder for each dataset with the following data:<ul>
+<li>Train and test confusion matrices (<code>matrices.txt</code>).</li>
+<li>Name of the folder used for the experiments (<code>dataset</code>).</li>
+<li>Individual results for each partition in CSV format (<code>results.csv</code>).</li>
+<li>Models of each partition in <code>.mat</code> format (<code>Models</code> folder). These models are structures and their fields depend on the specific algorithm.</li>
+<li>Decision values used to obtain the predicted labels for training and test partitions ('Guess' folder). For threshold models, this is the one dimensional mapping before applying the discretisation based on the thresholds. The rest of models may have multidimensional mappings.</li>
+<li>Labels predicted by the models for each partition ('Predictions' folder).</li>
+<li>Optimal hyper-parameters values obtained after nested cross-validation ('OptHyperparams').</li>
+<li>Computational time results ('Times').</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>If you provide the option <code>report_sum = true</code> in <code>{general-conf}</code>, additionally the same metrics will be calculated with a matrix that is the sum of the generalization matrices (as Weka does). <strong>Note that this only makes sense in the case of a k-fold experimental design</strong>. With this option active, two additional reports will be generated (<code>mean-results_matrices_sum_train.csv</code> and <code>mean-results_matrices_sum_test.csv</code>)</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Running-algorithms-with-ORCA-API">Running algorithms with ORCA API<a class="anchor-link" href="#Running-algorithms-with-ORCA-API">&#182;</a></h2><h3 id="Run-a-pair-of-train-test-files-with-fitpredict">Run a pair of train-test files with fitpredict<a class="anchor-link" href="#Run-a-pair-of-train-test-files-with-fitpredict">&#182;</a></h3><p>ORCA algorithms can be used from your own Matlab code. All algorithms included in the <a href="../src/Algorithms">Algorithms</a> have a <code>fitpredict</code> method, which can be used for running the algorithms with your data. The method receives a structure with the matrix of training data and labels, the equivalent for test data and a structure with the values of the parameters associated to the method. With respect to other tools, parameters are a mandatory argument for the method to avoid the use of default values.</p>
+<p>For example, the <a href="../src/Algorithms/KDLOR.m">KDLOR (Kernel Discriminant Learning for Ordinal Regression)</a> [5]  method has a total of five parameters. Two of them (the type of kernel, <code>kernelType</code>, and the optimisation routine considered, <code>optimizationMethod</code>) are received in the constructor of the corresponding class, and the other three parameters (cost, <code>C</code>, kernel parameter, <code>k</code>, and value to avoid singularities, <code>u</code>) are supposed to have to be fine-tuned for each dataset and partition, so they are received in a structure passed to the <code>fitpredict</code> method.</p>
+<p>This an example of execution of KDLOR from the Matlab console:</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[6]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-octave"><pre><span></span><span class="nb">addpath</span><span class="p">(</span><span class="s">&#39;../src/Algorithms/&#39;</span><span class="p">)</span>
+<span class="n">kdlorAlgorithm</span> <span class="p">=</span> <span class="n">KDLOR</span><span class="p">(</span><span class="s">&#39;kernelType&#39;</span><span class="p">,</span><span class="s">&#39;rbf&#39;</span><span class="p">,</span><span class="s">&#39;optimizationMethod&#39;</span><span class="p">,</span><span class="s">&#39;quadprog&#39;</span><span class="p">);</span>
+<span class="n">kdlorAlgorithm</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>kdlorAlgorithm =
+
+&lt;object KDLOR&gt;
+
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Load train and test data:</p>
 
 </div>
 </div>
@@ -13438,12 +13867,16 @@ ans =  0.51786
 <div class="prompt input_prompt">In&nbsp;[7]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-octave"><pre><span></span><span class="p">[</span><span class="n">train</span><span class="p">,</span><span class="nb">test</span><span class="p">]</span> <span class="p">=</span> <span class="n">DataSet</span><span class="p">.</span><span class="n">deleteConstantAtributes</span><span class="p">(</span><span class="n">train</span><span class="p">,</span><span class="nb">test</span><span class="p">);</span>
-<span class="p">[</span><span class="n">train</span><span class="p">,</span><span class="nb">test</span><span class="p">]</span> <span class="p">=</span> <span class="n">DataSet</span><span class="p">.</span><span class="n">standarizeData</span><span class="p">(</span><span class="n">train</span><span class="p">,</span><span class="nb">test</span><span class="p">);</span>
-<span class="p">[</span><span class="n">train</span><span class="p">,</span><span class="nb">test</span><span class="p">]</span> <span class="p">=</span> <span class="n">DataSet</span><span class="p">.</span><span class="n">deleteNonNumericValues</span><span class="p">(</span><span class="n">train</span><span class="p">,</span><span class="nb">test</span><span class="p">);</span>
-<span class="nb">info</span> <span class="p">=</span> <span class="n">algorithmObj</span><span class="p">.</span><span class="n">fitpredict</span><span class="p">(</span><span class="n">train</span><span class="p">,</span><span class="nb">test</span><span class="p">);</span>
-<span class="n">CCR</span><span class="p">.</span><span class="n">calculateMetric</span><span class="p">(</span><span class="nb">info</span><span class="p">.</span><span class="n">predictedTest</span><span class="p">,</span><span class="nb">test</span><span class="p">.</span><span class="n">targets</span><span class="p">)</span>
-<span class="n">MAE</span><span class="p">.</span><span class="n">calculateMetric</span><span class="p">(</span><span class="nb">info</span><span class="p">.</span><span class="n">predictedTest</span><span class="p">,</span><span class="nb">test</span><span class="p">.</span><span class="n">targets</span><span class="p">)</span>
+<div class=" highlight hl-octave"><pre><span></span><span class="nb">load</span> <span class="p">.</span><span class="o">./</span><span class="n">exampledata</span><span class="o">/</span><span class="mi">1</span><span class="o">-</span><span class="n">holdout</span><span class="o">/</span><span class="n">toy</span><span class="o">/</span><span class="n">matlab</span><span class="o">/</span><span class="n">train_toy</span><span class="p">.</span><span class="mi">0</span>
+<span class="nb">load</span> <span class="p">.</span><span class="o">./</span><span class="n">exampledata</span><span class="o">/</span><span class="mi">1</span><span class="o">-</span><span class="n">holdout</span><span class="o">/</span><span class="n">toy</span><span class="o">/</span><span class="n">matlab</span><span class="o">/</span><span class="n">test_toy</span><span class="p">.</span><span class="mi">0</span>
+<span class="n">train</span><span class="p">.</span><span class="n">patterns</span> <span class="p">=</span> <span class="n">train_toy</span><span class="p">(:,</span><span class="mi">1</span><span class="p">:(</span><span class="nb">size</span><span class="p">(</span><span class="n">train_toy</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">));</span>
+<span class="n">train</span><span class="p">.</span><span class="n">targets</span> <span class="p">=</span> <span class="n">train_toy</span><span class="p">(:,</span><span class="nb">size</span><span class="p">(</span><span class="n">train_toy</span><span class="p">,</span><span class="mi">2</span><span class="p">));</span>
+<span class="nb">test</span><span class="p">.</span><span class="n">patterns</span> <span class="p">=</span> <span class="n">test_toy</span><span class="p">(:,</span><span class="mi">1</span><span class="p">:(</span><span class="nb">size</span><span class="p">(</span><span class="n">test_toy</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">));</span>
+<span class="nb">test</span><span class="p">.</span><span class="n">targets</span> <span class="p">=</span> <span class="n">test_toy</span><span class="p">(:,</span><span class="nb">size</span><span class="p">(</span><span class="n">test_toy</span><span class="p">,</span><span class="mi">2</span><span class="p">));</span>
+<span class="n">param</span><span class="p">.</span><span class="n">C</span> <span class="p">=</span> <span class="mi">10</span><span class="p">;</span>
+<span class="n">param</span><span class="p">.</span><span class="n">k</span> <span class="p">=</span> <span class="mf">0.1</span><span class="p">;</span>
+<span class="n">param</span><span class="p">.</span><span class="n">u</span> <span class="p">=</span> <span class="mf">0.001</span><span class="p">;</span>
+<span class="n">param</span>
 </pre></div>
 
     </div>
@@ -13460,10 +13893,14 @@ ans =  0.51786
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>epsilon
- 0.11250
-ans =  0.66071
-ans =  0.51786
+<pre>param =
+
+  scalar structure containing the fields:
+
+    C =  10
+    k =  0.10000
+    u =  0.0010000
+
 </pre>
 </div>
 </div>
@@ -13475,18 +13912,7 @@ ans =  0.51786
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Again, the results have not changed, as there were no attributes with these characteristics. However, in general, it is a good idea to apply standardisation of the input variables.</p>
-<hr>
-<p><strong><em>Exercise 2</em></strong>: construct a function (<code>preprocess.m</code>) applying these three pre-processing steps (standarisation, removal of constant features and removal of non numeric values) for future uses.</p>
-<hr>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Naive-approaches">Naive approaches<a class="anchor-link" href="#Naive-approaches">&#182;</a></h2><p>The first thing we will do is applying standard approaches for this ordinal regression dataset. This includes applying regression, classification and cost-sensitive classification. In this section we will use kernel methods, that are more suitable for high-dimensional data, so that we can use melanoma dataset with the full set of 100 features:</p>
+<p>Fit the model and test prediction with generalization data:</p>
 
 </div>
 </div>
@@ -13496,18 +13922,39 @@ ans =  0.51786
 <div class="prompt input_prompt">In&nbsp;[8]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-octave"><pre><span></span><span class="n">trainMelanoma</span> <span class="p">=</span> <span class="nb">load</span><span class="p">(</span><span class="s">&#39;../exampledata/10-fold/melanoma-5classes-abcd-100/matlab/train_melanoma-5classes-abcd-100.2&#39;</span><span class="p">);</span>
-<span class="n">testMelanoma</span> <span class="p">=</span> <span class="nb">load</span><span class="p">(</span><span class="s">&#39;../exampledata/10-fold/melanoma-5classes-abcd-100/matlab/test_melanoma-5classes-abcd-100.2&#39;</span><span class="p">);</span>
-<span class="n">train</span><span class="p">.</span><span class="n">patterns</span> <span class="p">=</span> <span class="n">trainMelanoma</span><span class="p">(:,</span><span class="mi">1</span><span class="p">:(</span><span class="k">end</span><span class="o">-</span><span class="mi">1</span><span class="p">));</span>
-<span class="n">train</span><span class="p">.</span><span class="n">targets</span> <span class="p">=</span> <span class="n">trainMelanoma</span><span class="p">(:,</span><span class="k">end</span><span class="p">);</span>
-<span class="nb">test</span><span class="p">.</span><span class="n">patterns</span> <span class="p">=</span> <span class="n">testMelanoma</span><span class="p">(:,</span><span class="mi">1</span><span class="p">:(</span><span class="k">end</span><span class="o">-</span><span class="mi">1</span><span class="p">));</span>
-<span class="nb">test</span><span class="p">.</span><span class="n">targets</span> <span class="p">=</span> <span class="n">testMelanoma</span><span class="p">(:,</span><span class="k">end</span><span class="p">);</span>
-<span class="p">[</span><span class="n">train</span><span class="p">,</span><span class="nb">test</span><span class="p">]</span> <span class="p">=</span> <span class="n">DataSet</span><span class="p">.</span><span class="n">deleteConstantAtributes</span><span class="p">(</span><span class="n">train</span><span class="p">,</span><span class="nb">test</span><span class="p">);</span>
-<span class="p">[</span><span class="n">train</span><span class="p">,</span><span class="nb">test</span><span class="p">]</span> <span class="p">=</span> <span class="n">DataSet</span><span class="p">.</span><span class="n">standarizeData</span><span class="p">(</span><span class="n">train</span><span class="p">,</span><span class="nb">test</span><span class="p">);</span>
-<span class="p">[</span><span class="n">train</span><span class="p">,</span><span class="nb">test</span><span class="p">]</span> <span class="p">=</span> <span class="n">DataSet</span><span class="p">.</span><span class="n">deleteNonNumericValues</span><span class="p">(</span><span class="n">train</span><span class="p">,</span><span class="nb">test</span><span class="p">);</span>
+<div class=" highlight hl-octave"><pre><span></span><span class="nb">info</span> <span class="p">=</span> <span class="n">kdlorAlgorithm</span><span class="p">.</span><span class="n">fitpredict</span><span class="p">(</span><span class="n">train</span><span class="p">,</span><span class="nb">test</span><span class="p">,</span><span class="n">param</span><span class="p">);</span>
+<span class="nb">fieldnames</span><span class="p">(</span><span class="nb">info</span><span class="p">)</span>
 </pre></div>
 
     </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>ans =
+{
+  [1,1] = projectedTrain
+  [2,1] = predictedTrain
+  [3,1] = trainTime
+  [4,1] = projectedTest
+  [5,1] = predictedTest
+  [6,1] = testTime
+  [7,1] = model
+}
+
+</pre>
+</div>
+</div>
+
 </div>
 </div>
 
@@ -13515,14 +13962,7 @@ ans =  0.51786
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Regression-(SVR)">Regression (SVR)<a class="anchor-link" href="#Regression-(SVR)">&#182;</a></h3><p>A very simple way of solving an ordinal classification problem is to apply regression. This is, we train a regressor to predict the number of the category (where categories are coded with real consecutive values, <code>1</code>, <code>2</code>, ..., <code>Q</code>, which are scaled between 0 and 1, <code>0/(Q-1)=0</code>, <code>1/(Q-1)</code>, ..., <code>(Q-1)/(Q-1)</code>). Then, to predict categories, we round the real values predicted by the regressor to the nearest integer.</p>
-<p>ORCA includes one algorithm following this approach based on support vector machines: <a href="../src/Algorithms/SVR.m">Support Vector Regression (SVR)</a>. Note that SVR considers the epsilon-SVR model with an RBF kernel, involving three different parameters:</p>
-<ul>
-<li>Parameter <code>C</code>, importance given to errors.</li>
-<li>Parameter <code>k</code>, inverse of the width of the RBF kernel.</li>
-<li>Parameter <code>e</code>, epsilon. It specifies the epsilon-tube within which no penalty is associated in the training loss function with points predicted within a distance epsilon from the actual value.</li>
-</ul>
-<p>We can check the performance of this model in the melanoma dataset:</p>
+<p>Calculate accuracy:</p>
 
 </div>
 </div>
@@ -13532,11 +13972,9 @@ ans =  0.51786
 <div class="prompt input_prompt">In&nbsp;[9]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-octave"><pre><span></span><span class="n">algorithmObj</span> <span class="p">=</span> <span class="n">SVR</span><span class="p">();</span>
-<span class="nb">info</span> <span class="p">=</span> <span class="n">algorithmObj</span><span class="p">.</span><span class="n">fitpredict</span><span class="p">(</span><span class="n">train</span><span class="p">,</span><span class="nb">test</span><span class="p">,</span><span class="nb">struct</span><span class="p">(</span><span class="s">&#39;C&#39;</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="s">&#39;k&#39;</span><span class="p">,</span><span class="mf">0.001</span><span class="p">,</span><span class="s">&#39;e&#39;</span><span class="p">,</span><span class="mf">0.01</span><span class="p">));</span>
-<span class="nb">fprintf</span><span class="p">(</span><span class="s">&#39;\nSupport Vector Regression\n---------------\n&#39;</span><span class="p">);</span>
-<span class="nb">fprintf</span><span class="p">(</span><span class="s">&#39;SVR Accuracy: %f\n&#39;</span><span class="p">,</span> <span class="n">CCR</span><span class="p">.</span><span class="n">calculateMetric</span><span class="p">(</span><span class="nb">test</span><span class="p">.</span><span class="n">targets</span><span class="p">,</span><span class="nb">info</span><span class="p">.</span><span class="n">predictedTest</span><span class="p">));</span>
-<span class="nb">fprintf</span><span class="p">(</span><span class="s">&#39;SVR MAE: %f\n&#39;</span><span class="p">,</span> <span class="n">MAE</span><span class="p">.</span><span class="n">calculateMetric</span><span class="p">(</span><span class="nb">test</span><span class="p">.</span><span class="n">targets</span><span class="p">,</span><span class="nb">info</span><span class="p">.</span><span class="n">predictedTest</span><span class="p">));</span>
+<div class=" highlight hl-octave"><pre><span></span><span class="nb">fprintf</span><span class="p">(</span><span class="s">&#39;Accuracy Train %f, Accuracy Test %f\n&#39;</span><span class="p">,</span>
+    <span class="nb">sum</span><span class="p">(</span><span class="n">train</span><span class="p">.</span><span class="n">targets</span><span class="o">==</span><span class="nb">info</span><span class="p">.</span><span class="n">predictedTrain</span><span class="p">)</span><span class="o">/</span><span class="nb">size</span><span class="p">(</span><span class="n">train</span><span class="p">.</span><span class="n">targets</span><span class="p">,</span><span class="mi">1</span><span class="p">),</span>
+    <span class="nb">sum</span><span class="p">(</span><span class="nb">test</span><span class="p">.</span><span class="n">targets</span><span class="o">==</span><span class="nb">info</span><span class="p">.</span><span class="n">predictedTest</span><span class="p">)</span><span class="o">/</span><span class="nb">size</span><span class="p">(</span><span class="nb">test</span><span class="p">.</span><span class="n">targets</span><span class="p">,</span><span class="mi">1</span><span class="p">));</span>
 </pre></div>
 
     </div>
@@ -13553,11 +13991,7 @@ ans =  0.51786
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>
-Support Vector Regression
----------------
-SVR Accuracy: 0.678571
-SVR MAE: 0.392857
+<pre>Accuracy Train 0.871111, Accuracy Test 0.853333
 </pre>
 </div>
 </div>
@@ -13569,7 +14003,16 @@ SVR MAE: 0.392857
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>The object info also contains the projection values, which, in this case, are the real values without being rounded:</p>
+<p>As we can see, the methods return a structure with the main information about the execution of the algorithm. The fields of this structure are:</p>
+<ul>
+<li><code>projectedTrain</code>: decision values for the training set.</li>
+<li><code>predictedTrain</code>: labels predicted for the training set.</li>
+<li><code>trainTime</code>: time in seconds needed for training the model.</li>
+<li><code>projectedTest</code>: decision values for the test set.</li>
+<li><code>predictedTest</code>: labels predicted for the test set.</li>
+<li><code>testTime</code>: time in seconds needed for the test phase.</li>
+<li><code>model</code>: structure containing the model (its coefficients, parameters, etc.). Note that, although most of the fields of this structure depend on the specific algorithm considered, we will always find the <code>algorithm</code> and <code>parameters</code> fields. These are the fields for KDLOR:</li>
+</ul>
 
 </div>
 </div>
@@ -13579,7 +14022,7 @@ SVR MAE: 0.392857
 <div class="prompt input_prompt">In&nbsp;[10]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-octave"><pre><span></span><span class="nb">info</span><span class="p">.</span><span class="n">projectedTest</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="mi">10</span><span class="p">)</span>
+<div class=" highlight hl-octave"><pre><span></span><span class="nb">fieldnames</span><span class="p">(</span><span class="nb">info</span><span class="p">.</span><span class="n">model</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -13597,17 +14040,14 @@ SVR MAE: 0.392857
 
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>ans =
-
-   0.109167
-   0.229370
-   0.028311
-  -0.047946
-   0.121599
-   0.051311
-   0.313528
-   0.125686
-   0.105111
-   0.106238
+{
+  [1,1] = projection
+  [2,1] = thresholds
+  [3,1] = parameters
+  [4,1] = kernelType
+  [5,1] = train
+  [6,1] = algorithm
+}
 
 </pre>
 </div>
@@ -13620,7 +14060,8 @@ SVR MAE: 0.392857
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>As you can see, poor performance is obtained. We can try different parameter values by using a <code>for</code> loop:</p>
+<p>i.e., the algorithm used for training (<code>algorithm</code>), the weight given to each pattern in the kernel model (<code>projection</code>), the set of threshold values (<code>thresholds</code>), the parameters used for training (<code>parameters</code>), the type of kernel considered (<code>kernelType</code>) and the training data (<code>train</code>). As can be checked, at least, this structure should contain the information for performing the test phase. In this way, for KDLOR, the prediction phase needs to apply the kernel to each training point and the test point being evaluated (using <code>kernelType</code>, <code>train</code> and <code>parameters.K</code>) and perform the weighted sum of these values (using <code>projection</code>). After that, the thresholds are used to obtain the labels.</p>
+<p>The corresponding script (<a href="../src/code-examples/exampleKDLOR.m">exampleKDLOR.m</a>) can be found and run in the <a href="../src/code-examples">code example</a> folder.</p>
 
 </div>
 </div>
@@ -13630,859 +14071,15 @@ SVR MAE: 0.392857
 <div class="prompt input_prompt">In&nbsp;[11]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-octave"><pre><span></span><span class="nb">fprintf</span><span class="p">(</span><span class="s">&#39;\nSupport Vector Regression parameters\n---------------\n&#39;</span><span class="p">);</span>
-<span class="n">bestAccuracy</span><span class="p">=</span><span class="mi">0</span><span class="p">;</span>
-<span class="k">for</span> <span class="n">C</span><span class="p">=</span><span class="mf">10.</span>^<span class="p">(</span><span class="o">-</span><span class="mi">3</span><span class="p">:</span><span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">)</span>
-   <span class="k">for</span> <span class="n">k</span><span class="p">=</span><span class="mf">10.</span>^<span class="p">(</span><span class="o">-</span><span class="mi">3</span><span class="p">:</span><span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">)</span>
-       <span class="k">for</span> <span class="nb">e</span><span class="p">=</span><span class="mf">10.</span>^<span class="p">(</span><span class="o">-</span><span class="mi">3</span><span class="p">:</span><span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">)</span>
-           <span class="n">param</span> <span class="p">=</span> <span class="nb">struct</span><span class="p">(</span><span class="s">&#39;C&#39;</span><span class="p">,</span><span class="n">C</span><span class="p">,</span><span class="s">&#39;k&#39;</span><span class="p">,</span><span class="n">k</span><span class="p">,</span><span class="s">&#39;e&#39;</span><span class="p">,</span><span class="nb">e</span><span class="p">);</span>
-           <span class="nb">info</span> <span class="p">=</span> <span class="n">algorithmObj</span><span class="p">.</span><span class="n">fitpredict</span><span class="p">(</span><span class="n">train</span><span class="p">,</span><span class="nb">test</span><span class="p">,</span><span class="n">param</span><span class="p">);</span>
-           <span class="n">accuracy</span> <span class="p">=</span> <span class="n">CCR</span><span class="p">.</span><span class="n">calculateMetric</span><span class="p">(</span><span class="nb">test</span><span class="p">.</span><span class="n">targets</span><span class="p">,</span><span class="nb">info</span><span class="p">.</span><span class="n">predictedTest</span><span class="p">);</span>
-           <span class="k">if</span> <span class="n">accuracy</span> <span class="o">&gt;</span> <span class="n">bestAccuracy</span>
-               <span class="n">bestAccuracy</span> <span class="p">=</span> <span class="n">accuracy</span><span class="p">;</span>
-               <span class="n">bestParam</span> <span class="p">=</span> <span class="n">param</span><span class="p">;</span>
-           <span class="k">end</span>
-           <span class="nb">fprintf</span><span class="p">(</span><span class="s">&#39;SVR C %f, k %f, e %f --&gt; Accuracy: %f, MAE: %f\n&#39;</span> <span class="p">...</span>
-               <span class="p">,</span> <span class="n">C</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="nb">e</span><span class="p">,</span> <span class="n">accuracy</span><span class="p">,</span> <span class="n">MAE</span><span class="p">.</span><span class="n">calculateMetric</span><span class="p">(</span><span class="nb">test</span><span class="p">.</span><span class="n">targets</span><span class="p">,</span><span class="nb">info</span><span class="p">.</span><span class="n">predictedTest</span><span class="p">));</span>
-       <span class="k">end</span>
-   <span class="k">end</span>
-<span class="k">end</span>
-<span class="nb">fprintf</span><span class="p">(</span><span class="s">&#39;Best Results SVR C %f, k %f, e %f --&gt; Accuracy: %f\n&#39;</span><span class="p">,</span> <span class="n">bestParam</span><span class="p">.</span><span class="n">C</span><span class="p">,</span> <span class="n">bestParam</span><span class="p">.</span><span class="n">k</span><span class="p">,</span> <span class="n">bestParam</span><span class="p">.</span><span class="nb">e</span><span class="p">,</span> <span class="n">bestAccuracy</span><span class="p">);</span>
+<div class=" highlight hl-octave"><pre><span></span><span class="nb">rmpath</span><span class="p">(</span><span class="s">&#39;../src/Measures&#39;</span><span class="p">)</span>
+<span class="nb">rmpath</span><span class="p">(</span><span class="s">&#39;../src/Algorithms&#39;</span><span class="p">)</span>
+<span class="nb">rmpath</span><span class="p">(</span><span class="s">&#39;../src/&#39;</span><span class="p">)</span>
 </pre></div>
 
     </div>
 </div>
 </div>
 
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>
-Support Vector Regression parameters
----------------
-SVR C 0.001000, k 0.001000, e 0.001000 --&gt; Accuracy: 0.571429, MAE: 0.892857
-SVR C 0.001000, k 0.001000, e 0.010000 --&gt; Accuracy: 0.571429, MAE: 0.892857
-SVR C 0.001000, k 0.001000, e 0.100000 --&gt; Accuracy: 0.571429, MAE: 0.892857
-SVR C 0.001000, k 0.001000, e 1.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 0.001000, k 0.001000, e 10.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 0.001000, k 0.001000, e 100.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 0.001000, k 0.001000, e 1000.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 0.001000, k 0.010000, e 0.001000 --&gt; Accuracy: 0.571429, MAE: 0.892857
-SVR C 0.001000, k 0.010000, e 0.010000 --&gt; Accuracy: 0.571429, MAE: 0.892857
-SVR C 0.001000, k 0.010000, e 0.100000 --&gt; Accuracy: 0.571429, MAE: 0.892857
-SVR C 0.001000, k 0.010000, e 1.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 0.001000, k 0.010000, e 10.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 0.001000, k 0.010000, e 100.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 0.001000, k 0.010000, e 1000.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 0.001000, k 0.100000, e 0.001000 --&gt; Accuracy: 0.571429, MAE: 0.892857
-SVR C 0.001000, k 0.100000, e 0.010000 --&gt; Accuracy: 0.571429, MAE: 0.892857
-SVR C 0.001000, k 0.100000, e 0.100000 --&gt; Accuracy: 0.571429, MAE: 0.892857
-SVR C 0.001000, k 0.100000, e 1.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 0.001000, k 0.100000, e 10.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 0.001000, k 0.100000, e 100.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 0.001000, k 0.100000, e 1000.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 0.001000, k 1.000000, e 0.001000 --&gt; Accuracy: 0.571429, MAE: 0.892857
-SVR C 0.001000, k 1.000000, e 0.010000 --&gt; Accuracy: 0.571429, MAE: 0.892857
-SVR C 0.001000, k 1.000000, e 0.100000 --&gt; Accuracy: 0.571429, MAE: 0.892857
-SVR C 0.001000, k 1.000000, e 1.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 0.001000, k 1.000000, e 10.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 0.001000, k 1.000000, e 100.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 0.001000, k 1.000000, e 1000.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 0.001000, k 10.000000, e 0.001000 --&gt; Accuracy: 0.571429, MAE: 0.892857
-SVR C 0.001000, k 10.000000, e 0.010000 --&gt; Accuracy: 0.571429, MAE: 0.892857
-SVR C 0.001000, k 10.000000, e 0.100000 --&gt; Accuracy: 0.571429, MAE: 0.892857
-SVR C 0.001000, k 10.000000, e 1.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 0.001000, k 10.000000, e 10.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 0.001000, k 10.000000, e 100.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 0.001000, k 10.000000, e 1000.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 0.001000, k 100.000000, e 0.001000 --&gt; Accuracy: 0.571429, MAE: 0.892857
-SVR C 0.001000, k 100.000000, e 0.010000 --&gt; Accuracy: 0.571429, MAE: 0.892857
-SVR C 0.001000, k 100.000000, e 0.100000 --&gt; Accuracy: 0.571429, MAE: 0.892857
-SVR C 0.001000, k 100.000000, e 1.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 0.001000, k 100.000000, e 10.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 0.001000, k 100.000000, e 100.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 0.001000, k 100.000000, e 1000.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 0.001000, k 1000.000000, e 0.001000 --&gt; Accuracy: 0.571429, MAE: 0.892857
-SVR C 0.001000, k 1000.000000, e 0.010000 --&gt; Accuracy: 0.571429, MAE: 0.892857
-SVR C 0.001000, k 1000.000000, e 0.100000 --&gt; Accuracy: 0.571429, MAE: 0.892857
-SVR C 0.001000, k 1000.000000, e 1.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 0.001000, k 1000.000000, e 10.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 0.001000, k 1000.000000, e 100.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 0.001000, k 1000.000000, e 1000.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 0.010000, k 0.001000, e 0.001000 --&gt; Accuracy: 0.571429, MAE: 0.892857
-SVR C 0.010000, k 0.001000, e 0.010000 --&gt; Accuracy: 0.571429, MAE: 0.892857
-SVR C 0.010000, k 0.001000, e 0.100000 --&gt; Accuracy: 0.517857, MAE: 0.732143
-SVR C 0.010000, k 0.001000, e 1.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 0.010000, k 0.001000, e 10.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 0.010000, k 0.001000, e 100.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 0.010000, k 0.001000, e 1000.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 0.010000, k 0.010000, e 0.001000 --&gt; Accuracy: 0.607143, MAE: 0.732143
-SVR C 0.010000, k 0.010000, e 0.010000 --&gt; Accuracy: 0.589286, MAE: 0.732143
-SVR C 0.010000, k 0.010000, e 0.100000 --&gt; Accuracy: 0.482143, MAE: 0.732143
-SVR C 0.010000, k 0.010000, e 1.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 0.010000, k 0.010000, e 10.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 0.010000, k 0.010000, e 100.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 0.010000, k 0.010000, e 1000.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 0.010000, k 0.100000, e 0.001000 --&gt; Accuracy: 0.571429, MAE: 0.892857
-SVR C 0.010000, k 0.100000, e 0.010000 --&gt; Accuracy: 0.571429, MAE: 0.892857
-SVR C 0.010000, k 0.100000, e 0.100000 --&gt; Accuracy: 0.571429, MAE: 0.892857
-SVR C 0.010000, k 0.100000, e 1.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 0.010000, k 0.100000, e 10.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 0.010000, k 0.100000, e 100.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 0.010000, k 0.100000, e 1000.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 0.010000, k 1.000000, e 0.001000 --&gt; Accuracy: 0.571429, MAE: 0.892857
-SVR C 0.010000, k 1.000000, e 0.010000 --&gt; Accuracy: 0.571429, MAE: 0.892857
-SVR C 0.010000, k 1.000000, e 0.100000 --&gt; Accuracy: 0.571429, MAE: 0.892857
-SVR C 0.010000, k 1.000000, e 1.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 0.010000, k 1.000000, e 10.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 0.010000, k 1.000000, e 100.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 0.010000, k 1.000000, e 1000.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 0.010000, k 10.000000, e 0.001000 --&gt; Accuracy: 0.571429, MAE: 0.892857
-SVR C 0.010000, k 10.000000, e 0.010000 --&gt; Accuracy: 0.571429, MAE: 0.892857
-SVR C 0.010000, k 10.000000, e 0.100000 --&gt; Accuracy: 0.571429, MAE: 0.892857
-SVR C 0.010000, k 10.000000, e 1.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 0.010000, k 10.000000, e 10.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 0.010000, k 10.000000, e 100.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 0.010000, k 10.000000, e 1000.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 0.010000, k 100.000000, e 0.001000 --&gt; Accuracy: 0.571429, MAE: 0.892857
-SVR C 0.010000, k 100.000000, e 0.010000 --&gt; Accuracy: 0.571429, MAE: 0.892857
-SVR C 0.010000, k 100.000000, e 0.100000 --&gt; Accuracy: 0.571429, MAE: 0.892857
-SVR C 0.010000, k 100.000000, e 1.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 0.010000, k 100.000000, e 10.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 0.010000, k 100.000000, e 100.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 0.010000, k 100.000000, e 1000.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 0.010000, k 1000.000000, e 0.001000 --&gt; Accuracy: 0.571429, MAE: 0.892857
-SVR C 0.010000, k 1000.000000, e 0.010000 --&gt; Accuracy: 0.571429, MAE: 0.892857
-SVR C 0.010000, k 1000.000000, e 0.100000 --&gt; Accuracy: 0.571429, MAE: 0.892857
-SVR C 0.010000, k 1000.000000, e 1.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 0.010000, k 1000.000000, e 10.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 0.010000, k 1000.000000, e 100.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 0.010000, k 1000.000000, e 1000.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 0.100000, k 0.001000, e 0.001000 --&gt; Accuracy: 0.517857, MAE: 0.642857
-SVR C 0.100000, k 0.001000, e 0.010000 --&gt; Accuracy: 0.517857, MAE: 0.660714
-SVR C 0.100000, k 0.001000, e 0.100000 --&gt; Accuracy: 0.464286, MAE: 0.660714
-SVR C 0.100000, k 0.001000, e 1.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 0.100000, k 0.001000, e 10.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 0.100000, k 0.001000, e 100.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 0.100000, k 0.001000, e 1000.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 0.100000, k 0.010000, e 0.001000 --&gt; Accuracy: 0.553571, MAE: 0.571429
-SVR C 0.100000, k 0.010000, e 0.010000 --&gt; Accuracy: 0.535714, MAE: 0.589286
-SVR C 0.100000, k 0.010000, e 0.100000 --&gt; Accuracy: 0.517857, MAE: 0.571429
-SVR C 0.100000, k 0.010000, e 1.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 0.100000, k 0.010000, e 10.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 0.100000, k 0.010000, e 100.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 0.100000, k 0.010000, e 1000.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 0.100000, k 0.100000, e 0.001000 --&gt; Accuracy: 0.571429, MAE: 0.875000
-SVR C 0.100000, k 0.100000, e 0.010000 --&gt; Accuracy: 0.553571, MAE: 0.857143
-SVR C 0.100000, k 0.100000, e 0.100000 --&gt; Accuracy: 0.107143, MAE: 1.053571
-SVR C 0.100000, k 0.100000, e 1.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 0.100000, k 0.100000, e 10.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 0.100000, k 0.100000, e 100.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 0.100000, k 0.100000, e 1000.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 0.100000, k 1.000000, e 0.001000 --&gt; Accuracy: 0.571429, MAE: 0.892857
-SVR C 0.100000, k 1.000000, e 0.010000 --&gt; Accuracy: 0.571429, MAE: 0.892857
-SVR C 0.100000, k 1.000000, e 0.100000 --&gt; Accuracy: 0.125000, MAE: 1.035714
-SVR C 0.100000, k 1.000000, e 1.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 0.100000, k 1.000000, e 10.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 0.100000, k 1.000000, e 100.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 0.100000, k 1.000000, e 1000.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 0.100000, k 10.000000, e 0.001000 --&gt; Accuracy: 0.571429, MAE: 0.892857
-SVR C 0.100000, k 10.000000, e 0.010000 --&gt; Accuracy: 0.571429, MAE: 0.892857
-SVR C 0.100000, k 10.000000, e 0.100000 --&gt; Accuracy: 0.125000, MAE: 1.035714
-SVR C 0.100000, k 10.000000, e 1.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 0.100000, k 10.000000, e 10.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 0.100000, k 10.000000, e 100.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 0.100000, k 10.000000, e 1000.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 0.100000, k 100.000000, e 0.001000 --&gt; Accuracy: 0.571429, MAE: 0.892857
-SVR C 0.100000, k 100.000000, e 0.010000 --&gt; Accuracy: 0.571429, MAE: 0.892857
-SVR C 0.100000, k 100.000000, e 0.100000 --&gt; Accuracy: 0.125000, MAE: 1.035714
-SVR C 0.100000, k 100.000000, e 1.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 0.100000, k 100.000000, e 10.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 0.100000, k 100.000000, e 100.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 0.100000, k 100.000000, e 1000.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 0.100000, k 1000.000000, e 0.001000 --&gt; Accuracy: 0.571429, MAE: 0.892857
-SVR C 0.100000, k 1000.000000, e 0.010000 --&gt; Accuracy: 0.571429, MAE: 0.892857
-SVR C 0.100000, k 1000.000000, e 0.100000 --&gt; Accuracy: 0.125000, MAE: 1.035714
-SVR C 0.100000, k 1000.000000, e 1.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 0.100000, k 1000.000000, e 10.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 0.100000, k 1000.000000, e 100.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 0.100000, k 1000.000000, e 1000.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 1.000000, k 0.001000, e 0.001000 --&gt; Accuracy: 0.625000, MAE: 0.482143
-SVR C 1.000000, k 0.001000, e 0.010000 --&gt; Accuracy: 0.589286, MAE: 0.517857
-SVR C 1.000000, k 0.001000, e 0.100000 --&gt; Accuracy: 0.589286, MAE: 0.482143
-SVR C 1.000000, k 0.001000, e 1.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 1.000000, k 0.001000, e 10.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 1.000000, k 0.001000, e 100.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 1.000000, k 0.001000, e 1000.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 1.000000, k 0.010000, e 0.001000 --&gt; Accuracy: 0.535714, MAE: 0.535714
-SVR C 1.000000, k 0.010000, e 0.010000 --&gt; Accuracy: 0.535714, MAE: 0.553571
-SVR C 1.000000, k 0.010000, e 0.100000 --&gt; Accuracy: 0.500000, MAE: 0.589286
-SVR C 1.000000, k 0.010000, e 1.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 1.000000, k 0.010000, e 10.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 1.000000, k 0.010000, e 100.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 1.000000, k 0.010000, e 1000.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 1.000000, k 0.100000, e 0.001000 --&gt; Accuracy: 0.142857, MAE: 1.035714
-SVR C 1.000000, k 0.100000, e 0.010000 --&gt; Accuracy: 0.142857, MAE: 1.035714
-SVR C 1.000000, k 0.100000, e 0.100000 --&gt; Accuracy: 0.142857, MAE: 1.035714
-SVR C 1.000000, k 0.100000, e 1.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 1.000000, k 0.100000, e 10.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 1.000000, k 0.100000, e 100.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 1.000000, k 0.100000, e 1000.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 1.000000, k 1.000000, e 0.001000 --&gt; Accuracy: 0.125000, MAE: 1.035714
-SVR C 1.000000, k 1.000000, e 0.010000 --&gt; Accuracy: 0.125000, MAE: 1.035714
-SVR C 1.000000, k 1.000000, e 0.100000 --&gt; Accuracy: 0.125000, MAE: 1.035714
-SVR C 1.000000, k 1.000000, e 1.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 1.000000, k 1.000000, e 10.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 1.000000, k 1.000000, e 100.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 1.000000, k 1.000000, e 1000.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 1.000000, k 10.000000, e 0.001000 --&gt; Accuracy: 0.125000, MAE: 1.035714
-SVR C 1.000000, k 10.000000, e 0.010000 --&gt; Accuracy: 0.125000, MAE: 1.035714
-SVR C 1.000000, k 10.000000, e 0.100000 --&gt; Accuracy: 0.125000, MAE: 1.035714
-SVR C 1.000000, k 10.000000, e 1.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 1.000000, k 10.000000, e 10.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 1.000000, k 10.000000, e 100.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 1.000000, k 10.000000, e 1000.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 1.000000, k 100.000000, e 0.001000 --&gt; Accuracy: 0.125000, MAE: 1.035714
-SVR C 1.000000, k 100.000000, e 0.010000 --&gt; Accuracy: 0.125000, MAE: 1.035714
-SVR C 1.000000, k 100.000000, e 0.100000 --&gt; Accuracy: 0.125000, MAE: 1.035714
-SVR C 1.000000, k 100.000000, e 1.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 1.000000, k 100.000000, e 10.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 1.000000, k 100.000000, e 100.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 1.000000, k 100.000000, e 1000.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 1.000000, k 1000.000000, e 0.001000 --&gt; Accuracy: 0.125000, MAE: 1.035714
-SVR C 1.000000, k 1000.000000, e 0.010000 --&gt; Accuracy: 0.125000, MAE: 1.035714
-SVR C 1.000000, k 1000.000000, e 0.100000 --&gt; Accuracy: 0.125000, MAE: 1.035714
-SVR C 1.000000, k 1000.000000, e 1.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 1.000000, k 1000.000000, e 10.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 1.000000, k 1000.000000, e 100.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 1.000000, k 1000.000000, e 1000.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 10.000000, k 0.001000, e 0.001000 --&gt; Accuracy: 0.660714, MAE: 0.410714
-SVR C 10.000000, k 0.001000, e 0.010000 --&gt; Accuracy: 0.678571, MAE: 0.392857
-SVR C 10.000000, k 0.001000, e 0.100000 --&gt; Accuracy: 0.678571, MAE: 0.375000
-SVR C 10.000000, k 0.001000, e 1.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 10.000000, k 0.001000, e 10.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 10.000000, k 0.001000, e 100.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 10.000000, k 0.001000, e 1000.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 10.000000, k 0.010000, e 0.001000 --&gt; Accuracy: 0.535714, MAE: 0.589286
-SVR C 10.000000, k 0.010000, e 0.010000 --&gt; Accuracy: 0.535714, MAE: 0.589286
-SVR C 10.000000, k 0.010000, e 0.100000 --&gt; Accuracy: 0.500000, MAE: 0.625000
-SVR C 10.000000, k 0.010000, e 1.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 10.000000, k 0.010000, e 10.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 10.000000, k 0.010000, e 100.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 10.000000, k 0.010000, e 1000.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 10.000000, k 0.100000, e 0.001000 --&gt; Accuracy: 0.142857, MAE: 1.035714
-SVR C 10.000000, k 0.100000, e 0.010000 --&gt; Accuracy: 0.142857, MAE: 1.035714
-SVR C 10.000000, k 0.100000, e 0.100000 --&gt; Accuracy: 0.142857, MAE: 1.035714
-SVR C 10.000000, k 0.100000, e 1.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 10.000000, k 0.100000, e 10.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 10.000000, k 0.100000, e 100.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 10.000000, k 0.100000, e 1000.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 10.000000, k 1.000000, e 0.001000 --&gt; Accuracy: 0.125000, MAE: 1.035714
-SVR C 10.000000, k 1.000000, e 0.010000 --&gt; Accuracy: 0.125000, MAE: 1.035714
-SVR C 10.000000, k 1.000000, e 0.100000 --&gt; Accuracy: 0.125000, MAE: 1.035714
-SVR C 10.000000, k 1.000000, e 1.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 10.000000, k 1.000000, e 10.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 10.000000, k 1.000000, e 100.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 10.000000, k 1.000000, e 1000.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 10.000000, k 10.000000, e 0.001000 --&gt; Accuracy: 0.125000, MAE: 1.035714
-SVR C 10.000000, k 10.000000, e 0.010000 --&gt; Accuracy: 0.125000, MAE: 1.035714
-SVR C 10.000000, k 10.000000, e 0.100000 --&gt; Accuracy: 0.125000, MAE: 1.035714
-SVR C 10.000000, k 10.000000, e 1.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 10.000000, k 10.000000, e 10.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 10.000000, k 10.000000, e 100.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 10.000000, k 10.000000, e 1000.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 10.000000, k 100.000000, e 0.001000 --&gt; Accuracy: 0.125000, MAE: 1.035714
-SVR C 10.000000, k 100.000000, e 0.010000 --&gt; Accuracy: 0.125000, MAE: 1.035714
-SVR C 10.000000, k 100.000000, e 0.100000 --&gt; Accuracy: 0.125000, MAE: 1.035714
-SVR C 10.000000, k 100.000000, e 1.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 10.000000, k 100.000000, e 10.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 10.000000, k 100.000000, e 100.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 10.000000, k 100.000000, e 1000.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 10.000000, k 1000.000000, e 0.001000 --&gt; Accuracy: 0.125000, MAE: 1.035714
-SVR C 10.000000, k 1000.000000, e 0.010000 --&gt; Accuracy: 0.125000, MAE: 1.035714
-SVR C 10.000000, k 1000.000000, e 0.100000 --&gt; Accuracy: 0.125000, MAE: 1.035714
-SVR C 10.000000, k 1000.000000, e 1.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 10.000000, k 1000.000000, e 10.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 10.000000, k 1000.000000, e 100.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 10.000000, k 1000.000000, e 1000.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 100.000000, k 0.001000, e 0.001000 --&gt; Accuracy: 0.607143, MAE: 0.428571
-SVR C 100.000000, k 0.001000, e 0.010000 --&gt; Accuracy: 0.625000, MAE: 0.410714
-SVR C 100.000000, k 0.001000, e 0.100000 --&gt; Accuracy: 0.535714, MAE: 0.535714
-SVR C 100.000000, k 0.001000, e 1.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 100.000000, k 0.001000, e 10.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 100.000000, k 0.001000, e 100.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 100.000000, k 0.001000, e 1000.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 100.000000, k 0.010000, e 0.001000 --&gt; Accuracy: 0.571429, MAE: 0.589286
-SVR C 100.000000, k 0.010000, e 0.010000 --&gt; Accuracy: 0.535714, MAE: 0.607143
-SVR C 100.000000, k 0.010000, e 0.100000 --&gt; Accuracy: 0.517857, MAE: 0.625000
-SVR C 100.000000, k 0.010000, e 1.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 100.000000, k 0.010000, e 10.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 100.000000, k 0.010000, e 100.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 100.000000, k 0.010000, e 1000.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 100.000000, k 0.100000, e 0.001000 --&gt; Accuracy: 0.142857, MAE: 1.035714
-SVR C 100.000000, k 0.100000, e 0.010000 --&gt; Accuracy: 0.142857, MAE: 1.035714
-SVR C 100.000000, k 0.100000, e 0.100000 --&gt; Accuracy: 0.142857, MAE: 1.035714
-SVR C 100.000000, k 0.100000, e 1.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 100.000000, k 0.100000, e 10.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 100.000000, k 0.100000, e 100.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 100.000000, k 0.100000, e 1000.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 100.000000, k 1.000000, e 0.001000 --&gt; Accuracy: 0.125000, MAE: 1.035714
-SVR C 100.000000, k 1.000000, e 0.010000 --&gt; Accuracy: 0.125000, MAE: 1.035714
-SVR C 100.000000, k 1.000000, e 0.100000 --&gt; Accuracy: 0.125000, MAE: 1.035714
-SVR C 100.000000, k 1.000000, e 1.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 100.000000, k 1.000000, e 10.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 100.000000, k 1.000000, e 100.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 100.000000, k 1.000000, e 1000.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 100.000000, k 10.000000, e 0.001000 --&gt; Accuracy: 0.125000, MAE: 1.035714
-SVR C 100.000000, k 10.000000, e 0.010000 --&gt; Accuracy: 0.125000, MAE: 1.035714
-SVR C 100.000000, k 10.000000, e 0.100000 --&gt; Accuracy: 0.125000, MAE: 1.035714
-SVR C 100.000000, k 10.000000, e 1.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 100.000000, k 10.000000, e 10.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 100.000000, k 10.000000, e 100.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 100.000000, k 10.000000, e 1000.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 100.000000, k 100.000000, e 0.001000 --&gt; Accuracy: 0.125000, MAE: 1.035714
-SVR C 100.000000, k 100.000000, e 0.010000 --&gt; Accuracy: 0.125000, MAE: 1.035714
-SVR C 100.000000, k 100.000000, e 0.100000 --&gt; Accuracy: 0.125000, MAE: 1.035714
-SVR C 100.000000, k 100.000000, e 1.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 100.000000, k 100.000000, e 10.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 100.000000, k 100.000000, e 100.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 100.000000, k 100.000000, e 1000.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 100.000000, k 1000.000000, e 0.001000 --&gt; Accuracy: 0.125000, MAE: 1.035714
-SVR C 100.000000, k 1000.000000, e 0.010000 --&gt; Accuracy: 0.125000, MAE: 1.035714
-SVR C 100.000000, k 1000.000000, e 0.100000 --&gt; Accuracy: 0.125000, MAE: 1.035714
-SVR C 100.000000, k 1000.000000, e 1.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 100.000000, k 1000.000000, e 10.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 100.000000, k 1000.000000, e 100.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 100.000000, k 1000.000000, e 1000.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 1000.000000, k 0.001000, e 0.001000 --&gt; Accuracy: 0.607143, MAE: 0.500000
-SVR C 1000.000000, k 0.001000, e 0.010000 --&gt; Accuracy: 0.589286, MAE: 0.517857
-SVR C 1000.000000, k 0.001000, e 0.100000 --&gt; Accuracy: 0.571429, MAE: 0.553571
-SVR C 1000.000000, k 0.001000, e 1.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 1000.000000, k 0.001000, e 10.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 1000.000000, k 0.001000, e 100.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 1000.000000, k 0.001000, e 1000.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 1000.000000, k 0.010000, e 0.001000 --&gt; Accuracy: 0.571429, MAE: 0.589286
-SVR C 1000.000000, k 0.010000, e 0.010000 --&gt; Accuracy: 0.535714, MAE: 0.607143
-SVR C 1000.000000, k 0.010000, e 0.100000 --&gt; Accuracy: 0.517857, MAE: 0.625000
-SVR C 1000.000000, k 0.010000, e 1.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 1000.000000, k 0.010000, e 10.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 1000.000000, k 0.010000, e 100.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 1000.000000, k 0.010000, e 1000.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 1000.000000, k 0.100000, e 0.001000 --&gt; Accuracy: 0.142857, MAE: 1.035714
-SVR C 1000.000000, k 0.100000, e 0.010000 --&gt; Accuracy: 0.142857, MAE: 1.035714
-SVR C 1000.000000, k 0.100000, e 0.100000 --&gt; Accuracy: 0.142857, MAE: 1.035714
-SVR C 1000.000000, k 0.100000, e 1.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 1000.000000, k 0.100000, e 10.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 1000.000000, k 0.100000, e 100.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 1000.000000, k 0.100000, e 1000.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 1000.000000, k 1.000000, e 0.001000 --&gt; Accuracy: 0.125000, MAE: 1.035714
-SVR C 1000.000000, k 1.000000, e 0.010000 --&gt; Accuracy: 0.125000, MAE: 1.035714
-SVR C 1000.000000, k 1.000000, e 0.100000 --&gt; Accuracy: 0.125000, MAE: 1.035714
-SVR C 1000.000000, k 1.000000, e 1.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 1000.000000, k 1.000000, e 10.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 1000.000000, k 1.000000, e 100.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 1000.000000, k 1.000000, e 1000.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 1000.000000, k 10.000000, e 0.001000 --&gt; Accuracy: 0.125000, MAE: 1.035714
-SVR C 1000.000000, k 10.000000, e 0.010000 --&gt; Accuracy: 0.125000, MAE: 1.035714
-SVR C 1000.000000, k 10.000000, e 0.100000 --&gt; Accuracy: 0.125000, MAE: 1.035714
-SVR C 1000.000000, k 10.000000, e 1.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 1000.000000, k 10.000000, e 10.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 1000.000000, k 10.000000, e 100.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 1000.000000, k 10.000000, e 1000.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 1000.000000, k 100.000000, e 0.001000 --&gt; Accuracy: 0.125000, MAE: 1.035714
-SVR C 1000.000000, k 100.000000, e 0.010000 --&gt; Accuracy: 0.125000, MAE: 1.035714
-SVR C 1000.000000, k 100.000000, e 0.100000 --&gt; Accuracy: 0.125000, MAE: 1.035714
-SVR C 1000.000000, k 100.000000, e 1.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 1000.000000, k 100.000000, e 10.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 1000.000000, k 100.000000, e 100.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 1000.000000, k 100.000000, e 1000.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 1000.000000, k 1000.000000, e 0.001000 --&gt; Accuracy: 0.125000, MAE: 1.035714
-SVR C 1000.000000, k 1000.000000, e 0.010000 --&gt; Accuracy: 0.125000, MAE: 1.035714
-SVR C 1000.000000, k 1000.000000, e 0.100000 --&gt; Accuracy: 0.125000, MAE: 1.035714
-SVR C 1000.000000, k 1000.000000, e 1.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 1000.000000, k 1000.000000, e 10.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 1000.000000, k 1000.000000, e 100.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-SVR C 1000.000000, k 1000.000000, e 1000.000000 --&gt; Accuracy: 0.178571, MAE: 1.428571
-Best Results SVR C 10.000000, k 0.001000, e 0.010000 --&gt; Accuracy: 0.678571
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>As you can check, the best configuration leads to almost a 70% of accuracy, which is not very bad considering that we have 5 classes.</p>
-<p>This way of adjusting the parameters is not fair, as we can be overfitting the test set. The decision of the optimal parameters should be taken without checking test results. This can be done by using nested crossvalidation.</p>
-<hr>
-<p><strong><em>Exercise 3</em></strong> : complete the code of the script (<a href="tutorial/scripts/crossvalide.m">crossvalide.m</a>) for automatising hyper-parameter selection in this problem. The idea is to have a function like this:</p>
-<div class="highlight"><pre><span></span><span class="o">&gt;&gt;</span> <span class="n">param</span> <span class="p">=</span> <span class="n">crossvalide</span><span class="p">(</span><span class="n">algorithmObj</span><span class="p">,</span><span class="n">train</span><span class="p">,</span><span class="mi">5</span><span class="p">);</span>
-<span class="o">&gt;&gt;</span> <span class="n">param</span>
-
-<span class="n">param</span> <span class="p">=</span>
-
-    <span class="n">C</span><span class="p">:</span> <span class="mf">0.0100</span>
-    <span class="n">k</span><span class="p">:</span> <span class="mf">0.0100</span>
-    <span class="n">e</span><span class="p">:</span> <span class="mf">0.0100</span>
-<span class="o">&gt;&gt;</span> <span class="n">fprintf</span><span class="p">(</span><span class="s">&#39;\nSupport Vector Regression with cross validated parameters\n---------------\n&#39;</span><span class="p">);</span>
-<span class="n">fprintf</span><span class="p">(</span><span class="s">&#39;SVR Accuracy: %f\n&#39;</span><span class="p">,</span> <span class="n">CCR</span><span class="p">.</span><span class="n">calculateMetric</span><span class="p">(</span><span class="n">test</span><span class="p">.</span><span class="n">targets</span><span class="p">,</span><span class="n">info</span><span class="p">.</span><span class="n">predictedTest</span><span class="p">));</span>
-<span class="n">fprintf</span><span class="p">(</span><span class="s">&#39;SVR MAE: %f\n&#39;</span><span class="p">,</span> <span class="n">MAE</span><span class="p">.</span><span class="n">calculateMetric</span><span class="p">(</span><span class="n">test</span><span class="p">.</span><span class="n">targets</span><span class="p">,</span><span class="n">info</span><span class="p">.</span><span class="n">predictedTest</span><span class="p">));</span>
-
-<span class="n">Support</span> <span class="n">Vector</span> <span class="n">Regression</span> <span class="n">with</span> <span class="nb">cross</span> <span class="n">validated</span> <span class="n">parameters</span>
-<span class="o">---------------</span>
-<span class="n">SVR</span> <span class="n">Accuracy</span><span class="p">:</span> <span class="mf">0.589286</span>
-<span class="n">SVR</span> <span class="n">MAE</span><span class="p">:</span> <span class="mf">0.732143</span>
-</pre></div>
-<p>Although the results are worse, we can be sure that here there is no overfitting.</p>
-<hr>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Fortunately, this can be easily done in ORCA by using the <code>ini</code> files with the correct format. <a href="tutorial/config-files/svrMelanoma.ini">svrMelanoma.ini</a> is a configuration file with the following contents:</p>
-<div class="highlight"><pre><span></span><span class="c1">;SVR experiments for melanoma</span>
-<span class="c1">;</span>
-<span class="c1">; Experiment ID</span>
-<span class="k">[svr-mae-tutorial-melanoma]</span>
-<span class="na">{general-conf}</span>
-<span class="na">seed</span> <span class="o">=</span> <span class="s">1</span>
-<span class="c1">; Datasets path</span>
-<span class="na">basedir</span> <span class="o">=</span> <span class="s">../exampledata/10-fold</span>
-<span class="c1">; Datasets to process (comma separated list or all to process all)</span>
-<span class="na">datasets</span> <span class="o">=</span> <span class="s">melanoma-5classes-abcd-100</span>
-<span class="c1">; Activate data standardization</span>
-<span class="na">standarize</span> <span class="o">=</span> <span class="s">true</span>
-<span class="c1">; Number of folds for the parameters optimization</span>
-<span class="na">num_folds</span> <span class="o">=</span> <span class="s">5</span>
-<span class="c1">; Crossvalidation metric</span>
-<span class="na">cvmetric</span> <span class="o">=</span> <span class="s">ccr</span>
-
-<span class="c1">; Method: algorithm and parameter</span>
-<span class="na">{algorithm-parameters}</span>
-<span class="na">algorithm</span> <span class="o">=</span> <span class="s">SVR</span>
-<span class="c1">;kernelType = rbf</span>
-
-<span class="c1">; Method&#39;s hyper-parameter values to optimize</span>
-<span class="na">{algorithm-hyper-parameters-to-cv}</span>
-<span class="na">C</span> <span class="o">=</span> <span class="s">10.^(-2:1:2)</span>
-<span class="na">k</span> <span class="o">=</span> <span class="s">10.^(-2:1:2)</span>
-<span class="na">e</span> <span class="o">=</span> <span class="s">10.^(-3:1:0)</span>
-</pre></div>
-<p>In this way, we will obtain the results for the 10 partitions. This <code>ini</code> file can be run by using the following code (to be run from the <code>src</code> folder):</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[12]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-octave"><pre><span></span><span class="n">Utilities</span><span class="p">.</span><span class="n">runExperiments</span><span class="p">(</span><span class="s">&#39;../doc/tutorial/config-files/svrMelanomafs.ini&#39;</span><span class="p">)</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>Setting up experiments...
-Running experiment exp-svr-mae-tutorial-melanoma-melanoma-5classes-abcd-100-fs-1.ini
-Running experiment exp-svr-mae-tutorial-melanoma-melanoma-5classes-abcd-100-fs-10.ini
-Running experiment exp-svr-mae-tutorial-melanoma-melanoma-5classes-abcd-100-fs-2.ini
-Running experiment exp-svr-mae-tutorial-melanoma-melanoma-5classes-abcd-100-fs-3.ini
-Running experiment exp-svr-mae-tutorial-melanoma-melanoma-5classes-abcd-100-fs-4.ini
-Running experiment exp-svr-mae-tutorial-melanoma-melanoma-5classes-abcd-100-fs-5.ini
-Running experiment exp-svr-mae-tutorial-melanoma-melanoma-5classes-abcd-100-fs-6.ini
-Running experiment exp-svr-mae-tutorial-melanoma-melanoma-5classes-abcd-100-fs-7.ini
-Running experiment exp-svr-mae-tutorial-melanoma-melanoma-5classes-abcd-100-fs-8.ini
-Running experiment exp-svr-mae-tutorial-melanoma-melanoma-5classes-abcd-100-fs-9.ini
-Calculating results...
-Experiments/exp-2019-4-24-11-21-7/Results/melanoma-5classes-abcd-100-fs-svr-mae-tutorial-melanoma/dataset
-Experiments/exp-2019-4-24-11-21-7/Results/melanoma-5classes-abcd-100-fs-svr-mae-tutorial-melanoma/dataset
-ans = Experiments/exp-2019-4-24-11-21-7
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Note that the number of experiments is crucial, so the execution can take a considerable amount of time. To accelerate the experiments you can use multiple cores of your CPU with <code>Utilities.runExperiments('experiments.ini','parallel', true)</code> (see this <a href="orca-parallel.md">page</a>).</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Nominal-classification-(SVC1V1-and-SVC1VA)">Nominal classification (SVC1V1 and SVC1VA)<a class="anchor-link" href="#Nominal-classification-(SVC1V1-and-SVC1VA)">&#182;</a></h3><p>We can also approach ordinal classification by considering nominal classification, i.e. by ignoring the ordering information. It has been shown that this can make the classifier need more data to learn.</p>
-<p>ORCA includes two approaches to perform ordinal classification by nominal classification, both based on the Support Vector Classifier:</p>
-<ul>
-<li><a href="../src/Algorithms/SVC1V1.m">One-Vs-One (SVC1V1)</a> [3], where all pairs of classes are compared in different binary SVCs. The prediction is based on majority voting.</li>
-<li><a href="../src/Algorithms/SVC1VA.m">One-Vs-All (SVC1VA)</a> [3], where each class is compared against the rest. The class predicted is that with the largest decision function value.</li>
-</ul>
-<p>Both methods consider an RBF kernel with the following two parameters:</p>
-<ul>
-<li>Parameter <code>C</code>, importance given to errors.</li>
-<li>Parameter <code>k</code>, inverse of the width of the RBF kernel.</li>
-</ul>
-<p>Now, we run the SVC1V1 method:</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[13]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-octave"><pre><span></span><span class="n">algorithmObj</span> <span class="p">=</span> <span class="n">SVC1V1</span><span class="p">();</span>
-<span class="nb">info</span> <span class="p">=</span> <span class="n">algorithmObj</span><span class="p">.</span><span class="n">fitpredict</span><span class="p">(</span><span class="n">train</span><span class="p">,</span><span class="nb">test</span><span class="p">,</span><span class="nb">struct</span><span class="p">(</span><span class="s">&#39;C&#39;</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="s">&#39;k&#39;</span><span class="p">,</span><span class="mf">0.001</span><span class="p">));</span>
-<span class="nb">fprintf</span><span class="p">(</span><span class="s">&#39;\nSVC1V1\n---------------\n&#39;</span><span class="p">);</span>
-<span class="nb">fprintf</span><span class="p">(</span><span class="s">&#39;SVC1V1 Accuracy: %f\n&#39;</span><span class="p">,</span> <span class="n">CCR</span><span class="p">.</span><span class="n">calculateMetric</span><span class="p">(</span><span class="nb">test</span><span class="p">.</span><span class="n">targets</span><span class="p">,</span><span class="nb">info</span><span class="p">.</span><span class="n">predictedTest</span><span class="p">));</span>
-<span class="nb">fprintf</span><span class="p">(</span><span class="s">&#39;SVC1V1 MAE: %f\n&#39;</span><span class="p">,</span> <span class="n">MAE</span><span class="p">.</span><span class="n">calculateMetric</span><span class="p">(</span><span class="nb">test</span><span class="p">.</span><span class="n">targets</span><span class="p">,</span><span class="nb">info</span><span class="p">.</span><span class="n">predictedTest</span><span class="p">));</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>
-SVC1V1
----------------
-SVC1V1 Accuracy: 0.678571
-SVC1V1 MAE: 0.517857
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>In SVC1V1, the decision values have <code>(Q(Q-1))/2</code> (the number of combinations of two classes from the set of <code>Q</code> possibilities) columns and majority voting is applied.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[14]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-octave"><pre><span></span><span class="nb">info</span><span class="p">.</span><span class="n">projectedTest</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="mi">10</span><span class="p">,:)</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>ans =
-
- Columns 1 through 7:
-
-   0.926074   0.536692   1.024967   1.830303  -0.602659   0.984071   2.016569
-   0.781432   0.482145   0.765139   0.899214  -0.519628   0.146724   1.053821
-   1.528675   1.504568   1.561044   1.935776  -0.465130   0.043801   0.944491
-   1.672826   2.087165   2.060144   1.702189   0.438583   2.397228   2.721777
-   1.400823   1.620267   1.327972   1.661743   0.307829   0.668906   1.746674
-   1.522858   1.452593   1.731991   1.742870  -0.816676  -0.359383   0.397733
-   1.255397   1.143070   1.042698   1.317361  -1.144442  -0.934373  -0.192200
-   1.172912   1.379507   1.437137   1.315572   0.013278   0.179874   1.168156
-   0.686760   0.745882   1.214429   1.195741   0.293695   1.392134   1.054115
-   0.523418   0.692412   0.706582   0.741470   0.185244   0.936942   1.564033
-
- Columns 8 through 10:
-
-   1.126951   2.248576   2.797064
-   0.816910   1.310837   1.206514
-   0.150428   1.624378   2.462877
-   1.686543   2.019641   2.294685
-   0.394076   1.871991   1.857090
-   0.402845   1.284394   0.931703
-  -0.512859   0.916138   0.948722
-   0.311567   1.752660   1.255249
-   1.043376   1.083996   1.188979
-   0.669801   1.071577   1.003215
-
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>We can also try SVC1VA:</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[15]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-octave"><pre><span></span><span class="n">algorithmObj</span> <span class="p">=</span> <span class="n">SVC1VA</span><span class="p">();</span>
-<span class="nb">info</span> <span class="p">=</span> <span class="n">algorithmObj</span><span class="p">.</span><span class="n">fitpredict</span><span class="p">(</span><span class="n">train</span><span class="p">,</span><span class="nb">test</span><span class="p">,</span><span class="nb">struct</span><span class="p">(</span><span class="s">&#39;C&#39;</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="s">&#39;k&#39;</span><span class="p">,</span><span class="mf">0.001</span><span class="p">));</span>
-<span class="nb">fprintf</span><span class="p">(</span><span class="s">&#39;\nSVC1VA\n---------------\n&#39;</span><span class="p">);</span>
-<span class="nb">fprintf</span><span class="p">(</span><span class="s">&#39;SVC1VA Accuracy: %f\n&#39;</span><span class="p">,</span> <span class="n">CCR</span><span class="p">.</span><span class="n">calculateMetric</span><span class="p">(</span><span class="nb">test</span><span class="p">.</span><span class="n">targets</span><span class="p">,</span><span class="nb">info</span><span class="p">.</span><span class="n">predictedTest</span><span class="p">));</span>
-<span class="nb">fprintf</span><span class="p">(</span><span class="s">&#39;SVC1VA MAE: %f\n&#39;</span><span class="p">,</span> <span class="n">MAE</span><span class="p">.</span><span class="n">calculateMetric</span><span class="p">(</span><span class="nb">test</span><span class="p">.</span><span class="n">targets</span><span class="p">,</span><span class="nb">info</span><span class="p">.</span><span class="n">predictedTest</span><span class="p">));</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>
-SVC1VA
----------------
-SVC1VA Accuracy: 0.660714
-SVC1VA MAE: 0.535714
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Five decision values are obtained for each pattern:</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[16]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-octave"><pre><span></span><span class="nb">info</span><span class="p">.</span><span class="n">projectedTest</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="mi">10</span><span class="p">,:)</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>ans =
-
-   0.462546  -1.071544  -0.908493  -1.044683  -1.926574
-  -0.226527  -1.058268  -1.080394  -1.053184  -1.497083
-   1.163881  -1.128640  -1.304918  -1.068402  -1.501780
-   1.973975  -1.197629  -1.338739  -1.211381  -1.883198
-   0.888686  -1.029075  -1.284270  -0.988469  -1.772721
-   1.167493  -1.120933  -1.107723  -1.115342  -1.446582
-   0.618121  -1.160749  -1.248624  -0.980550  -1.149154
-   0.681678  -0.861655  -1.150944  -1.017109  -1.520761
-   0.202775  -0.989939  -0.937921  -1.077725  -1.595495
-  -0.051222  -0.964142  -1.198391  -1.072984  -1.301023
-
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>In this case, SVC1V1 obtains better results.</p>
-<h3 id="Cost-sensitive-classification-(CSSVC)">Cost sensitive classification (CSSVC)<a class="anchor-link" href="#Cost-sensitive-classification-(CSSVC)">&#182;</a></h3><p>This is a special case of approaching ordinal classification by nominal classifiers. We can include different misclassification costs in the optimization function, in order to penalize more those mistakes which involve several categories in the ordinal scale. ORCA implements this method using again SVC and specifically the SVC1VA alternative. The costs are included as weights in the patterns, in such a way that, when generating the <code>Q</code> binary problems, the patterns of the negative class are given a weight according to the absolute difference (in number of categories) between the positive class and the specific negative class.</p>
-<p>The method is called <a href="../src/Algorithms/CSSVC.m">Cost Sensitive SVC (CSSVC)</a> [3] and considers an RBF kernel with the following two parameters:</p>
-<ul>
-<li>Parameter <code>C</code>, importance given to errors.</li>
-<li>Parameter <code>k</code>, inverse of the width of the RBF kernel.</li>
-</ul>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[17]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-octave"><pre><span></span><span class="n">algorithmObj</span> <span class="p">=</span> <span class="n">CSSVC</span><span class="p">();</span>
-<span class="nb">info</span> <span class="p">=</span> <span class="n">algorithmObj</span><span class="p">.</span><span class="n">fitpredict</span><span class="p">(</span><span class="n">train</span><span class="p">,</span><span class="nb">test</span><span class="p">,</span><span class="nb">struct</span><span class="p">(</span><span class="s">&#39;C&#39;</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="s">&#39;k&#39;</span><span class="p">,</span><span class="mf">0.001</span><span class="p">));</span>
-<span class="nb">fprintf</span><span class="p">(</span><span class="s">&#39;\nCSSVC\n---------------\n&#39;</span><span class="p">);</span>
-<span class="nb">fprintf</span><span class="p">(</span><span class="s">&#39;CSSVC Accuracy: %f\n&#39;</span><span class="p">,</span> <span class="n">CCR</span><span class="p">.</span><span class="n">calculateMetric</span><span class="p">(</span><span class="nb">test</span><span class="p">.</span><span class="n">targets</span><span class="p">,</span><span class="nb">info</span><span class="p">.</span><span class="n">predictedTest</span><span class="p">));</span>
-<span class="nb">fprintf</span><span class="p">(</span><span class="s">&#39;CSSVC MAE: %f\n&#39;</span><span class="p">,</span> <span class="n">MAE</span><span class="p">.</span><span class="n">calculateMetric</span><span class="p">(</span><span class="nb">test</span><span class="p">.</span><span class="n">targets</span><span class="p">,</span><span class="nb">info</span><span class="p">.</span><span class="n">predictedTest</span><span class="p">));</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>
-CSSVC
----------------
-CSSVC Accuracy: 0.660714
-CSSVC MAE: 0.571429
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>And the structure of decision values is the same than for SVC1VA:</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[18]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-octave"><pre><span></span><span class="nb">info</span><span class="p">.</span><span class="n">projectedTest</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="mi">10</span><span class="p">,:)</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>ans =
-
-   0.526466  -1.056019  -0.817306  -1.106751  -2.053652
-  -0.245966  -1.067136  -1.091898  -1.069017  -1.570898
-   1.272027  -1.127647  -1.363783  -1.096815  -1.770744
-   2.012662  -1.210841  -1.448556  -1.348315  -2.044471
-   0.997074  -1.037871  -1.339759  -1.004385  -1.932343
-   1.188533  -1.118333  -1.165770  -1.190148  -1.586843
-   0.607352  -1.152543  -1.266244  -0.984153  -1.107906
-   0.817064  -0.859796  -1.156218  -1.089279  -1.663824
-   0.235265  -0.967117  -0.944791  -1.125184  -1.773904
-   0.017978  -0.973937  -1.218500  -1.116829  -1.373983
-
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Summary-of-results-for-naive-approaches">Summary of results for naive approaches<a class="anchor-link" href="#Summary-of-results-for-naive-approaches">&#182;</a></h3><h3 id="TODO:-now-SVR-does-not-get-the-best-MAE-since-the-order-information-is-missed-in-the-reduded-dataset">TODO: now SVR does not get the best MAE since the order information is missed in the reduded dataset<a class="anchor-link" href="#TODO:-now-SVR-does-not-get-the-best-MAE-since-the-order-information-is-missed-in-the-reduded-dataset">&#182;</a></h3><p>We can compare all the results obtained by naive methods in the third partition of the melanoma dataset:</p>
-<ul>
-<li>SVR Accuracy: 0.678571</li>
-<li>SVC1V1 Accuracy: 0.678571</li>
-<li>SVC1VA Accuracy: 0.660714</li>
-<li>CSSVC Accuracy: 0.660714</li>
-<li>SVR MAE: 0.392857</li>
-<li>SVC1V1 MAE: 0.517857</li>
-<li>SVC1VA MAE: 0.535714</li>
-<li>CSSVC MAE: 0.571429</li>
-</ul>
-<p>In this case, SVR has definitely obtained the best results. As can be checked, SVC1V1 accuracy is quite high, but it is masking a not so good MAE value.</p>
-
-</div>
-</div>
 </div>
     </div>
   </div>

@@ -2,7 +2,7 @@
 <html>
 <head><meta charset="utf-8" />
 
-<title>orca-tutorial-1</title>
+<title>orca_tutorial_3</title>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
@@ -13138,33 +13138,22 @@ $( document ).ready(function(){
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="How-to-use-ORCA">How to use ORCA<a class="anchor-link" href="#How-to-use-ORCA">&#182;</a></h1><p>ORCA is an experimental framework focused on productivity and experiments reproducibility for machine learning researchers. Although initially created to collect ordinal classification methods, it is also suitable for other classifiers.</p>
-<p>First, you will need to install the framework. To do so, please visit <a href="orca-quick-install.md">ORCA Quick Install Guide</a>. Note that you should be able to perform the test when the framework is successfully installed.</p>
-<p>This tutorial uses tree small datasets (<code>pasture</code>, <code>tae</code>, <code>toy</code>) contained in folder <a href="../exampledata/30-holdout">example data</a>. The datasets are already partitioned with a 30-holdout experimental design.</p>
-<p>This tutorial is prepared for running the experiments in Matlab, although it should be easily adapted to Octave.</p>
-<p><em>NOTE:</em></p>
-<p>Small datasets like the ones used in this tutorial usually produce warning messages such as:</p>
-<div class="highlight"><pre><span></span><span class="n">Warning</span><span class="p">:</span> <span class="n">Matrix</span> <span class="n">is</span> <span class="n">close</span> <span class="n">to</span> <span class="n">singular</span> <span class="n">or</span> <span class="n">badly</span> <span class="n">scaled</span><span class="p">.</span> <span class="n">Results</span> <span class="n">may</span> <span class="n">be</span> <span class="n">inaccurate</span><span class="p">.</span> <span class="n">RCOND</span> <span class="p">=</span>
-<span class="mf">1.747151e-17</span><span class="p">.</span>
-<span class="n">Warning</span><span class="p">:</span> <span class="n">Maximum</span> <span class="n">likelihood</span> <span class="n">estimation</span> <span class="n">did</span> <span class="n">not</span> <span class="n">converge</span><span class="p">.</span>  <span class="n">Iteration</span> <span class="n">limit</span>
-<span class="n">exceeded</span><span class="p">.</span>  <span class="n">You</span> <span class="n">may</span> <span class="n">need</span> <span class="n">to</span> <span class="n">merge</span> <span class="n">categories</span> <span class="n">to</span> <span class="n">increase</span> <span class="n">observed</span> <span class="n">counts</span><span class="p">.</span>
-</pre></div>
-<p>You can disable these messages by using the following code in Matlab:</p>
-<div class="highlight"><pre><span></span><span class="n">warning</span><span class="p">(</span><span class="s">&#39;off&#39;</span><span class="p">,</span><span class="s">&#39;MATLAB:nearlySingularMatrix&#39;</span><span class="p">)</span>
-<span class="n">warning</span><span class="p">(</span><span class="s">&#39;off&#39;</span><span class="p">,</span><span class="s">&#39;stats:mnrfit:IterOrEvalLimit&#39;</span><span class="p">)</span>
-</pre></div>
-<p>In Octave, to disable <code>warning: matrix singular to machine precision</code> we need to disable all the warnings:</p>
-<div class="highlight"><pre><span></span><span class="n">warning</span><span class="p">(</span><span class="s">&#39;off&#39;</span><span class="p">,</span><span class="s">&#39;all&#39;</span><span class="p">);</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Launch-experiments-through-ini-files">Launch experiments through <code>ini</code> files<a class="anchor-link" href="#Launch-experiments-through-ini-files">&#182;</a></h2><p>In this section, we run several experiments to compare the performance of three methods in a set of datasets: POM (Proportional Odds Model) [1], SVORIM (Support Vector Machines with IMplicit constrains) [2] and SVC1V1 (SVM classifier with 1-vs-1 binary decomposition) [3]. POM is a linear ordinal model, with limited performance but easy interpretation. SVORIM is an ordinal nonlinear model, with one of the most competitive performances according to several studies. SVC1V1 is the nominal counterpart of SVORIM, so that we can check the benefits of considering the order of the classes. To learn more about ordinal performance metrics see [4].</p>
-<p>From the Octave console load packages and add orca files to path:</p>
+<h1 id="Threshold-models">Threshold models<a class="anchor-link" href="#Threshold-models">&#182;</a></h1><p>This tutorial will cover how to apply threshold models in the framework ORCA. It is highly recommended to have previously completed the <a href="orca-tutorial-1.md">how to tutorial</a>.</p>
+<p>Moreover, we are going to work again with melanoma diagnosis dataset. You should complete at least <a href="orca-tutorial-2.md#loading-the-dataset-and-performing-some-preliminary-experiments">the second section of the second tutorial</a> in order to follow this third tutorial.</p>
+<p>All threshold models are designed with a very reasonable idea: the categories to be predicted in ordinal classification comes from the discretization of an underlying latent variable, so that we can try to model the latent variables and use a total of Q-1 thresholds (for Q classes) to divide this variable in categories. In this way, the order of categories will be considered, because the intervals defined for each will be arranged in the same order, and a lot of flexibility will be given to the model by simply moving these thresholds.</p>
+<p>Because of this, there are many threshold model proposals in the literature, and ORCA includes some of the most popular ones:</p>
+<ul>
+<li>One linear model (POM) [1].</li>
+<li>One neural network model (NNPOM) [1,2].</li>
+<li>Two support vector machine proposals (SVOREX and SVORIM) [3].</li>
+<li>One reduction from ordinal regression to binary SVM (REDSVM) [4].</li>
+<li>One discriminant analysis proposal (KDLOR) [5].</li>
+<li>One ensemble model (ORBoost) [6].</li>
+</ul>
+<p>The corresponding script for this tutorial, (<a href="../src/code-examples/exampleMelanomaTM.m">exampleMelanomaTM.m</a>), can be found and run in the <a href="../src/code-examples">code example folder</a>. Octave code is not shown here to simplify code, but it is included in (<a href="../src/code-examples/exampleMelanomaTM.m">exampleMelanomaTM.m</a>).</p>
+<h2 id="Proportional-odds-model-(POM)">Proportional odds model (POM)<a class="anchor-link" href="#Proportional-odds-model-(POM)">&#182;</a></h2><p>The POM arose from a statistical background, and it is based on an extension of binary logistic regression. Instead of using one single threshold to discriminate negative and positive class, the model includes as many thresholds as the number of classes minus one. The model uses one logistic function for each class, where the thresholds are arranged in ascending order and the linear part (projection vector) is common for all of them.</p>
+<p>A strong probabilistic basis is inherent to this approach: each logistic function is modelling the cumulative probability that a pattern has of belonging to the corresponding class or any of the previous classes. Cumulative probabilities can be easily transformed to standard probabilities by simply subtracting them.</p>
+<p>We can try the POM model using the melanoma dataset to check its performance. This method does not involve any parameter.</p>
 
 </div>
 </div>
@@ -13174,52 +13163,52 @@ $( document ).ready(function(){
 <div class="prompt input_prompt">In&nbsp;[1]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-octave"><pre><span></span><span class="c">% Install dataframe, add src to path and disable some warnings</span>
-<span class="n">pkg</span> <span class="n">install</span> <span class="o">-</span><span class="n">forge</span> <span class="n">dataframe</span>
+<div class=" highlight hl-octave"><pre><span></span><span class="nb">addpath</span><span class="p">(</span><span class="s">&#39;../src/Measures&#39;</span><span class="p">)</span>
+<span class="nb">addpath</span><span class="p">(</span><span class="s">&#39;../src/Algorithms&#39;</span><span class="p">)</span>
+<span class="nb">addpath</span><span class="p">(</span><span class="s">&#39;../src&#39;</span><span class="p">)</span>
+
+<span class="c">% Disable warnings</span>
+<span class="c">% MATLAB warnings</span>
+<span class="c">%warning(&#39;off&#39;,&#39;MATLAB:nearlySingularMatrix&#39;)</span>
+<span class="c">%warning(&#39;off&#39;,&#39;stats:mnrfit:IterOrEvalLimit&#39;)</span>
+<span class="c">% Octave warnings</span>
 <span class="nb">warning</span><span class="p">(</span><span class="s">&#39;off&#39;</span><span class="p">,</span><span class="s">&#39;all&#39;</span><span class="p">);</span>
 
-<span class="nb">addpath</span><span class="p">(</span><span class="s">&#39;../src/Algorithms/&#39;</span><span class="p">)</span>
-<span class="nb">addpath</span><span class="p">(</span><span class="s">&#39;../src/Measures/&#39;</span><span class="p">)</span>
-<span class="nb">addpath</span><span class="p">(</span><span class="s">&#39;../src/&#39;</span><span class="p">)</span>
+<span class="c">% Loading the data</span>
+<span class="n">trainMelanoma</span> <span class="p">=</span> <span class="nb">load</span><span class="p">(</span><span class="s">&#39;../exampledata/10-fold/melanoma-5classes-abcd-100/matlab/train_melanoma-5classes-abcd-100.5&#39;</span><span class="p">);</span>
+<span class="n">testMelanoma</span> <span class="p">=</span> <span class="nb">load</span><span class="p">(</span><span class="s">&#39;../exampledata/10-fold/melanoma-5classes-abcd-100/matlab/test_melanoma-5classes-abcd-100.5&#39;</span><span class="p">);</span>
+<span class="c">% Form structures for training/test</span>
+<span class="n">train</span><span class="p">.</span><span class="n">patterns</span> <span class="p">=</span> <span class="n">trainMelanoma</span><span class="p">(:,</span><span class="mi">1</span><span class="p">:(</span><span class="k">end</span><span class="o">-</span><span class="mi">1</span><span class="p">));</span>
+<span class="n">train</span><span class="p">.</span><span class="n">targets</span> <span class="p">=</span> <span class="n">trainMelanoma</span><span class="p">(:,</span><span class="k">end</span><span class="p">);</span>
+<span class="nb">test</span><span class="p">.</span><span class="n">patterns</span> <span class="p">=</span> <span class="n">testMelanoma</span><span class="p">(:,</span><span class="mi">1</span><span class="p">:(</span><span class="k">end</span><span class="o">-</span><span class="mi">1</span><span class="p">));</span>
+<span class="nb">test</span><span class="p">.</span><span class="n">targets</span> <span class="p">=</span> <span class="n">testMelanoma</span><span class="p">(:,</span><span class="k">end</span><span class="p">);</span>
+<span class="c">% Preprocess the data</span>
+<span class="p">[</span><span class="n">train</span><span class="p">,</span><span class="nb">test</span><span class="p">]</span> <span class="p">=</span> <span class="n">DataSet</span><span class="p">.</span><span class="n">deleteConstantAtributes</span><span class="p">(</span><span class="n">train</span><span class="p">,</span><span class="nb">test</span><span class="p">);</span>
+<span class="p">[</span><span class="n">train</span><span class="p">,</span><span class="nb">test</span><span class="p">]</span> <span class="p">=</span> <span class="n">DataSet</span><span class="p">.</span><span class="n">standarizeData</span><span class="p">(</span><span class="n">train</span><span class="p">,</span><span class="nb">test</span><span class="p">);</span>
+<span class="p">[</span><span class="n">train</span><span class="p">,</span><span class="nb">test</span><span class="p">]</span> <span class="p">=</span> <span class="n">DataSet</span><span class="p">.</span><span class="n">deleteNonNumericValues</span><span class="p">(</span><span class="n">train</span><span class="p">,</span><span class="nb">test</span><span class="p">);</span>
 </pre></div>
 
     </div>
 </div>
 </div>
 
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>For information about changes from previous versions of the dataframe package, run &#39;news dataframe&#39;.
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>The set of experiments described in INI file <code>tutorial/config-files/pom.ini</code> can be run by (the syntax of these files will be explained in the <a href="#Syntax-of-ini-files">next subsection</a>):</p>
-
-</div>
-</div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[2]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-octave"><pre><span></span><span class="n">Utilities</span><span class="p">.</span><span class="n">runExperiments</span><span class="p">(</span><span class="s">&#39;tutorial/config-files/pom.ini&#39;</span><span class="p">)</span>
+<div class=" highlight hl-octave"><pre><span></span><span class="c">%% Apply POM model</span>
+<span class="c">% Create the POM object</span>
+<span class="n">algorithmObj</span> <span class="p">=</span> <span class="n">POM</span><span class="p">();</span>
+
+<span class="c">% Train POM</span>
+<span class="nb">info</span> <span class="p">=</span> <span class="n">algorithmObj</span><span class="p">.</span><span class="n">fitpredict</span><span class="p">(</span><span class="n">train</span><span class="p">,</span><span class="nb">test</span><span class="p">);</span>
+
+<span class="c">% Evaluate the model</span>
+<span class="nb">fprintf</span><span class="p">(</span><span class="s">&#39;POM method\n---------------\n&#39;</span><span class="p">);</span>
+<span class="nb">fprintf</span><span class="p">(</span><span class="s">&#39;POM Accuracy: %f\n&#39;</span><span class="p">,</span> <span class="n">CCR</span><span class="p">.</span><span class="n">calculateMetric</span><span class="p">(</span><span class="nb">test</span><span class="p">.</span><span class="n">targets</span><span class="p">,</span><span class="nb">info</span><span class="p">.</span><span class="n">predictedTest</span><span class="p">));</span>
+<span class="nb">fprintf</span><span class="p">(</span><span class="s">&#39;POM MAE: %f\n&#39;</span><span class="p">,</span> <span class="n">MAE</span><span class="p">.</span><span class="n">calculateMetric</span><span class="p">(</span><span class="nb">test</span><span class="p">.</span><span class="n">targets</span><span class="p">,</span><span class="nb">info</span><span class="p">.</span><span class="n">predictedTest</span><span class="p">));</span>
 </pre></div>
 
     </div>
@@ -13236,105 +13225,10 @@ $( document ).ready(function(){
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>Setting up experiments...
-Running experiment exp-pom-tutorial-pasture-1.ini
-Running experiment exp-pom-tutorial-pasture-10.ini
-Running experiment exp-pom-tutorial-pasture-11.ini
-Running experiment exp-pom-tutorial-pasture-12.ini
-Running experiment exp-pom-tutorial-pasture-13.ini
-Running experiment exp-pom-tutorial-pasture-14.ini
-Running experiment exp-pom-tutorial-pasture-15.ini
-Running experiment exp-pom-tutorial-pasture-16.ini
-Running experiment exp-pom-tutorial-pasture-17.ini
-Running experiment exp-pom-tutorial-pasture-18.ini
-Running experiment exp-pom-tutorial-pasture-19.ini
-Running experiment exp-pom-tutorial-pasture-2.ini
-Running experiment exp-pom-tutorial-pasture-20.ini
-Running experiment exp-pom-tutorial-pasture-21.ini
-Running experiment exp-pom-tutorial-pasture-22.ini
-Running experiment exp-pom-tutorial-pasture-23.ini
-Running experiment exp-pom-tutorial-pasture-24.ini
-Running experiment exp-pom-tutorial-pasture-25.ini
-Running experiment exp-pom-tutorial-pasture-26.ini
-Running experiment exp-pom-tutorial-pasture-27.ini
-Running experiment exp-pom-tutorial-pasture-28.ini
-Running experiment exp-pom-tutorial-pasture-29.ini
-Running experiment exp-pom-tutorial-pasture-3.ini
-Running experiment exp-pom-tutorial-pasture-30.ini
-Running experiment exp-pom-tutorial-pasture-4.ini
-Running experiment exp-pom-tutorial-pasture-5.ini
-Running experiment exp-pom-tutorial-pasture-6.ini
-Running experiment exp-pom-tutorial-pasture-7.ini
-Running experiment exp-pom-tutorial-pasture-8.ini
-Running experiment exp-pom-tutorial-pasture-9.ini
-Running experiment exp-pom-tutorial-tae-1.ini
-Running experiment exp-pom-tutorial-tae-10.ini
-Running experiment exp-pom-tutorial-tae-11.ini
-Running experiment exp-pom-tutorial-tae-12.ini
-Running experiment exp-pom-tutorial-tae-13.ini
-Running experiment exp-pom-tutorial-tae-14.ini
-Running experiment exp-pom-tutorial-tae-15.ini
-Running experiment exp-pom-tutorial-tae-16.ini
-Running experiment exp-pom-tutorial-tae-17.ini
-Running experiment exp-pom-tutorial-tae-18.ini
-Running experiment exp-pom-tutorial-tae-19.ini
-Running experiment exp-pom-tutorial-tae-2.ini
-Running experiment exp-pom-tutorial-tae-20.ini
-Running experiment exp-pom-tutorial-tae-21.ini
-Running experiment exp-pom-tutorial-tae-22.ini
-Running experiment exp-pom-tutorial-tae-23.ini
-Running experiment exp-pom-tutorial-tae-24.ini
-Running experiment exp-pom-tutorial-tae-25.ini
-Running experiment exp-pom-tutorial-tae-26.ini
-Running experiment exp-pom-tutorial-tae-27.ini
-Running experiment exp-pom-tutorial-tae-28.ini
-Running experiment exp-pom-tutorial-tae-29.ini
-Running experiment exp-pom-tutorial-tae-3.ini
-Running experiment exp-pom-tutorial-tae-30.ini
-Running experiment exp-pom-tutorial-tae-4.ini
-Running experiment exp-pom-tutorial-tae-5.ini
-Running experiment exp-pom-tutorial-tae-6.ini
-Running experiment exp-pom-tutorial-tae-7.ini
-Running experiment exp-pom-tutorial-tae-8.ini
-Running experiment exp-pom-tutorial-tae-9.ini
-Running experiment exp-pom-tutorial-toy-1.ini
-Running experiment exp-pom-tutorial-toy-10.ini
-Running experiment exp-pom-tutorial-toy-11.ini
-Running experiment exp-pom-tutorial-toy-12.ini
-Running experiment exp-pom-tutorial-toy-13.ini
-Running experiment exp-pom-tutorial-toy-14.ini
-Running experiment exp-pom-tutorial-toy-15.ini
-Running experiment exp-pom-tutorial-toy-16.ini
-Running experiment exp-pom-tutorial-toy-17.ini
-Running experiment exp-pom-tutorial-toy-18.ini
-Running experiment exp-pom-tutorial-toy-19.ini
-Running experiment exp-pom-tutorial-toy-2.ini
-Running experiment exp-pom-tutorial-toy-20.ini
-Running experiment exp-pom-tutorial-toy-21.ini
-Running experiment exp-pom-tutorial-toy-22.ini
-Running experiment exp-pom-tutorial-toy-23.ini
-Running experiment exp-pom-tutorial-toy-24.ini
-Running experiment exp-pom-tutorial-toy-25.ini
-Running experiment exp-pom-tutorial-toy-26.ini
-Running experiment exp-pom-tutorial-toy-27.ini
-Running experiment exp-pom-tutorial-toy-28.ini
-Running experiment exp-pom-tutorial-toy-29.ini
-Running experiment exp-pom-tutorial-toy-3.ini
-Running experiment exp-pom-tutorial-toy-30.ini
-Running experiment exp-pom-tutorial-toy-4.ini
-Running experiment exp-pom-tutorial-toy-5.ini
-Running experiment exp-pom-tutorial-toy-6.ini
-Running experiment exp-pom-tutorial-toy-7.ini
-Running experiment exp-pom-tutorial-toy-8.ini
-Running experiment exp-pom-tutorial-toy-9.ini
-Calculating results...
-Experiments/exp-2019-4-24-11-16-14/Results/pasture-pom-tutorial/dataset
-Experiments/exp-2019-4-24-11-16-14/Results/tae-pom-tutorial/dataset
-Experiments/exp-2019-4-24-11-16-14/Results/toy-pom-tutorial/dataset
-Experiments/exp-2019-4-24-11-16-14/Results/pasture-pom-tutorial/dataset
-Experiments/exp-2019-4-24-11-16-14/Results/tae-pom-tutorial/dataset
-Experiments/exp-2019-4-24-11-16-14/Results/toy-pom-tutorial/dataset
-ans = Experiments/exp-2019-4-24-11-16-14
+<pre>POM method
+---------------
+POM Accuracy: 0.678571
+POM MAE: 0.428571
 </pre>
 </div>
 </div>
@@ -13346,8 +13240,7 @@ ans = Experiments/exp-2019-4-24-11-16-14
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>As can be observed, ORCA analyses all the files included in the folder of the dataset, where training and test partitions are included (a pair of files <code>train_dataset.X</code> and <code>test_dataset.X</code> for each dataset, where <code>X</code> is the number of partition). For each partition, a model is trained on training data and tested on test data.</p>
-<p>After this, you can also run the experiments for SVORIM and SVC1V1:</p>
+<p>An accuracy of ~67% is obtained in this fold using POM. Now, we can check the projection the model is doing and the set of thresholds.</p>
 
 </div>
 </div>
@@ -13357,239 +13250,16 @@ ans = Experiments/exp-2019-4-24-11-16-14
 <div class="prompt input_prompt">In&nbsp;[3]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-octave"><pre><span></span><span class="n">Utilities</span><span class="p">.</span><span class="n">runExperiments</span><span class="p">(</span><span class="s">&#39;tutorial/config-files/svorim-3holdout.ini&#39;</span><span class="p">)</span>
-<span class="n">Utilities</span><span class="p">.</span><span class="n">runExperiments</span><span class="p">(</span><span class="s">&#39;tutorial/config-files/svc1v1-3holdout.ini&#39;</span><span class="p">)</span>
-</pre></div>
+<div class=" highlight hl-octave"><pre><span></span><span class="c">% Visualize the projection</span>
+<span class="nb">figure</span><span class="p">;</span> <span class="nb">hold</span> <span class="n">on</span><span class="p">;</span>
 
-    </div>
-</div>
-</div>
+<span class="nb">hist</span><span class="p">(</span><span class="nb">info</span><span class="p">.</span><span class="n">projectedTest</span><span class="o">&#39;</span><span class="p">,</span> <span class="mi">30</span><span class="p">);</span>
+<span class="n">y1</span><span class="p">=</span><span class="k">get</span><span class="p">(</span><span class="nb">gca</span><span class="p">,</span><span class="s">&#39;ylim&#39;</span><span class="p">);</span>
 
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>Setting up experiments...
-Running experiment exp-svorim-mae-tutorial-pasture-1.ini
-Running experiment exp-svorim-mae-tutorial-pasture-2.ini
-Running experiment exp-svorim-mae-tutorial-pasture-3.ini
-Running experiment exp-svorim-mae-tutorial-tae-1.ini
-Running experiment exp-svorim-mae-tutorial-tae-2.ini
-Running experiment exp-svorim-mae-tutorial-tae-3.ini
-Running experiment exp-svorim-mae-tutorial-toy-1.ini
-Running experiment exp-svorim-mae-tutorial-toy-2.ini
-Running experiment exp-svorim-mae-tutorial-toy-3.ini
-Calculating results...
-Experiments/exp-2019-4-24-11-16-39/Results/pasture-svorim-mae-tutorial/dataset
-Experiments/exp-2019-4-24-11-16-39/Results/tae-svorim-mae-tutorial/dataset
-Experiments/exp-2019-4-24-11-16-39/Results/toy-svorim-mae-tutorial/dataset
-Experiments/exp-2019-4-24-11-16-39/Results/pasture-svorim-mae-tutorial/dataset
-Experiments/exp-2019-4-24-11-16-39/Results/tae-svorim-mae-tutorial/dataset
-Experiments/exp-2019-4-24-11-16-39/Results/toy-svorim-mae-tutorial/dataset
-ans = Experiments/exp-2019-4-24-11-16-39
-Setting up experiments...
-Running experiment exp-svc1v1-mae-tutorial-pasture-1.ini
-Running experiment exp-svc1v1-mae-tutorial-pasture-2.ini
-Running experiment exp-svc1v1-mae-tutorial-pasture-3.ini
-Running experiment exp-svc1v1-mae-tutorial-tae-1.ini
-Running experiment exp-svc1v1-mae-tutorial-tae-2.ini
-Running experiment exp-svc1v1-mae-tutorial-tae-3.ini
-Running experiment exp-svc1v1-mae-tutorial-toy-1.ini
-Running experiment exp-svc1v1-mae-tutorial-toy-2.ini
-Running experiment exp-svc1v1-mae-tutorial-toy-3.ini
-Calculating results...
-Experiments/exp-2019-4-24-11-16-47/Results/pasture-svc1v1-mae-tutorial/dataset
-Experiments/exp-2019-4-24-11-16-47/Results/tae-svc1v1-mae-tutorial/dataset
-Experiments/exp-2019-4-24-11-16-47/Results/toy-svc1v1-mae-tutorial/dataset
-Experiments/exp-2019-4-24-11-16-47/Results/pasture-svc1v1-mae-tutorial/dataset
-Experiments/exp-2019-4-24-11-16-47/Results/tae-svc1v1-mae-tutorial/dataset
-Experiments/exp-2019-4-24-11-16-47/Results/toy-svc1v1-mae-tutorial/dataset
-ans = Experiments/exp-2019-4-24-11-16-47
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Once the experiments are finished, the corresponding results can be found in the <code>Experiments</code> subfolder, as described in the <a href="#Experimental-results-and-reports">corresponding section</a> of this tutorial.</p>
-<p>Each experiment has a different folder, and each folder should include two CSV files with results similar to the following (some columns are omitted):</p>
-<p>POM results (<a href="tutorial/reference-results/pom-mean-results_test.csv">download CSV</a>):</p>
-<table>
-<thead><tr>
-<th>Dataset-Experiment</th>
-<th>MeanMAE</th>
-<th>StdMAE</th>
-<th>MeanAMAE</th>
-<th>StdAMAE</th>
-<th>MeanTrainTime</th>
-<th>StdTrainTime</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>pasture-pom-tutorial</td>
-<td>0.6</td>
-<td>0.230866</td>
-<td>0.6</td>
-<td>0.230866</td>
-<td>0.070958</td>
-<td>0.004822</td>
-</tr>
-<tr>
-<td>tae-pom-tutorial</td>
-<td>0.615789</td>
-<td>0.100766</td>
-<td>0.616952</td>
-<td>0.101876</td>
-<td>0.324884</td>
-<td>0.087447</td>
-</tr>
-<tr>
-<td>toy-pom-tutorial</td>
-<td>0.980889</td>
-<td>0.038941</td>
-<td>1.213242</td>
-<td>0.059357</td>
-<td>0.038949</td>
-<td>0.002738</td>
-</tr>
-</tbody>
-</table>
-<p>SVORIM results (<a href="tutorial/reference-results/svorim-mean-results_test.csv">download CSV</a>):</p>
-<table>
-<thead><tr>
-<th>Dataset-Experiment</th>
-<th>MeanMAE</th>
-<th>StdMAE</th>
-<th>MeanAMAE</th>
-<th>StdAMAE</th>
-<th>MeanTrainTime</th>
-<th>StdTrainTime</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>pasture-svorim-mae-real</td>
-<td>0.322222</td>
-<td>0.106614</td>
-<td>0.322222</td>
-<td>0.106614</td>
-<td>0.013843</td>
-<td>0.002601</td>
-</tr>
-<tr>
-<td>tae-svorim-mae-real</td>
-<td>0.475439</td>
-<td>0.069086</td>
-<td>0.473291</td>
-<td>0.068956</td>
-<td>0.042999</td>
-<td>0.023227</td>
-</tr>
-<tr>
-<td>toy-svorim-mae-real</td>
-<td>0.017778</td>
-<td>0.012786</td>
-<td>0.019631</td>
-<td>0.015726</td>
-<td>0.071385</td>
-<td>0.025767</td>
-</tr>
-</tbody>
-</table>
-<p>SVC1V1 results (<a href="tutorial/reference-results/svc1v1-mean-results_test.csv">download CSV</a>):</p>
-<table>
-<thead><tr>
-<th>Dataset-Experiment</th>
-<th>MeanMAE</th>
-<th>StdMAE</th>
-<th>MeanAMAE</th>
-<th>StdAMAE</th>
-<th>MeanTrainTime</th>
-<th>StdTrainTime</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>pasture-svc1v1-mae-tutorial</td>
-<td>0.314815</td>
-<td>0.127468</td>
-<td>0.314815</td>
-<td>0.127468</td>
-<td>0.014363</td>
-<td>0.003297</td>
-</tr>
-<tr>
-<td>tae-svc1v1-mae-tutorial</td>
-<td>0.534211</td>
-<td>0.108865</td>
-<td>0.533832</td>
-<td>0.110083</td>
-<td>0.017699</td>
-<td>0.004122</td>
-</tr>
-<tr>
-<td>toy-svc1v1-mae-tutorial</td>
-<td>0.051556</td>
-<td>0.023419</td>
-<td>0.044367</td>
-<td>0.022971</td>
-<td>0.015869</td>
-<td>0.003786</td>
-</tr>
-</tbody>
-</table>
-<hr>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<hr>
-<p><strong><em>Exercise 1</em></strong>: apparently, POM is the slowest method, but here we are not considering the crossvalidation time. Check the detailed CSV results to conclude which is the method with the lowest computational cost (taking crossvalidation, training and test phases into account).</p>
-<hr>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Finally, you can plot a bar plot to graphically compare the performance of the methods. Let's analyse for that the <code>toy</code> dataset. This is a synthetic dataset proposed by Herbrich et al. in their paper "Support vector learning for ordinal regression" (1997):
-<img src="tutorial/images/toy.png" alt="Synthetic toy dataset"></p>
-<p>The following code (to be run from the <code>src</code> folder) plots the figure below:</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[4]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-octave"><pre><span></span><span class="n">pkg</span> <span class="nb">load</span> <span class="n">dataframe</span>
-<span class="n">pomT</span> <span class="p">=</span> <span class="n">dataframe</span><span class="p">(</span><span class="s">&#39;../doc/tutorial/reference-results/pom-mean-results_test.csv&#39;</span><span class="p">);</span>
-<span class="n">svorimT</span> <span class="p">=</span> <span class="n">dataframe</span><span class="p">(</span><span class="s">&#39;../doc/tutorial/reference-results/svorim-mean-results_test.csv&#39;</span><span class="p">);</span>
-<span class="n">svc1v1T</span> <span class="p">=</span> <span class="n">dataframe</span><span class="p">(</span><span class="s">&#39;../doc/tutorial/reference-results/svc1v1-mean-results_test.csv&#39;</span><span class="p">);</span>
-<span class="n">datasets</span> <span class="p">=</span> <span class="p">{</span><span class="s">&#39;pasture&#39;</span><span class="p">,</span><span class="s">&#39;tae&#39;</span><span class="p">,</span><span class="s">&#39;toy&#39;</span><span class="p">};</span>
-
-<span class="nb">bar</span><span class="p">([</span><span class="n">pomT</span><span class="p">.</span><span class="n">MeanAMAE</span> <span class="n">svorimT</span><span class="p">.</span><span class="n">MeanAMAE</span> <span class="n">svc1v1T</span><span class="p">.</span><span class="n">MeanAMAE</span><span class="p">])</span>
-<span class="k">set</span> <span class="p">(</span><span class="nb">gca</span><span class="p">,</span> <span class="s">&#39;xticklabel&#39;</span><span class="p">,</span><span class="n">datasets</span><span class="p">)</span>
-<span class="nb">legend</span><span class="p">(</span><span class="s">&#39;POM  &#39;</span><span class="p">,</span> <span class="s">&#39;SVORIM&#39;</span><span class="p">,</span> <span class="s">&#39;SVC1V1&#39;</span><span class="p">)</span>
-<span class="nb">title</span><span class="p">(</span><span class="s">&#39;AMAE performance (smaller is better)&#39;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="nb">size</span><span class="p">(</span><span class="nb">info</span><span class="p">.</span><span class="n">model</span><span class="p">.</span><span class="n">thresholds</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+    <span class="nb">line</span><span class="p">([</span><span class="o">+</span><span class="nb">info</span><span class="p">.</span><span class="n">model</span><span class="p">.</span><span class="n">thresholds</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">+</span><span class="nb">info</span><span class="p">.</span><span class="n">model</span><span class="p">.</span><span class="n">thresholds</span><span class="p">(</span><span class="n">i</span><span class="p">)],</span><span class="n">y1</span><span class="p">,</span><span class="s">&#39;Color&#39;</span><span class="p">,[</span><span class="mi">1</span> <span class="mi">0</span> <span class="mi">0</span><span class="p">]);</span>
+<span class="k">end</span>
+<span class="nb">hold</span> <span class="n">off</span><span class="p">;</span>
 </pre></div>
 
     </div>
@@ -13608,7 +13278,980 @@ ans = Experiments/exp-2019-4-24-11-16-47
 
 
 <div class="output_png output_subarea ">
-<img src="orca-tutorial-1_files/orca-tutorial-1_10_0.png"
+<img src="orca_tutorial_3_files/orca_tutorial_3_4_0.png"
+>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>As can be checked no pattern is projected beyond the last threshold, so that the last class is ignored. Note that POM is a linear model and this can limit its accuracy. We can check this in the confusion matrix:</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[4]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-octave"><pre><span></span><span class="n">confusionmat</span><span class="p">(</span><span class="nb">test</span><span class="p">.</span><span class="n">targets</span><span class="p">,</span><span class="nb">info</span><span class="p">.</span><span class="n">predictedTest</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>ans =
+
+   30    0    1    0    0
+    2    1    3    0    0
+    2    0    6    2    0
+    0    1    4    1    0
+    0    0    2    1    0
+
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Moreover, we can recode the projections, so that the patterns of each class appear in different colours:</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[5]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-octave"><pre><span></span><span class="c">% Palette of colors. More at https://www.color-hex.com/</span>
+<span class="n">palette</span><span class="p">=</span><span class="n">num2cell</span><span class="p">([</span><span class="mi">255</span><span class="p">,</span><span class="mi">98</span><span class="p">,</span><span class="mi">0</span><span class="p">;</span><span class="mi">255</span><span class="p">,</span><span class="mi">192</span><span class="p">,</span><span class="mi">0</span><span class="p">;</span><span class="mi">160</span><span class="p">,</span><span class="mi">255</span><span class="p">,</span><span class="mi">0</span><span class="p">;</span><span class="mi">0</span><span class="p">,</span><span class="mi">234</span><span class="p">,</span><span class="mi">255</span><span class="p">;</span><span class="mi">66</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">116</span><span class="p">]</span><span class="o">/</span><span class="mi">255</span><span class="p">,</span><span class="mi">2</span><span class="p">);</span>
+
+<span class="nb">figure</span><span class="p">;</span> <span class="nb">hold</span> <span class="n">on</span><span class="p">;</span>
+<span class="n">Q</span> <span class="p">=</span> <span class="nb">size</span><span class="p">(</span><span class="nb">info</span><span class="p">.</span><span class="n">model</span><span class="p">.</span><span class="n">thresholds</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">;</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="n">Q</span>
+    <span class="nb">hist</span><span class="p">(</span><span class="nb">info</span><span class="p">.</span><span class="n">projectedTest</span><span class="p">(</span><span class="nb">test</span><span class="p">.</span><span class="n">targets</span><span class="o">==</span><span class="n">i</span><span class="p">),</span> <span class="mi">30</span><span class="p">,</span> <span class="s">&#39;FaceColor&#39;</span><span class="p">,</span> <span class="n">palette</span><span class="p">{</span><span class="n">i</span><span class="p">});</span>
+<span class="k">end</span>
+<span class="n">y1</span><span class="p">=</span><span class="k">get</span><span class="p">(</span><span class="nb">gca</span><span class="p">,</span><span class="s">&#39;ylim&#39;</span><span class="p">);</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="nb">size</span><span class="p">(</span><span class="nb">info</span><span class="p">.</span><span class="n">model</span><span class="p">.</span><span class="n">thresholds</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+    <span class="nb">line</span><span class="p">([</span><span class="nb">info</span><span class="p">.</span><span class="n">model</span><span class="p">.</span><span class="n">thresholds</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="nb">info</span><span class="p">.</span><span class="n">model</span><span class="p">.</span><span class="n">thresholds</span><span class="p">(</span><span class="n">i</span><span class="p">)],</span><span class="n">y1</span><span class="p">,</span><span class="s">&#39;Color&#39;</span><span class="p">,[</span><span class="mi">1</span> <span class="mi">0</span> <span class="mi">0</span><span class="p">]);</span>
+<span class="k">end</span>
+<span class="c">%legend(&#39;C1&#39;,&#39;C2&#39;,&#39;C3&#39;,&#39;C4&#39;,&#39;C5&#39;);</span>
+<span class="nb">legend</span><span class="p">(</span><span class="nb">arrayfun</span><span class="p">(@(</span><span class="n">num</span><span class="p">)</span> <span class="nb">sprintf</span><span class="p">(</span><span class="s">&#39;C%d&#39;</span><span class="p">,</span> <span class="n">num</span><span class="p">),</span> <span class="mi">1</span><span class="p">:</span><span class="n">Q</span><span class="p">,</span> <span class="s">&#39;UniformOutput&#39;</span><span class="p">,</span> <span class="nb">false</span><span class="p">))</span>
+<span class="nb">hold</span> <span class="n">off</span><span class="p">;</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+
+<div class="output_png output_subarea ">
+<img src="orca_tutorial_3_files/orca_tutorial_3_8_0.png"
+>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>As can be observed the three patterns from the last class are never correctly classified.</p>
+<p>We can also plot the probability estimations generated by POM, which are based on the <code>logit</code> function:</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[6]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-octave"><pre><span></span><span class="c">% Visualize the cummulative probabilities</span>
+<span class="nb">figure</span><span class="p">;</span> <span class="nb">hold</span> <span class="n">on</span><span class="p">;</span>
+<span class="n">numPoints</span><span class="p">=</span><span class="mi">300</span><span class="p">;</span>
+<span class="n">x</span> <span class="p">=</span> <span class="nb">linspace</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="nb">info</span><span class="p">.</span><span class="n">model</span><span class="p">.</span><span class="n">thresholds</span><span class="p">)</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span><span class="nb">max</span><span class="p">(</span><span class="nb">info</span><span class="p">.</span><span class="n">model</span><span class="p">.</span><span class="n">thresholds</span><span class="p">)</span><span class="o">+</span><span class="mi">3</span><span class="p">,</span><span class="n">numPoints</span><span class="p">);</span>
+<span class="n">f</span> <span class="p">=</span> <span class="nb">repmat</span><span class="p">(</span><span class="nb">info</span><span class="p">.</span><span class="n">model</span><span class="p">.</span><span class="n">thresholds</span><span class="p">,</span><span class="n">numPoints</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span> <span class="o">-</span> <span class="nb">repmat</span><span class="p">(</span><span class="n">x</span><span class="o">&#39;</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="n">Q</span><span class="o">-</span><span class="mi">1</span><span class="p">);</span>
+<span class="n">cumProb</span> <span class="p">=</span> <span class="p">[</span><span class="mf">1.</span><span class="o">/</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="nb">exp</span><span class="p">(</span><span class="o">-</span><span class="n">f</span><span class="p">))</span> <span class="nb">ones</span><span class="p">(</span><span class="n">numPoints</span><span class="p">,</span><span class="mi">1</span><span class="p">)];</span> <span class="c">%logit function</span>
+<span class="nb">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">cumProb</span><span class="p">,</span><span class="s">&#39;-&#39;</span><span class="p">);</span>
+<span class="n">y1</span><span class="p">=</span><span class="k">get</span><span class="p">(</span><span class="nb">gca</span><span class="p">,</span><span class="s">&#39;ylim&#39;</span><span class="p">);</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="nb">size</span><span class="p">(</span><span class="nb">info</span><span class="p">.</span><span class="n">model</span><span class="p">.</span><span class="n">thresholds</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+    <span class="nb">line</span><span class="p">([</span><span class="nb">info</span><span class="p">.</span><span class="n">model</span><span class="p">.</span><span class="n">thresholds</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="nb">info</span><span class="p">.</span><span class="n">model</span><span class="p">.</span><span class="n">thresholds</span><span class="p">(</span><span class="n">i</span><span class="p">)],</span><span class="n">y1</span><span class="p">,</span><span class="s">&#39;Color&#39;</span><span class="p">,[</span><span class="mi">1</span> <span class="mi">0</span> <span class="mi">0</span><span class="p">]);</span>    
+<span class="k">end</span>
+<span class="nb">hold</span> <span class="n">off</span><span class="p">;</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+
+<div class="output_png output_subarea ">
+<img src="orca_tutorial_3_files/orca_tutorial_3_10_0.png"
+>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[7]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-octave"><pre><span></span><span class="c">% Visualize the individual probabilities</span>
+<span class="nb">figure</span><span class="p">;</span> <span class="nb">hold</span> <span class="n">on</span><span class="p">;</span>
+<span class="n">prob</span> <span class="p">=</span> <span class="n">cumProb</span><span class="p">;</span>
+<span class="n">prob</span><span class="p">(:,</span><span class="mi">2</span><span class="p">:</span><span class="k">end</span><span class="p">)</span> <span class="p">=</span> <span class="n">prob</span><span class="p">(:,</span><span class="mi">2</span><span class="p">:</span><span class="k">end</span><span class="p">)</span> <span class="o">-</span> <span class="n">prob</span><span class="p">(:,</span><span class="mi">1</span><span class="p">:(</span><span class="k">end</span><span class="o">-</span><span class="mi">1</span><span class="p">));</span>
+<span class="nb">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">prob</span><span class="p">,</span><span class="s">&#39;-&#39;</span><span class="p">);</span>
+<span class="n">y1</span><span class="p">=</span><span class="k">get</span><span class="p">(</span><span class="nb">gca</span><span class="p">,</span><span class="s">&#39;ylim&#39;</span><span class="p">);</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="nb">size</span><span class="p">(</span><span class="nb">info</span><span class="p">.</span><span class="n">model</span><span class="p">.</span><span class="n">thresholds</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+    <span class="nb">line</span><span class="p">([</span><span class="nb">info</span><span class="p">.</span><span class="n">model</span><span class="p">.</span><span class="n">thresholds</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="nb">info</span><span class="p">.</span><span class="n">model</span><span class="p">.</span><span class="n">thresholds</span><span class="p">(</span><span class="n">i</span><span class="p">)],</span><span class="n">y1</span><span class="p">,</span><span class="s">&#39;Color&#39;</span><span class="p">,[</span><span class="mi">1</span> <span class="mi">0</span> <span class="mi">0</span><span class="p">]);</span>    
+<span class="k">end</span>
+<span class="nb">hold</span> <span class="n">off</span><span class="p">;</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+
+<div class="output_png output_subarea ">
+<img src="orca_tutorial_3_files/orca_tutorial_3_11_0.png"
+>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="As-can-be-seen,-those-projections-close-to-the-thresholds-can-be-classified-in-different-classes-according-to-the-probability-distribution.-However,-following-the-spirit-of-threshold-models,-the-implementation-of-POM-included-in-ORCA-classify-the-patterns-according-to-their-position-with-respect-to-the-thresholds.">As can be seen, those projections close to the thresholds can be classified in different classes according to the probability distribution. However, following the spirit of threshold models, the implementation of POM included in ORCA classify the patterns according to their position with respect to the thresholds.<a class="anchor-link" href="#As-can-be-seen,-those-projections-close-to-the-thresholds-can-be-classified-in-different-classes-according-to-the-probability-distribution.-However,-following-the-spirit-of-threshold-models,-the-implementation-of-POM-included-in-ORCA-classify-the-patterns-according-to-their-position-with-respect-to-the-thresholds.">&#182;</a></h2><p><strong><em>Exercise 1</em></strong>: POM is a member of the Cumulative Link Models (CLM) family, where a <code>logit</code> function is considered. Now, you can try other probability distributions used in this models, such as the following ones (table from the <a href="https://cran.r-project.org/web/packages/ordinal/vignettes/clm_intro.pdf">documentation</a> of this <a href="https://cran.r-project.org/web/packages/ordinal/">R package</a>):</p>
+<p><img src="tutorial/images/links.png" alt="Different link functions"></p>
+<p>Compare graphically the different results.</p>
+<hr>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Neural-network-based-on-POM-(NNPOM)">Neural network based on POM (NNPOM)<a class="anchor-link" href="#Neural-network-based-on-POM-(NNPOM)">&#182;</a></h2><p>The idea of NNPOM is to extend POM by considering a nonlinear projection, instead of a linear one. To do so, the projection function is a linear combination of nonlinear basis function (i.e. a neural network of one output node). As in NNOP, only one hidden layer is considered. Given that POM estimate a proper probability distribution, the cross entropy is used for gradient descent. The algorithm used for gradient descent is the iRProp+ algorithm.</p>
+<p>Three parameters must be specified in this case:</p>
+<ul>
+<li>Parameter <code>hiddenN</code>, number of hidden neurons of the model.</li>
+<li>Parameter <code>iter</code>, number of iterations for gradient descent.</li>
+<li>Parameter <code>lambda</code>, regularization parameter in the error function (L2 regularizer), to avoid overfitting.</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[8]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-octave"><pre><span></span><span class="c">% Create the NNPOM object</span>
+<span class="n">algorithmObj</span> <span class="p">=</span> <span class="n">NNPOM</span><span class="p">();</span>
+<span class="c">% Train NNPOM</span>
+<span class="nb">info</span> <span class="p">=</span> <span class="n">algorithmObj</span><span class="p">.</span><span class="n">fitpredict</span><span class="p">(</span><span class="n">train</span><span class="p">,</span><span class="nb">test</span><span class="p">,</span><span class="nb">struct</span><span class="p">(</span><span class="s">&#39;hiddenN&#39;</span><span class="p">,</span><span class="mi">20</span><span class="p">,</span><span class="s">&#39;iter&#39;</span><span class="p">,</span><span class="mi">500</span><span class="p">,</span><span class="s">&#39;lambda&#39;</span><span class="p">,</span><span class="mf">0.1</span><span class="p">));</span>
+<span class="nb">info</span> <span class="p">=</span> <span class="n">algorithmObj</span><span class="p">.</span><span class="n">fitpredict</span><span class="p">(</span><span class="n">train</span><span class="p">,</span><span class="nb">test</span><span class="p">,</span><span class="nb">struct</span><span class="p">(</span><span class="s">&#39;hiddenN&#39;</span><span class="p">,</span><span class="mi">20</span><span class="p">,</span><span class="s">&#39;iter&#39;</span><span class="p">,</span><span class="mi">500</span><span class="p">,</span><span class="s">&#39;lambda&#39;</span><span class="p">,</span><span class="mf">0.1</span><span class="p">));</span>
+<span class="c">% Evaluate the model</span>
+<span class="nb">fprintf</span><span class="p">(</span><span class="s">&#39;NNPOM method\n---------------\n&#39;</span><span class="p">);</span>
+<span class="nb">fprintf</span><span class="p">(</span><span class="s">&#39;NNPOM Accuracy: %f\n&#39;</span><span class="p">,</span> <span class="n">CCR</span><span class="p">.</span><span class="n">calculateMetric</span><span class="p">(</span><span class="nb">test</span><span class="p">.</span><span class="n">targets</span><span class="p">,</span><span class="nb">info</span><span class="p">.</span><span class="n">predictedTest</span><span class="p">));</span>
+<span class="nb">fprintf</span><span class="p">(</span><span class="s">&#39;NNPOM MAE: %f\n&#39;</span><span class="p">,</span> <span class="n">MAE</span><span class="p">.</span><span class="n">calculateMetric</span><span class="p">(</span><span class="nb">test</span><span class="p">.</span><span class="n">targets</span><span class="p">,</span><span class="nb">info</span><span class="p">.</span><span class="n">predictedTest</span><span class="p">));</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>NNPOM method
+---------------
+NNPOM Accuracy: 0.553571
+NNPOM MAE: 0.625000
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The source code of NNPOM clearly shows how the prediction is performed, which clarify a lot the model:</p>
+<div class="highlight"><pre><span></span><span class="k">function</span><span class="w"> </span>[projected, predicted]<span class="p">=</span><span class="w"> </span><span class="nf">privpredict</span><span class="p">(</span>obj,test<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="c">%PRIVPREDICT predicts labels of TEST patterns labels using fitted MODEL.</span>
+    <span class="n">m</span> <span class="p">=</span> <span class="nb">size</span><span class="p">(</span><span class="n">test</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+    <span class="n">a1</span> <span class="p">=</span> <span class="p">[</span><span class="nb">ones</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="n">test</span><span class="p">];</span>
+    <span class="n">z2</span> <span class="p">=</span> <span class="n">a1</span><span class="o">*</span><span class="n">obj</span><span class="p">.</span><span class="n">model</span><span class="p">.</span><span class="n">Theta1</span><span class="o">&#39;</span><span class="p">;</span>
+    <span class="n">a2</span> <span class="p">=</span>  <span class="mf">1.0</span> <span class="o">./</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="nb">exp</span><span class="p">(</span><span class="o">-</span><span class="n">z2</span><span class="p">));</span>
+    <span class="n">projected</span><span class="p">=</span><span class="n">a2</span><span class="o">*</span><span class="n">obj</span><span class="p">.</span><span class="n">model</span><span class="p">.</span><span class="n">Theta2</span><span class="o">&#39;</span><span class="p">;</span>
+
+    <span class="n">z3</span><span class="p">=</span><span class="nb">repmat</span><span class="p">(</span><span class="n">obj</span><span class="p">.</span><span class="n">model</span><span class="p">.</span><span class="n">thresholds</span><span class="p">,</span><span class="n">m</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span><span class="o">-</span><span class="nb">repmat</span><span class="p">(</span><span class="n">projected</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="n">obj</span><span class="p">.</span><span class="n">model</span><span class="p">.</span><span class="n">num_labels</span><span class="o">-</span><span class="mi">1</span><span class="p">);</span>
+    <span class="n">a3T</span> <span class="p">=</span>  <span class="mf">1.0</span> <span class="o">./</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="nb">exp</span><span class="p">(</span><span class="o">-</span><span class="n">z3</span><span class="p">));</span>
+    <span class="n">a3</span> <span class="p">=</span> <span class="p">[</span><span class="n">a3T</span> <span class="nb">ones</span><span class="p">(</span><span class="n">m</span><span class="p">,</span><span class="mi">1</span><span class="p">)];</span>
+    <span class="n">a3</span><span class="p">(:,</span><span class="mi">2</span><span class="p">:</span><span class="k">end</span><span class="p">)</span> <span class="p">=</span> <span class="n">a3</span><span class="p">(:,</span><span class="mi">2</span><span class="p">:</span><span class="k">end</span><span class="p">)</span> <span class="o">-</span> <span class="n">a3</span><span class="p">(:,</span><span class="mi">1</span><span class="p">:(</span><span class="k">end</span><span class="o">-</span><span class="mi">1</span><span class="p">));</span>
+    <span class="p">[</span><span class="n">M</span><span class="p">,</span><span class="n">predicted</span><span class="p">]</span> <span class="p">=</span> <span class="n">max</span><span class="p">(</span><span class="n">a3</span><span class="p">,[],</span><span class="mi">2</span><span class="p">);</span>            
+<span class="k">end</span>
+</pre></div>
+<p>In this case, the results are not very good and even a bit worse than POM. However, the configuration of the parameters is critical.</p>
+<p>You can also examine the threshold obtained and the projections:</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[9]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-octave"><pre><span></span><span class="nb">info</span><span class="p">.</span><span class="n">model</span><span class="p">.</span><span class="n">thresholds</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>ans =
+
+    0.042807    6.835785   14.598403   22.071311
+
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[10]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-octave"><pre><span></span><span class="nb">info</span><span class="p">.</span><span class="n">projectedTest</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="mi">10</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>ans =
+
+  -13.1418
+  -18.3972
+   -2.5807
+  -12.9526
+   -4.2438
+   -4.2278
+  -11.3341
+    6.8763
+    9.0577
+  -25.8812
+
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<hr>
+<p><strong><em>Exercise 2</em></strong>: try to improve the results in this dataset by applying nested crossvalidation with an <code>ini</code> file.</p>
+<hr>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Support-vector-for-ordinal-regression-(SVOREX-and-SVORIM)">Support vector for ordinal regression (SVOREX and SVORIM)<a class="anchor-link" href="#Support-vector-for-ordinal-regression-(SVOREX-and-SVORIM)">&#182;</a></h2><p>Now we examine support vector approaches based on the threshold model structure. The main methods are:</p>
+<ul>
+<li>SVOREX, which is an ordinal formulation of the SVM paradigm, which computes discriminant parallel hyperplanes for the data and a set of thresholds by imposing explicit constraints in the optimization problem.</li>
+<li>SVORIM, which is similar but computes discriminant parallel hyperplanes for the data and a set of thresholds by imposing implicit constraints in the optimization problem.</li>
+</ul>
+<p>Both are threshold models so that they obtain a projection together with a set of thresholds. In ORCA, they are implemented considering the RBF kernel. Consequently, the main parameters of both methods are:</p>
+<ul>
+<li>Parameter <code>C</code>, importance given to errors.</li>
+<li>Parameter <code>k</code>, inverse of the width of the RBF kernel.</li>
+</ul>
+<p>We are going to test both methods:</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[11]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-octave"><pre><span></span><span class="c">%% Apply the SVORIM model</span>
+<span class="c">% Create the SVORIM object</span>
+<span class="n">algorithmObj</span> <span class="p">=</span> <span class="n">SVORIM</span><span class="p">();</span>
+
+<span class="c">% Train SVORIM</span>
+<span class="nb">info</span> <span class="p">=</span> <span class="n">algorithmObj</span><span class="p">.</span><span class="n">fitpredict</span><span class="p">(</span><span class="n">train</span><span class="p">,</span><span class="nb">test</span><span class="p">,</span><span class="nb">struct</span><span class="p">(</span><span class="s">&#39;C&#39;</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="s">&#39;k&#39;</span><span class="p">,</span><span class="mf">0.001</span><span class="p">));</span>
+
+<span class="c">% Evaluate the model</span>
+<span class="nb">fprintf</span><span class="p">(</span><span class="s">&#39;SVORIM method\n---------------\n&#39;</span><span class="p">);</span>
+<span class="nb">fprintf</span><span class="p">(</span><span class="s">&#39;SVORIM Accuracy: %f\n&#39;</span><span class="p">,</span> <span class="n">CCR</span><span class="p">.</span><span class="n">calculateMetric</span><span class="p">(</span><span class="nb">test</span><span class="p">.</span><span class="n">targets</span><span class="p">,</span><span class="nb">info</span><span class="p">.</span><span class="n">predictedTest</span><span class="p">));</span>
+<span class="nb">fprintf</span><span class="p">(</span><span class="s">&#39;SVORIM MAE: %f\n&#39;</span><span class="p">,</span> <span class="n">MAE</span><span class="p">.</span><span class="n">calculateMetric</span><span class="p">(</span><span class="nb">test</span><span class="p">.</span><span class="n">targets</span><span class="p">,</span><span class="nb">info</span><span class="p">.</span><span class="n">predictedTest</span><span class="p">));</span>
+
+<span class="c">% Store projections and thresholds (we will used them later)</span>
+<span class="n">svorimProjections</span> <span class="p">=</span> <span class="nb">info</span><span class="p">.</span><span class="n">projectedTest</span><span class="p">;</span>
+<span class="n">svorimProjectionsTrain</span> <span class="p">=</span> <span class="nb">info</span><span class="p">.</span><span class="n">projectedTrain</span><span class="p">;</span>
+<span class="n">svorimThresholds</span> <span class="p">=</span> <span class="nb">info</span><span class="p">.</span><span class="n">model</span><span class="p">.</span><span class="n">thresholds</span><span class="p">;</span>
+
+<span class="c">%% Apply the SVOREX model</span>
+<span class="c">% Create the SVOREX object</span>
+<span class="n">algorithmObj</span> <span class="p">=</span> <span class="n">SVOREX</span><span class="p">();</span>
+
+<span class="c">% Train SVOREX</span>
+<span class="nb">info</span> <span class="p">=</span> <span class="n">algorithmObj</span><span class="p">.</span><span class="n">fitpredict</span><span class="p">(</span><span class="n">train</span><span class="p">,</span><span class="nb">test</span><span class="p">,</span><span class="nb">struct</span><span class="p">(</span><span class="s">&#39;C&#39;</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="s">&#39;k&#39;</span><span class="p">,</span><span class="mf">0.001</span><span class="p">));</span>
+
+<span class="c">% Evaluate the model</span>
+<span class="nb">fprintf</span><span class="p">(</span><span class="s">&#39;---------------\n&#39;</span><span class="p">);</span>
+<span class="nb">fprintf</span><span class="p">(</span><span class="s">&#39;SVOREX method\n---------------\n&#39;</span><span class="p">);</span>
+<span class="nb">fprintf</span><span class="p">(</span><span class="s">&#39;SVOREX Accuracy: %f\n&#39;</span><span class="p">,</span> <span class="n">CCR</span><span class="p">.</span><span class="n">calculateMetric</span><span class="p">(</span><span class="nb">test</span><span class="p">.</span><span class="n">targets</span><span class="p">,</span><span class="nb">info</span><span class="p">.</span><span class="n">predictedTest</span><span class="p">));</span>
+<span class="nb">fprintf</span><span class="p">(</span><span class="s">&#39;SVOREX MAE: %f\n&#39;</span><span class="p">,</span> <span class="n">MAE</span><span class="p">.</span><span class="n">calculateMetric</span><span class="p">(</span><span class="nb">test</span><span class="p">.</span><span class="n">targets</span><span class="p">,</span><span class="nb">info</span><span class="p">.</span><span class="n">predictedTest</span><span class="p">));</span>
+
+<span class="c">% Store projections and thresholds (we will used them later)</span>
+<span class="n">svorexProjections</span> <span class="p">=</span> <span class="nb">info</span><span class="p">.</span><span class="n">projectedTest</span><span class="p">;</span>
+<span class="n">svorexProjectionsTrain</span> <span class="p">=</span> <span class="nb">info</span><span class="p">.</span><span class="n">projectedTrain</span><span class="p">;</span>
+<span class="n">svorexThresholds</span> <span class="p">=</span> <span class="nb">info</span><span class="p">.</span><span class="n">model</span><span class="p">.</span><span class="n">thresholds</span><span class="p">;</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>SVORIM method
+---------------
+SVORIM Accuracy: 0.642857
+SVORIM MAE: 0.500000
+---------------
+SVOREX method
+---------------
+SVOREX Accuracy: 0.642857
+SVOREX MAE: 0.589286
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We can plot both projections by:</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[12]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-octave"><pre><span></span><span class="c">%% Represent both projections and thresholds</span>
+<span class="nb">figure</span><span class="p">;</span> <span class="nb">hold</span> <span class="n">on</span><span class="p">;</span> 
+<span class="nb">subplot</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+<span class="nb">plot</span><span class="p">(</span><span class="n">svorimProjections</span><span class="p">,</span><span class="nb">test</span><span class="p">.</span><span class="n">targets</span><span class="p">,</span> <span class="s">&#39;o&#39;</span><span class="p">);</span>
+<span class="n">y1</span><span class="p">=</span><span class="k">get</span><span class="p">(</span><span class="nb">gca</span><span class="p">,</span><span class="s">&#39;ylim&#39;</span><span class="p">);</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="nb">size</span><span class="p">(</span><span class="n">svorimThresholds</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+    <span class="nb">line</span><span class="p">([</span><span class="n">svorimThresholds</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="n">svorimThresholds</span><span class="p">(</span><span class="n">i</span><span class="p">)],</span><span class="n">y1</span><span class="p">,</span><span class="s">&#39;Color&#39;</span><span class="p">,[</span><span class="mi">1</span> <span class="mi">0</span> <span class="mi">0</span><span class="p">]);</span>    
+<span class="k">end</span>
+<span class="nb">legend</span><span class="p">(</span><span class="s">&#39;SVORIM&#39;</span><span class="p">);</span>
+<span class="nb">subplot</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+<span class="nb">plot</span><span class="p">(</span><span class="n">svorexProjections</span><span class="p">,</span><span class="nb">test</span><span class="p">.</span><span class="n">targets</span><span class="p">,</span> <span class="s">&#39;o&#39;</span><span class="p">);</span>
+<span class="n">y1</span><span class="p">=</span><span class="k">get</span><span class="p">(</span><span class="nb">gca</span><span class="p">,</span><span class="s">&#39;ylim&#39;</span><span class="p">);</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="nb">size</span><span class="p">(</span><span class="n">svorexThresholds</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+    <span class="nb">line</span><span class="p">([</span><span class="n">svorexThresholds</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="n">svorexThresholds</span><span class="p">(</span><span class="n">i</span><span class="p">)],</span><span class="n">y1</span><span class="p">,</span><span class="s">&#39;Color&#39;</span><span class="p">,[</span><span class="mi">1</span> <span class="mi">0</span> <span class="mi">0</span><span class="p">]);</span>    
+<span class="k">end</span>
+<span class="nb">legend</span><span class="p">(</span><span class="s">&#39;SVOREX&#39;</span><span class="p">);</span>
+<span class="nb">hold</span> <span class="n">off</span><span class="p">;</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+
+<div class="output_png output_subarea ">
+<img src="orca_tutorial_3_files/orca_tutorial_3_22_0.png"
+>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Fine tuning a bit the parameters, we can improve the results:</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[13]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-octave"><pre><span></span><span class="c">%% Apply the SVORIM model improved</span>
+<span class="c">% Create the SVORIM object</span>
+<span class="n">algorithmObj</span> <span class="p">=</span> <span class="n">SVORIM</span><span class="p">();</span>
+
+<span class="c">% Train SVORIM</span>
+<span class="nb">info</span> <span class="p">=</span> <span class="n">algorithmObj</span><span class="p">.</span><span class="n">fitpredict</span><span class="p">(</span><span class="n">train</span><span class="p">,</span><span class="nb">test</span><span class="p">,</span><span class="nb">struct</span><span class="p">(</span><span class="s">&#39;C&#39;</span><span class="p">,</span><span class="mi">200</span><span class="p">,</span><span class="s">&#39;k&#39;</span><span class="p">,</span><span class="mf">0.001</span><span class="p">));</span>
+
+<span class="c">% Evaluate the model</span>
+<span class="nb">fprintf</span><span class="p">(</span><span class="s">&#39;SVORIM method improved\n---------------\n&#39;</span><span class="p">);</span>
+<span class="nb">fprintf</span><span class="p">(</span><span class="s">&#39;SVORIM Accuracy: %f\n&#39;</span><span class="p">,</span> <span class="n">CCR</span><span class="p">.</span><span class="n">calculateMetric</span><span class="p">(</span><span class="nb">test</span><span class="p">.</span><span class="n">targets</span><span class="p">,</span><span class="nb">info</span><span class="p">.</span><span class="n">predictedTest</span><span class="p">));</span>
+<span class="nb">fprintf</span><span class="p">(</span><span class="s">&#39;SVORIM MAE: %f\n&#39;</span><span class="p">,</span> <span class="n">MAE</span><span class="p">.</span><span class="n">calculateMetric</span><span class="p">(</span><span class="nb">test</span><span class="p">.</span><span class="n">targets</span><span class="p">,</span><span class="nb">info</span><span class="p">.</span><span class="n">predictedTest</span><span class="p">));</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>SVORIM method improved
+---------------
+SVORIM Accuracy: 0.660714
+SVORIM MAE: 0.464286
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Reduction-from-ordinal-regression-to-binary-SVM-classifiers-(REDSVM)">Reduction from ordinal regression to binary SVM classifiers (REDSVM)<a class="anchor-link" href="#Reduction-from-ordinal-regression-to-binary-SVM-classifiers-(REDSVM)">&#182;</a></h2><p>The reduction from ordinal regression to binary SVM classifiers (REDSVM) [4] is a method that can be categorized both as threshold method or as decomposition method. The hyper-parameters are the well-known <code>k</code> and <code>C</code> of SVM variants.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[14]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-octave"><pre><span></span><span class="c">%% Apply the REDSVM model</span>
+<span class="c">% Create the REDSVM object</span>
+<span class="n">algorithmObj</span> <span class="p">=</span> <span class="n">REDSVM</span><span class="p">();</span>
+
+<span class="c">% Train REDSVM</span>
+<span class="nb">info</span> <span class="p">=</span> <span class="n">algorithmObj</span><span class="p">.</span><span class="n">fitpredict</span><span class="p">(</span><span class="n">train</span><span class="p">,</span><span class="nb">test</span><span class="p">,</span><span class="nb">struct</span><span class="p">(</span><span class="s">&#39;C&#39;</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="s">&#39;k&#39;</span><span class="p">,</span><span class="mf">0.001</span><span class="p">));</span>
+
+<span class="c">% Evaluate the model</span>
+<span class="nb">fprintf</span><span class="p">(</span><span class="s">&#39;REDSVM method\n---------------\n&#39;</span><span class="p">);</span>
+<span class="nb">fprintf</span><span class="p">(</span><span class="s">&#39;REDSVM Accuracy: %f\n&#39;</span><span class="p">,</span> <span class="n">CCR</span><span class="p">.</span><span class="n">calculateMetric</span><span class="p">(</span><span class="nb">test</span><span class="p">.</span><span class="n">targets</span><span class="p">,</span><span class="nb">info</span><span class="p">.</span><span class="n">predictedTest</span><span class="p">));</span>
+<span class="nb">fprintf</span><span class="p">(</span><span class="s">&#39;REDSVM MAE: %f\n&#39;</span><span class="p">,</span> <span class="n">MAE</span><span class="p">.</span><span class="n">calculateMetric</span><span class="p">(</span><span class="nb">test</span><span class="p">.</span><span class="n">targets</span><span class="p">,</span><span class="nb">info</span><span class="p">.</span><span class="n">predictedTest</span><span class="p">));</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>REDSVM method
+---------------
+REDSVM Accuracy: 0.660714
+REDSVM MAE: 0.482143
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>To better understand the relevance of parameters selection process, the following code optimizes parameters <code>k</code> and <code>C</code> using a 3Fold for each combination. Only in Matlab: the second cell plots corresponding validation results for <code>Acc</code> and <code>AMAE</code>. Note that the optimal combination may differ depending of the selected performance metric. Depending on your version of Matlab, a <code>contourf</code> or a <code>heatmap</code> is used for each metric.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[15]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-octave"><pre><span></span><span class="c">%% REDSVM optimization</span>
+<span class="n">clear</span> <span class="n">T</span> <span class="n">Ts</span><span class="p">;</span>
+
+<span class="n">Metrics</span> <span class="p">=</span> <span class="p">{@</span><span class="n">MZE</span><span class="p">,@</span><span class="n">AMAE</span><span class="p">};</span>
+<span class="n">setC</span> <span class="p">=</span> <span class="mf">10.</span>^<span class="p">(</span><span class="o">-</span><span class="mi">3</span><span class="p">:</span><span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">);</span>
+<span class="n">setk</span> <span class="p">=</span> <span class="mf">10.</span>^<span class="p">(</span><span class="o">-</span><span class="mi">3</span><span class="p">:</span><span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">);</span>
+<span class="c">% TODO: fix for Octave since table() is not supported</span>
+<span class="n">Ts</span> <span class="p">=</span> <span class="nb">cell</span><span class="p">(</span><span class="nb">size</span><span class="p">(</span><span class="n">Metrics</span><span class="p">,</span><span class="mi">2</span><span class="p">),</span><span class="mi">1</span><span class="p">);</span>
+<span class="n">nFolds</span> <span class="p">=</span> <span class="mi">3</span><span class="p">;</span>
+
+<span class="k">if</span> <span class="p">(</span><span class="nb">exist</span> <span class="p">(</span><span class="s">&#39;OCTAVE_VERSION&#39;</span><span class="p">,</span> <span class="s">&#39;builtin&#39;</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">pkg</span> <span class="nb">load</span> <span class="nb">statistics</span><span class="p">;</span>
+    <span class="n">CVO</span> <span class="p">=</span> <span class="n">cvpartition</span><span class="p">(</span><span class="n">train</span><span class="p">.</span><span class="n">targets</span><span class="p">,</span><span class="s">&#39;KFold&#39;</span><span class="p">,</span><span class="n">nFolds</span><span class="p">);</span>
+<span class="k">else</span>
+    <span class="n">CVO</span> <span class="p">=</span> <span class="n">cvpartition</span><span class="p">(</span><span class="n">train</span><span class="p">.</span><span class="n">targets</span><span class="p">,</span><span class="s">&#39;k&#39;</span><span class="p">,</span><span class="n">nFolds</span><span class="p">);</span>
+<span class="k">end</span>
+
+<span class="k">for</span> <span class="n">m</span> <span class="p">=</span> <span class="mi">1</span><span class="p">:</span><span class="nb">size</span><span class="p">(</span><span class="n">Metrics</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">mObj</span> <span class="p">=</span> <span class="n">Metrics</span><span class="p">{</span><span class="n">m</span><span class="p">}();</span>
+    <span class="nb">fprintf</span><span class="p">(</span><span class="s">&#39;Grid search to optimize %s for REDSVM\n&#39;</span><span class="p">,</span> <span class="n">mObj</span><span class="p">.</span><span class="n">name</span><span class="p">);</span>
+    <span class="n">bestError</span><span class="p">=</span><span class="nb">Inf</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">~</span><span class="nb">exist</span> <span class="p">(</span><span class="s">&#39;OCTAVE_VERSION&#39;</span><span class="p">,</span> <span class="s">&#39;builtin&#39;</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
+      <span class="n">T</span> <span class="p">=</span> <span class="nb">table</span><span class="p">();</span>
+    <span class="k">end</span>
+    <span class="k">for</span> <span class="n">C</span><span class="p">=</span><span class="mf">10.</span>^<span class="p">(</span><span class="o">-</span><span class="mi">3</span><span class="p">:</span><span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">=</span><span class="mf">10.</span>^<span class="p">(</span><span class="o">-</span><span class="mi">3</span><span class="p">:</span><span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">)</span>
+            <span class="nb">error</span><span class="p">=</span><span class="mi">0</span><span class="p">;</span>
+            <span class="k">for</span> <span class="n">ff</span> <span class="p">=</span> <span class="mi">1</span><span class="p">:</span><span class="n">nFolds</span>
+                <span class="n">param</span> <span class="p">=</span> <span class="nb">struct</span><span class="p">(</span><span class="s">&#39;C&#39;</span><span class="p">,</span><span class="n">C</span><span class="p">,</span><span class="s">&#39;k&#39;</span><span class="p">,</span><span class="n">k</span><span class="p">);</span>
+                <span class="nb">info</span> <span class="p">=</span> <span class="n">algorithmObj</span><span class="p">.</span><span class="n">fitpredict</span><span class="p">(</span><span class="n">train</span><span class="p">,</span><span class="nb">test</span><span class="p">,</span><span class="n">param</span><span class="p">);</span>
+                <span class="nb">error</span> <span class="p">=</span> <span class="nb">error</span> <span class="o">+</span> <span class="n">mObj</span><span class="p">.</span><span class="n">calculateMetric</span><span class="p">(</span><span class="nb">test</span><span class="p">.</span><span class="n">targets</span><span class="p">,</span><span class="nb">info</span><span class="p">.</span><span class="n">predictedTest</span><span class="p">);</span>
+
+            <span class="k">end</span>
+            <span class="nb">error</span> <span class="p">=</span> <span class="nb">error</span> <span class="o">/</span> <span class="n">nFolds</span><span class="p">;</span>
+            <span class="k">if</span> <span class="nb">error</span> <span class="o">&lt;</span> <span class="n">bestError</span>
+                <span class="n">bestError</span> <span class="p">=</span> <span class="nb">error</span><span class="p">;</span>
+                <span class="n">bestParam</span> <span class="p">=</span> <span class="n">param</span><span class="p">;</span>
+            <span class="k">end</span>
+            <span class="n">param</span><span class="p">.</span><span class="nb">error</span> <span class="p">=</span> <span class="nb">error</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">~</span><span class="nb">exist</span> <span class="p">(</span><span class="s">&#39;OCTAVE_VERSION&#39;</span><span class="p">,</span> <span class="s">&#39;builtin&#39;</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
+              <span class="n">T</span> <span class="p">=</span> <span class="p">[</span><span class="n">T</span><span class="p">;</span> <span class="n">struct2table</span><span class="p">(</span><span class="n">param</span><span class="p">)];</span>
+            <span class="k">end</span>
+            <span class="nb">fprintf</span><span class="p">(</span><span class="s">&#39;.&#39;</span><span class="p">);</span>
+        <span class="k">end</span>
+    <span class="k">end</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">~</span><span class="nb">exist</span> <span class="p">(</span><span class="s">&#39;OCTAVE_VERSION&#39;</span><span class="p">,</span> <span class="s">&#39;builtin&#39;</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
+      <span class="n">Ts</span><span class="p">{</span><span class="n">m</span><span class="p">}</span> <span class="p">=</span> <span class="n">T</span><span class="p">;</span>
+    <span class="k">end</span>
+    <span class="nb">fprintf</span><span class="p">(</span><span class="s">&#39;\nBest Results REDSVM C %f, k %f --&gt; %s: %f\n&#39;</span><span class="p">,</span> <span class="n">bestParam</span><span class="p">.</span><span class="n">C</span><span class="p">,</span> <span class="n">bestParam</span><span class="p">.</span><span class="n">k</span><span class="p">,</span> <span class="n">mObj</span><span class="p">.</span><span class="n">name</span><span class="p">,</span> <span class="n">bestError</span><span class="p">);</span>
+<span class="k">end</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Grid search to optimize Mean Zero Error for REDSVM
+.................................................
+Best Results REDSVM C 1.000000, k 0.010000 --&gt; Mean Zero Error: 0.303571
+Grid search to optimize Average Mean Absolute Error for REDSVM
+.................................................
+Best Results REDSVM C 10.000000, k 0.001000 --&gt; Average Mean Absolute Error: 0.879355
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[16]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-octave"><pre><span></span><span class="k">if</span> <span class="p">(</span><span class="nb">exist</span> <span class="p">(</span><span class="s">&#39;OCTAVE_VERSION&#39;</span><span class="p">,</span> <span class="s">&#39;builtin&#39;</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
+  <span class="nb">fprintf</span><span class="p">(</span><span class="s">&#39;This type of graphic is not supported in Octave\n&#39;</span><span class="p">);</span>
+<span class="k">else</span>
+<span class="k">if</span> <span class="n">verLessThan</span><span class="p">(</span><span class="s">&#39;matlab&#39;</span><span class="p">,</span> <span class="s">&#39;9.2&#39;</span><span class="p">)</span>
+    <span class="c">% Use contours</span>
+    <span class="nb">figure</span><span class="p">;</span>
+    <span class="nb">hold</span> <span class="n">on</span><span class="p">;</span>
+    <span class="k">for</span> <span class="n">m</span> <span class="p">=</span> <span class="mi">1</span><span class="p">:</span><span class="nb">size</span><span class="p">(</span><span class="n">Metrics</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">mObj</span> <span class="p">=</span> <span class="n">Metrics</span><span class="p">{</span><span class="n">m</span><span class="p">}();</span>
+        <span class="nb">subplot</span><span class="p">(</span><span class="nb">size</span><span class="p">(</span><span class="n">Metrics</span><span class="p">,</span><span class="mi">2</span><span class="p">),</span><span class="mi">1</span><span class="p">,</span><span class="n">m</span><span class="p">)</span>
+        <span class="n">x</span> <span class="p">=</span> <span class="n">Ts</span><span class="p">{</span><span class="n">m</span><span class="p">}{:,</span><span class="mi">1</span><span class="p">};</span>
+        <span class="n">y</span> <span class="p">=</span> <span class="n">Ts</span><span class="p">{</span><span class="n">m</span><span class="p">}{:,</span><span class="mi">2</span><span class="p">};</span>
+        <span class="n">z</span> <span class="p">=</span> <span class="n">Ts</span><span class="p">{</span><span class="n">m</span><span class="p">}{:,</span><span class="mi">3</span><span class="p">};</span>
+        <span class="n">numPoints</span><span class="p">=</span><span class="mi">100</span><span class="p">;</span>
+        <span class="p">[</span><span class="n">xi</span><span class="p">,</span> <span class="n">yi</span><span class="p">]</span> <span class="p">=</span> <span class="nb">meshgrid</span><span class="p">(</span><span class="nb">linspace</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">x</span><span class="p">),</span><span class="nb">max</span><span class="p">(</span><span class="n">x</span><span class="p">),</span><span class="n">numPoints</span><span class="p">),</span><span class="nb">linspace</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">y</span><span class="p">),</span><span class="nb">max</span><span class="p">(</span><span class="n">y</span><span class="p">),</span><span class="n">numPoints</span><span class="p">));</span>
+        <span class="n">zi</span> <span class="p">=</span> <span class="nb">griddata</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">z</span><span class="p">,</span> <span class="n">xi</span><span class="p">,</span><span class="n">yi</span><span class="p">);</span>
+        <span class="nb">contourf</span><span class="p">(</span><span class="n">xi</span><span class="p">,</span><span class="n">yi</span><span class="p">,</span><span class="n">zi</span><span class="p">,</span><span class="mi">15</span><span class="p">);</span>
+        <span class="k">set</span><span class="p">(</span><span class="nb">gca</span><span class="p">,</span> <span class="s">&#39;XScale&#39;</span><span class="p">,</span> <span class="s">&#39;log&#39;</span><span class="p">);</span>
+        <span class="k">set</span><span class="p">(</span><span class="nb">gca</span><span class="p">,</span> <span class="s">&#39;YScale&#39;</span><span class="p">,</span> <span class="s">&#39;log&#39;</span><span class="p">);</span>
+        <span class="nb">colorbar</span><span class="p">;</span>
+        <span class="nb">title</span><span class="p">([</span><span class="n">mObj</span><span class="p">.</span><span class="n">name</span> <span class="s">&#39; optimization for REDSVM&#39;</span><span class="p">]);</span>
+    <span class="k">end</span>
+    <span class="nb">hold</span> <span class="n">off</span><span class="p">;</span>
+<span class="k">else</span>
+    <span class="c">% Use heatmaps</span>
+    <span class="nb">fprintf</span><span class="p">(</span><span class="s">&#39;Generating heat maps\n&#39;</span><span class="p">);</span>
+    <span class="nb">figure</span><span class="p">;</span>
+    <span class="nb">subplot</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">heatmap</span><span class="p">(</span><span class="n">Ts</span><span class="p">{</span><span class="mi">1</span><span class="p">},</span><span class="s">&#39;C&#39;</span><span class="p">,</span><span class="s">&#39;k&#39;</span><span class="p">,</span><span class="s">&#39;ColorVariable&#39;</span><span class="p">,</span><span class="s">&#39;error&#39;</span><span class="p">);</span>
+    <span class="nb">title</span><span class="p">(</span><span class="s">&#39;MZE optimization for REDSVM&#39;</span><span class="p">);</span>
+
+    <span class="nb">subplot</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">heatmap</span><span class="p">(</span><span class="n">Ts</span><span class="p">{</span><span class="mi">2</span><span class="p">},</span><span class="s">&#39;C&#39;</span><span class="p">,</span><span class="s">&#39;k&#39;</span><span class="p">,</span><span class="s">&#39;ColorVariable&#39;</span><span class="p">,</span><span class="s">&#39;error&#39;</span><span class="p">);</span>
+    <span class="nb">title</span><span class="p">(</span><span class="s">&#39;AMAE optimization for REDSVM&#39;</span><span class="p">);</span>
+<span class="k">end</span>
+<span class="k">end</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>This type of graphic is not supported in Octave
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Kernel-discriminant-learning-for-ordinal-regression-(KDLOR)">Kernel discriminant learning for ordinal regression (KDLOR)<a class="anchor-link" href="#Kernel-discriminant-learning-for-ordinal-regression-(KDLOR)">&#182;</a></h2><p>This method adapts discriminant learning to the context of ordinal classification. The original discriminant learning problem is transformed by considering the minimum difference between the averages of two consecutive classes (in the ordinal scale). If this minimum difference is positive, the classes are correctly ranked according to the projection.</p>
+<p>After obtaining the projection, the thresholds are positioned in the mean point of the average projection of the classes they are separating. This makes the method quite sensitive to classes with low frequencies (being a good method for imbalanced ordinal regression problems).</p>
+<p>You can use KDLOR with three different kernels (<code>rbf</code>, <code>sigmoid</code> or <code>linear</code>) and with different optimization engines for the problem to be solved (<code>quadprog</code>, <code>qp</code> or <code>cvx</code>). Please, take into account that the <code>cvx</code> engine is not included by default in ORCA, so you will have to <a href="http://cvxr.com/cvx/">install it</a>. These two parameters are specified in the constructor (with the parameters <code>optimizationMethod</code> and <code>kernelType</code>, respectively), as they are not intended to be fine tuned by cross validation. During the optimization, KDLOR needs the following three parameters:</p>
+<ul>
+<li>Parameter <code>C</code>, importance given to the minimum distance between average projections of classes.</li>
+<li>Parameter <code>k</code>, inverse of the width of the RBF kernel.</li>
+<li>Parameter <code>u</code>, constant summed to the main diagonal of the kernel matrix, aimed at avoiding singularities.</li>
+</ul>
+<p>Let try KDLOR in the melanoma dataset:</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[17]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-octave"><pre><span></span><span class="c">%% Apply the KDLOR model</span>
+<span class="c">% Create the KDLOR object</span>
+<span class="n">algorithmObj</span> <span class="p">=</span> <span class="n">KDLOR</span><span class="p">(</span><span class="s">&#39;kernelType&#39;</span><span class="p">,</span><span class="s">&#39;rbf&#39;</span><span class="p">);</span>
+
+<span class="c">% Train KDLOR</span>
+<span class="nb">info</span> <span class="p">=</span> <span class="n">algorithmObj</span><span class="p">.</span><span class="n">fitpredict</span><span class="p">(</span><span class="n">train</span><span class="p">,</span><span class="nb">test</span><span class="p">,</span><span class="nb">struct</span><span class="p">(</span><span class="s">&#39;C&#39;</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="s">&#39;k&#39;</span><span class="p">,</span><span class="mf">0.001</span><span class="p">,</span><span class="s">&#39;u&#39;</span><span class="p">,</span><span class="mf">0.01</span><span class="p">));</span>
+
+<span class="c">% Evaluate the model</span>
+<span class="nb">fprintf</span><span class="p">(</span><span class="s">&#39;KDLOR method\n---------------\n&#39;</span><span class="p">);</span>
+<span class="nb">fprintf</span><span class="p">(</span><span class="s">&#39;KDLOR Accuracy: %f\n&#39;</span><span class="p">,</span> <span class="n">CCR</span><span class="p">.</span><span class="n">calculateMetric</span><span class="p">(</span><span class="nb">test</span><span class="p">.</span><span class="n">targets</span><span class="p">,</span><span class="nb">info</span><span class="p">.</span><span class="n">predictedTest</span><span class="p">));</span>
+<span class="nb">fprintf</span><span class="p">(</span><span class="s">&#39;KDLOR MAE: %f\n&#39;</span><span class="p">,</span> <span class="n">MAE</span><span class="p">.</span><span class="n">calculateMetric</span><span class="p">(</span><span class="nb">test</span><span class="p">.</span><span class="n">targets</span><span class="p">,</span><span class="nb">info</span><span class="p">.</span><span class="n">predictedTest</span><span class="p">));</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>KDLOR method
+---------------
+KDLOR Accuracy: 0.607143
+KDLOR MAE: 0.517857
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[18]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-octave"><pre><span></span><span class="n">MS</span><span class="p">.</span><span class="n">calculateMetric</span><span class="p">(</span><span class="nb">test</span><span class="p">.</span><span class="n">targets</span><span class="p">,</span><span class="nb">info</span><span class="p">.</span><span class="n">predictedTest</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>ans =  0.20000
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[19]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-octave"><pre><span></span><span class="n">confusionmat</span><span class="p">(</span><span class="nb">test</span><span class="p">.</span><span class="n">targets</span><span class="p">,</span><span class="nb">info</span><span class="p">.</span><span class="n">predictedTest</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>ans =
+
+   25    4    2    0    0
+    2    3    1    0    0
+    2    4    2    0    2
+    0    1    2    3    0
+    0    0    0    2    1
+
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>as previously discussed, because of the way the thresholds are derived, this method is quite robust for minority classes.</p>
+<p>Let check it in the projections:</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[20]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-octave"><pre><span></span><span class="c">% Visualize the projection with colors</span>
+<span class="nb">figure</span><span class="p">;</span> <span class="nb">hold</span> <span class="n">on</span><span class="p">;</span>
+<span class="n">Q</span> <span class="p">=</span> <span class="nb">size</span><span class="p">(</span><span class="nb">info</span><span class="p">.</span><span class="n">model</span><span class="p">.</span><span class="n">thresholds</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">;</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="n">Q</span>
+    <span class="nb">hist</span><span class="p">(</span><span class="nb">info</span><span class="p">.</span><span class="n">projectedTest</span><span class="p">(</span><span class="nb">test</span><span class="p">.</span><span class="n">targets</span><span class="o">==</span><span class="n">i</span><span class="p">),</span><span class="mi">30</span><span class="p">,</span> <span class="s">&#39;FaceColor&#39;</span><span class="p">,</span> <span class="n">palette</span><span class="p">{</span><span class="n">i</span><span class="p">});</span>
+<span class="k">end</span>
+<span class="n">y1</span><span class="p">=</span><span class="k">get</span><span class="p">(</span><span class="nb">gca</span><span class="p">,</span><span class="s">&#39;ylim&#39;</span><span class="p">);</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="nb">size</span><span class="p">(</span><span class="nb">info</span><span class="p">.</span><span class="n">model</span><span class="p">.</span><span class="n">thresholds</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+    <span class="nb">line</span><span class="p">([</span><span class="nb">info</span><span class="p">.</span><span class="n">model</span><span class="p">.</span><span class="n">thresholds</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="nb">info</span><span class="p">.</span><span class="n">model</span><span class="p">.</span><span class="n">thresholds</span><span class="p">(</span><span class="n">i</span><span class="p">)],</span><span class="n">y1</span><span class="p">,</span><span class="s">&#39;Color&#39;</span><span class="p">,[</span><span class="mi">1</span> <span class="mi">0</span> <span class="mi">0</span><span class="p">]);</span>    
+<span class="k">end</span>
+<span class="c">%legend(&#39;C1&#39;,&#39;C2&#39;,&#39;C3&#39;,&#39;C4&#39;,&#39;C5&#39;);</span>
+<span class="nb">legend</span><span class="p">(</span><span class="nb">arrayfun</span><span class="p">(@(</span><span class="n">num</span><span class="p">)</span> <span class="nb">sprintf</span><span class="p">(</span><span class="s">&#39;C%d&#39;</span><span class="p">,</span> <span class="n">num</span><span class="p">),</span> <span class="mi">1</span><span class="p">:</span><span class="n">Q</span><span class="p">,</span> <span class="s">&#39;UniformOutput&#39;</span><span class="p">,</span> <span class="nb">false</span><span class="p">))</span>
+<span class="nb">hold</span> <span class="n">off</span><span class="p">;</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+
+<div class="output_png output_subarea ">
+<img src="orca_tutorial_3_files/orca_tutorial_3_35_0.png"
 >
 </div>
 
@@ -13622,13 +14265,7 @@ ans = Experiments/exp-2019-4-24-11-16-47
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <hr>
-<p><strong><em>Exercise 2</em></strong>: you can repeat this barplot but now considering:</p>
-<ul>
-<li>A <code>global</code> (i.e. a metric where the class a priori probability is not considered) <strong>nominal</strong> metric.</li>
-<li>A <code>global</code> <strong>ordinal</strong> metric.</li>
-<li>A <strong>nominal</strong> metric specifically designed for imbalanced datasets.</li>
-<li>An <strong>ordinal</strong> metric specifically designed for imbalanced datasets.</li>
-</ul>
+<p><strong><em>Exercise 3</em></strong>: Compare the results obtained in KDLOR by using different kernel functions.</p>
 <hr>
 
 </div>
@@ -13637,110 +14274,29 @@ ans = Experiments/exp-2019-4-24-11-16-47
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Syntax-of-ini-files">Syntax of <code>ini</code> files<a class="anchor-link" href="#Syntax-of-ini-files">&#182;</a></h3><p>ORCA experiments are specified in configuration <code>ini</code> files, which execute an algorithm for a collection of datasets (each dataset with a given number of partitions). The folder <a href="../src/config-files">src/config-files</a> contains example configuration files for running all the algorithms included in ORCA for all the algorithms and datasets of the <a href="http://www.uco.es/grupos/ayrna/orreview">review paper</a>. The following code is an example for running the Proportion Odds Model (POM), a.k.a. Ordinal Logistic Regression. Note that the execution of this <code>ini</code> file can take several hours:</p>
-<div class="highlight"><pre><span></span><span class="c1">; Experiment ID</span>
-<span class="na">[pom-real</span>
-<span class="na">{general-conf}</span>
-<span class="na">seed</span> <span class="o">=</span> <span class="s">1</span>
-<span class="c1">; Datasets path</span>
-<span class="na">basedir</span> <span class="o">=</span> <span class="s">../../../datasets/ordinal/real/30-holdout</span>
-<span class="c1">; Datasets to process (comma separated list or &#39;all&#39; to process all)</span>
-<span class="na">datasets</span> <span class="o">=</span> <span class="s">automobile,balance-scale,bondrate,car,contact-lenses,ERA,ESL,eucalyptus,LEV,marketing,newthyroid,pasture,squash-stored,squash-unstored,SWD,tae,thyroid,toy,winequality-red,winequality-white</span>
-<span class="c1">; Activate data standardization</span>
-<span class="na">standarize</span> <span class="o">=</span> <span class="s">true</span>
-
-<span class="c1">; Method: algorithm and parameter</span>
-<span class="na">{algorithm-parameters}</span>
-<span class="na">algorithm</span> <span class="o">=</span> <span class="s">POM</span>
-</pre></div>
-<p><code>ini</code> files include <strong>Subsections</strong> to help organize the configuration. These sections are mandatory:</p>
-<ul>
-<li><code>{general-conf}</code>: generic parameters of the experiment, including the seed considered for random number generation, the directory containing the datasets, the datasets to be processed... All the parameters included here are the same for all the algorithms.</li>
-<li><code>{algorithm-parameters}</code>: here you can specify the algorithm to run and the parameters which are going to be fixed (not optimized through cross validation).</li>
-<li><code>{algorithm-hyper-parameters-to-cv}</code>: algorithms' hyper-parameters to optimise. For more details, see <a href="#Hyper-parameter-optimization">Hyper-parameter optimization</a>.</li>
-</ul>
-<p>The above file tells ORCA to run the algorithm <code>POM</code> for all the datasets specified in the list <code>datasets</code>. You can also use <code>datasets = all</code> to process all the datasets in <code>basedir</code>). Each of these datasets should be found at folder <code>basedir</code>, in such a way that ORCA expects one subfolder for each dataset, where the name of the subfolder must match the name of the dataset. Other directives are:</p>
-<ul>
-<li>INI section <code>[pom-real]</code> sets the experiment identifier.</li>
-<li>The <code>standarize</code> flag activates the standardization of the data (by using the mean and standard deviation of the train set).</li>
-<li>The rest of the parameters of the model depend on the specific algorithm (and they should be checked in the documentation of the algorithm). For instance, the kernel type is set up with <code>kernel</code> parameter.</li>
-</ul>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Hyper-parameter-optimization">Hyper-parameter optimization<a class="anchor-link" href="#Hyper-parameter-optimization">&#182;</a></h3><p>Many machine learning methods are very sensitive to the value considered for the hyper-parameters (consider, for example, support vector machines and the two associated parameters, cost and kernel width). ORCA automates hyper-parameter optimization by using a grid search with an internal nested <em>k</em>-fold cross-validation considering only the training partition. Let see an example for the optimisation of the two hyper-parameters of SVORIM: cost (<code>C</code>) and kernel width parameter (<code>k</code>, a.k.a. <em>gamma</em>):</p>
-<div class="highlight"><pre><span></span><span class="c1">; Experiment ID</span>
-<span class="k">[svorim-mae-real]</span>
-<span class="na">{general-conf}</span>
-<span class="na">seed</span> <span class="o">=</span> <span class="s">1</span>
-<span class="c1">; Datasets path</span>
-<span class="na">basedir</span> <span class="o">=</span> <span class="s">datasets/ordinal/real/30-holdout</span>
-<span class="c1">; Datasets to process (comma separated list)</span>
-<span class="na">datasets</span> <span class="o">=</span> <span class="s">all</span>
-<span class="c1">; Activate data standardization</span>
-<span class="na">standarize</span> <span class="o">=</span> <span class="s">true</span>
-<span class="c1">; Number of folds for the parameters optimization</span>
-<span class="na">num_folds</span> <span class="o">=</span> <span class="s">5</span>
-<span class="c1">; Crossvalidation metric</span>
-<span class="na">cvmetric</span> <span class="o">=</span> <span class="s">mae</span>
-
-<span class="c1">; Method: algorithm and parameter</span>
-<span class="na">{algorithm-parameters}</span>
-<span class="na">algorithm</span> <span class="o">=</span> <span class="s">SVORIM</span>
-<span class="na">kernel</span> <span class="o">=</span> <span class="s">rbf</span>
-
-<span class="c1">; Method&#39;s hyper-parameter values to optimize</span>
-<span class="na">{algorithm-hyper-parameters-to-cv}</span>
-<span class="na">C</span> <span class="o">=</span> <span class="s">10.^(-3:1:3)</span>
-<span class="na">k</span> <span class="o">=</span> <span class="s">10.^(-3:1:3)</span>
-</pre></div>
-<p>The directive for configuring the search process is included in the general section. The directives associated to hyper-parameter optimisation are:</p>
-<ul>
-<li><code>seed</code>: is the value to initialize MATLAB random number generator. This can be helpful to debug algorithms.</li>
-<li><code>num_folds</code>: <em>k</em> value for the nested <em>k</em>-fold cross validation over the training data.</li>
-<li><code>cvmetric</code>: metric used to select the best hyper-parameters in the grid search. The metrics available are: <code>AMAE</code>,<code>CCR</code>,<code>GM</code>,<code>MAE</code>,<code>MMAE</code>,<code>MS</code>,<code>MZE</code>,<code>Spearman</code>,<code>Tkendall</code> and <code>Wkappa</code>.</li>
-<li>The list of hyper-parameters to be optimised and values considered for each parameter during the grid search are specified in subsection <code>{algorithm-hyper-parameters-to-cv}</code>;<ul>
-<li><code>C</code>: add a new parameter with name <code>C</code> and a set of values of <code>10.^(-3:1:3)</code> (10<sup>-3</sup>,10<sup>-2</sup>,...,10<sup>3</sup>). The same apples for <code>k</code>.</li>
-</ul>
-</li>
-</ul>
-<p>The parameter optimization can also be done by using the API (full example is in <a href="../src/code-examples/exampleParamOptimization.m">exampleParamOptimization.m</a> script):</p>
+<h2 id="Ordinal-regression-boosting-(ORBoost)">Ordinal regression boosting (ORBoost)<a class="anchor-link" href="#Ordinal-regression-boosting-(ORBoost)">&#182;</a></h2><p>Ordinal regression boosting (ORBoost) is a thresholded-ensemble model, which is composed of confidence functions, and their weighted linear combination is used as the one-dimensional mapping. A set of thresholds for this mapping is also included in the model and iteratively updated with the rest of parameters.</p>
+<p>As proposed by the authors, the total number of ensemble members is set to <code>T=2000</code>, and normalised sigmoid functions are used as the base classifier, where the smoothness parameter is <code>gamma=4</code>. Large margin bounds of the classification error and the absolute error are derived, from which two algorithms are presented: ORBoost with all margins and ORBoost with left-right margins. The <code>weights</code> parameter in the constructor configures whether the All margins versions is used (<code>weights=true</code>) or the Left-Right margin is used (<code>weights=false</code>).</p>
+<p>This is the code for running ORBoost with the melanoma diagnosis dataset (this will take some time):</p>
 
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[5]:</div>
+<div class="prompt input_prompt">In&nbsp;[21]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-octave"><pre><span></span><span class="c">% Load the different partitions of the dataset</span>
-<span class="nb">load</span> <span class="p">.</span><span class="o">./</span><span class="n">exampledata</span><span class="o">/</span><span class="mi">1</span><span class="o">-</span><span class="n">holdout</span><span class="o">/</span><span class="n">toy</span><span class="o">/</span><span class="n">matlab</span><span class="o">/</span><span class="n">train_toy</span><span class="p">.</span><span class="mi">0</span>
-<span class="nb">load</span> <span class="p">.</span><span class="o">./</span><span class="n">exampledata</span><span class="o">/</span><span class="mi">1</span><span class="o">-</span><span class="n">holdout</span><span class="o">/</span><span class="n">toy</span><span class="o">/</span><span class="n">matlab</span><span class="o">/</span><span class="n">test_toy</span><span class="p">.</span><span class="mi">0</span>
+<div class=" highlight hl-octave"><pre><span></span><span class="c">%% Apply the ORBoost model</span>
+<span class="c">% Create the ORBoost object</span>
+<span class="n">algorithmObj</span> <span class="p">=</span> <span class="n">ORBoost</span><span class="p">(</span><span class="s">&#39;weights&#39;</span><span class="p">,</span><span class="nb">true</span><span class="p">);</span>
 
-<span class="c">% &quot;patterns&quot; refers to the input variables and targets to the output one</span>
-<span class="n">train</span><span class="p">.</span><span class="n">patterns</span> <span class="p">=</span> <span class="n">train_toy</span><span class="p">(:,</span><span class="mi">1</span><span class="p">:</span><span class="k">end</span><span class="o">-</span><span class="mi">1</span><span class="p">);</span>
-<span class="n">train</span><span class="p">.</span><span class="n">targets</span> <span class="p">=</span> <span class="n">train_toy</span><span class="p">(:,</span><span class="k">end</span><span class="p">);</span>
-<span class="nb">test</span><span class="p">.</span><span class="n">patterns</span> <span class="p">=</span> <span class="n">test_toy</span><span class="p">(:,</span><span class="mi">1</span><span class="p">:</span><span class="k">end</span><span class="o">-</span><span class="mi">1</span><span class="p">);</span>
-<span class="nb">test</span><span class="p">.</span><span class="n">targets</span> <span class="p">=</span> <span class="n">test_toy</span><span class="p">(:,</span><span class="k">end</span><span class="p">);</span>
+<span class="c">% Train ORBoost</span>
+<span class="nb">info</span> <span class="p">=</span> <span class="n">algorithmObj</span><span class="p">.</span><span class="n">fitpredict</span><span class="p">(</span><span class="n">train</span><span class="p">,</span><span class="nb">test</span><span class="p">);</span>
 
-<span class="c">% Assumes training set in structure &#39;train&#39;</span>
-<span class="c">% Create the algorithm object</span>
-<span class="n">algorithmObj</span> <span class="p">=</span> <span class="n">KDLOR</span><span class="p">();</span>
-<span class="c">% Create vectors of values to test</span>
-<span class="n">param</span><span class="p">.</span><span class="n">C</span> <span class="p">=</span> <span class="mf">10.</span>^<span class="p">(</span><span class="o">-</span><span class="mi">3</span><span class="p">:</span><span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">);</span>
-<span class="n">param</span><span class="p">.</span><span class="n">k</span> <span class="p">=</span> <span class="mf">10.</span>^<span class="p">(</span><span class="o">-</span><span class="mi">3</span><span class="p">:</span><span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">);</span>
-<span class="n">param</span><span class="p">.</span><span class="n">u</span> <span class="p">=</span> <span class="p">[</span><span class="mf">0.01</span><span class="p">,</span><span class="mf">0.001</span><span class="p">,</span><span class="mf">0.0001</span><span class="p">,</span><span class="mf">0.00001</span><span class="p">];</span>
-
-<span class="c">% Optimizing parameters for KDLOR with metric MAE (default metric)</span>
-<span class="n">optimalp</span> <span class="p">=</span> <span class="n">paramopt</span><span class="p">(</span><span class="n">algorithmObj</span><span class="p">,</span><span class="n">param</span><span class="p">,</span><span class="n">train</span><span class="p">)</span>
-
-<span class="c">% Optimizing parameters for KDLOR with metric GM</span>
-<span class="n">optimalp</span> <span class="p">=</span> <span class="n">paramopt</span><span class="p">(</span><span class="n">algorithmObj</span><span class="p">,</span><span class="n">param</span><span class="p">,</span><span class="n">train</span><span class="p">,</span> <span class="s">&#39;metric&#39;</span><span class="p">,</span> <span class="n">GM</span><span class="p">)</span>
+<span class="c">% Evaluate the model</span>
+<span class="nb">fprintf</span><span class="p">(</span><span class="s">&#39;ORBoost method\n---------------\n&#39;</span><span class="p">);</span>
+<span class="nb">fprintf</span><span class="p">(</span><span class="s">&#39;ORBoost Accuracy: %f\n&#39;</span><span class="p">,</span> <span class="n">CCR</span><span class="p">.</span><span class="n">calculateMetric</span><span class="p">(</span><span class="nb">test</span><span class="p">.</span><span class="n">targets</span><span class="p">,</span><span class="nb">info</span><span class="p">.</span><span class="n">predictedTest</span><span class="p">));</span>
+<span class="nb">fprintf</span><span class="p">(</span><span class="s">&#39;ORBoost MAE: %f\n&#39;</span><span class="p">,</span> <span class="n">MAE</span><span class="p">.</span><span class="n">calculateMetric</span><span class="p">(</span><span class="nb">test</span><span class="p">.</span><span class="n">targets</span><span class="p">,</span><span class="nb">info</span><span class="p">.</span><span class="n">predictedTest</span><span class="p">));</span>
 </pre></div>
 
     </div>
@@ -13757,22 +14313,11 @@ ans = Experiments/exp-2019-4-24-11-16-47
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>optimalp =
-
-  scalar structure containing the fields:
-
-    C =  0.0010000
-    k =  10
-    u =  0.00010000
-
-optimalp =
-
-  scalar structure containing the fields:
-
-    C =  0.0010000
-    k =  10
-    u =  0.010000
-
+<pre>Entering ORBoost Training
+ORBoost method
+---------------
+ORBoost Accuracy: 0.607143
+ORBoost MAE: 0.553571
 </pre>
 </div>
 </div>
@@ -13784,48 +14329,33 @@ optimalp =
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Experimental-results-and-reports">Experimental results and reports<a class="anchor-link" href="#Experimental-results-and-reports">&#182;</a></h3><p>ORCA uses the <code>Experiments</code> folder to store all the results of the different experiments. Each report is placed in a subfolder of <code>Experiments</code> named with the current date, time and the name of the configuration file (for example 'exp-2015-7-14-10-5-57-pom'). After a successful experiment, this folder should contain the following information:</p>
-<ul>
-<li>Individual experiment configuration files for each dataset and partition.</li>
-<li>A <code>Results</code> folder with the following information:<ul>
-<li><code>mean-results_train.csv</code> and <code>mean-results_test.csv</code> which are the reports in CSV format (easily read by Excel or LibreOffice Calc). They contain the mean and standard deviation for each performance measure (<code>AMAE</code>,<code>CCR</code>,<code>GM</code>,<code>MAE</code>,<code>MMAE</code>,<code>MS</code>,<code>MZE</code>,<code>Spearman</code>,<code>Tkendall</code> and <code>Wkappa</code>) and the computational time. These averages and standard deviations are obtained for all the partitions of each algorithm and dataset.</li>
-<li>The <code>Results</code> folder contains one subfolder for each dataset with the following data:<ul>
-<li>Train and test confusion matrices (<code>matrices.txt</code>).</li>
-<li>Name of the folder used for the experiments (<code>dataset</code>).</li>
-<li>Individual results for each partition in CSV format (<code>results.csv</code>).</li>
-<li>Models of each partition in <code>.mat</code> format (<code>Models</code> folder). These models are structures and their fields depend on the specific algorithm.</li>
-<li>Decision values used to obtain the predicted labels for training and test partitions ('Guess' folder). For threshold models, this is the one dimensional mapping before applying the discretisation based on the thresholds. The rest of models may have multidimensional mappings.</li>
-<li>Labels predicted by the models for each partition ('Predictions' folder).</li>
-<li>Optimal hyper-parameters values obtained after nested cross-validation ('OptHyperparams').</li>
-<li>Computational time results ('Times').</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<p>If you provide the option <code>report_sum = true</code> in <code>{general-conf}</code>, additionally the same metrics will be calculated with a matrix that is the sum of the generalization matrices (as Weka does). <strong>Note that this only makes sense in the case of a k-fold experimental design</strong>. With this option active, two additional reports will be generated (<code>mean-results_matrices_sum_train.csv</code> and <code>mean-results_matrices_sum_test.csv</code>)</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Running-algorithms-with-ORCA-API">Running algorithms with ORCA API<a class="anchor-link" href="#Running-algorithms-with-ORCA-API">&#182;</a></h2><h3 id="Run-a-pair-of-train-test-files-with-fitpredict">Run a pair of train-test files with fitpredict<a class="anchor-link" href="#Run-a-pair-of-train-test-files-with-fitpredict">&#182;</a></h3><p>ORCA algorithms can be used from your own Matlab code. All algorithms included in the <a href="../src/Algorithms">Algorithms</a> have a <code>fitpredict</code> method, which can be used for running the algorithms with your data. The method receives a structure with the matrix of training data and labels, the equivalent for test data and a structure with the values of the parameters associated to the method. With respect to other tools, parameters are a mandatory argument for the method to avoid the use of default values.</p>
-<p>For example, the <a href="../src/Algorithms/KDLOR.m">KDLOR (Kernel Discriminant Learning for Ordinal Regression)</a> [5]  method has a total of five parameters. Two of them (the type of kernel, <code>kernelType</code>, and the optimisation routine considered, <code>optimizationMethod</code>) are received in the constructor of the corresponding class, and the other three parameters (cost, <code>C</code>, kernel parameter, <code>k</code>, and value to avoid singularities, <code>u</code>) are supposed to have to be fine-tuned for each dataset and partition, so they are received in a structure passed to the <code>fitpredict</code> method.</p>
-<p>This an example of execution of KDLOR from the Matlab console:</p>
+<h2 id="Custom-Ensemble-based-on-several-projections">Custom Ensemble based on several projections<a class="anchor-link" href="#Custom-Ensemble-based-on-several-projections">&#182;</a></h2><p>We can construct an ensemble by using the projection given by different models. In the following example, we combine the projections given by SVORIM and SVOREX method to construct a new dataset. With this dataset, we apply the POM algorithm:</p>
 
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[6]:</div>
+<div class="prompt input_prompt">In&nbsp;[22]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-octave"><pre><span></span><span class="nb">addpath</span><span class="p">(</span><span class="s">&#39;../src/Algorithms/&#39;</span><span class="p">)</span>
-<span class="n">kdlorAlgorithm</span> <span class="p">=</span> <span class="n">KDLOR</span><span class="p">(</span><span class="s">&#39;kernelType&#39;</span><span class="p">,</span><span class="s">&#39;rbf&#39;</span><span class="p">,</span><span class="s">&#39;optimizationMethod&#39;</span><span class="p">,</span><span class="s">&#39;quadprog&#39;</span><span class="p">);</span>
-<span class="n">kdlorAlgorithm</span>
+<div class=" highlight hl-octave"><pre><span></span><span class="c">%% Make an ensemble with SVORIM and SVOREX. The final decission by POM</span>
+<span class="c">% Construct a new dataset with the projections</span>
+<span class="n">newTrain</span><span class="p">.</span><span class="n">patterns</span> <span class="p">=</span> <span class="p">[</span><span class="n">svorexProjectionsTrain</span> <span class="n">svorimProjectionsTrain</span><span class="p">];</span>
+<span class="n">newTrain</span><span class="p">.</span><span class="n">targets</span> <span class="p">=</span> <span class="n">train</span><span class="p">.</span><span class="n">targets</span><span class="p">;</span>
+<span class="n">newTest</span><span class="p">.</span><span class="n">patterns</span> <span class="p">=</span> <span class="p">[</span><span class="n">svorexProjections</span> <span class="n">svorimProjections</span><span class="p">];</span>
+<span class="n">newTest</span><span class="p">.</span><span class="n">targets</span> <span class="p">=</span> <span class="n">train</span><span class="p">.</span><span class="n">targets</span><span class="p">;</span>
+<span class="c">% Preprocess the dataset</span>
+<span class="p">[</span><span class="n">newTrain</span><span class="p">,</span><span class="n">newTest</span><span class="p">]</span> <span class="p">=</span> <span class="n">DataSet</span><span class="p">.</span><span class="n">deleteConstantAtributes</span><span class="p">(</span><span class="n">newTrain</span><span class="p">,</span><span class="n">newTest</span><span class="p">);</span>
+<span class="p">[</span><span class="n">newTrain</span><span class="p">,</span><span class="n">newTest</span><span class="p">]</span> <span class="p">=</span> <span class="n">DataSet</span><span class="p">.</span><span class="n">standarizeData</span><span class="p">(</span><span class="n">newTrain</span><span class="p">,</span><span class="n">newTest</span><span class="p">);</span>
+<span class="p">[</span><span class="n">newTrain</span><span class="p">,</span><span class="n">newTest</span><span class="p">]</span> <span class="p">=</span> <span class="n">DataSet</span><span class="p">.</span><span class="n">deleteNonNumericValues</span><span class="p">(</span><span class="n">newTrain</span><span class="p">,</span><span class="n">newTest</span><span class="p">);</span>
+<span class="c">% Train the final POM model</span>
+<span class="n">algorithmObj</span> <span class="p">=</span> <span class="n">POM</span><span class="p">();</span>
+<span class="nb">info</span> <span class="p">=</span> <span class="n">algorithmObj</span><span class="p">.</span><span class="n">fitpredict</span><span class="p">(</span><span class="n">newTrain</span><span class="p">,</span><span class="n">newTest</span><span class="p">);</span>
+<span class="c">% Evaluate the ensemble</span>
+<span class="nb">fprintf</span><span class="p">(</span><span class="s">&#39;SVORIM+SVOREX+POM method\n---------------\n&#39;</span><span class="p">);</span>
+<span class="nb">fprintf</span><span class="p">(</span><span class="s">&#39;SVORIM+SVOREX+POM Accuracy: %f\n&#39;</span><span class="p">,</span> <span class="n">CCR</span><span class="p">.</span><span class="n">calculateMetric</span><span class="p">(</span><span class="nb">test</span><span class="p">.</span><span class="n">targets</span><span class="p">,</span><span class="nb">info</span><span class="p">.</span><span class="n">predictedTest</span><span class="p">));</span>
+<span class="nb">fprintf</span><span class="p">(</span><span class="s">&#39;SVORIM+SVOREX+POM MAE: %f\n&#39;</span><span class="p">,</span> <span class="n">MAE</span><span class="p">.</span><span class="n">calculateMetric</span><span class="p">(</span><span class="nb">test</span><span class="p">.</span><span class="n">targets</span><span class="p">,</span><span class="nb">info</span><span class="p">.</span><span class="n">predictedTest</span><span class="p">))</span>
 </pre></div>
 
     </div>
@@ -13842,10 +14372,10 @@ optimalp =
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>kdlorAlgorithm =
-
-&lt;object KDLOR&gt;
-
+<pre>SVORIM+SVOREX+POM method
+---------------
+SVORIM+SVOREX+POM Accuracy: 0.660714
+SVORIM+SVOREX+POM MAE: 0.500000
 </pre>
 </div>
 </div>
@@ -13857,26 +14387,17 @@ optimalp =
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Load train and test data:</p>
+<p>If we check the dataset used for POM:</p>
 
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[7]:</div>
+<div class="prompt input_prompt">In&nbsp;[23]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-octave"><pre><span></span><span class="nb">load</span> <span class="p">.</span><span class="o">./</span><span class="n">exampledata</span><span class="o">/</span><span class="mi">1</span><span class="o">-</span><span class="n">holdout</span><span class="o">/</span><span class="n">toy</span><span class="o">/</span><span class="n">matlab</span><span class="o">/</span><span class="n">train_toy</span><span class="p">.</span><span class="mi">0</span>
-<span class="nb">load</span> <span class="p">.</span><span class="o">./</span><span class="n">exampledata</span><span class="o">/</span><span class="mi">1</span><span class="o">-</span><span class="n">holdout</span><span class="o">/</span><span class="n">toy</span><span class="o">/</span><span class="n">matlab</span><span class="o">/</span><span class="n">test_toy</span><span class="p">.</span><span class="mi">0</span>
-<span class="n">train</span><span class="p">.</span><span class="n">patterns</span> <span class="p">=</span> <span class="n">train_toy</span><span class="p">(:,</span><span class="mi">1</span><span class="p">:(</span><span class="nb">size</span><span class="p">(</span><span class="n">train_toy</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">));</span>
-<span class="n">train</span><span class="p">.</span><span class="n">targets</span> <span class="p">=</span> <span class="n">train_toy</span><span class="p">(:,</span><span class="nb">size</span><span class="p">(</span><span class="n">train_toy</span><span class="p">,</span><span class="mi">2</span><span class="p">));</span>
-<span class="nb">test</span><span class="p">.</span><span class="n">patterns</span> <span class="p">=</span> <span class="n">test_toy</span><span class="p">(:,</span><span class="mi">1</span><span class="p">:(</span><span class="nb">size</span><span class="p">(</span><span class="n">test_toy</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">));</span>
-<span class="nb">test</span><span class="p">.</span><span class="n">targets</span> <span class="p">=</span> <span class="n">test_toy</span><span class="p">(:,</span><span class="nb">size</span><span class="p">(</span><span class="n">test_toy</span><span class="p">,</span><span class="mi">2</span><span class="p">));</span>
-<span class="n">param</span><span class="p">.</span><span class="n">C</span> <span class="p">=</span> <span class="mi">10</span><span class="p">;</span>
-<span class="n">param</span><span class="p">.</span><span class="n">k</span> <span class="p">=</span> <span class="mf">0.1</span><span class="p">;</span>
-<span class="n">param</span><span class="p">.</span><span class="n">u</span> <span class="p">=</span> <span class="mf">0.001</span><span class="p">;</span>
-<span class="n">param</span>
+<div class=" highlight hl-octave"><pre><span></span><span class="nb">scatter</span><span class="p">(</span><span class="n">newTrain</span><span class="p">.</span><span class="n">patterns</span><span class="p">(:,</span><span class="mi">1</span><span class="p">),</span><span class="n">newTrain</span><span class="p">.</span><span class="n">patterns</span><span class="p">(:,</span><span class="mi">2</span><span class="p">),</span><span class="mi">150</span><span class="p">,</span><span class="n">newTrain</span><span class="p">.</span><span class="n">targets</span><span class="p">,</span> <span class="s">&quot;filled&quot;</span><span class="p">);</span>
 </pre></div>
 
     </div>
@@ -13892,17 +14413,13 @@ optimalp =
     <div class="prompt"></div>
 
 
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>param =
 
-  scalar structure containing the fields:
 
-    C =  10
-    k =  0.10000
-    u =  0.0010000
-
-</pre>
+<div class="output_png output_subarea ">
+<img src="orca_tutorial_3_files/orca_tutorial_3_42_0.png"
+>
 </div>
+
 </div>
 
 </div>
@@ -13912,168 +14429,30 @@ optimalp =
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Fit the model and test prediction with generalization data:</p>
+<p>We can see that, although the correlation of both projections is quite high, some patterns can be refined by considering both projections.</p>
+<hr>
+<p><strong><em>Exercise 4</em></strong>: construct a similar ensemble but using different SVORIM projections with different subsets of input variables (a 40% of randomly chosen variables). The number of members of the ensemble should be as a parameter (try 50).</p>
+<hr>
+<p><strong><em>Exercise 5</em></strong>: construct a similar ensemble but using different SVORIM projections with different parameters for the <code>C</code> value.</p>
+<hr>
+<h1 id="References">References<a class="anchor-link" href="#References">&#182;</a></h1><ol>
+<li>P. McCullagh, "Regression models for ordinal data",  Journal of the Royal Statistical Society. Series B (Methodological), vol. 42, no. 2, pp. 109–142, 1980.</li>
+<li>M. J. Mathieson, "Ordinal models for neural networks", in Proc. 3rd Int. Conf. Neural Netw. Capital Markets, 1996, pp. 523-536.</li>
+<li>W. Chu and S. S. Keerthi, "Support Vector Ordinal Regression", Neural Computation, vol. 19, no. 3, pp. 792–815, 2007. <a href="https://doi.org/10.1162/neco.2007.19.3.792">https://doi.org/10.1162/neco.2007.19.3.792</a></li>
+<li>H.-T. Lin and L. Li, "Reduction from cost-sensitive ordinal ranking to weighted binary classification" Neural Computation, vol. 24, no. 5, pp. 1329-1367, 2012. <a href="https://doi.org/10.1162/NECO_a_00265">https://doi.org/10.1162/NECO_a_00265</a></li>
+<li>B.-Y. Sun, J. Li, D. D. Wu, X.-M. Zhang, and W.-B. Li, "Kernel discriminant learning for ordinal regression", IEEE Transactions on Knowledge and Data Engineering, vol. 22, no. 6, pp. 906-910, 2010. <a href="https://doi.org/10.1109/TKDE.2009.170">https://doi.org/10.1109/TKDE.2009.170</a></li>
+<li>H.-T. Lin and L. Li, "Large-margin thresholded ensembles for ordinal regression: Theory and practice", in Proc. of the 17th Algorithmic Learning Theory International Conference, ser. Lecture Notes in Artificial Intelligence (LNAI), J. L. Balcazar, P. M. Long, and F. Stephan, Eds., vol. 4264. Springer-Verlag, October 2006, pp. 319-333.</li>
+</ol>
 
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[8]:</div>
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-octave"><pre><span></span><span class="nb">info</span> <span class="p">=</span> <span class="n">kdlorAlgorithm</span><span class="p">.</span><span class="n">fitpredict</span><span class="p">(</span><span class="n">train</span><span class="p">,</span><span class="nb">test</span><span class="p">,</span><span class="n">param</span><span class="p">);</span>
-<span class="nb">fieldnames</span><span class="p">(</span><span class="nb">info</span><span class="p">)</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>ans =
-{
-  [1,1] = projectedTrain
-  [2,1] = predictedTrain
-  [3,1] = trainTime
-  [4,1] = projectedTest
-  [5,1] = predictedTest
-  [6,1] = testTime
-  [7,1] = model
-}
-
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Calculate accuracy:</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[9]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-octave"><pre><span></span><span class="nb">fprintf</span><span class="p">(</span><span class="s">&#39;Accuracy Train %f, Accuracy Test %f\n&#39;</span><span class="p">,</span>
-    <span class="nb">sum</span><span class="p">(</span><span class="n">train</span><span class="p">.</span><span class="n">targets</span><span class="o">==</span><span class="nb">info</span><span class="p">.</span><span class="n">predictedTrain</span><span class="p">)</span><span class="o">/</span><span class="nb">size</span><span class="p">(</span><span class="n">train</span><span class="p">.</span><span class="n">targets</span><span class="p">,</span><span class="mi">1</span><span class="p">),</span>
-    <span class="nb">sum</span><span class="p">(</span><span class="nb">test</span><span class="p">.</span><span class="n">targets</span><span class="o">==</span><span class="nb">info</span><span class="p">.</span><span class="n">predictedTest</span><span class="p">)</span><span class="o">/</span><span class="nb">size</span><span class="p">(</span><span class="nb">test</span><span class="p">.</span><span class="n">targets</span><span class="p">,</span><span class="mi">1</span><span class="p">));</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>Accuracy Train 0.871111, Accuracy Test 0.853333
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>As we can see, the methods return a structure with the main information about the execution of the algorithm. The fields of this structure are:</p>
-<ul>
-<li><code>projectedTrain</code>: decision values for the training set.</li>
-<li><code>predictedTrain</code>: labels predicted for the training set.</li>
-<li><code>trainTime</code>: time in seconds needed for training the model.</li>
-<li><code>projectedTest</code>: decision values for the test set.</li>
-<li><code>predictedTest</code>: labels predicted for the test set.</li>
-<li><code>testTime</code>: time in seconds needed for the test phase.</li>
-<li><code>model</code>: structure containing the model (its coefficients, parameters, etc.). Note that, although most of the fields of this structure depend on the specific algorithm considered, we will always find the <code>algorithm</code> and <code>parameters</code> fields. These are the fields for KDLOR:</li>
-</ul>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[10]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-octave"><pre><span></span><span class="nb">fieldnames</span><span class="p">(</span><span class="nb">info</span><span class="p">.</span><span class="n">model</span><span class="p">)</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>ans =
-{
-  [1,1] = projection
-  [2,1] = thresholds
-  [3,1] = parameters
-  [4,1] = kernelType
-  [5,1] = train
-  [6,1] = algorithm
-}
-
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>i.e., the algorithm used for training (<code>algorithm</code>), the weight given to each pattern in the kernel model (<code>projection</code>), the set of threshold values (<code>thresholds</code>), the parameters used for training (<code>parameters</code>), the type of kernel considered (<code>kernelType</code>) and the training data (<code>train</code>). As can be checked, at least, this structure should contain the information for performing the test phase. In this way, for KDLOR, the prediction phase needs to apply the kernel to each training point and the test point being evaluated (using <code>kernelType</code>, <code>train</code> and <code>parameters.K</code>) and perform the weighted sum of these values (using <code>projection</code>). After that, the thresholds are used to obtain the labels.</p>
-<p>The corresponding script (<a href="../src/code-examples/exampleKDLOR.m">exampleKDLOR.m</a>) can be found and run in the <a href="../src/code-examples">code example</a> folder.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[11]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-octave"><pre><span></span><span class="nb">rmpath</span><span class="p">(</span><span class="s">&#39;../src/Measures&#39;</span><span class="p">)</span>
-<span class="nb">rmpath</span><span class="p">(</span><span class="s">&#39;../src/Algorithms&#39;</span><span class="p">)</span>
-<span class="nb">rmpath</span><span class="p">(</span><span class="s">&#39;../src/&#39;</span><span class="p">)</span>
+<div class=" highlight hl-octave"><pre><span></span>
 </pre></div>
 
     </div>
