@@ -40,9 +40,10 @@ A strong probabilistic basis is inherent to this approach: each logistic functio
 
 We can try the POM model using the melanoma dataset to check its performance. This method does not involve any parameter. Run the following commands (from the [code-examples folder](/src/code-examples)):
 ```MATLAB
->> addpath ../
+>> 
 addpath ../Measures
 addpath ../Algorithms
+addpath ../src
 >> % Disable warnings
 warning('off','MATLAB:nearlySingularMatrix')
 warning('off','stats:mnrfit:IterOrEvalLimit')
@@ -58,7 +59,7 @@ test.targets = testMelanoma(:,end);
 [train,test] = DataSet.deleteConstantAtributes(train,test);
 [train,test] = DataSet.standarizeData(train,test);
 [train,test] = DataSet.deleteNonNumericValues(train,test);
->> %% Apply POM model
+%% Apply POM model
 % Create the POM object
 algorithmObj = POM();
 
@@ -200,7 +201,7 @@ NNPOM Accuracy: 0.642857
 NNPOM MAE: 0.500000
 ```
 
-The source code of NNPOM clearly shows hot the prediction is performed, which clarify a lot the model:
+The source code of NNPOM clearly shows how the prediction is performed, which clarify a lot the model:
 
 ```MATLAB
 function [projected, predicted]= privpredict(obj,test)
