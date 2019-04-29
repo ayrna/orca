@@ -18,3 +18,7 @@ cd src/Algorithms
 make
 make clean
 cd ..
+
+disp('== Run basic tests... == ')
+
+runtestssingle

@@ -39,4 +39,5 @@ script:
 - gcc --version
 - octave-cli --version
 - octave-cli install_octave.m
-- ./run_tests.sh
+- cd doc
+- ./test_notebooks.sh
