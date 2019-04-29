@@ -69,3 +69,26 @@ else
   echo "Test notebook 2 ERROR in logs!" 
   exit $n_errors
 fi
+
+# Test notebook 3
+jupyter nbconvert --to script orca_tutorial_3.ipynb
+octave-cli orca_tutorial_3.m 2> test.err
+status=$?
+if [ $status -eq 0 ]
+then
+  echo "Test notebook 3 OK"
+else
+  echo "Test notebook 3 ERROR!" 
+  exit $status
+fi
+
+n_errors=$( grep error test.err | wc -l )
+echo $n_errors
+if [ $n_errors -eq 0 ]
+then
+  echo "Test notebook 3 OK in logs"
+else
+  echo "Test notebook 3 ERROR in logs!" 
+  exit $n_errors
+fi
+
