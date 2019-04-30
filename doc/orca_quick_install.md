@@ -31,20 +31,21 @@ $ git clone https://github.com/ayrna/orca
 ```
 All the contents of the repository can also be downloaded from the GitHub site by using the "Download ZIP" button.
 
+To build ORCA, `build_orca.m` will check dependencies, install them for Octave, and run basic tests. From MATLAB/Octave:
+
+```MATLAB
+> build_orca.m
+```
+
 For instance, to install Octave, download and install ORCA in Ubuntu 18.10:
 
 ```bash
 $ sudo apt-get install octave liboctave-dev
 $ git clone https://github.com/ayrna/orca.git
 $ cd orca
-$ octave-cli install_octave.m
+$ octave-cli build_orca.m
 ```
 
-To install ORCA for MATLAB, from MATLAB console go to ORCA directory and type:
-
-```MATLAB
-> install_matlab.m
-```
 ## Binaries
 
 We provide binary files for several platforms (Debian based and CentOS GNU/Linux and Windows). The compressed files include the git files, so git pull should work. Binaries can be downloaded in the [release page](https://github.com/ayrna/orca/releases).
@@ -73,7 +74,7 @@ If you prefer to build `mex` files from the Linux shell, you can use standard `m
 
 ## Installation testing
 
-We provide a set of basic tests to for checking that all the algorithms work, both using ORCA's API and experiment scripts (see [tutorial](orca-tutorial-1.md) for more information).
+We provide a set of basic tests to for checking that all the algorithms work, both using ORCA's API and experiment scripts (see [tutorial](orca_tutorial_1_md) for more information).
 
 The way to run the tests checking the API (see [single test scripts](../src/tests/singletests/)) is the following (running time is ~12 seconds):
 
