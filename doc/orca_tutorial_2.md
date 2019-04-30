@@ -1,26 +1,7 @@
-![ORCA logo](orca_small.png)
-
-<!-- TOC depthFrom:1 depthTo:6 withLinks:1 updateOnSave:1 orderedList:1 -->
-
-1. [Naive approaches and decomposition methods in orca](#naive-approaches-and-decomposition-methods-in-orca)
-	1. [Loading the dataset and performing some preliminary experiments](#loading-the-dataset-and-performing-some-preliminary-experiments)
-	2. [Naive approaches](#naive-approaches)
-		1. [Regression (SVR)](#regression-svr)
-		2. [Nominal classification (SVC1V1 and SVC1VA)](#nominal-classification-svc1v1-and-svc1va)
-		3. [Cost sensitive classification (CSSVC)](#cost-sensitive-classification-cssvc)
-		4. [Summary of results for naive approaches](#summary-of-results-for-naive-approaches)
-	3. [Binary decomposition methods](#binary-decomposition-methods)
-		1. [SVM with ordered partitions (SVMOP)](#svm-with-ordered-partitions-svmop)
-		2. [Neural network approaches (ELMOP and NNOP)](#neural-network-approaches-elmop-and-nnop)
-		3. [Summary of results for binary decompositions](#summary-of-results-for-binary-decompositions)
-	4. [Ternary decomposition](#ternary-decomposition)
-2. [References](#references)
-
-<!-- /TOC -->
 
 # Naive approaches and decomposition methods in orca
 
-This tutorial covers how to apply naive approaches and decomposition methods in ORCA. It is highly recommended to have previously completed the ['how to' tutorial](orca-tutorial-1.md).
+This tutorial covers how to apply naive approaches and decomposition methods in ORCA. It is highly recommended to have previously completed the ['how to' tutorial (Notebook)](orca-tutorial-1.ipynb)/['how to' tutorial (HTML)](orca-tutorial-1.html).
 
 We are going to test these methods using a melanoma diagnosis dataset based on dermatoscopic images. Melanoma is a type of cancer that develops from the pigment-containing cells known as melanocytes. Usually occurring on the skin, early detection and diagnosis is strongly related to survival rates. The dataset is aimed at predicting the severity of the lesion:
 - A total of `100` image descriptors are used as input features, including features related to shape, colour, pigment network and texture.
@@ -33,146 +14,153 @@ The dataset from [1] is included in this repository, in a specific [folder](/exa
 
 ## Loading the dataset and performing some preliminary experiments
 
-First, we will load the dataset and examine the label for some of the patterns.
-```MATLAB
->> trainMelanoma = load('../exampledata/10-fold/melanoma-5classes-abcd-100/matlab/train_melanoma-5classes-abcd-100.2');
->> testMelanoma = load('../exampledata/10-fold/melanoma-5classes-abcd-100/matlab/test_melanoma-5classes-abcd-100.2');
->> trainMelanoma([1:5 300:305],end)
+First, we will load the dataset and examine the label for some of the patterns:
 
-ans =
 
-     1
-     1
-     1
-     1
-     1
-     2
-     2
-     2
-     2
-     2
-     2
+```octave
+trainMelanoma = load('../exampledata/10-fold/melanoma-5classes-abcd-100-fs/matlab/train_melanoma-5classes-abcd-100-fs.2');
+testMelanoma = load('../exampledata/10-fold/melanoma-5classes-abcd-100-fs/matlab/test_melanoma-5classes-abcd-100-fs.2');
+trainMelanoma([1:5 300:305],end)
 ```
+
+    ans =
+    
+       1
+       1
+       1
+       1
+       1
+       2
+       2
+       2
+       2
+       2
+       2
+    
+
+
 Although the data is prepared to perform a 10-fold experimental design, we are going to examine the properties of the whole set:
-```MATLAB
->> melanoma = [trainMelanoma; testMelanoma];
+
+
+```octave
+melanoma = [trainMelanoma; testMelanoma];
 ```
 
 The dataset is quite imbalanced, as you can check with this code:
-```MATLAB
->> histcounts(melanoma(:,end),5)
 
-ans =
 
-   313    64   102    54    29
+
+```octave
+labels = {'Non-melanoma', 'In Situ', 'I', 'II', 'III-IV'};
+nn = hist(melanoma(:,end),5);
+bar(nn)
+set (gca, 'xticklabel',labels)
 ```
+
+
+![png](orca_tutorial_2_files/orca_tutorial_2_5_0.png)
+
 
 ---
 
 ***Exercise 1***: obtain the average imbalanced ratio for this dataset, where the imbalanced ratio of each class is the sum of the number of patterns of the rest of classes divided by the number of classes times the number of patterns of the class.
 
 ---
+We can apply a simple method, [POM](../src/Algorithms/POM.m) [2], to check the accuracy (CCR) and MAE obtained for this dataset:
 
-We can apply a simple method, [POM](../src/Algorithms/POM.m) [2], to check the accuracy obtained for this dataset:
-```Matlab
->> train.patterns = trainMelanoma(:,1:(end-1));
->> train.targets = trainMelanoma(:,end);
->> test.patterns = testMelanoma(:,1:(end-1));
->> test.targets = testMelanoma(:,end);
->> addpath Algorithms;
->> algorithmObj = POM();
->> info = algorithmObj.fitpredict(train,test);
->> addpath Measures
->> CCR.calculateMetric(info.predictedTest,test.targets)
 
-ans =
-
-    0.625000
-
->> MAE.calculateMetric(info.predictedTest,test.targets)
-
-ans =
-
-     0.535714
+```octave
+train.patterns = trainMelanoma(:,1:(end-1));
+train.targets = trainMelanoma(:,end);
+test.patterns = testMelanoma(:,1:(end-1));
+test.targets = testMelanoma(:,end);
+addpath('../src/Algorithms/');
+algorithmObj = POM();
+info = algorithmObj.fitpredict(train,test);
+addpath('../src/Measures/');
+CCR.calculateMetric(info.predictedTest,test.targets)
+MAE.calculateMetric(info.predictedTest,test.targets)
 ```
+
+    epsilon
+     56909.29682
+    ans =  0.66071
+    ans =  0.51786
+
+
 In the following code, we try to improve the results by considering standardization:
-```Matlab
->> [trainStandarized,testStandarized] = DataSet.standarizeData(train,test)
-
-trainStandarized =
-
-    patterns: [506x100 double]
-     targets: [506x1 double]
 
 
-testStandarized =
+```octave
+addpath('../src/');
+[trainStandarized,testStandarized] = DataSet.standarizeData(train,test);
+disp('Some patterns before standarizing')
+train.patterns(1:10,2:5)
+disp('The same patterns after standarizing')
+trainStandarized.patterns(1:10,2:5)
+```
 
-    patterns: [56x100 double]
-     targets: [56x1 double]
-
->> train.patterns(1:10,2:5)
-
-ans =
-
-   1.0e+03 *
-
-    0.0014    0.4802    0.0007    0.0012
-    0.0013    0.1085    0.0007    0.0012
-    0.0014    0.7935    0.0007    0.0012
-    0.0013    0.0369    0.0004    0.0011
-    0.0015    0.3560    0.0003    0.0010
-    0.0014    1.0862    0.0008    0.0012
-    0.0014    0.0689    0.0006    0.0011
-    0.0016    0.6699    0.0008    0.0014
-    0.0013    0.2068    0.0008    0.0013
-    0.0013    0.0126    0.0004    0.0011
-
->> trainStandarized.patterns(1:10,2:5)
-
-ans =
-
-    0.0225   -0.4632    0.2890   -0.0817
-   -0.3277   -0.7576    0.0326   -0.3588
-   -0.0639   -0.2150    0.4011   -0.1098
-   -0.4081   -0.8143   -1.4457   -1.0444
-    0.6038   -0.5615   -2.5231   -1.2014
-   -0.0875    0.0168    0.6502    0.1826
-   -0.0241   -0.7889   -0.2616   -0.5209
-    0.9498   -0.3129    1.0035    1.2467
-   -0.3708   -0.6797    0.8863    0.4503
-   -0.7856   -0.8335   -1.5715   -1.0839
-
->> info = algorithmObj.fitpredict(trainStandarized,testStandarized);
->> CCR.calculateMetric(info.predictedTest,test.targets)
-
+    Some patterns before standarizing
     ans =
+    
+          1.39817    266.63620     68.22989     66.71459
+          1.63949   1520.75100     77.41614     97.06574
+          1.50760    394.50550     58.38186      0.16893
+          1.27778    176.16820     83.20313      1.47513
+          1.44320    552.79690     34.28749     22.74991
+          1.25702     92.13424     52.84424     49.53449
+          1.40287    190.13010     76.44786     91.14979
+          1.59847   2333.85600     61.23107      0.00720
+          1.51663    454.34930     72.21953      0.00000
+          1.34062    149.19010     74.05859     77.66209
+    
+    The same patterns after standarizing
+    ans =
+    
+      -0.0263804  -0.6159705   0.8400188   1.2639962
+       1.1899081   0.3464767   1.3279650   2.2296928
+       0.5251951  -0.5178396   0.3169205  -0.8533179
+      -0.6331613  -0.6853985   1.6353530  -0.8117580
+       0.2005954  -0.3963618  -0.9629005  -0.1348485
+      -0.7378061  -0.7498888   0.0227789   0.7173692
+      -0.0027065  -0.6746837   1.2765327   2.0414624
+       0.9831587   0.9704791   0.4682625  -0.8584636
+       0.5706981  -0.4719136   1.0519365  -0.8586928
+      -0.3164445  -0.7061023   1.1496218   1.6123181
+    
 
-             0.625000
->> MAE.calculateMetric(info.predictedTest,test.targets)
 
-         ans =
 
-              0.535714
-
+```octave
+info = algorithmObj.fitpredict(trainStandarized,testStandarized);
+CCR.calculateMetric(info.predictedTest,test.targets)
+MAE.calculateMetric(info.predictedTest,test.targets)
 ```
+
+    epsilon
+     0.11250
+    ans =  0.66071
+    ans =  0.51786
+
+
 The results have not improved in this specific case. The static method `DataSet.standarizeData(train,test)` transforms the training and test datasets and returns a copy where all the input variables have zero mean and unit standard deviation. There are other pre-processing methods in the `DataSet` class which delete constant input attributes or non numeric attributes:
-```Matlab
->> [train,test] = DataSet.deleteConstantAtributes(train,test);
->> [train,test] = DataSet.standarizeData(train,test);
->> [train,test] = DataSet.deleteNonNumericValues(train,test);
->> info = algorithmObj.fitpredict(train,test);
->> CCR.calculateMetric(info.predictedTest,test.targets)
 
-ans =
 
-    0.625000
-
->> MAE.calculateMetric(info.predictedTest,test.targets)
-
-ans =
-
-     0.535714
+```octave
+[train,test] = DataSet.deleteConstantAtributes(train,test);
+[train,test] = DataSet.standarizeData(train,test);
+[train,test] = DataSet.deleteNonNumericValues(train,test);
+info = algorithmObj.fitpredict(train,test);
+CCR.calculateMetric(info.predictedTest,test.targets)
+MAE.calculateMetric(info.predictedTest,test.targets)
 ```
+
+    epsilon
+     0.11250
+    ans =  0.66071
+    ans =  0.51786
+
+
 Again, the results have not changed, as there were no attributes with these characteristics. However, in general, it is a good idea to apply standardisation of the input variables.
 
 ---
@@ -183,7 +171,21 @@ Again, the results have not changed, as there were no attributes with these char
 
 ## Naive approaches
 
-The first thing we will do is applying standard approaches for this ordinal regression dataset. This includes applying regression, classification and cost-sensitive classification.
+The first thing we will do is applying standard approaches for this ordinal regression dataset. This includes applying regression, classification and cost-sensitive classification. In this section we will use kernel methods, that are more suitable for high-dimensional data, so that we can use melanoma dataset with the full set of 100 features:
+
+
+```octave
+trainMelanoma = load('../exampledata/10-fold/melanoma-5classes-abcd-100/matlab/train_melanoma-5classes-abcd-100.2');
+testMelanoma = load('../exampledata/10-fold/melanoma-5classes-abcd-100/matlab/test_melanoma-5classes-abcd-100.2');
+train.patterns = trainMelanoma(:,1:(end-1));
+train.targets = trainMelanoma(:,end);
+test.patterns = testMelanoma(:,1:(end-1));
+test.targets = testMelanoma(:,end);
+[train,test] = DataSet.deleteConstantAtributes(train,test);
+[train,test] = DataSet.standarizeData(train,test);
+[train,test] = DataSet.deleteNonNumericValues(train,test);
+```
+
 
 ### Regression (SVR)
 
@@ -195,85 +197,51 @@ ORCA includes one algorithm following this approach based on support vector mach
 - Parameter `e`, epsilon. It specifies the epsilon-tube within which no penalty is associated in the training loss function with points predicted within a distance epsilon from the actual value.
 
 We can check the performance of this model in the melanoma dataset:
-```Matlab
->> algorithmObj = SVR();
+
+
+```octave
+algorithmObj = SVR();
 info = algorithmObj.fitpredict(train,test,struct('C',10,'k',0.001,'e',0.01));
 fprintf('\nSupport Vector Regression\n---------------\n');
 fprintf('SVR Accuracy: %f\n', CCR.calculateMetric(test.targets,info.predictedTest));
 fprintf('SVR MAE: %f\n', MAE.calculateMetric(test.targets,info.predictedTest));
 
-Support Vector Regression
----------------
-SVR Accuracy: 0.678571
-SVR MAE: 0.392857
 ```
+
+    
+    Support Vector Regression
+    ---------------
+    SVR Accuracy: 0.678571
+    SVR MAE: 0.392857
+
+
 The object info also contains the projection values, which, in this case, are the real values without being rounded:
-```MATLAB
->> info.projectedTest
 
-ans =
 
-    0.1092
-    0.2294
-    0.0283
-   -0.0479
-    0.1216
-    0.0513
-    0.3135
-    0.1257
-    0.1051
-    0.1062
-    0.3625
-    0.0604
-   -0.1561
-   -0.0522
-   -0.0229
-   -0.0017
-   -0.1394
-    0.0613
-   -0.0394
-    0.0612
-    0.2356
-   -0.0442
-   -0.1126
-    0.0541
-   -0.0653
-    0.0451
-    0.0289
-    0.0392
-    0.0565
-    0.2734
-   -0.0110
-    0.0468
-    0.1632
-    0.2537
-    0.1370
-    0.2247
-    0.2072
-    0.5004
-    0.5360
-    0.7742
-    0.0921
-    0.3459
-    0.5812
-    0.3463
-    0.2674
-    0.2362
-    0.3473
-    0.6035
-    0.5439
-    0.2840
-    0.8574
-    0.0812
-    0.7082
-    0.6549
-    0.8369
-    0.9076
+```octave
+info.projectedTest(1:10)
 ```
+
+    ans =
+    
+       0.109167
+       0.229370
+       0.028311
+      -0.047946
+       0.121599
+       0.051311
+       0.313528
+       0.125686
+       0.105111
+       0.106238
+    
+
 
 As you can see, poor performance is obtained. We can try different parameter values by using a `for` loop:
-```MATLAB
->> fprintf('\nSupport Vector Regression parameters\n---------------\n');
+
+
+```octave
+fprintf('\nSupport Vector Regression parameters\n---------------\n');
 bestAccuracy=0;
 for C=10.^(-3:1:3)
    for k=10.^(-3:1:3)
@@ -291,23 +259,357 @@ for C=10.^(-3:1:3)
    end
 end
 fprintf('Best Results SVR C %f, k %f, e %f --> Accuracy: %f\n', bestParam.C, bestParam.k, bestParam.e, bestAccuracy);
-
-Support Vector Regression parameters
----------------
-SVR C 0.001000, k 0.001000, e 0.001000 --> Accuracy: 0.571429, MAE: 0.892857
-SVR C 0.001000, k 0.001000, e 0.010000 --> Accuracy: 0.571429, MAE: 0.892857
-SVR C 0.001000, k 0.001000, e 0.100000 --> Accuracy: 0.571429, MAE: 0.892857
-SVR C 0.001000, k 0.001000, e 1.000000 --> Accuracy: 0.178571, MAE: 1.428571
-SVR C 0.001000, k 0.001000, e 10.000000 --> Accuracy: 0.178571, MAE: 1.428571
-SVR C 0.001000, k 0.001000, e 100.000000 --> Accuracy: 0.178571, MAE: 1.428571
-SVR C 0.001000, k 0.001000, e 1000.000000 --> Accuracy: 0.178571, MAE: 1.428571
-SVR C 0.001000, k 0.010000, e 0.001000 --> Accuracy: 0.571429, MAE: 0.892857
-SVR C 0.001000, k 0.010000, e 0.010000 --> Accuracy: 0.571429, MAE: 0.892857
-...
-SVR C 1000.000000, k 1000.000000, e 100.000000 --> Accuracy: 0.178571, MAE: 1.428571
-SVR C 1000.000000, k 1000.000000, e 1000.000000 --> Accuracy: 0.178571, MAE: 1.428571
-Best Results SVR C 10.000000, k 0.001000, e 0.010000 --> Accuracy: 0.678571
 ```
+
+    
+    Support Vector Regression parameters
+    ---------------
+    SVR C 0.001000, k 0.001000, e 0.001000 --> Accuracy: 0.571429, MAE: 0.892857
+    SVR C 0.001000, k 0.001000, e 0.010000 --> Accuracy: 0.571429, MAE: 0.892857
+    SVR C 0.001000, k 0.001000, e 0.100000 --> Accuracy: 0.571429, MAE: 0.892857
+    SVR C 0.001000, k 0.001000, e 1.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 0.001000, k 0.001000, e 10.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 0.001000, k 0.001000, e 100.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 0.001000, k 0.001000, e 1000.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 0.001000, k 0.010000, e 0.001000 --> Accuracy: 0.571429, MAE: 0.892857
+    SVR C 0.001000, k 0.010000, e 0.010000 --> Accuracy: 0.571429, MAE: 0.892857
+    SVR C 0.001000, k 0.010000, e 0.100000 --> Accuracy: 0.571429, MAE: 0.892857
+    SVR C 0.001000, k 0.010000, e 1.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 0.001000, k 0.010000, e 10.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 0.001000, k 0.010000, e 100.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 0.001000, k 0.010000, e 1000.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 0.001000, k 0.100000, e 0.001000 --> Accuracy: 0.571429, MAE: 0.892857
+    SVR C 0.001000, k 0.100000, e 0.010000 --> Accuracy: 0.571429, MAE: 0.892857
+    SVR C 0.001000, k 0.100000, e 0.100000 --> Accuracy: 0.571429, MAE: 0.892857
+    SVR C 0.001000, k 0.100000, e 1.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 0.001000, k 0.100000, e 10.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 0.001000, k 0.100000, e 100.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 0.001000, k 0.100000, e 1000.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 0.001000, k 1.000000, e 0.001000 --> Accuracy: 0.571429, MAE: 0.892857
+    SVR C 0.001000, k 1.000000, e 0.010000 --> Accuracy: 0.571429, MAE: 0.892857
+    SVR C 0.001000, k 1.000000, e 0.100000 --> Accuracy: 0.571429, MAE: 0.892857
+    SVR C 0.001000, k 1.000000, e 1.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 0.001000, k 1.000000, e 10.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 0.001000, k 1.000000, e 100.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 0.001000, k 1.000000, e 1000.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 0.001000, k 10.000000, e 0.001000 --> Accuracy: 0.571429, MAE: 0.892857
+    SVR C 0.001000, k 10.000000, e 0.010000 --> Accuracy: 0.571429, MAE: 0.892857
+    SVR C 0.001000, k 10.000000, e 0.100000 --> Accuracy: 0.571429, MAE: 0.892857
+    SVR C 0.001000, k 10.000000, e 1.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 0.001000, k 10.000000, e 10.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 0.001000, k 10.000000, e 100.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 0.001000, k 10.000000, e 1000.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 0.001000, k 100.000000, e 0.001000 --> Accuracy: 0.571429, MAE: 0.892857
+    SVR C 0.001000, k 100.000000, e 0.010000 --> Accuracy: 0.571429, MAE: 0.892857
+    SVR C 0.001000, k 100.000000, e 0.100000 --> Accuracy: 0.571429, MAE: 0.892857
+    SVR C 0.001000, k 100.000000, e 1.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 0.001000, k 100.000000, e 10.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 0.001000, k 100.000000, e 100.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 0.001000, k 100.000000, e 1000.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 0.001000, k 1000.000000, e 0.001000 --> Accuracy: 0.571429, MAE: 0.892857
+    SVR C 0.001000, k 1000.000000, e 0.010000 --> Accuracy: 0.571429, MAE: 0.892857
+    SVR C 0.001000, k 1000.000000, e 0.100000 --> Accuracy: 0.571429, MAE: 0.892857
+    SVR C 0.001000, k 1000.000000, e 1.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 0.001000, k 1000.000000, e 10.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 0.001000, k 1000.000000, e 100.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 0.001000, k 1000.000000, e 1000.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 0.010000, k 0.001000, e 0.001000 --> Accuracy: 0.571429, MAE: 0.892857
+    SVR C 0.010000, k 0.001000, e 0.010000 --> Accuracy: 0.571429, MAE: 0.892857
+    SVR C 0.010000, k 0.001000, e 0.100000 --> Accuracy: 0.517857, MAE: 0.732143
+    SVR C 0.010000, k 0.001000, e 1.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 0.010000, k 0.001000, e 10.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 0.010000, k 0.001000, e 100.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 0.010000, k 0.001000, e 1000.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 0.010000, k 0.010000, e 0.001000 --> Accuracy: 0.607143, MAE: 0.732143
+    SVR C 0.010000, k 0.010000, e 0.010000 --> Accuracy: 0.589286, MAE: 0.732143
+    SVR C 0.010000, k 0.010000, e 0.100000 --> Accuracy: 0.482143, MAE: 0.732143
+    SVR C 0.010000, k 0.010000, e 1.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 0.010000, k 0.010000, e 10.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 0.010000, k 0.010000, e 100.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 0.010000, k 0.010000, e 1000.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 0.010000, k 0.100000, e 0.001000 --> Accuracy: 0.571429, MAE: 0.892857
+    SVR C 0.010000, k 0.100000, e 0.010000 --> Accuracy: 0.571429, MAE: 0.892857
+    SVR C 0.010000, k 0.100000, e 0.100000 --> Accuracy: 0.571429, MAE: 0.892857
+    SVR C 0.010000, k 0.100000, e 1.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 0.010000, k 0.100000, e 10.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 0.010000, k 0.100000, e 100.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 0.010000, k 0.100000, e 1000.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 0.010000, k 1.000000, e 0.001000 --> Accuracy: 0.571429, MAE: 0.892857
+    SVR C 0.010000, k 1.000000, e 0.010000 --> Accuracy: 0.571429, MAE: 0.892857
+    SVR C 0.010000, k 1.000000, e 0.100000 --> Accuracy: 0.571429, MAE: 0.892857
+    SVR C 0.010000, k 1.000000, e 1.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 0.010000, k 1.000000, e 10.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 0.010000, k 1.000000, e 100.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 0.010000, k 1.000000, e 1000.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 0.010000, k 10.000000, e 0.001000 --> Accuracy: 0.571429, MAE: 0.892857
+    SVR C 0.010000, k 10.000000, e 0.010000 --> Accuracy: 0.571429, MAE: 0.892857
+    SVR C 0.010000, k 10.000000, e 0.100000 --> Accuracy: 0.571429, MAE: 0.892857
+    SVR C 0.010000, k 10.000000, e 1.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 0.010000, k 10.000000, e 10.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 0.010000, k 10.000000, e 100.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 0.010000, k 10.000000, e 1000.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 0.010000, k 100.000000, e 0.001000 --> Accuracy: 0.571429, MAE: 0.892857
+    SVR C 0.010000, k 100.000000, e 0.010000 --> Accuracy: 0.571429, MAE: 0.892857
+    SVR C 0.010000, k 100.000000, e 0.100000 --> Accuracy: 0.571429, MAE: 0.892857
+    SVR C 0.010000, k 100.000000, e 1.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 0.010000, k 100.000000, e 10.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 0.010000, k 100.000000, e 100.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 0.010000, k 100.000000, e 1000.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 0.010000, k 1000.000000, e 0.001000 --> Accuracy: 0.571429, MAE: 0.892857
+    SVR C 0.010000, k 1000.000000, e 0.010000 --> Accuracy: 0.571429, MAE: 0.892857
+    SVR C 0.010000, k 1000.000000, e 0.100000 --> Accuracy: 0.571429, MAE: 0.892857
+    SVR C 0.010000, k 1000.000000, e 1.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 0.010000, k 1000.000000, e 10.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 0.010000, k 1000.000000, e 100.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 0.010000, k 1000.000000, e 1000.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 0.100000, k 0.001000, e 0.001000 --> Accuracy: 0.517857, MAE: 0.642857
+    SVR C 0.100000, k 0.001000, e 0.010000 --> Accuracy: 0.517857, MAE: 0.660714
+    SVR C 0.100000, k 0.001000, e 0.100000 --> Accuracy: 0.464286, MAE: 0.660714
+    SVR C 0.100000, k 0.001000, e 1.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 0.100000, k 0.001000, e 10.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 0.100000, k 0.001000, e 100.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 0.100000, k 0.001000, e 1000.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 0.100000, k 0.010000, e 0.001000 --> Accuracy: 0.553571, MAE: 0.571429
+    SVR C 0.100000, k 0.010000, e 0.010000 --> Accuracy: 0.535714, MAE: 0.589286
+    SVR C 0.100000, k 0.010000, e 0.100000 --> Accuracy: 0.517857, MAE: 0.571429
+    SVR C 0.100000, k 0.010000, e 1.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 0.100000, k 0.010000, e 10.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 0.100000, k 0.010000, e 100.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 0.100000, k 0.010000, e 1000.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 0.100000, k 0.100000, e 0.001000 --> Accuracy: 0.571429, MAE: 0.875000
+    SVR C 0.100000, k 0.100000, e 0.010000 --> Accuracy: 0.553571, MAE: 0.857143
+    SVR C 0.100000, k 0.100000, e 0.100000 --> Accuracy: 0.107143, MAE: 1.053571
+    SVR C 0.100000, k 0.100000, e 1.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 0.100000, k 0.100000, e 10.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 0.100000, k 0.100000, e 100.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 0.100000, k 0.100000, e 1000.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 0.100000, k 1.000000, e 0.001000 --> Accuracy: 0.571429, MAE: 0.892857
+    SVR C 0.100000, k 1.000000, e 0.010000 --> Accuracy: 0.571429, MAE: 0.892857
+    SVR C 0.100000, k 1.000000, e 0.100000 --> Accuracy: 0.125000, MAE: 1.035714
+    SVR C 0.100000, k 1.000000, e 1.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 0.100000, k 1.000000, e 10.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 0.100000, k 1.000000, e 100.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 0.100000, k 1.000000, e 1000.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 0.100000, k 10.000000, e 0.001000 --> Accuracy: 0.571429, MAE: 0.892857
+    SVR C 0.100000, k 10.000000, e 0.010000 --> Accuracy: 0.571429, MAE: 0.892857
+    SVR C 0.100000, k 10.000000, e 0.100000 --> Accuracy: 0.125000, MAE: 1.035714
+    SVR C 0.100000, k 10.000000, e 1.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 0.100000, k 10.000000, e 10.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 0.100000, k 10.000000, e 100.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 0.100000, k 10.000000, e 1000.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 0.100000, k 100.000000, e 0.001000 --> Accuracy: 0.571429, MAE: 0.892857
+    SVR C 0.100000, k 100.000000, e 0.010000 --> Accuracy: 0.571429, MAE: 0.892857
+    SVR C 0.100000, k 100.000000, e 0.100000 --> Accuracy: 0.125000, MAE: 1.035714
+    SVR C 0.100000, k 100.000000, e 1.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 0.100000, k 100.000000, e 10.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 0.100000, k 100.000000, e 100.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 0.100000, k 100.000000, e 1000.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 0.100000, k 1000.000000, e 0.001000 --> Accuracy: 0.571429, MAE: 0.892857
+    SVR C 0.100000, k 1000.000000, e 0.010000 --> Accuracy: 0.571429, MAE: 0.892857
+    SVR C 0.100000, k 1000.000000, e 0.100000 --> Accuracy: 0.125000, MAE: 1.035714
+    SVR C 0.100000, k 1000.000000, e 1.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 0.100000, k 1000.000000, e 10.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 0.100000, k 1000.000000, e 100.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 0.100000, k 1000.000000, e 1000.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 1.000000, k 0.001000, e 0.001000 --> Accuracy: 0.625000, MAE: 0.482143
+    SVR C 1.000000, k 0.001000, e 0.010000 --> Accuracy: 0.589286, MAE: 0.517857
+    SVR C 1.000000, k 0.001000, e 0.100000 --> Accuracy: 0.589286, MAE: 0.482143
+    SVR C 1.000000, k 0.001000, e 1.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 1.000000, k 0.001000, e 10.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 1.000000, k 0.001000, e 100.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 1.000000, k 0.001000, e 1000.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 1.000000, k 0.010000, e 0.001000 --> Accuracy: 0.535714, MAE: 0.535714
+    SVR C 1.000000, k 0.010000, e 0.010000 --> Accuracy: 0.535714, MAE: 0.553571
+    SVR C 1.000000, k 0.010000, e 0.100000 --> Accuracy: 0.500000, MAE: 0.589286
+    SVR C 1.000000, k 0.010000, e 1.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 1.000000, k 0.010000, e 10.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 1.000000, k 0.010000, e 100.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 1.000000, k 0.010000, e 1000.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 1.000000, k 0.100000, e 0.001000 --> Accuracy: 0.142857, MAE: 1.035714
+    SVR C 1.000000, k 0.100000, e 0.010000 --> Accuracy: 0.142857, MAE: 1.035714
+    SVR C 1.000000, k 0.100000, e 0.100000 --> Accuracy: 0.142857, MAE: 1.035714
+    SVR C 1.000000, k 0.100000, e 1.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 1.000000, k 0.100000, e 10.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 1.000000, k 0.100000, e 100.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 1.000000, k 0.100000, e 1000.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 1.000000, k 1.000000, e 0.001000 --> Accuracy: 0.125000, MAE: 1.035714
+    SVR C 1.000000, k 1.000000, e 0.010000 --> Accuracy: 0.125000, MAE: 1.035714
+    SVR C 1.000000, k 1.000000, e 0.100000 --> Accuracy: 0.125000, MAE: 1.035714
+    SVR C 1.000000, k 1.000000, e 1.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 1.000000, k 1.000000, e 10.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 1.000000, k 1.000000, e 100.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 1.000000, k 1.000000, e 1000.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 1.000000, k 10.000000, e 0.001000 --> Accuracy: 0.125000, MAE: 1.035714
+    SVR C 1.000000, k 10.000000, e 0.010000 --> Accuracy: 0.125000, MAE: 1.035714
+    SVR C 1.000000, k 10.000000, e 0.100000 --> Accuracy: 0.125000, MAE: 1.035714
+    SVR C 1.000000, k 10.000000, e 1.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 1.000000, k 10.000000, e 10.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 1.000000, k 10.000000, e 100.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 1.000000, k 10.000000, e 1000.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 1.000000, k 100.000000, e 0.001000 --> Accuracy: 0.125000, MAE: 1.035714
+    SVR C 1.000000, k 100.000000, e 0.010000 --> Accuracy: 0.125000, MAE: 1.035714
+    SVR C 1.000000, k 100.000000, e 0.100000 --> Accuracy: 0.125000, MAE: 1.035714
+    SVR C 1.000000, k 100.000000, e 1.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 1.000000, k 100.000000, e 10.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 1.000000, k 100.000000, e 100.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 1.000000, k 100.000000, e 1000.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 1.000000, k 1000.000000, e 0.001000 --> Accuracy: 0.125000, MAE: 1.035714
+    SVR C 1.000000, k 1000.000000, e 0.010000 --> Accuracy: 0.125000, MAE: 1.035714
+    SVR C 1.000000, k 1000.000000, e 0.100000 --> Accuracy: 0.125000, MAE: 1.035714
+    SVR C 1.000000, k 1000.000000, e 1.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 1.000000, k 1000.000000, e 10.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 1.000000, k 1000.000000, e 100.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 1.000000, k 1000.000000, e 1000.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 10.000000, k 0.001000, e 0.001000 --> Accuracy: 0.660714, MAE: 0.410714
+    SVR C 10.000000, k 0.001000, e 0.010000 --> Accuracy: 0.678571, MAE: 0.392857
+    SVR C 10.000000, k 0.001000, e 0.100000 --> Accuracy: 0.678571, MAE: 0.375000
+    SVR C 10.000000, k 0.001000, e 1.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 10.000000, k 0.001000, e 10.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 10.000000, k 0.001000, e 100.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 10.000000, k 0.001000, e 1000.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 10.000000, k 0.010000, e 0.001000 --> Accuracy: 0.535714, MAE: 0.589286
+    SVR C 10.000000, k 0.010000, e 0.010000 --> Accuracy: 0.535714, MAE: 0.589286
+    SVR C 10.000000, k 0.010000, e 0.100000 --> Accuracy: 0.500000, MAE: 0.625000
+    SVR C 10.000000, k 0.010000, e 1.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 10.000000, k 0.010000, e 10.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 10.000000, k 0.010000, e 100.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 10.000000, k 0.010000, e 1000.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 10.000000, k 0.100000, e 0.001000 --> Accuracy: 0.142857, MAE: 1.035714
+    SVR C 10.000000, k 0.100000, e 0.010000 --> Accuracy: 0.142857, MAE: 1.035714
+    SVR C 10.000000, k 0.100000, e 0.100000 --> Accuracy: 0.142857, MAE: 1.035714
+    SVR C 10.000000, k 0.100000, e 1.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 10.000000, k 0.100000, e 10.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 10.000000, k 0.100000, e 100.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 10.000000, k 0.100000, e 1000.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 10.000000, k 1.000000, e 0.001000 --> Accuracy: 0.125000, MAE: 1.035714
+    SVR C 10.000000, k 1.000000, e 0.010000 --> Accuracy: 0.125000, MAE: 1.035714
+    SVR C 10.000000, k 1.000000, e 0.100000 --> Accuracy: 0.125000, MAE: 1.035714
+    SVR C 10.000000, k 1.000000, e 1.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 10.000000, k 1.000000, e 10.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 10.000000, k 1.000000, e 100.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 10.000000, k 1.000000, e 1000.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 10.000000, k 10.000000, e 0.001000 --> Accuracy: 0.125000, MAE: 1.035714
+    SVR C 10.000000, k 10.000000, e 0.010000 --> Accuracy: 0.125000, MAE: 1.035714
+    SVR C 10.000000, k 10.000000, e 0.100000 --> Accuracy: 0.125000, MAE: 1.035714
+    SVR C 10.000000, k 10.000000, e 1.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 10.000000, k 10.000000, e 10.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 10.000000, k 10.000000, e 100.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 10.000000, k 10.000000, e 1000.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 10.000000, k 100.000000, e 0.001000 --> Accuracy: 0.125000, MAE: 1.035714
+    SVR C 10.000000, k 100.000000, e 0.010000 --> Accuracy: 0.125000, MAE: 1.035714
+    SVR C 10.000000, k 100.000000, e 0.100000 --> Accuracy: 0.125000, MAE: 1.035714
+    SVR C 10.000000, k 100.000000, e 1.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 10.000000, k 100.000000, e 10.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 10.000000, k 100.000000, e 100.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 10.000000, k 100.000000, e 1000.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 10.000000, k 1000.000000, e 0.001000 --> Accuracy: 0.125000, MAE: 1.035714
+    SVR C 10.000000, k 1000.000000, e 0.010000 --> Accuracy: 0.125000, MAE: 1.035714
+    SVR C 10.000000, k 1000.000000, e 0.100000 --> Accuracy: 0.125000, MAE: 1.035714
+    SVR C 10.000000, k 1000.000000, e 1.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 10.000000, k 1000.000000, e 10.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 10.000000, k 1000.000000, e 100.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 10.000000, k 1000.000000, e 1000.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 100.000000, k 0.001000, e 0.001000 --> Accuracy: 0.607143, MAE: 0.428571
+    SVR C 100.000000, k 0.001000, e 0.010000 --> Accuracy: 0.625000, MAE: 0.410714
+    SVR C 100.000000, k 0.001000, e 0.100000 --> Accuracy: 0.535714, MAE: 0.535714
+    SVR C 100.000000, k 0.001000, e 1.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 100.000000, k 0.001000, e 10.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 100.000000, k 0.001000, e 100.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 100.000000, k 0.001000, e 1000.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 100.000000, k 0.010000, e 0.001000 --> Accuracy: 0.571429, MAE: 0.589286
+    SVR C 100.000000, k 0.010000, e 0.010000 --> Accuracy: 0.535714, MAE: 0.607143
+    SVR C 100.000000, k 0.010000, e 0.100000 --> Accuracy: 0.517857, MAE: 0.625000
+    SVR C 100.000000, k 0.010000, e 1.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 100.000000, k 0.010000, e 10.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 100.000000, k 0.010000, e 100.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 100.000000, k 0.010000, e 1000.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 100.000000, k 0.100000, e 0.001000 --> Accuracy: 0.142857, MAE: 1.035714
+    SVR C 100.000000, k 0.100000, e 0.010000 --> Accuracy: 0.142857, MAE: 1.035714
+    SVR C 100.000000, k 0.100000, e 0.100000 --> Accuracy: 0.142857, MAE: 1.035714
+    SVR C 100.000000, k 0.100000, e 1.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 100.000000, k 0.100000, e 10.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 100.000000, k 0.100000, e 100.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 100.000000, k 0.100000, e 1000.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 100.000000, k 1.000000, e 0.001000 --> Accuracy: 0.125000, MAE: 1.035714
+    SVR C 100.000000, k 1.000000, e 0.010000 --> Accuracy: 0.125000, MAE: 1.035714
+    SVR C 100.000000, k 1.000000, e 0.100000 --> Accuracy: 0.125000, MAE: 1.035714
+    SVR C 100.000000, k 1.000000, e 1.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 100.000000, k 1.000000, e 10.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 100.000000, k 1.000000, e 100.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 100.000000, k 1.000000, e 1000.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 100.000000, k 10.000000, e 0.001000 --> Accuracy: 0.125000, MAE: 1.035714
+    SVR C 100.000000, k 10.000000, e 0.010000 --> Accuracy: 0.125000, MAE: 1.035714
+    SVR C 100.000000, k 10.000000, e 0.100000 --> Accuracy: 0.125000, MAE: 1.035714
+    SVR C 100.000000, k 10.000000, e 1.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 100.000000, k 10.000000, e 10.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 100.000000, k 10.000000, e 100.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 100.000000, k 10.000000, e 1000.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 100.000000, k 100.000000, e 0.001000 --> Accuracy: 0.125000, MAE: 1.035714
+    SVR C 100.000000, k 100.000000, e 0.010000 --> Accuracy: 0.125000, MAE: 1.035714
+    SVR C 100.000000, k 100.000000, e 0.100000 --> Accuracy: 0.125000, MAE: 1.035714
+    SVR C 100.000000, k 100.000000, e 1.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 100.000000, k 100.000000, e 10.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 100.000000, k 100.000000, e 100.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 100.000000, k 100.000000, e 1000.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 100.000000, k 1000.000000, e 0.001000 --> Accuracy: 0.125000, MAE: 1.035714
+    SVR C 100.000000, k 1000.000000, e 0.010000 --> Accuracy: 0.125000, MAE: 1.035714
+    SVR C 100.000000, k 1000.000000, e 0.100000 --> Accuracy: 0.125000, MAE: 1.035714
+    SVR C 100.000000, k 1000.000000, e 1.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 100.000000, k 1000.000000, e 10.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 100.000000, k 1000.000000, e 100.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 100.000000, k 1000.000000, e 1000.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 1000.000000, k 0.001000, e 0.001000 --> Accuracy: 0.607143, MAE: 0.500000
+    SVR C 1000.000000, k 0.001000, e 0.010000 --> Accuracy: 0.589286, MAE: 0.517857
+    SVR C 1000.000000, k 0.001000, e 0.100000 --> Accuracy: 0.571429, MAE: 0.553571
+    SVR C 1000.000000, k 0.001000, e 1.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 1000.000000, k 0.001000, e 10.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 1000.000000, k 0.001000, e 100.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 1000.000000, k 0.001000, e 1000.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 1000.000000, k 0.010000, e 0.001000 --> Accuracy: 0.571429, MAE: 0.589286
+    SVR C 1000.000000, k 0.010000, e 0.010000 --> Accuracy: 0.535714, MAE: 0.607143
+    SVR C 1000.000000, k 0.010000, e 0.100000 --> Accuracy: 0.517857, MAE: 0.625000
+    SVR C 1000.000000, k 0.010000, e 1.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 1000.000000, k 0.010000, e 10.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 1000.000000, k 0.010000, e 100.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 1000.000000, k 0.010000, e 1000.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 1000.000000, k 0.100000, e 0.001000 --> Accuracy: 0.142857, MAE: 1.035714
+    SVR C 1000.000000, k 0.100000, e 0.010000 --> Accuracy: 0.142857, MAE: 1.035714
+    SVR C 1000.000000, k 0.100000, e 0.100000 --> Accuracy: 0.142857, MAE: 1.035714
+    SVR C 1000.000000, k 0.100000, e 1.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 1000.000000, k 0.100000, e 10.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 1000.000000, k 0.100000, e 100.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 1000.000000, k 0.100000, e 1000.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 1000.000000, k 1.000000, e 0.001000 --> Accuracy: 0.125000, MAE: 1.035714
+    SVR C 1000.000000, k 1.000000, e 0.010000 --> Accuracy: 0.125000, MAE: 1.035714
+    SVR C 1000.000000, k 1.000000, e 0.100000 --> Accuracy: 0.125000, MAE: 1.035714
+    SVR C 1000.000000, k 1.000000, e 1.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 1000.000000, k 1.000000, e 10.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 1000.000000, k 1.000000, e 100.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 1000.000000, k 1.000000, e 1000.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 1000.000000, k 10.000000, e 0.001000 --> Accuracy: 0.125000, MAE: 1.035714
+    SVR C 1000.000000, k 10.000000, e 0.010000 --> Accuracy: 0.125000, MAE: 1.035714
+    SVR C 1000.000000, k 10.000000, e 0.100000 --> Accuracy: 0.125000, MAE: 1.035714
+    SVR C 1000.000000, k 10.000000, e 1.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 1000.000000, k 10.000000, e 10.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 1000.000000, k 10.000000, e 100.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 1000.000000, k 10.000000, e 1000.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 1000.000000, k 100.000000, e 0.001000 --> Accuracy: 0.125000, MAE: 1.035714
+    SVR C 1000.000000, k 100.000000, e 0.010000 --> Accuracy: 0.125000, MAE: 1.035714
+    SVR C 1000.000000, k 100.000000, e 0.100000 --> Accuracy: 0.125000, MAE: 1.035714
+    SVR C 1000.000000, k 100.000000, e 1.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 1000.000000, k 100.000000, e 10.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 1000.000000, k 100.000000, e 100.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 1000.000000, k 100.000000, e 1000.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 1000.000000, k 1000.000000, e 0.001000 --> Accuracy: 0.125000, MAE: 1.035714
+    SVR C 1000.000000, k 1000.000000, e 0.010000 --> Accuracy: 0.125000, MAE: 1.035714
+    SVR C 1000.000000, k 1000.000000, e 0.100000 --> Accuracy: 0.125000, MAE: 1.035714
+    SVR C 1000.000000, k 1000.000000, e 1.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 1000.000000, k 1000.000000, e 10.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 1000.000000, k 1000.000000, e 100.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    SVR C 1000.000000, k 1000.000000, e 1000.000000 --> Accuracy: 0.178571, MAE: 1.428571
+    Best Results SVR C 10.000000, k 0.001000, e 0.010000 --> Accuracy: 0.678571
+
+
 As you can check, the best configuration leads to almost a 70% of accuracy, which is not very bad considering that we have 5 classes.
 
 This way of adjusting the parameters is not fair, as we can be overfitting the test set. The decision of the optimal parameters should be taken without checking test results. This can be done by using nested crossvalidation.
@@ -368,30 +670,30 @@ k = 10.^(-2:1:2)
 e = 10.^(-3:1:0)
 ```
 In this way, we will obtain the results for the 10 partitions. This `ini` file can be run by using the following code (to be run from the `src` folder):
-```MATLAB
->> Utilities.runExperiments('../doc/tutorial/config-files/svrMelanoma.ini')
-Setting up experiments...
-Running experiment exp-svr-mae-tutorial-melanoma-melanoma-5classes-abcd-100-1.ini
-Running experiment exp-svr-mae-tutorial-melanoma-melanoma-5classes-abcd-100-10.ini
-Running experiment exp-svr-mae-tutorial-melanoma-melanoma-5classes-abcd-100-2.ini
-Running experiment exp-svr-mae-tutorial-melanoma-melanoma-5classes-abcd-100-3.ini
-Running experiment exp-svr-mae-tutorial-melanoma-melanoma-5classes-abcd-100-4.ini
-Running experiment exp-svr-mae-tutorial-melanoma-melanoma-5classes-abcd-100-5.ini
-Running experiment exp-svr-mae-tutorial-melanoma-melanoma-5classes-abcd-100-6.ini
-Running experiment exp-svr-mae-tutorial-melanoma-melanoma-5classes-abcd-100-7.ini
-Running experiment exp-svr-mae-tutorial-melanoma-melanoma-5classes-abcd-100-8.ini
-Running experiment exp-svr-mae-tutorial-melanoma-melanoma-5classes-abcd-100-9.ini
-Calculating results...
-Experiments/exp-2018-1-20-17-38-22/Results/melanoma-5classes-abcd-100-svr-mae-tutorial-melanoma/dataset
-Experiments/exp-2018-1-20-17-38-22/Results/melanoma-5classes-abcd-100-svr-mae-tutorial-melanoma/dataset
 
-ans =
 
-Experiments/exp-2018-1-20-17-38-22
+```octave
+Utilities.runExperiments('../doc/tutorial/config-files/svrMelanomafs.ini')
 ```
 
-Note that the number of experiments is crucial, so the execution can take a considerable amount of time. To accelerate the experiments you can use multiple cores of your CPU (see this [page](orca_parallel.md)).
+    Setting up experiments...
+    Running experiment exp-svr-mae-tutorial-melanoma-melanoma-5classes-abcd-100-fs-1.ini
+    Running experiment exp-svr-mae-tutorial-melanoma-melanoma-5classes-abcd-100-fs-10.ini
+    Running experiment exp-svr-mae-tutorial-melanoma-melanoma-5classes-abcd-100-fs-2.ini
+    Running experiment exp-svr-mae-tutorial-melanoma-melanoma-5classes-abcd-100-fs-3.ini
+    Running experiment exp-svr-mae-tutorial-melanoma-melanoma-5classes-abcd-100-fs-4.ini
+    Running experiment exp-svr-mae-tutorial-melanoma-melanoma-5classes-abcd-100-fs-5.ini
+    Running experiment exp-svr-mae-tutorial-melanoma-melanoma-5classes-abcd-100-fs-6.ini
+    Running experiment exp-svr-mae-tutorial-melanoma-melanoma-5classes-abcd-100-fs-7.ini
+    Running experiment exp-svr-mae-tutorial-melanoma-melanoma-5classes-abcd-100-fs-8.ini
+    Running experiment exp-svr-mae-tutorial-melanoma-melanoma-5classes-abcd-100-fs-9.ini
+    Calculating results...
+    Experiments/exp-2019-4-30-9-57-32/Results/melanoma-5classes-abcd-100-fs-svr-mae-tutorial-melanoma/dataset
+    Experiments/exp-2019-4-30-9-57-32/Results/melanoma-5classes-abcd-100-fs-svr-mae-tutorial-melanoma/dataset
+    ans = Experiments/exp-2019-4-30-9-57-32
 
+
+Note that the number of experiments is crucial, so the execution can take a considerable amount of time. To accelerate the experiments you can use multiple cores of your CPU with `Utilities.runExperiments('experiments.ini','parallel', true)` (see this [page](orca-parallel.md)).
 
 ### Nominal classification (SVC1V1 and SVC1VA)
 
@@ -406,66 +708,100 @@ Both methods consider an RBF kernel with the following two parameters:
 - Parameter `k`, inverse of the width of the RBF kernel.
 
 Now, we run the SVC1V1 method:
-```MATLAB
->> algorithmObj = SVC1V1();
+
+
+```octave
+algorithmObj = SVC1V1();
 info = algorithmObj.fitpredict(train,test,struct('C',10,'k',0.001));
 fprintf('\nSVC1V1\n---------------\n');
 fprintf('SVC1V1 Accuracy: %f\n', CCR.calculateMetric(test.targets,info.predictedTest));
 fprintf('SVC1V1 MAE: %f\n', MAE.calculateMetric(test.targets,info.predictedTest));
-
-SVC1V1
----------------
-SVC1V1 Accuracy: 0.678571
-SVC1V1 MAE: 0.517857
 ```
+
+    
+    SVC1V1
+    ---------------
+    SVC1V1 Accuracy: 0.678571
+    SVC1V1 MAE: 0.517857
+
+
 In SVC1V1, the decision values have `(Q(Q-1))/2` (the number of combinations of two classes from the set of `Q` possibilities) columns and majority voting is applied.
-```MATLAB
->> info.projectedTest(1:10,:)
 
-ans =
 
-    0.9261    0.5367    1.0250    1.8303   -0.6027    0.9841    2.0166    1.1270    2.2486    2.7971
-    0.7814    0.4821    0.7651    0.8992   -0.5196    0.1467    1.0538    0.8169    1.3108    1.2065
-    1.5287    1.5046    1.5610    1.9358   -0.4651    0.0438    0.9445    0.1504    1.6244    2.4629
-    1.6728    2.0872    2.0601    1.7022    0.4386    2.3972    2.7218    1.6865    2.0196    2.2947
-    1.4008    1.6203    1.3280    1.6617    0.3078    0.6689    1.7467    0.3941    1.8720    1.8571
-    1.5229    1.4526    1.7320    1.7429   -0.8167   -0.3594    0.3977    0.4028    1.2844    0.9317
-    1.2554    1.1431    1.0427    1.3174   -1.1444   -0.9344   -0.1922   -0.5129    0.9161    0.9487
-    1.1729    1.3795    1.4371    1.3156    0.0133    0.1799    1.1682    0.3116    1.7527    1.2552
-    0.6868    0.7459    1.2144    1.1957    0.2937    1.3921    1.0541    1.0434    1.0840    1.1890
-    0.5234    0.6924    0.7066    0.7415    0.1852    0.9369    1.5640    0.6698    1.0716    1.0032
+```octave
+info.projectedTest(1:10,:)
 ```
 
-We can also check SVC1VA:
-```MATLAB
->> algorithmObj = SVC1VA();
+    ans =
+    
+     Columns 1 through 7:
+    
+       0.926074   0.536692   1.024967   1.830303  -0.602659   0.984071   2.016569
+       0.781432   0.482145   0.765139   0.899214  -0.519628   0.146724   1.053821
+       1.528675   1.504568   1.561044   1.935776  -0.465130   0.043801   0.944491
+       1.672826   2.087165   2.060144   1.702189   0.438583   2.397228   2.721777
+       1.400823   1.620267   1.327972   1.661743   0.307829   0.668906   1.746674
+       1.522858   1.452593   1.731991   1.742870  -0.816676  -0.359383   0.397733
+       1.255397   1.143070   1.042698   1.317361  -1.144442  -0.934373  -0.192200
+       1.172912   1.379507   1.437137   1.315572   0.013278   0.179874   1.168156
+       0.686760   0.745882   1.214429   1.195741   0.293695   1.392134   1.054115
+       0.523418   0.692412   0.706582   0.741470   0.185244   0.936942   1.564033
+    
+     Columns 8 through 10:
+    
+       1.126951   2.248576   2.797064
+       0.816910   1.310837   1.206514
+       0.150428   1.624378   2.462877
+       1.686543   2.019641   2.294685
+       0.394076   1.871991   1.857090
+       0.402845   1.284394   0.931703
+      -0.512859   0.916138   0.948722
+       0.311567   1.752660   1.255249
+       1.043376   1.083996   1.188979
+       0.669801   1.071577   1.003215
+    
+
+
+We can also try SVC1VA:
+
+
+```octave
+algorithmObj = SVC1VA();
 info = algorithmObj.fitpredict(train,test,struct('C',10,'k',0.001));
 fprintf('\nSVC1VA\n---------------\n');
 fprintf('SVC1VA Accuracy: %f\n', CCR.calculateMetric(test.targets,info.predictedTest));
 fprintf('SVC1VA MAE: %f\n', MAE.calculateMetric(test.targets,info.predictedTest));
-
-SVC1VA
----------------
-SVC1VA Accuracy: 0.660714
-SVC1VA MAE: 0.535714
 ```
+
+    
+    SVC1VA
+    ---------------
+    SVC1VA Accuracy: 0.660714
+    SVC1VA MAE: 0.535714
+
+
 Five decision values are obtained for each pattern:
-```MATLAB
->> info.projectedTest(1:10,:)
 
-ans =
 
-    0.4625   -1.0715   -0.9085   -1.0447   -1.9266
-   -0.2265   -1.0583   -1.0804   -1.0532   -1.4971
-    1.1639   -1.1286   -1.3049   -1.0684   -1.5018
-    1.9740   -1.1976   -1.3387   -1.2114   -1.8832
-    0.8887   -1.0291   -1.2843   -0.9885   -1.7727
-    1.1675   -1.1209   -1.1077   -1.1153   -1.4466
-    0.6181   -1.1607   -1.2486   -0.9805   -1.1492
-    0.6817   -0.8617   -1.1509   -1.0171   -1.5208
-    0.2028   -0.9899   -0.9379   -1.0777   -1.5955
-   -0.0512   -0.9641   -1.1984   -1.0730   -1.3010
+```octave
+info.projectedTest(1:10,:)
 ```
+
+    ans =
+    
+       0.462546  -1.071544  -0.908493  -1.044683  -1.926574
+      -0.226527  -1.058268  -1.080394  -1.053184  -1.497083
+       1.163881  -1.128640  -1.304918  -1.068402  -1.501780
+       1.973975  -1.197629  -1.338739  -1.211381  -1.883198
+       0.888686  -1.029075  -1.284270  -0.988469  -1.772721
+       1.167493  -1.120933  -1.107723  -1.115342  -1.446582
+       0.618121  -1.160749  -1.248624  -0.980550  -1.149154
+       0.681678  -0.861655  -1.150944  -1.017109  -1.520761
+       0.202775  -0.989939  -0.937921  -1.077725  -1.595495
+      -0.051222  -0.964142  -1.198391  -1.072984  -1.301023
+    
+
+
 In this case, SVC1V1 obtains better results.
 
 ### Cost sensitive classification (CSSVC)
@@ -476,37 +812,47 @@ The method is called [Cost Sensitive SVC (CSSVC)](../src/Algorithms/CSSVC.m) [3]
 - Parameter `C`, importance given to errors.
 - Parameter `k`, inverse of the width of the RBF kernel.
 
-```MATLAB
->> algorithmObj = CSSVC();
+
+```octave
+algorithmObj = CSSVC();
 info = algorithmObj.fitpredict(train,test,struct('C',10,'k',0.001));
 fprintf('\nCSSVC\n---------------\n');
 fprintf('CSSVC Accuracy: %f\n', CCR.calculateMetric(test.targets,info.predictedTest));
 fprintf('CSSVC MAE: %f\n', MAE.calculateMetric(test.targets,info.predictedTest));
-
-CSSVC
----------------
-CSSVC Accuracy: 0.660714
-CSSVC MAE: 0.571429
 ```
+
+    
+    CSSVC
+    ---------------
+    CSSVC Accuracy: 0.660714
+    CSSVC MAE: 0.571429
+
+
 And the structure of decision values is the same than for SVC1VA:
-```MATLAB
->> info.projectedTest(1:10,:)
 
-ans =
 
-    0.5265   -1.0560   -0.8173   -1.1068   -2.0537
-   -0.2460   -1.0671   -1.0919   -1.0690   -1.5709
-    1.2720   -1.1276   -1.3638   -1.0968   -1.7707
-    2.0127   -1.2108   -1.4486   -1.3483   -2.0445
-    0.9971   -1.0379   -1.3398   -1.0044   -1.9323
-    1.1885   -1.1183   -1.1658   -1.1901   -1.5868
-    0.6074   -1.1525   -1.2662   -0.9842   -1.1079
-    0.8171   -0.8598   -1.1562   -1.0893   -1.6638
-    0.2353   -0.9671   -0.9448   -1.1252   -1.7739
-    0.0180   -0.9739   -1.2185   -1.1168   -1.3740
+```octave
+info.projectedTest(1:10,:)
 ```
+
+    ans =
+    
+       0.526466  -1.056019  -0.817306  -1.106751  -2.053652
+      -0.245966  -1.067136  -1.091898  -1.069017  -1.570898
+       1.272027  -1.127647  -1.363783  -1.096815  -1.770744
+       2.012662  -1.210841  -1.448556  -1.348315  -2.044471
+       0.997074  -1.037871  -1.339759  -1.004385  -1.932343
+       1.188533  -1.118333  -1.165770  -1.190148  -1.586843
+       0.607352  -1.152543  -1.266244  -0.984153  -1.107906
+       0.817064  -0.859796  -1.156218  -1.089279  -1.663824
+       0.235265  -0.967117  -0.944791  -1.125184  -1.773904
+       0.017978  -0.973937  -1.218500  -1.116829  -1.373983
+    
+
 
 ### Summary of results for naive approaches
+
+### TODO: now SVR does not get the best MAE since the order information is missed in the reduded dataset
 
 We can compare all the results obtained by naive methods in the third partition of the melanoma dataset:
 - SVR Accuracy: 0.678571
@@ -519,210 +865,3 @@ We can compare all the results obtained by naive methods in the third partition 
 - CSSVC MAE: 0.571429
 
 In this case, SVR has definitely obtained the best results. As can be checked, SVC1V1 accuracy is quite high, but it is masking a not so good MAE value.
-
-
-## Binary decomposition methods
-
-These methods decompose the original problem in several binary problems (as SVC1V1 and SVC1VA do) but they binary subproblems are organised in such a way that the ordinal structure of the targets is maintained. Specifically, patterns of two non-consecutive categories in the ordinal scale will never be included in the same class against a pattern of an intermediate category. ORCA includes three methods with this structure:
-- One based on SVMs. Because of the way SVM is formulated, the binary subproblems are trained with **multiple models**.
-- Two based on neural networks. The flexibility of NN training makes possible learn all binary subproblems with one **single model**.
-All of them are based on an ordered partition decomposition, where the binary subproblems have the following structure:
-
-| Class | Problem1 | Problem2 | Problem3 | Problem4 |
-| --- | --- | --- | --- | --- |
-| C1 | 0 | 0 | 0 | 0 |
-| C2 | 1 | 0 | 0 | 0 |
-| C3 | 1 | 1 | 0 | 0 |
-| C4 | 1 | 1 | 1 | 0 |
-| C5 | 1 | 1 | 1 | 1 |
-
-
-### SVM with ordered partitions (SVMOP)
-
-[SVMOP](../src/Algorithms/SVMOP.m) method is based on applying the ordered partition binary decomposition, together different weights according to the absolute distance between the class of the binary problem and the specific category being examined [4,5]. The models are trained independently, and final prediction is based on the first model (in the ordinal scale) predicting a positive class. Again, the parameters of this model are:
-- Parameter `C`, importance given to errors.
-- Parameter `k`, inverse of the width of the RBF kernel.
-
-The same parameter values are considered for all subproblems, although the results could be improved by considering different `C` and `k` for each subproblem (resulting in a significantly higher computational cost). Here, we can check the performance of SVMOP on the partition of melanoma we have been studying:
-
-```MATLAB
->> algorithmObj = SVMOP();
-info = algorithmObj.fitpredict(train,test,struct('C',10,'k',0.001));
-fprintf('\nSVMOP\n---------------\n');
-fprintf('SVMOP Accuracy: %f\n', CCR.calculateMetric(test.targets,info.predictedTest));
-fprintf('SVMOP MAE: %f\n', MAE.calculateMetric(test.targets,info.predictedTest));
-
-SVMOP
----------------
-SVMOP Accuracy: 0.678571
-SVMOP MAE: 0.517857
-```
-
-Of course, decision values include the independent values obtained for all subproblems:
-```MATLAB
->> info.projectedTest
-
-ans =
-
-  Columns 1 through 12
-
-    0.3161    0.6788    0.0873    0.0213    0.1411    0.1021    0.2897    0.1883    0.4164    0.5428    0.8796    0.1691
-    0.2321    0.3929    0.0826    0.0397    0.1228    0.0916    0.2082    0.1310    0.2140    0.2849    0.7380    0.1135
-    0.0256    0.1160    0.0540    0.0186    0.0548    0.0441    0.1156    0.0537    0.0424    0.1020    0.0067    0.0204
-    0.0055    0.0212    0.0103    0.0057    0.0074    0.0165    0.0697    0.0141    0.0095    0.0351    0.0034    0.0068
-         0         0         0         0         0         0         0         0         0         0         0         0
-```
-
-### Neural network approaches (ELMOP and NNOP)
-
-Neural networks allow solving all the binary subproblems using a single model with several output nodes. Two neural network models are considered in ORCA:
-- [Extreme learning machines with ordered partitions (ELMOP)](../src/Algorithms/ELMOP.m) [6].
-- [Neural network with ordered partitions (NNOP)](../src/Algorithms/NNOP.m) [7].
-
-ELMOP model is based on ELMs, which are a quite popular type of neural network. In ELMs, the hidden weights are randomly set and the output weights are analytically set. The implementation in ORCA consider the ordered partition decomposition in the output layer. The prediction phase is tackled using an exponential loss based decoding process, where the class predicted is that with the minimum exponential loss with respect to the decision values.
-
-The algorithm can be configured using different activation functions for the hidden layer ('sig, 'sin', 'hardlim','tribas', 'radbas', 'up','rbf'/'krbf' or 'grbf'). During training, the user has to specify the following parameter in the `param` structure:
-- Parameter `hiddenN`: number of hidden nodes of the model. This is a decisive parameter for avoiding overfitting.
-
-Now, we perform a test for training ELMOP (note that ELMOP is not deterministic, this is, the results may vary among different runs of the algorithm):
-```MATLAB
->> algorithmObj = ELMOP('activationFunction','sig');
-info = algorithmObj.fitpredict(train,test,struct('hiddenN',20));
-fprintf('\nELMOP\n---------------\n');
-fprintf('ELMOP Accuracy: %f\n', CCR.calculateMetric(test.targets,info.predictedTest));
-fprintf('ELMOP MAE: %f\n', MAE.calculateMetric(test.targets,info.predictedTest));
-
-ELMOP
----------------
-ELMOP Accuracy: 0.607143
-ELMOP MAE: 0.642857
-```
-
-These are the decision values for ELMOP:
-```MATLAB
->> info.projectedTest
-
-ans =
-
-  Columns 1 through 12
-
-    0.9896    1.0486    0.9168    0.9247    1.0403    1.0267    1.0340    1.0738    1.0198    1.0798    1.0952    1.1875
-   -0.1175    0.1854   -0.6503   -1.1460    0.0094   -0.2907   -0.6847    0.2618   -0.4546   -0.4248   -0.5869   -0.4123
-   -0.4277   -0.1900   -0.8463   -1.1260   -0.5096   -0.5601   -0.8069   -0.2252   -0.7395   -0.6979   -0.6891   -0.6284
-   -0.7446   -0.6973   -0.7709   -1.2785   -0.7912   -0.6649   -0.9554   -0.6374   -0.9156   -0.9938   -0.9971   -1.1071
-   -0.9630   -0.9493   -0.9312   -0.9969   -1.0528   -0.9400   -1.0753   -0.9589   -0.9230   -0.9160   -0.9969   -1.1435
-```
-
----
-
-***Exercise 4***: compare all different activation functions for ELM trying to find the most appropriate one. Check the source code of [ELMOP](../src/Algorithms/ELMOP.m) to understand the different functions.
-
----
-
-The other neural network model is NNOP. In this case, a standard neural network is considered, training all its parameters (hidden and output weights). In the output layer, a standard sigmoidal function is used, and the mean squared error with respect to the ordered partition targets is used for gradient descent. The algorithm used for gradient descent is the iRProp+ algorithm.
-
-The prediction rule is based on checking which is the first class whose output value is higher than a predefined threshold (0.5 in this case).
-
-Three parameters have to be specified in this case:
-- Parameter `hiddenN`, number of hidden neurons of the model.
-- Parameter `iter`, number of iterations for gradient descent.
-- Parameter `lambda`, regularization parameter in the error function (L2 regularizer), in order to avoid overfitting.
-
-This is an example of execution of NNOP (note that results may vary among different runs):
-```MATLAB
->> algorithmObj = NNOP();
-info = algorithmObj.fitpredict(train,test,struct('hiddenN',20,'iter',500,'lambda',0.1));
-fprintf('\nNNOP\n---------------\n');
-fprintf('NNOP Accuracy: %f\n', CCR.calculateMetric(test.targets,info.predictedTest));
-fprintf('NNOP MAE: %f\n', MAE.calculateMetric(test.targets,info.predictedTest));
-
-NNOP
----------------
-NNOP Accuracy: 0.732143
-NNOP MAE: 0.428571
-```
-and the decision values are:
-```MATLAB
->> info.projectedTest
-
-ans =
-
-    0.8846    0.9433    0.9995    0.9998
-    0.6481    0.9579    0.9547    0.9772
-    0.9765    0.9770    0.9548    0.9961
-    0.9942    0.9991    0.9999    0.9997
-    0.8824    0.9938    0.9731    0.9982
-    0.9668    0.9957    0.9955    0.9973
-    0.4480    0.2875    0.7679    0.9627
-    0.7560    0.9554    0.9836    0.9978
-    0.7151    0.9807    0.9940    0.9727
-    0.4807    0.8472    0.9446    0.9206
-    0.1589    0.1477    0.9872    0.9998
-    0.8633    0.9513    0.9997    0.9995
-    ...
-```
-
-### Summary of results for binary decompositions
-
-As a summary, the results obtained for the third partition of melanoma dataset are:
-- SVMOP Accuracy: 0.678571
-- ELMOP Accuracy: 0.607143
-- NNOP Accuracy: 0.732143
-- SVMOP MAE: 0.517857
-- ELMOP MAE: 0.642857
-- NNOP MAE: 0.428571
-
-In this case, the best classifier is NNOP, although parameter values can be influencing these results.
-
-## Ternary decomposition
-
-The last method considered in the tutorial is a projection similar to One-Vs-All but generating three class subproblems, instead of binary ones. The subproblems are solved considering independent classifiers, and the prediction phase is performed under a probabilistic approach (which firstly obtain a `Q` class probability distribution for each ternary classifier and then fuse all the distributions).
-
-The base algorithm used can be configured by the user in the constructor, but it is necessary to use a one-dimensional projection method (threshold model). The parameters of OPBE are the same than the base algorithm, all subproblems being solved using the same parameter values.
-
-```MATLAB
->> algorithmObj = OPBE('base_algorithm','SVORIM');
-info = algorithmObj.fitpredict(train,test,struct('C',10,'k',0.001));
-fprintf('\nOPBE\n---------------\n');
-fprintf('OPBE Accuracy: %f\n', CCR.calculateMetric(test.targets,info.predictedTest));
-fprintf('OPBE MAE: %f\n', MAE.calculateMetric(test.targets,info.predictedTest));
-
-OPBE
----------------
-OPBE Accuracy: 0.696429
-OPBE MAE: 0.446429
-```
-
-In this case, the decision values only include the maximum probability after considering the weights given for each class:
-```MATLAB
->> info.projectedTest
-
-ans =
-
-  Columns 1 through 12
-
-    0.0071    0.0013    0.0083    0.0103    0.0081    0.0083    0.0045    0.0072    0.0054    0.0026    0.0004    0.0080
-
-  Columns 13 through 24
-
-    0.0086    0.0099    0.0099    0.0109    0.0084    0.0092    0.0089    0.0081    0.0006    0.0105    0.0109    0.0090
-...
-```
-
----
-
-***Exercise 5***: in this tutorial, we have considered a total of 8 classifiers with different parameter values for one of the folds of the melanoma dataset. In this exercise, you should generalise these results over the `10` partitions and interpret the results, trying to search for the best method. Apart from the two metrics considered in the tutorial (CCR and MAE), include metrics more sensitive to minority classes (for example, MS and MMAE). Construct a table with the average of these four metrics over the 10 folds. You can use the parameter values given in this tutorial or try to tune a bit them.
-
----
-
-***Exercise 6***: now you should consider cross-validation to tune hyper parameters. In order to limit the computational time, do not include too many values for each parameter and only use the three first partitions of the dataset (by deleting or moving the files for the rest of partitions). Check again the conclusions about the methods. **Hyper parameters are decisive for performance!!**
-
-# References
-
-1. J. Sánchez-Monedero, M. Pérez-Ortiz, A. Sáez, P.A. Gutiérrez, and C. Hervás-Martínez. "Partial order label decomposition approaches for melanoma diagnosis". Applied Soft Computing. Volume 64, March 2018, Pages 341-355. https://doi.org/10.1016/j.asoc.2017.11.042
-1. P. McCullagh, "Regression models for ordinal data",  Journal of the Royal Statistical Society. Series B (Methodological), vol. 42, no. 2, pp. 109–142, 1980.
-1. C.-W. Hsu and C.-J. Lin. "A comparison of methods for multi-class support vector machines", IEEE Transaction on Neural Networks,vol. 13, no. 2, pp. 415–425, 2002. https://doi.org/10.1109/72.991427
-1. E. Frank and M. Hall, "A simple approach to ordinal classification", in Proceedings of the 12th European Conference on Machine Learning, ser. EMCL'01. London, UK: Springer-Verlag, 2001, pp. 145–156. https://doi.org/10.1007/3-540-44795-4_13
-1. W. Waegeman and L. Boullart, "An ensemble of weighted support vector machines for ordinal regression", International Journal of Computer Systems Science and Engineering, vol. 3, no. 1, pp. 47–51, 2009.
-1. W.-Y. Deng, Q.-H. Zheng, S. Lian, L. Chen, and X. Wang, "Ordinal extreme learning machine", Neurocomputing, vol. 74, no. 1-3, pp. 447-456, 2010.         http://dx.doi.org/10.1016/j.neucom.2010.08.022
-1. J. Cheng, Z. Wang, and G. Pollastri, "A neural network  approach to ordinal regression," in Proc. IEEE Int. Joint Conf. Neural Netw. (IEEE World Congr. Comput. Intell.), 2008, pp. 1279-1284.
