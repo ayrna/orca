@@ -7,7 +7,7 @@ MATLABDIR ?= /usr/local/matlab
 #CXX ?= g++
 #CXX = gcc-4.1
 CXX = gcc
-CFLAGS = -Wall -O3 -fPIC -I$(MATLABDIR)/extern/include -I..
+CFLAGS = -Wconversion -Wno-unused-result -O3 -fPIC -I$(MATLABDIR)/extern/include -I..
 #CFLAGS = -Wall -Wconversion -O3 -fPIC -I$(MATLABDIR)/extern/include -I..
 
 MEX = $(MATLABDIR)/bin/mex
@@ -27,7 +27,9 @@ all:	matlab
 matlab:	binary
 
 octave:
-	@echo "please type make under Octave"
+	@make MEX="$(OCTAVE_MEX)" MEX_OPTION="$(OCTAVE_MEX_OPTION)" \
+	MEX_EXT="$(OCTAVE_MEX_EXT)" CFLAGS="$(OCTAVE_CFLAGS)" \
+	binary
 binary: train.$(MEX_EXT) predict.$(MEX_EXT) libsvmread.$(MEX_EXT) libsvmwrite.$(MEX_EXT)
 
 train.$(MEX_EXT): svmtrain.c ../linear.h ../tron.o ../linear.o linear_model_matlab.o ../blas/blas.a
