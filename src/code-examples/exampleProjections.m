@@ -1,3 +1,4 @@
+% Note: this code should be run from orca/src/code-examples
 addpath ../Algorithms/
 addpath ../Measures/
 

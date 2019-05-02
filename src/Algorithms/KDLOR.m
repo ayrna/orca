@@ -2,7 +2,7 @@ classdef KDLOR < Algorithm
     %KDLOR Kernel Discriminant Learning for Ordinal Regression (KDLOR) [1].
     %
     %   KDLOR methods:
-    %      runAlgorithm               - runs the corresponding algorithm,
+    %      fitpredict               - runs the corresponding algorithm,
     %                                   fitting the model and testing it in a dataset.
     %      fit                        - Fits a model from training data
     %      predict                    - Performs label prediction
@@ -173,7 +173,7 @@ classdef KDLOR < Algorithm
             
             % W = 0.5 * H^{-1} * aux
             projection = 0.5*H_inv*aux';
-            thresholds = zeros(numClasses-1, 1);
+            thresholds = zeros(1, numClasses-1);
             
             % Calculate the threshold for each couple of classes
             for currentClass = 1:numClasses-1
@@ -187,7 +187,7 @@ classdef KDLOR < Algorithm
             model.kernelType = obj.kernelType;
             model.train = trainPatterns;
             projectedTrain = model.projection'*kernelMatrix;
-            predictedTrain = assignLabels(obj, projectedTrain, model.thresholds');
+            predictedTrain = assignLabels(obj, projectedTrain, model.thresholds);
             obj.model = model;
             
             projectedTrain = projectedTrain';
@@ -199,7 +199,7 @@ classdef KDLOR < Algorithm
             kernelMatrix = computeKernelMatrix(obj.model.train,testPatterns',obj.model.kernelType, obj.model.parameters.k);
             projected = obj.model.projection'*kernelMatrix;
             
-            predicted = assignLabels(obj, projected, obj.model.thresholds');
+            predicted = assignLabels(obj, projected, obj.model.thresholds);
             projected = projected';
         end
         

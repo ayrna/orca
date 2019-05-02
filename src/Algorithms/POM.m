@@ -2,7 +2,7 @@ classdef POM < Algorithm
     %POM Proportional Odd Model for Ordinal Regression
     %
     %   POM methods:
-    %      runAlgorithm               - runs the corresponding algorithm,
+    %      fitpredict               - runs the corresponding algorithm,
     %                                   fitting the model and testing it in a dataset.
     %      fit                        - Fits a model from training data
     %      predict                    - Performs label prediction
@@ -77,7 +77,9 @@ classdef POM < Algorithm
             nOfClasses = numel(unique(train.targets));
             % TODO: Debug size octave
             if exist ('OCTAVE_VERSION', 'builtin') > 0
-                [model.thresholds, model.projection] = logistic_regression(train.targets, train.patterns);    
+                pkg load statistics;
+                [model.thresholds, model.projection] = logistic_regression(train.targets, train.patterns);
+                pkg unload statistics;
             else
                 % Obtain coefficients of the ordinal regression model
                 betaHatOrd = mnrfit(train.patterns,train.targets,'model',...

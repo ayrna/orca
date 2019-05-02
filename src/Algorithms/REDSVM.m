@@ -6,7 +6,7 @@ classdef REDSVM < Algorithm
     %(http://www.work.caltech.edu/~htlin/program/libsvm/)
     %
     %   REDSVM methods:
-    %      runAlgorithm               - runs the corresponding algorithm,
+    %      fitpredict               - runs the corresponding algorithm,
     %                                   fitting the model and testing it in a dataset.
     %      fit                        - Fits a model from training data
     %      predict                    - Performs label prediction

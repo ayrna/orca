@@ -43,11 +43,11 @@ typedef enum _BOOL
 struct estructura
 {
 
-	int dim2,dim3,dim4,dim5;
+	int dim2,n_alpha,n_threshold,n_pairs;
 	double * data2;
-	double * data3;
-	double * data4;
-	double * data5;
+	double * alpha;
+	double * biasj;
+	double * guess;
 
 };
 

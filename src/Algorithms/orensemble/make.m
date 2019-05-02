@@ -1,6 +1,7 @@
 % ORBoost does not have a matlab's interface. There we use external
 % Makefile
 function make(opt)
+fprintf('=> Building ORBoost.\n');
 if nargin < 1
     try
         if ispc
@@ -11,6 +12,7 @@ if nargin < 1
             setenv('CFLAGS','-O3 -fstack-protector-strong -Wformat -Werror=format-security -Wno-unused-result')
             setenv('CC','g++')
             system('make'); 
+            unsetenv('CC')
           else
             system('make'); 
           end

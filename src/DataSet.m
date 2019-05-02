@@ -169,10 +169,14 @@ classdef DataSet < handle
         %   performs data cleaning on arrays of patterns TRAINSET and TESTSET. Returns
         %   processed matrices. 
             
-            all = [trainSet.patterns ; testSet.patterns];
+            % This causes problems in some dataset with constant attribute in
+            % train but not constant in test. Latar when standarizing a division by 
+            % zero will happens. Then we only look for constant att. in
+            % train
+            % all = [trainSet.patterns ; testSet.patterns];
             
-            minvals = min(all);
-            maxvals = max(all);
+            minvals = min(trainSet.patterns);
+            maxvals = max(trainSet.patterns);
             
             r = 0;
             for k=1:size(trainSet.patterns,2)

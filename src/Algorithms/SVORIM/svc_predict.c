@@ -143,9 +143,9 @@ struct estructura svm_saveresults_Matlab(Data_List * testlist, smo_Settings * se
 
 
 		aux.dim2=testlist->count;
-		aux.dim3=settings->pairs->count;
-		aux.dim4= settings->pairs->classes - 1;
-		aux.dim5=settings->pairs->count;
+		aux.n_alpha=settings->pairs->count;
+		aux.n_threshold= settings->pairs->classes - 1;
+		aux.n_pairs=settings->pairs->count;
 
 		if ( (aux.data2=(double *)malloc(testlist->count*sizeof(double))) == NULL)
 		{
@@ -154,19 +154,19 @@ struct estructura svm_saveresults_Matlab(Data_List * testlist, smo_Settings * se
 		}
 
 
-		if ( (aux.data3=(double *)malloc(settings->pairs->count*sizeof(double))) == NULL)
+		if ( (aux.alpha=(double *)malloc(settings->pairs->count*sizeof(double))) == NULL)
 		{
 			printf("Error al reservar memoria\n");
 			exit(-1);
 		}
 
-		if ( (aux.data4=(double *)malloc(settings->pairs->classes*sizeof(double))) == NULL)
+		if ( (aux.biasj=(double *)malloc(settings->pairs->classes*sizeof(double))) == NULL)
 		{
 			printf("Error al reservar memoria\n");
 			exit(-1);
 		}
 
-		if ( (aux.data5=(double *)malloc(settings->pairs->count*sizeof(double))) == NULL)
+		if ( (aux.guess=(double *)malloc(settings->pairs->count*sizeof(double))) == NULL)
 		{
 			printf("Error al reservar memoria\n");
 			exit(-1);
@@ -292,8 +292,8 @@ struct estructura svm_saveresults_Matlab(Data_List * testlist, smo_Settings * se
 					alpha += (ALPHA+i)->alpha[k] ;
 			}
 			/*fprintf(svmalpha,"%.12f\r", alpha) ;*/
-			aux.data3[i]=alpha;
-			//printf("data3:%.12lf\r",aux.data3[i]);
+			aux.alpha[i]=alpha;
+			//printf("alpha:%.12lf\r",aux.alpha[i]);
 
 		}
 
@@ -301,8 +301,8 @@ struct estructura svm_saveresults_Matlab(Data_List * testlist, smo_Settings * se
 			/*fprintf(svmalpha,"%.12f\r", settings->biasj[i-1]) ;*/
 			/*printf("bias:%.12f\r", settings->biasj[i-1]);*/
 
-			aux.data4[i-1]= settings->biasj[i-1];
-			//printf("data4:%.12lf\r",aux.data4[i-1]);
+			aux.biasj[i-1]= settings->biasj[i-1];
+			//printf("biasj:%.12lf\r",aux.biasj[i-1]);
 
 		}
 	/*}*/
@@ -322,8 +322,8 @@ struct estructura svm_saveresults_Matlab(Data_List * testlist, smo_Settings * se
 			/*fprintf(svmfunc,"%.12f\r", fabs((settings->alpha + i)->pair->guess)) ;*/
 			/*printf("%.12f\r", fabs((settings->alpha + i)->pair->guess)) ;*/
 
-			aux.data5[i]= (settings->alpha + i)->pair->guess; // He quitado un fabs
-			//printf("data5:%.12lf\r",aux.data5[i]);
+			aux.guess[i]= (settings->alpha + i)->pair->guess; // He quitado un fabs
+			//printf("guess:%.12lf\r",aux.guess[i]);
 
 		}
 	/*}*/

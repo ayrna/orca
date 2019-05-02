@@ -1,0 +1,43 @@
+language: c
+group: travis_latest
+dist: xenial
+
+# safelist
+branches:
+  only:
+  - master
+  - develop
+
+# blocklist
+branches:
+  except:
+  - jupyter-tutorials
+
+before_install:
+  - sudo add-apt-repository ppa:octave/stable -y
+  - sudo apt-get update -q
+  - sudo apt-get install octave liboctave-dev gnuplot-qt python-pip -y
+  - pip install --user --upgrade pip
+  - pip install --user jupyter
+  - pip install --user octave_kernel
+  - pip install --user jupyter_contrib_nbextensions
+
+  
+addons:
+  apt:
+    packages:
+    - octave
+    - liboctave-dev
+    - gcc
+    - g++
+
+matrix:
+  include:
+  - os: linux
+  
+script:
+- gcc --version
+- octave-cli --version
+- octave-cli build_orca.m
+- cd doc
+- ./test_notebooks.sh
