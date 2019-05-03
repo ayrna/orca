@@ -1,18 +1,3 @@
-.name![ORCA logo](orca_small.png)
-
-<!-- TOC depthFrom:1 depthTo:6 withLinks:1 updateOnSave:1 orderedList:1 -->
-
-1. [Threshold models](#threshold-models)
-	1. [Proportional odds model (POM)](#proportional-odds-model-pom)
-	2. [Neural network based on POM (NNPOM)](#neural-network-based-on-pom-nnpom)
-	3. [Support vector for ordinal regression (SVOREX and SVORIM)](#support-vector-for-ordinal-regression-svorex-and-svorim)
-	4. [Reduction from ordinal regression to binary SVM classifiers (REDSVM)](#reduction-from-ordinal-regression-to-binary-svm-classifiers-redsvm)
-	5. [Kernel discriminant learning for ordinal regression (KDLOR)](#kernel-discriminant-learning-for-ordinal-regression-kdlor)
-	6. [Ordinal regression boosting (ORBoost)](#ordinal-regression-boosting-orboost)
-	7. [Custom Ensemble based on several projections](#custom-ensemble-based-on-several-projections)
-2. [References](#references)
-
-<!-- /TOC -->
 
 # Threshold models
 
@@ -38,27 +23,37 @@ The POM arose from a statistical background, and it is based on an extension of 
 
 A strong probabilistic basis is inherent to this approach: each logistic function is modelling the cumulative probability that a pattern has of belonging to the corresponding class or any of the previous classes. Cumulative probabilities can be easily transformed to standard probabilities by simply subtracting them.
 
-We can try the POM model using the melanoma dataset to check its performance. This method does not involve any parameter. Run the following commands (from the [code-examples folder](/src/code-examples)):
-```MATLAB
->> 
-addpath ../Measures
-addpath ../Algorithms
-addpath ../src
->> % Disable warnings
-warning('off','MATLAB:nearlySingularMatrix')
-warning('off','stats:mnrfit:IterOrEvalLimit')
->> % Loading the data
-trainMelanoma = load('../../exampledata/10-fold/melanoma-5classes-abcd-100/matlab/train_melanoma-5classes-abcd-100.5');
-testMelanoma = load('../../exampledata/10-fold/melanoma-5classes-abcd-100/matlab/test_melanoma-5classes-abcd-100.5');
->> % Form structures for training/test
+We can try the POM model using the melanoma dataset to check its performance. This method does not involve any parameter. 
+
+
+```octave
+addpath('../src/Measures')
+addpath('../src/Algorithms')
+addpath('../src')
+
+% Disable warnings
+% MATLAB warnings
+%warning('off','MATLAB:nearlySingularMatrix')
+%warning('off','stats:mnrfit:IterOrEvalLimit')
+% Octave warnings
+warning('off','all');
+
+% Loading the data
+trainMelanoma = load('../exampledata/10-fold/melanoma-5classes-abcd-100/matlab/train_melanoma-5classes-abcd-100.5');
+testMelanoma = load('../exampledata/10-fold/melanoma-5classes-abcd-100/matlab/test_melanoma-5classes-abcd-100.5');
+% Form structures for training/test
 train.patterns = trainMelanoma(:,1:(end-1));
 train.targets = trainMelanoma(:,end);
 test.patterns = testMelanoma(:,1:(end-1));
 test.targets = testMelanoma(:,end);
->> % Preprocess the data
+% Preprocess the data
 [train,test] = DataSet.deleteConstantAtributes(train,test);
 [train,test] = DataSet.standarizeData(train,test);
 [train,test] = DataSet.deleteNonNumericValues(train,test);
+```
+
+
+```octave
 %% Apply POM model
 % Create the POM object
 algorithmObj = POM();
@@ -70,99 +65,120 @@ info = algorithmObj.fitpredict(train,test);
 fprintf('POM method\n---------------\n');
 fprintf('POM Accuracy: %f\n', CCR.calculateMetric(test.targets,info.predictedTest));
 fprintf('POM MAE: %f\n', MAE.calculateMetric(test.targets,info.predictedTest));
-POM method
----------------
-POM Accuracy: 0.660714
-POM MAE: 0.464286
 ```
 
-An accuracy of 66% is obtained in this fold using POM. Now, we can check the projection the model is doing and the set of thresholds.
+    POM method
+    ---------------
+    POM Accuracy: 0.678571
+    POM MAE: 0.428571
 
-```MATLAB
->> % Visualize the projection
+
+An accuracy of ~67% is obtained in this fold using POM. Now, we can check the projection the model is doing and the set of thresholds.
+
+
+```octave
+% Visualize the projection
 figure; hold on;
-h = histogram(info.projectedTest,30);
+
+hist(info.projectedTest', 30);
 y1=get(gca,'ylim');
+
 for i=1:size(info.model.thresholds,2)
-    line([-info.model.thresholds(i) -info.model.thresholds(i)],y1,'Color',[1 0 0]);    
+    line([+info.model.thresholds(i) +info.model.thresholds(i)],y1,'Color',[1 0 0]);
 end
 hold off;
-```
-which generates the following figure:
 
-![Projections of POM for melanoma](tutorial/images/POMMelanomaProjections.png)
+```
+
+
+![png](orca_tutorial_3_files/orca_tutorial_3_4_0.png)
+
 
 As can be checked no pattern is projected beyond the last threshold, so that the last class is ignored. Note that POM is a linear model and this can limit its accuracy. We can check this in the confusion matrix:
-```MATLAB
->> confusionmat(test.targets,info.predictedTest)
 
-ans =
 
-    30     0     1     0     0
-     1     2     3     0     0
-     2     2     4     2     0
-     0     2     3     1     0
-     0     0     2     1     0
+```octave
+confusionmat(test.targets,info.predictedTest)
 ```
 
+    ans =
+    
+       30    0    1    0    0
+        2    1    3    0    0
+        2    0    6    2    0
+        0    1    4    1    0
+        0    0    2    1    0
+    
+
+
 Moreover, we can recode the projections, so that the patterns of each class appear in different colours:
-```MATLAB
->> % Visualize the projection with colors
+
+
+```octave
+% Palette of colors. More at https://www.color-hex.com/
+palette=num2cell([255,98,0;255,192,0;160,255,0;0,234,255;66,0,116]/255,2);
+
 figure; hold on;
 Q = size(info.model.thresholds,2)+1;
 for i=1:Q
-    h = histogram(info.projectedTest(test.targets==i),'BinWidth',0.5);
+    hist(info.projectedTest(test.targets==i), 30, 'FaceColor', palette{i});
 end
 y1=get(gca,'ylim');
 for i=1:size(info.model.thresholds,2)
-    line([-info.model.thresholds(i) -info.model.thresholds(i)],y1,'Color',[1 0 0]);    
+    line([info.model.thresholds(i) info.model.thresholds(i)],y1,'Color',[1 0 0]);
 end
 %legend('C1','C2','C3','C4','C5');
 legend(arrayfun(@(num) sprintf('C%d', num), 1:Q, 'UniformOutput', false))
 hold off;
 ```
-which generates the plot:
 
-![Projections of POM for melanoma with colours](tutorial/images/POMMelanomaProjectionsColours.png)
+
+![png](orca_tutorial_3_files/orca_tutorial_3_8_0.png)
+
 
 As can be observed the three patterns from the last class are never correctly classified.
 
 We can also plot the probability estimations generated by POM, which are based on the `logit` function:
 
-```MATLAB
+
+```octave
 % Visualize the cummulative probabilities
 figure; hold on;
 numPoints=300;
-x = linspace(min(-info.model.thresholds)-3,max(-info.model.thresholds)+3,numPoints);
+x = linspace(min(info.model.thresholds)-3,max(info.model.thresholds)+3,numPoints);
 f = repmat(info.model.thresholds,numPoints,1) - repmat(x',1,Q-1);
 cumProb = [1./(1+exp(-f)) ones(numPoints,1)]; %logit function
 plot(x,cumProb,'-');
 y1=get(gca,'ylim');
 for i=1:size(info.model.thresholds,2)
-    line([-info.model.thresholds(i) -info.model.thresholds(i)],y1,'Color',[1 0 0]);    
+    line([info.model.thresholds(i) info.model.thresholds(i)],y1,'Color',[1 0 0]);    
 end
 hold off;
 ```
 
-![Cumulative probabilities by this set of thresholds](tutorial/images/POMMelanomaCumProb.png)
 
-```MATLAB
->> % Visualize the individual probabilities
+![png](orca_tutorial_3_files/orca_tutorial_3_10_0.png)
+
+
+
+```octave
+% Visualize the individual probabilities
 figure; hold on;
 prob = cumProb;
 prob(:,2:end) = prob(:,2:end) - prob(:,1:(end-1));
 plot(x,prob,'-');
 y1=get(gca,'ylim');
 for i=1:size(info.model.thresholds,2)
-    line([-info.model.thresholds(i) -info.model.thresholds(i)],y1,'Color',[1 0 0]);    
+    line([info.model.thresholds(i) info.model.thresholds(i)],y1,'Color',[1 0 0]);    
 end
 hold off;
 ```
 
-![Individual probabilities by this set of thresholds](tutorial/images/POMMelanomaProb.png)
+
+![png](orca_tutorial_3_files/orca_tutorial_3_11_0.png)
+
 
 As can be seen, those projections close to the thresholds can be classified in different classes according to the probability distribution. However, following the spirit of threshold models, the implementation of POM included in ORCA classify the patterns according to their position with respect to the thresholds.
-
 ---
 
 ***Exercise 1***: POM is a member of the Cumulative Link Models (CLM) family, where a `logit` function is considered. Now, you can try other probability distributions used in this models, such as the following ones (table from the [documentation](https://cran.r-project.org/web/packages/ordinal/vignettes/clm_intro.pdf) of this [R package](https://cran.r-project.org/web/packages/ordinal/)):
@@ -182,24 +198,24 @@ Three parameters must be specified in this case:
 - Parameter `iter`, number of iterations for gradient descent.
 - Parameter `lambda`, regularization parameter in the error function (L2 regularizer), to avoid overfitting.
 
-```MATLAB
->> % Create the NNPOM object
-algorithmObj = NNPOM();
 
+```octave
+% Create the NNPOM object
+algorithmObj = NNPOM();
 % Train NNPOM
 info = algorithmObj.fitpredict(train,test,struct('hiddenN',20,'iter',500,'lambda',0.1));
 info = algorithmObj.fitpredict(train,test,struct('hiddenN',20,'iter',500,'lambda',0.1));
-
-
 % Evaluate the model
 fprintf('NNPOM method\n---------------\n');
 fprintf('NNPOM Accuracy: %f\n', CCR.calculateMetric(test.targets,info.predictedTest));
 fprintf('NNPOM MAE: %f\n', MAE.calculateMetric(test.targets,info.predictedTest));
-NNPOM method
----------------
-NNPOM Accuracy: 0.642857
-NNPOM MAE: 0.500000
 ```
+
+    NNPOM method
+    ---------------
+    NNPOM Accuracy: 0.571429
+    NNPOM MAE: 0.625000
+
 
 The source code of NNPOM clearly shows how the prediction is performed, which clarify a lot the model:
 
@@ -224,46 +240,36 @@ In this case, the results are not very good and even a bit worse than POM. Howev
 
 You can also examine the threshold obtained and the projections:
 
-```MATLAB
->> info.model.thresholds
 
-ans =
-
-   -0.0532    6.6890   14.5441   22.1281
-
->> info.projectedTest
-
-ans =
-
-  -12.5781
-  -14.1549
-  -10.0944
-  -11.7794
-   -4.7533
-  -10.5340
-   -5.4838
-    0.1905
-    6.0557
-  -22.3671
-   -4.4566
-  -10.6283
-  -16.6782
-   -1.8267
-  -19.1499
-    2.0112
-  -12.3217
-   -4.8291
-    1.9410
-   -6.0391
-   -7.4425
-  -12.9263
-   -4.7081
-  -18.7905
-   -4.4591
-    3.7864
-   -5.7989
-  ...
+```octave
+info.model.thresholds
 ```
+
+    ans =
+    
+       -0.17135    6.39835   14.21751   21.95202
+    
+
+
+
+```octave
+info.projectedTest(1:10)
+```
+
+    ans =
+    
+      -11.52673
+      -13.68463
+      -13.39112
+      -15.80110
+       -6.81897
+      -13.47581
+       -2.80771
+       -0.24213
+        4.47635
+      -21.01269
+    
+
 
 ---
 
@@ -282,8 +288,10 @@ Both are threshold models so that they obtain a projection together with a set o
 - Parameter `k`, inverse of the width of the RBF kernel.
 
 We are going to test both methods:
-```MATLAB
->> %% Apply the SVORIM model
+
+
+```octave
+%% Apply the SVORIM model
 % Create the SVORIM object
 algorithmObj = SVORIM();
 
@@ -308,6 +316,7 @@ algorithmObj = SVOREX();
 info = algorithmObj.fitpredict(train,test,struct('C',10,'k',0.001));
 
 % Evaluate the model
+fprintf('---------------\n');
 fprintf('SVOREX method\n---------------\n');
 fprintf('SVOREX Accuracy: %f\n', CCR.calculateMetric(test.targets,info.predictedTest));
 fprintf('SVOREX MAE: %f\n', MAE.calculateMetric(test.targets,info.predictedTest));
@@ -316,23 +325,25 @@ fprintf('SVOREX MAE: %f\n', MAE.calculateMetric(test.targets,info.predictedTest)
 svorexProjections = info.projectedTest;
 svorexProjectionsTrain = info.projectedTrain;
 svorexThresholds = info.model.thresholds;
-
-SVORIM method
----------------
-SVORIM Accuracy: 0.642857
-SVORIM MAE: 0.500000
-SVOREX method
----------------
-SVOREX Accuracy: 0.642857
-SVOREX MAE: 0.589286
 ```
-SVORIM results in better test MAE, while the accuracy is the same.
+
+    SVORIM method
+    ---------------
+    SVORIM Accuracy: 0.642857
+    SVORIM MAE: 0.500000
+    ---------------
+    SVOREX method
+    ---------------
+    SVOREX Accuracy: 0.642857
+    SVOREX MAE: 0.589286
+
 
 We can plot both projections by:
 
-```MATLAB
->> %% Represent both projections and thresholds
-figure; hold on;
+
+```octave
+%% Represent both projections and thresholds
+figure; hold on; 
 subplot(2,1,1)
 plot(svorimProjections,test.targets, 'o');
 y1=get(gca,'ylim');
@@ -350,12 +361,15 @@ legend('SVOREX');
 hold off;
 ```
 
-![Comparison of SVORIM and SVOREX](tutorial/images/SVORIM_SVOREX.png)
+
+![png](orca_tutorial_3_files/orca_tutorial_3_22_0.png)
+
 
 Fine tuning a bit the parameters, we can improve the results:
 
-```MATLAB
->> %% Apply the SVORIM model improved
+
+```octave
+%% Apply the SVORIM model improved
 % Create the SVORIM object
 algorithmObj = SVORIM();
 
@@ -366,18 +380,20 @@ info = algorithmObj.fitpredict(train,test,struct('C',200,'k',0.001));
 fprintf('SVORIM method improved\n---------------\n');
 fprintf('SVORIM Accuracy: %f\n', CCR.calculateMetric(test.targets,info.predictedTest));
 fprintf('SVORIM MAE: %f\n', MAE.calculateMetric(test.targets,info.predictedTest));
-
-SVORIM method improved
----------------
-SVORIM Accuracy: 0.660714
-SVORIM MAE: 0.464286
 ```
+
+    SVORIM method improved
+    ---------------
+    SVORIM Accuracy: 0.660714
+    SVORIM MAE: 0.464286
+
 
 ## Reduction from ordinal regression to binary SVM classifiers (REDSVM)
 
 The reduction from ordinal regression to binary SVM classifiers (REDSVM) [4] is a method that can be categorized both as threshold method or as decomposition method. The hyper-parameters are the well-known `k` and `C` of SVM variants.
 
-```MATLAB
+
+```octave
 %% Apply the REDSVM model
 % Create the REDSVM object
 algorithmObj = REDSVM();
@@ -391,10 +407,17 @@ fprintf('REDSVM Accuracy: %f\n', CCR.calculateMetric(test.targets,info.predicted
 fprintf('REDSVM MAE: %f\n', MAE.calculateMetric(test.targets,info.predictedTest));
 ```
 
-To better understand the relevance of parameters selection process, the following code optimizes parameters `k` and `C` using a 3Fold for each combination. Then, it plots corresponding validation results for `Acc` and `AMAE`. Note that the optimal combination may differ depending of the selected performance metric. Depending on your version of Matlab, a `contourf` or a `heatmap` is used for each metric.
+    REDSVM method
+    ---------------
+    REDSVM Accuracy: 0.660714
+    REDSVM MAE: 0.482143
 
-```MATLAB
->> %% REDSVM optimization
+
+To better understand the relevance of parameters selection process, the following code optimizes parameters `k` and `C` using a 3Fold for each combination. Only in Matlab: the second cell plots corresponding validation results for `Acc` and `AMAE`. Note that the optimal combination may differ depending of the selected performance metric. Depending on your version of Matlab, a `contourf` or a `heatmap` is used for each metric.
+
+
+```octave
+%% REDSVM optimization
 clear T Ts;
 
 Metrics = {@MZE,@AMAE};
@@ -403,7 +426,14 @@ setk = 10.^(-3:1:3);
 % TODO: fix for Octave since table() is not supported
 Ts = cell(size(Metrics,2),1);
 nFolds = 3;
-CVO = cvpartition(train.targets,'KFold',nFolds);
+
+if (exist ('OCTAVE_VERSION', 'builtin') > 0)
+    pkg load statistics;
+    CVO = cvpartition(train.targets,'KFold',nFolds);
+else
+    CVO = cvpartition(train.targets,'k',nFolds);
+end
+
 for m = 1:size(Metrics,2)
     mObj = Metrics{m}();
     fprintf('Grid search to optimize %s for REDSVM\n', mObj.name);
@@ -437,7 +467,18 @@ for m = 1:size(Metrics,2)
     end
     fprintf('\nBest Results REDSVM C %f, k %f --> %s: %f\n', bestParam.C, bestParam.k, mObj.name, bestError);
 end
+```
 
+    Grid search to optimize Mean Zero Error for REDSVM
+    .................................................
+    Best Results REDSVM C 1.000000, k 0.010000 --> Mean Zero Error: 0.303571
+    Grid search to optimize Average Mean Absolute Error for REDSVM
+    .................................................
+    Best Results REDSVM C 10.000000, k 0.001000 --> Average Mean Absolute Error: 0.879355
+
+
+
+```octave
 if (exist ('OCTAVE_VERSION', 'builtin') > 0)
   fprintf('This type of graphic is not supported in Octave\n');
 else
@@ -474,22 +515,10 @@ else
     title('AMAE optimization for REDSVM');
 end
 end
-
-
-Grid search to optimize Mean Zero Error for REDSVM
-.................................................
-Best Results REDSVM C 1.000000, k 0.010000 --> Mean Zero Error: 0.303571
-Grid search to optimize Average Mean Absolute Error for REDSVM
-.................................................
-Best Results REDSVM C 10.000000, k 0.001000 --> Average Mean Absolute Error: 0.879355
-
-
-
 ```
 
-![REDSVM heatmap to show crossvalidation](tutorial/images/redsvm-melanoma-heatmap.png)
+    This type of graphic is not supported in Octave
 
-![REDSVM contourf to show crossvalidation](tutorial/images/redsvm-melanoma-contour.png)
 
 ## Kernel discriminant learning for ordinal regression (KDLOR)
 
@@ -503,8 +532,10 @@ You can use KDLOR with three different kernels (`rbf`, `sigmoid` or `linear`) an
 - Parameter `u`, constant summed to the main diagonal of the kernel matrix, aimed at avoiding singularities.
 
 Let try KDLOR in the melanoma dataset:
-```MATLAB
->> %% Apply the KDLOR model
+
+
+```octave
+%% Apply the KDLOR model
 % Create the KDLOR object
 algorithmObj = KDLOR('kernelType','rbf');
 
@@ -515,37 +546,48 @@ info = algorithmObj.fitpredict(train,test,struct('C',1,'k',0.001,'u',0.01));
 fprintf('KDLOR method\n---------------\n');
 fprintf('KDLOR Accuracy: %f\n', CCR.calculateMetric(test.targets,info.predictedTest));
 fprintf('KDLOR MAE: %f\n', MAE.calculateMetric(test.targets,info.predictedTest));
-KDLOR method
----------------
-KDLOR Accuracy: 0.607143
-KDLOR MAE: 0.517857
->> MS.calculateMetric(test.targets,info.predictedTest)
-
-ans =
-
-    0.2000
-
->> confusionmat(test.targets,info.predictedTest)
-
-ans =
-
-    25     4     2     0     0
-     2     3     1     0     0
-     2     4     2     0     2
-     0     1     2     3     0
-     0     0     0     2     1
-
 ```
+
+    KDLOR method
+    ---------------
+    KDLOR Accuracy: 0.607143
+    KDLOR MAE: 0.517857
+
+
+
+```octave
+MS.calculateMetric(test.targets,info.predictedTest)
+```
+
+    ans =  0.20000
+
+
+
+```octave
+confusionmat(test.targets,info.predictedTest)
+```
+
+    ans =
+    
+       25    4    2    0    0
+        2    3    1    0    0
+        2    4    2    0    2
+        0    1    2    3    0
+        0    0    0    2    1
+    
+
+
 as previously discussed, because of the way the thresholds are derived, this method is quite robust for minority classes.
 
 Let check it in the projections:
 
-```MATLAB
->> % Visualize the projection with colors
+
+```octave
+% Visualize the projection with colors
 figure; hold on;
 Q = size(info.model.thresholds,2)+1;
 for i=1:Q
-    h = histogram(info.projectedTest(test.targets==i),30);
+    hist(info.projectedTest(test.targets==i),30, 'FaceColor', palette{i});
 end
 y1=get(gca,'ylim');
 for i=1:size(info.model.thresholds,2)
@@ -556,7 +598,9 @@ legend(arrayfun(@(num) sprintf('C%d', num), 1:Q, 'UniformOutput', false))
 hold off;
 ```
 
-![Projection of KDLOR for the melanoma dataset](tutorial/images/KDLORProjectionMelanoma.png)
+
+![png](orca_tutorial_3_files/orca_tutorial_3_35_0.png)
+
 
 ---
 
@@ -570,9 +614,11 @@ Ordinal regression boosting (ORBoost) is a thresholded-ensemble model, which is 
 
 As proposed by the authors, the total number of ensemble members is set to `T=2000`, and normalised sigmoid functions are used as the base classifier, where the smoothness parameter is `gamma=4`. Large margin bounds of the classification error and the absolute error are derived, from which two algorithms are presented: ORBoost with all margins and ORBoost with left-right margins. The `weights` parameter in the constructor configures whether the All margins versions is used (`weights=true`) or the Left-Right margin is used (`weights=false`).
 
-This is the code for running ORBoost with the melanoma diagnosis dataset:
-```MATLAB
->> %% Apply the ORBoost model
+This is the code for running ORBoost with the melanoma diagnosis dataset (this will take some time):
+
+
+```octave
+%% Apply the ORBoost model
 % Create the ORBoost object
 algorithmObj = ORBoost('weights',true);
 
@@ -583,19 +629,22 @@ info = algorithmObj.fitpredict(train,test);
 fprintf('ORBoost method\n---------------\n');
 fprintf('ORBoost Accuracy: %f\n', CCR.calculateMetric(test.targets,info.predictedTest));
 fprintf('ORBoost MAE: %f\n', MAE.calculateMetric(test.targets,info.predictedTest));
-Entering ORBoost Training
-ORBoost method
----------------
-ORBoost Accuracy: 0.571429
-ORBoost MAE: 0.589286
 ```
+
+    Entering ORBoost Training
+    ORBoost method
+    ---------------
+    ORBoost Accuracy: 0.607143
+    ORBoost MAE: 0.553571
+
 
 ## Custom Ensemble based on several projections
 
 We can construct an ensemble by using the projection given by different models. In the following example, we combine the projections given by SVORIM and SVOREX method to construct a new dataset. With this dataset, we apply the POM algorithm:
 
-```MATLAB
->> %% Make an ensemble with SVORIM and SVOREX. The final decission by POM
+
+```octave
+%% Make an ensemble with SVORIM and SVOREX. The final decission by POM
 % Construct a new dataset with the projections
 newTrain.patterns = [svorexProjectionsTrain svorimProjectionsTrain];
 newTrain.targets = train.targets;
@@ -612,19 +661,24 @@ info = algorithmObj.fitpredict(newTrain,newTest);
 fprintf('SVORIM+SVOREX+POM method\n---------------\n');
 fprintf('SVORIM+SVOREX+POM Accuracy: %f\n', CCR.calculateMetric(test.targets,info.predictedTest));
 fprintf('SVORIM+SVOREX+POM MAE: %f\n', MAE.calculateMetric(test.targets,info.predictedTest))
-SVORIM+SVOREX+POM method
----------------
-SVORIM+SVOREX+POM Accuracy: 0.642857
-SVORIM+SVOREX+POM MAE: 0.500000
 ```
+
+    SVORIM+SVOREX+POM method
+    ---------------
+    SVORIM+SVOREX+POM Accuracy: 0.660714
+    SVORIM+SVOREX+POM MAE: 0.500000
+
 
 If we check the dataset used for POM:
-```MATLAB
->> scatter(newTrain.patterns(:,1),newTrain.patterns(:,2),7,newTrain.targets);
 
+
+```octave
+scatter(newTrain.patterns(:,1),newTrain.patterns(:,2),150,newTrain.targets, "filled");
 ```
 
-![Intermediate dataset of the custom ensemble](tutorial/images/ensembleMelanoma.png)
+
+![png](orca_tutorial_3_files/orca_tutorial_3_42_0.png)
+
 
 We can see that, although the correlation of both projections is quite high, some patterns can be refined by considering both projections.
 
@@ -647,3 +701,8 @@ We can see that, although the correlation of both projections is quite high, som
 1. H.-T. Lin and L. Li, "Reduction from cost-sensitive ordinal ranking to weighted binary classification" Neural Computation, vol. 24, no. 5, pp. 1329-1367, 2012. https://doi.org/10.1162/NECO_a_00265
 1. B.-Y. Sun, J. Li, D. D. Wu, X.-M. Zhang, and W.-B. Li, "Kernel discriminant learning for ordinal regression", IEEE Transactions on Knowledge and Data Engineering, vol. 22, no. 6, pp. 906-910, 2010. https://doi.org/10.1109/TKDE.2009.170
 1. H.-T. Lin and L. Li, "Large-margin thresholded ensembles for ordinal regression: Theory and practice", in Proc. of the 17th Algorithmic Learning Theory International Conference, ser. Lecture Notes in Artificial Intelligence (LNAI), J. L. Balcazar, P. M. Long, and F. Stephan, Eds., vol. 4264. Springer-Verlag, October 2006, pp. 319-333.
+
+
+```octave
+
+```
