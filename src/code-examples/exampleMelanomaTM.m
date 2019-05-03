@@ -1,5 +1,6 @@
 % Note: this code should be run from orca/src/code-examples
-addpath ../
+clear param;
+addpath ../Utils
 addpath ../Measures
 addpath ../Algorithms
 
@@ -36,7 +37,7 @@ test.targets = testMelanoma(:,end);
 algorithmObj = POM();
 
 % Train POM
-info = algorithmObj.runAlgorithm(train,test);
+info = algorithmObj.fitpredict(train,test);
 
 % Evaluate the model
 fprintf('POM method\n---------------\n');
@@ -109,7 +110,7 @@ hold off;
 algorithmObj = NNPOM();
 
 % Train NNPOM
-info = algorithmObj.runAlgorithm(train,test,struct('hiddenN',20,'iter',500,'lambda',0.1));
+info = algorithmObj.fitpredict(train,test,struct('hiddenN',20,'iter',500,'lambda',0.1));
 
 % Evaluate the model
 fprintf('NNPOM method\n---------------\n');
@@ -123,7 +124,7 @@ info.projectedTest
 algorithmObj = SVORIM();
 
 % Train SVORIM
-info = algorithmObj.runAlgorithm(train,test,struct('C',10,'k',0.001));
+info = algorithmObj.fitpredict(train,test,struct('C',10,'k',0.001));
 
 % Evaluate the model
 fprintf('SVORIM method\n---------------\n');
@@ -140,7 +141,7 @@ svorimThresholds = info.model.thresholds;
 algorithmObj = SVOREX();
 
 % Train SVOREX
-info = algorithmObj.runAlgorithm(train,test,struct('C',10,'k',0.001));
+info = algorithmObj.fitpredict(train,test,struct('C',10,'k',0.001));
 
 % Evaluate the model
 fprintf('SVOREX methodt\n---------------\n');
@@ -175,7 +176,7 @@ hold off;
 algorithmObj = SVORIM();
 
 % Train SVORIM
-info = algorithmObj.runAlgorithm(train,test,struct('C',500,'k',0.001));
+info = algorithmObj.fitpredict(train,test,struct('C',500,'k',0.001));
 
 % Evaluate the model
 fprintf('SVORIM method improved\n---------------\n');
@@ -187,7 +188,7 @@ fprintf('SVORIM MAE: %f\n', MAE.calculateMetric(test.targets,info.predictedTest)
 algorithmObj = REDSVM();
 
 % Train REDSVM
-info = algorithmObj.runAlgorithm(train,test,struct('C',10,'k',0.001));
+info = algorithmObj.fitpredict(train,test,struct('C',10,'k',0.001));
 
 % Evaluate the model
 fprintf('REDSVM method\n---------------\n');
@@ -195,7 +196,7 @@ fprintf('REDSVM Accuracy: %f\n', CCR.calculateMetric(test.targets,info.predicted
 fprintf('REDSVM MAE: %f\n', MAE.calculateMetric(test.targets,info.predictedTest));
 
 %% REDSVM optimization
-clear T Ts;
+clear param T Ts;
 
 Metrics = {@MZE,@AMAE};
 setC = 10.^(-3:1:3);
@@ -203,6 +204,11 @@ setk = 10.^(-3:1:3);
 % TODO: fix for Octave since table() is not supported
 Ts = cell(size(Metrics,2),1);
 nFolds = 3;
+
+if (exist ('OCTAVE_VERSION', 'builtin') > 0)
+  pkg load statistics
+end
+
 CVO = cvpartition(train.targets,'KFold',nFolds);
 for m = 1:size(Metrics,2)
     mObj = Metrics{m}();
@@ -216,7 +222,7 @@ for m = 1:size(Metrics,2)
             error=0;
             for ff = 1:nFolds
                 param = struct('C',C,'k',k);
-                info = algorithmObj.runAlgorithm(train,test,param);
+                info = algorithmObj.fitpredict(train,test,param);
                 error = error + mObj.calculateMetric(test.targets,info.predictedTest);
 
             end
@@ -280,7 +286,7 @@ end
 algorithmObj = KDLOR('kernelType','rbf');
 
 % Train KDLOR
-info = algorithmObj.runAlgorithm(train,test,struct('C',1,'k',0.001,'u',0.01));
+info = algorithmObj.fitpredict(train,test,struct('C',1,'k',0.001,'u',0.01));
 
 % Evaluate the model
 fprintf('KDLOR method\n---------------\n');
@@ -318,7 +324,7 @@ hold off;
 algorithmObj = ORBoost('weights',true);
 
 % Train ORBoost
-info = algorithmObj.runAlgorithm(train,test);
+info = algorithmObj.fitpredict(train,test);
 
 % Evaluate the model
 fprintf('ORBoost method\n---------------\n');
@@ -342,7 +348,7 @@ newTest.targets = train.targets;
 [newTrain,newTest] = DataSet.deleteNonNumericValues(newTrain,newTest);
 % Train the final POM model
 algorithmObj = POM();
-info = algorithmObj.runAlgorithm(newTrain,newTest);
+info = algorithmObj.fitpredict(newTrain,newTest);
 % Evaluate the ensemble
 fprintf('SVORIM+SVOREX+POM method\n---------------\n');
 fprintf('SVORIM+SVOREX+POM Accuracy: %f\n', CCR.calculateMetric(test.targets,info.predictedTest));

@@ -1,4 +1,5 @@
 % Note: this code should be run from orca/src/code-examples
+clear param;
 if (exist ('OCTAVE_VERSION', 'builtin') > 0)
   pkg load statistics
 end

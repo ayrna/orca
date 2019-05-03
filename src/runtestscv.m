@@ -24,6 +24,7 @@
 % Utilities.runExperiments('tests/cvtests-30-holdout/<script>')
 %
 
+addpath Utils
 % Fast test
 tests_dir = 'tests/cvtests-1-holdout';
 % Long test

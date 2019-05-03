@@ -92,7 +92,7 @@ In the following code, we try to improve the results by considering standardizat
 
 
 ```octave
-addpath('../src/');
+addpath('../src/Utils/');
 [trainStandarized,testStandarized] = DataSet.standarizeData(train,test);
 disp('Some patterns before standarizing')
 train.patterns(1:10,2:5)
@@ -669,13 +669,19 @@ C = 10.^(-2:1:2)
 k = 10.^(-2:1:2)
 e = 10.^(-3:1:0)
 ```
-In this way, we will obtain the results for the 10 partitions. This `ini` file can be run by using the following code (to be run from the `src` folder):
+In this way, we will obtain the results for the 10 partitions. This `ini` file can be run by using the following code (to be run from the `doc` folder):
 
 
 ```octave
-Utilities.runExperiments('../doc/tutorial/config-files/svrMelanomafs.ini')
+Utilities.runExperiments('tutorial/config-files/svrMelanomafs.ini')
 ```
 
+    warning: addpath: /home/javier/Documentos/uco/SVNAYRNA/orca/src/Utils/Measures: No such file or directory
+    warning: called from
+        runExperiments at line 55 column 13
+    warning: addpath: /home/javier/Documentos/uco/SVNAYRNA/orca/src/Utils/Algorithms: No such file or directory
+    warning: called from
+        runExperiments at line 56 column 13
     Setting up experiments...
     Running experiment exp-svr-mae-tutorial-melanoma-melanoma-5classes-abcd-100-fs-1.ini
     Running experiment exp-svr-mae-tutorial-melanoma-melanoma-5classes-abcd-100-fs-10.ini
@@ -688,9 +694,41 @@ Utilities.runExperiments('../doc/tutorial/config-files/svrMelanomafs.ini')
     Running experiment exp-svr-mae-tutorial-melanoma-melanoma-5classes-abcd-100-fs-8.ini
     Running experiment exp-svr-mae-tutorial-melanoma-melanoma-5classes-abcd-100-fs-9.ini
     Calculating results...
-    Experiments/exp-2019-4-30-9-57-32/Results/melanoma-5classes-abcd-100-fs-svr-mae-tutorial-melanoma/dataset
-    Experiments/exp-2019-4-30-9-57-32/Results/melanoma-5classes-abcd-100-fs-svr-mae-tutorial-melanoma/dataset
-    ans = Experiments/exp-2019-4-30-9-57-32
+    warning: addpath: /home/javier/Documentos/uco/SVNAYRNA/orca/src/Utils/Measures: No such file or directory
+    warning: called from
+        results at line 141 column 13
+        runExperiments at line 98 column 13
+    warning: addpath: /home/javier/Documentos/uco/SVNAYRNA/orca/src/Utils/Algorithms: No such file or directory
+    warning: called from
+        results at line 142 column 13
+        runExperiments at line 98 column 13
+    Experiments/exp-2019-5-3-14-30-25/Results/melanoma-5classes-abcd-100-fs-svr-mae-tutorial-melanoma/dataset
+    warning: rmpath: /home/javier/Documentos/uco/SVNAYRNA/orca/src/Utils/Measures: not found
+    warning: called from
+        results at line 380 column 13
+        runExperiments at line 98 column 13
+    warning: rmpath: /home/javier/Documentos/uco/SVNAYRNA/orca/src/Utils/Algorithms: not found
+    warning: called from
+        results at line 381 column 13
+        runExperiments at line 98 column 13
+    warning: addpath: /home/javier/Documentos/uco/SVNAYRNA/orca/src/Utils/Measures: No such file or directory
+    warning: called from
+        results at line 141 column 13
+        runExperiments at line 100 column 13
+    warning: addpath: /home/javier/Documentos/uco/SVNAYRNA/orca/src/Utils/Algorithms: No such file or directory
+    warning: called from
+        results at line 142 column 13
+        runExperiments at line 100 column 13
+    Experiments/exp-2019-5-3-14-30-25/Results/melanoma-5classes-abcd-100-fs-svr-mae-tutorial-melanoma/dataset
+    warning: rmpath: /home/javier/Documentos/uco/SVNAYRNA/orca/src/Utils/Measures: not found
+    warning: called from
+        results at line 380 column 13
+        runExperiments at line 100 column 13
+    warning: rmpath: /home/javier/Documentos/uco/SVNAYRNA/orca/src/Utils/Algorithms: not found
+    warning: called from
+        results at line 381 column 13
+        runExperiments at line 100 column 13
+    ans = Experiments/exp-2019-5-3-14-30-25
 
 
 Note that the number of experiments is crucial, so the execution can take a considerable amount of time. To accelerate the experiments you can use multiple cores of your CPU with `Utilities.runExperiments('experiments.ini','parallel', true)` (see this [page](orca-parallel.md)).

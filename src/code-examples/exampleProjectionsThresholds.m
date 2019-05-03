@@ -1,5 +1,7 @@
 % Note: this code should be run from orca/src/code-examples
 addpath ../Algorithms/
+addpath ../Measures/
+addpath ../Utils/
 
 % Load the different partitions of the dataset
 load ../../exampledata/1-holdout/toy/matlab/train_toy.0
@@ -21,7 +23,7 @@ param.u = 0.001;
 
 
 % Run algorithm
-info1 = kdlorAlgorithm.runAlgorithm(train,test,param);
+info1 = kdlorAlgorithm.fitpredict(train,test,param);
 amaeTest1 = AMAE.calculateMetric(test.targets,info1.predictedTest);
 % Build legend text
 msg{1} = sprintf('KDLOR k=%f. AMAE=%f', param.k, amaeTest1);
