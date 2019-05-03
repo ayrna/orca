@@ -1,5 +1,5 @@
-% This script builds ORCA for Octave/MATLAB. The script check dependencies and 
-% install required Octave packages if needed. In MATLAB, it looks for 
+% This script builds ORCA for Octave/MATLAB. The script check dependencies and
+% install required Octave packages if needed. In MATLAB, it looks for
 % toolboxes.
 % The script runs basic tests after installation.%
 
@@ -26,6 +26,7 @@ disp('== Compile C/C++ source... ==')
 cd src/Algorithms
 make
 make clean
+cd ..
 cd ..
 
 disp('== Run basic tests... == ')
