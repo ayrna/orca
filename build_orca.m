@@ -30,5 +30,5 @@ cd ..
 
 disp('== Run basic tests... == ')
 
-runtestssingle
+runtests_single
 cd ..

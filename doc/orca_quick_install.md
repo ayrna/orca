@@ -65,7 +65,7 @@ The way to run the tests checking the API (see [single test scripts](../src/test
 
 ```MATLAB
 >> cd src/
->> runtestssingle
+>> runtests_single
 ...
 .........................
 Performing test for SVORLin

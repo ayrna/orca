@@ -1,5 +1,5 @@
 #!/bin/bash
-## runtestssingle.m is already tested in install_octave.m and install_matlab.m
+## runtests_single.m is already tested in install_octave.m and install_matlab.m
 ## Test notebooks
 
 FILES=*.ipynb
