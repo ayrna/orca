@@ -2,13 +2,12 @@
 
 - [Installing ORCA](#installing-orca)
 	- [Installation requirements](#installation-requirements)
-	- [Download ORCA](#download-orca)
+	- [Download and install ORCA](#download-and-install-orca)
 	- [Binaries](#binaries)
-	- [Compilation of `mex` files from the MATLAB/Octave console (RECOMMENDED)](#compilation-of-mex-files-from-the-matlaboctave-console-recommended)
 	- [Compilation of `mex` files from system shell](#compilation-of-mex-files-from-system-shell)
 	- [Installation testing](#installation-testing)
+	- [Use ORCA as a toolbox](#use-orca-as-a-toolbox)
 
-<!-- /TOC -->
 
 # Installing ORCA
 
@@ -49,20 +48,6 @@ $ octave-cli build_orca.m
 ## Binaries
 
 We provide binary files for several platforms (Debian based and CentOS GNU/Linux and Windows). The compressed files include the git files, so git pull should work. Binaries can be downloaded in the [release page](https://github.com/ayrna/orca/releases).
-
-## Compilation of `mex` files from the MATLAB/Octave console (RECOMMENDED)
-
-ORCA is programmed in MATLAB, but many of the classification algorithms are implemented in C/C++. Because of this, these methods have to be compiled and/or packaged into the corresponding `mex` files.
-
-In Windows and GNU/Linux, you can build ORCA directly **from the MATLAB/Octave console**. Just enter in the `scr` directory and type `make`.
-```MATLAB
->> cd src/Algorithms
->> make
-```
-After building, you can clean the objects files with `make clean`:
-```MATLAB
->> make clean
-```
 
 ## Compilation of `mex` files from system shell
 
@@ -110,3 +95,29 @@ All tests ended successfully
 ```
 
 If any of these tests fail, please read the [detailed installation guide](orca_install.md).
+
+## Use ORCA as a toolbox
+
+The first of three tutorials cvers the basic use of ORCA as a toolbox but also as an experimental framework: *'how to' tutorial* ([HTML](doc/orca_tutorial_1.html), [Jupyter Notebook](doc/orca_tutorial_1.ipynb), [MD](doc/orca_tutorial_1.md)).
+
+For instance, to use ORCA as a toolbox:
+
+```MATLAB
+% Create an Algorithm object
+addpath('src/Algorithms/')
+kdlorAlgorithm = KDLOR();
+% Load dataset
+load exampledata/1-holdout/toy/matlab/train_toy.0
+load exampledata/1-holdout/toy/matlab/test_toy.0
+train.patterns = train_toy(:,1:(size(train_toy,2)-1));
+train.targets = train_toy(:,size(train_toy,2));
+test.patterns = test_toy(:,1:(size(test_toy,2)-1));
+test.targets = test_toy(:,size(test_toy,2));
+% Fit the model and predict with test data
+info = kdlorAlgorithm.fitpredict(train,test);
+
+% You can evaluate performance with ordinal metrics:
+addpath('src/Measures/')
+CCR.calculateMetric(info.predictedTest,test.targets)
+MAE.calculateMetric(info.predictedTest,test.targets)
+```
