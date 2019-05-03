@@ -7,7 +7,7 @@ First, you will need to install the framework. To do so, please visit [ORCA Quic
 
 This tutorial uses tree small datasets (`pasture`, `tae`, `toy`) contained in folder [example data](../exampledata/30-holdout). The datasets are already partitioned with a 30-holdout experimental design.
 
-This tutorial is prepared for running the experiments in Matlab, although it should be easily adapted to Octave. 
+This tutorial has been tested in Octave 4.2 and 4.4, but it should work with minor changes in Matlab. 
 
 *NOTE:*
 
