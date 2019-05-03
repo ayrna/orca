@@ -33,7 +33,7 @@ In Windows, we recommend compiling `mex` files from Octave/MATLAB console.
 Default Octave installation provides `mex` command pre-configured with `MinGW`.
 
 1. Inside Octave's console, run `make` in folder `src\Algorithms`
-1. From `src` run `runtestssingle` to check the installation.
+1. From `src` run `runtests_single` to check the installation.
 
 ### Building `mex` files in Windows for Matlab
 
@@ -41,7 +41,7 @@ Default Octave installation provides `mex` command pre-configured with `MinGW`.
 and install [MinGW](http://es.mathworks.com/help/matlab/matlab_external/install-mingw-support-package.html).
 1. Test [basic C example](https://es.mathworks.com/matlabcentral/fileexchange/52848-matlab-support-for-mingw-w64-c-c++-compiler) to ensure `mex` is properly working.
 1. From the MATLAB's console, run `make` in `src\Algorithms`.
-1. Then run `runtestssingle` in `src` to check the instalation.
+1. Then run `runtests_single` in `src` to check the instalation.
 
 We provide binaries and *dlls* for 'ORBoost', because building this method in Windows can be very *complex*. Make will unpack all the binary files. If you need to compile your own binaries, these are the steps:
 

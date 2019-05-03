@@ -45,7 +45,7 @@ warning('off','all');
 
 addpath('../src/Algorithms/')
 addpath('../src/Measures/')
-addpath('../src/')
+addpath('../src/Utils/')
 
 ```
 
@@ -151,13 +151,13 @@ Utilities.runExperiments('tutorial/config-files/pom.ini')
     Running experiment exp-pom-tutorial-toy-8.ini
     Running experiment exp-pom-tutorial-toy-9.ini
     Calculating results...
-    Experiments/exp-2019-4-30-9-53-17/Results/pasture-pom-tutorial/dataset
-    Experiments/exp-2019-4-30-9-53-17/Results/tae-pom-tutorial/dataset
-    Experiments/exp-2019-4-30-9-53-17/Results/toy-pom-tutorial/dataset
-    Experiments/exp-2019-4-30-9-53-17/Results/pasture-pom-tutorial/dataset
-    Experiments/exp-2019-4-30-9-53-17/Results/tae-pom-tutorial/dataset
-    Experiments/exp-2019-4-30-9-53-17/Results/toy-pom-tutorial/dataset
-    ans = Experiments/exp-2019-4-30-9-53-17
+    Experiments/exp-2019-5-3-14-17-30/Results/pasture-pom-tutorial/dataset
+    Experiments/exp-2019-5-3-14-17-30/Results/tae-pom-tutorial/dataset
+    Experiments/exp-2019-5-3-14-17-30/Results/toy-pom-tutorial/dataset
+    Experiments/exp-2019-5-3-14-17-30/Results/pasture-pom-tutorial/dataset
+    Experiments/exp-2019-5-3-14-17-30/Results/tae-pom-tutorial/dataset
+    Experiments/exp-2019-5-3-14-17-30/Results/toy-pom-tutorial/dataset
+    ans = Experiments/exp-2019-5-3-14-17-30
 
 
 As can be observed, ORCA analyses all the files included in the folder of the dataset, where training and test partitions are included (a pair of files `train_dataset.X` and `test_dataset.X` for each dataset, where `X` is the number of partition). For each partition, a model is trained on training data and tested on test data.
@@ -182,13 +182,13 @@ Utilities.runExperiments('tutorial/config-files/svc1v1-3holdout.ini')
     Running experiment exp-svorim-mae-tutorial-toy-2.ini
     Running experiment exp-svorim-mae-tutorial-toy-3.ini
     Calculating results...
-    Experiments/exp-2019-4-30-9-53-29/Results/pasture-svorim-mae-tutorial/dataset
-    Experiments/exp-2019-4-30-9-53-29/Results/tae-svorim-mae-tutorial/dataset
-    Experiments/exp-2019-4-30-9-53-29/Results/toy-svorim-mae-tutorial/dataset
-    Experiments/exp-2019-4-30-9-53-29/Results/pasture-svorim-mae-tutorial/dataset
-    Experiments/exp-2019-4-30-9-53-29/Results/tae-svorim-mae-tutorial/dataset
-    Experiments/exp-2019-4-30-9-53-29/Results/toy-svorim-mae-tutorial/dataset
-    ans = Experiments/exp-2019-4-30-9-53-29
+    Experiments/exp-2019-5-3-14-17-58/Results/pasture-svorim-mae-tutorial/dataset
+    Experiments/exp-2019-5-3-14-17-58/Results/tae-svorim-mae-tutorial/dataset
+    Experiments/exp-2019-5-3-14-17-58/Results/toy-svorim-mae-tutorial/dataset
+    Experiments/exp-2019-5-3-14-17-58/Results/pasture-svorim-mae-tutorial/dataset
+    Experiments/exp-2019-5-3-14-17-58/Results/tae-svorim-mae-tutorial/dataset
+    Experiments/exp-2019-5-3-14-17-58/Results/toy-svorim-mae-tutorial/dataset
+    ans = Experiments/exp-2019-5-3-14-17-58
     Setting up experiments...
     Running experiment exp-svc1v1-mae-tutorial-pasture-1.ini
     Running experiment exp-svc1v1-mae-tutorial-pasture-2.ini
@@ -200,13 +200,13 @@ Utilities.runExperiments('tutorial/config-files/svc1v1-3holdout.ini')
     Running experiment exp-svc1v1-mae-tutorial-toy-2.ini
     Running experiment exp-svc1v1-mae-tutorial-toy-3.ini
     Calculating results...
-    Experiments/exp-2019-4-30-9-53-35/Results/pasture-svc1v1-mae-tutorial/dataset
-    Experiments/exp-2019-4-30-9-53-35/Results/tae-svc1v1-mae-tutorial/dataset
-    Experiments/exp-2019-4-30-9-53-35/Results/toy-svc1v1-mae-tutorial/dataset
-    Experiments/exp-2019-4-30-9-53-35/Results/pasture-svc1v1-mae-tutorial/dataset
-    Experiments/exp-2019-4-30-9-53-35/Results/tae-svc1v1-mae-tutorial/dataset
-    Experiments/exp-2019-4-30-9-53-35/Results/toy-svc1v1-mae-tutorial/dataset
-    ans = Experiments/exp-2019-4-30-9-53-35
+    Experiments/exp-2019-5-3-14-18-10/Results/pasture-svc1v1-mae-tutorial/dataset
+    Experiments/exp-2019-5-3-14-18-10/Results/tae-svc1v1-mae-tutorial/dataset
+    Experiments/exp-2019-5-3-14-18-10/Results/toy-svc1v1-mae-tutorial/dataset
+    Experiments/exp-2019-5-3-14-18-10/Results/pasture-svc1v1-mae-tutorial/dataset
+    Experiments/exp-2019-5-3-14-18-10/Results/tae-svc1v1-mae-tutorial/dataset
+    Experiments/exp-2019-5-3-14-18-10/Results/toy-svc1v1-mae-tutorial/dataset
+    ans = Experiments/exp-2019-5-3-14-18-10
 
 
 Once the experiments are finished, the corresponding results can be found in the `Experiments` subfolder, as described in the [corresponding section](#Experimental-results-and-reports) of this tutorial.
@@ -246,16 +246,17 @@ SVC1V1 results ([download CSV](tutorial/reference-results/svc1v1-mean-results_te
 ---
 
 Finally, you can plot a bar plot to graphically compare the performance of the methods. Let's analyse for that the `toy` dataset. This is a synthetic dataset proposed by Herbrich et al. in their paper "Support vector learning for ordinal regression" (1997):
+
 ![Synthetic toy dataset](tutorial/images/toy.png)
 
-The following code (to be run from the `src` folder) plots the figure below:
+The following code plots the figure below:
 
 
 ```octave
 pkg load dataframe
-pomT = dataframe('../doc/tutorial/reference-results/pom-mean-results_test.csv');
-svorimT = dataframe('../doc/tutorial/reference-results/svorim-mean-results_test.csv');
-svc1v1T = dataframe('../doc/tutorial/reference-results/svc1v1-mean-results_test.csv');
+pomT = dataframe('tutorial/reference-results/pom-mean-results_test.csv');
+svorimT = dataframe('tutorial/reference-results/svorim-mean-results_test.csv');
+svc1v1T = dataframe('tutorial/reference-results/svc1v1-mean-results_test.csv');
 datasets = {'pasture','tae','toy'};
 
 bar([pomT.MeanAMAE svorimT.MeanAMAE svc1v1T.MeanAMAE])
@@ -528,5 +529,5 @@ The corresponding script ([exampleKDLOR.m](../src/code-examples/exampleKDLOR.m))
 ```octave
 rmpath('../src/Measures')
 rmpath('../src/Algorithms')
-rmpath('../src/')
+rmpath('../src/Utils/')
 ```

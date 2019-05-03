@@ -12,31 +12,17 @@
 % other examples
 %
 clear;
-addpath Algorithms
-addpath Measures
-addpath Utils
 
-tests_dir = ['tests' filesep 'singletests'];
-eval(['addpath ' tests_dir])
-
-files = dir([tests_dir filesep '*.m']);
-
-% Load the different partitions of the dataset
-load ../exampledata/1-holdout/toy/matlab/train_toy.0
-load ../exampledata/1-holdout/toy/matlab/test_toy.0
-
-% "patterns" refers to the input variables and targets to the output one
-train.patterns = train_toy(:,1:end-1);
-train.targets = train_toy(:,end);
-test.patterns = test_toy(:,1:end-1);
-test.targets = test_toy(:,end);
+tests_dir = ['code-examples'];
+eval(['cd  ' tests_dir])
+files = dir('example*.m');
 
 for i=1:length(files)
     % Clear (almost) all the variables to avoid issues with some mex files in Octave +4.2.2
     if (exist ('OCTAVE_VERSION', 'builtin') > 0)
-      clear -x tests_dir files i train test
+      clear -x tests_dir files i
     else
-		  clearvars -except tests_dir files i train test
+      clearvars -except tests_dir files i
     end
     fprintf('==============================================\n');
     cmd = files(i).name;
@@ -51,4 +37,4 @@ fprintf('\nAll tests ended successfully\n')
 rmpath Algorithms
 rmpath Measures
 rmpath Utils
-eval(['rmpath ' tests_dir])
+cd ..

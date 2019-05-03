@@ -27,8 +27,8 @@ cd src/Algorithms
 make
 make clean
 cd ..
-cd ..
 
 disp('== Run basic tests... == ')
 
-runtestssingle
+runtests_single
+cd ..

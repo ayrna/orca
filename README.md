@@ -121,7 +121,7 @@ The [measures](src/Measures) folder contains the MATLAB classes for the metrics 
 - [DataSet.m](src/DataSet.m): Class for data preprocessing.
 - [Experiment.m](src/Experiment.m): Class that runs the different experiments.
 - [Utilities.m](src/Utilities.m): Class that pre-process the experiment files, run the different algorithms and produces the results.
-- [runtestssingle.m](src/runtestssingle.m): Script to run all the methods using the ORCA API. Reference performance is compared with toy dataset in order to check that the installation is correct.
+- [runtests_single.m](src/runtests_single.m): Script to run all the methods using the ORCA API. Reference performance is compared with toy dataset in order to check that the installation is correct.
 - [runtestscv.m](src/runtestscv.m): This script runs full experiment tests using the ORCA configuration files to describe experiments.
 
 # Datasets

@@ -1,7 +1,8 @@
 % Note: this code should be run from orca/src/code-examples
+clear param;
 addpath ../Algorithms/
 addpath ../Measures/
-addpath ../
+addpath ../Utils/
 
 % Load the different partitions of the dataset
 load ../../exampledata/1-holdout/toy/matlab/train_toy.0

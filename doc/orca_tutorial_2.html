@@ -13331,7 +13331,7 @@ ans =  0.51786
 <div class="prompt input_prompt">In&nbsp;[5]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-octave"><pre><span></span><span class="nb">addpath</span><span class="p">(</span><span class="s">&#39;../src/&#39;</span><span class="p">);</span>
+<div class=" highlight hl-octave"><pre><span></span><span class="nb">addpath</span><span class="p">(</span><span class="s">&#39;../src/Utils/&#39;</span><span class="p">);</span>
 <span class="p">[</span><span class="n">trainStandarized</span><span class="p">,</span><span class="n">testStandarized</span><span class="p">]</span> <span class="p">=</span> <span class="n">DataSet</span><span class="p">.</span><span class="n">standarizeData</span><span class="p">(</span><span class="n">train</span><span class="p">,</span><span class="nb">test</span><span class="p">);</span>
 <span class="nb">disp</span><span class="p">(</span><span class="s">&#39;Some patterns before standarizing&#39;</span><span class="p">)</span>
 <span class="n">train</span><span class="p">.</span><span class="n">patterns</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="mi">10</span><span class="p">,</span><span class="mi">2</span><span class="p">:</span><span class="mi">5</span><span class="p">)</span>
@@ -14081,7 +14081,7 @@ Best Results SVR C 10.000000, k 0.001000, e 0.010000 --&gt; Accuracy: 0.678571
 <span class="na">k</span> <span class="o">=</span> <span class="s">10.^(-2:1:2)</span>
 <span class="na">e</span> <span class="o">=</span> <span class="s">10.^(-3:1:0)</span>
 </pre></div>
-<p>In this way, we will obtain the results for the 10 partitions. This <code>ini</code> file can be run by using the following code (to be run from the <code>src</code> folder):</p>
+<p>In this way, we will obtain the results for the 10 partitions. This <code>ini</code> file can be run by using the following code (to be run from the <code>doc</code> folder):</p>
 
 </div>
 </div>
@@ -14091,7 +14091,7 @@ Best Results SVR C 10.000000, k 0.001000, e 0.010000 --&gt; Accuracy: 0.678571
 <div class="prompt input_prompt">In&nbsp;[12]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-octave"><pre><span></span><span class="n">Utilities</span><span class="p">.</span><span class="n">runExperiments</span><span class="p">(</span><span class="s">&#39;../doc/tutorial/config-files/svrMelanomafs.ini&#39;</span><span class="p">)</span>
+<div class=" highlight hl-octave"><pre><span></span><span class="n">Utilities</span><span class="p">.</span><span class="n">runExperiments</span><span class="p">(</span><span class="s">&#39;tutorial/config-files/svrMelanomafs.ini&#39;</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -14108,7 +14108,13 @@ Best Results SVR C 10.000000, k 0.001000, e 0.010000 --&gt; Accuracy: 0.678571
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>Setting up experiments...
+<pre>warning: addpath: /home/javier/Documentos/uco/SVNAYRNA/orca/src/Utils/Measures: No such file or directory
+warning: called from
+    runExperiments at line 55 column 13
+warning: addpath: /home/javier/Documentos/uco/SVNAYRNA/orca/src/Utils/Algorithms: No such file or directory
+warning: called from
+    runExperiments at line 56 column 13
+Setting up experiments...
 Running experiment exp-svr-mae-tutorial-melanoma-melanoma-5classes-abcd-100-fs-1.ini
 Running experiment exp-svr-mae-tutorial-melanoma-melanoma-5classes-abcd-100-fs-10.ini
 Running experiment exp-svr-mae-tutorial-melanoma-melanoma-5classes-abcd-100-fs-2.ini
@@ -14120,9 +14126,41 @@ Running experiment exp-svr-mae-tutorial-melanoma-melanoma-5classes-abcd-100-fs-7
 Running experiment exp-svr-mae-tutorial-melanoma-melanoma-5classes-abcd-100-fs-8.ini
 Running experiment exp-svr-mae-tutorial-melanoma-melanoma-5classes-abcd-100-fs-9.ini
 Calculating results...
-Experiments/exp-2019-4-29-22-44-37/Results/melanoma-5classes-abcd-100-fs-svr-mae-tutorial-melanoma/dataset
-Experiments/exp-2019-4-29-22-44-37/Results/melanoma-5classes-abcd-100-fs-svr-mae-tutorial-melanoma/dataset
-ans = Experiments/exp-2019-4-29-22-44-37
+warning: addpath: /home/javier/Documentos/uco/SVNAYRNA/orca/src/Utils/Measures: No such file or directory
+warning: called from
+    results at line 141 column 13
+    runExperiments at line 98 column 13
+warning: addpath: /home/javier/Documentos/uco/SVNAYRNA/orca/src/Utils/Algorithms: No such file or directory
+warning: called from
+    results at line 142 column 13
+    runExperiments at line 98 column 13
+Experiments/exp-2019-5-3-14-30-35/Results/melanoma-5classes-abcd-100-fs-svr-mae-tutorial-melanoma/dataset
+warning: rmpath: /home/javier/Documentos/uco/SVNAYRNA/orca/src/Utils/Measures: not found
+warning: called from
+    results at line 380 column 13
+    runExperiments at line 98 column 13
+warning: rmpath: /home/javier/Documentos/uco/SVNAYRNA/orca/src/Utils/Algorithms: not found
+warning: called from
+    results at line 381 column 13
+    runExperiments at line 98 column 13
+warning: addpath: /home/javier/Documentos/uco/SVNAYRNA/orca/src/Utils/Measures: No such file or directory
+warning: called from
+    results at line 141 column 13
+    runExperiments at line 100 column 13
+warning: addpath: /home/javier/Documentos/uco/SVNAYRNA/orca/src/Utils/Algorithms: No such file or directory
+warning: called from
+    results at line 142 column 13
+    runExperiments at line 100 column 13
+Experiments/exp-2019-5-3-14-30-35/Results/melanoma-5classes-abcd-100-fs-svr-mae-tutorial-melanoma/dataset
+warning: rmpath: /home/javier/Documentos/uco/SVNAYRNA/orca/src/Utils/Measures: not found
+warning: called from
+    results at line 380 column 13
+    runExperiments at line 100 column 13
+warning: rmpath: /home/javier/Documentos/uco/SVNAYRNA/orca/src/Utils/Algorithms: not found
+warning: called from
+    results at line 381 column 13
+    runExperiments at line 100 column 13
+ans = Experiments/exp-2019-5-3-14-30-35
 </pre>
 </div>
 </div>

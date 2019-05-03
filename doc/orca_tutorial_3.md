@@ -29,7 +29,7 @@ We can try the POM model using the melanoma dataset to check its performance. Th
 ```octave
 addpath('../src/Measures')
 addpath('../src/Algorithms')
-addpath('../src')
+addpath('../src/Utils')
 
 % Disable warnings
 % MATLAB warnings
@@ -213,8 +213,8 @@ fprintf('NNPOM MAE: %f\n', MAE.calculateMetric(test.targets,info.predictedTest))
 
     NNPOM method
     ---------------
-    NNPOM Accuracy: 0.571429
-    NNPOM MAE: 0.625000
+    NNPOM Accuracy: 0.607143
+    NNPOM MAE: 0.553571
 
 
 The source code of NNPOM clearly shows how the prediction is performed, which clarify a lot the model:
@@ -247,7 +247,7 @@ info.model.thresholds
 
     ans =
     
-       -0.17135    6.39835   14.21751   21.95202
+       -0.58276    6.14451   13.99427   21.64398
     
 
 
@@ -258,16 +258,16 @@ info.projectedTest(1:10)
 
     ans =
     
-      -11.52673
-      -13.68463
-      -13.39112
-      -15.80110
-       -6.81897
-      -13.47581
-       -2.80771
-       -0.24213
-        4.47635
-      -21.01269
+      -11.55402
+      -14.51841
+       -5.94913
+      -15.92422
+       -5.39251
+      -10.05063
+       -7.36761
+       -0.85558
+        8.09372
+      -21.15447
     
 
 
