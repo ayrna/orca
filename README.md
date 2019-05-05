@@ -85,10 +85,10 @@ The [Algorithms](src/Algorithms) folder includes the MATLAB classes for the algo
   - [POM](src/Algorithms/POM.m) [6]: Extension of the linear binary Logistic Regression methodology to Ordinal Classification by means of Cumulative Link Functions.
   - [SVOREX](src/Algorithms/SVOREX.m) [7]: Ordinal formulation of the SVM paradigm, which computes discriminant parallel hyperplanes for the data and a set of thresholds by imposing explicit constraints in the optimization problem.
   - [SVORIM](src/Algorithms/SVORIM.m) [7]: Ordinal formulation of the SVM paradigm, which computes discriminant parallel hyperplanes for the data and a set of thresholds by imposing implicit constraints in the optimization problem.
-  - [SVORLin](src/Algorithms/SVORLin.m) [7]: Linear version of the SVORIM method (considering a linear kernel instead of the Gaussian one) to check how the kernel trick affects the final performance (SVORLin).
+  - [SVORLin](src/Algorithms/SVORLin.m) [7]: Linear version of the SVORIM method (considering a linear kernel instead of the Gaussian one) to check how the kernel trick affects the final performance.
   - [KDLOR](src/Algorithms/KDLOR.m) [8]: Reformulation of the well-known Kernel Discriminant Analysis for Ordinal Regression by imposing an order constraint in the projected classes.
   - [NNPOM](src/Algorithms/NNPOM.m) [6,9]: Neural Network based on Proportional Odd Model (NNPOM), implementing a neural network model for ordinal regression. The model has one hidden layer and one output layer with only one neuron but as many thresholds as the number of classes minus one. The standard POM model is applied in this neuron to provide probabilistic outputs.
-  - [NNOP](src/Algorithms/NNOP.m) [10]: Neural Network with Ordered Partitions (NNOP), this model considers the OrderedPartitions coding scheme for the labels and a rule for decisions based on the first node whose output is higher than a predefined threshold (T=0.5). The model has one hidden layer and one outputlayer with as many neurons as the number of classes minus one.
+  - [NNOP](src/Algorithms/NNOP.m) [10]: Neural Network with Ordered Partitions (NNOP), this model considers the OrderedPartitions coding scheme for the labels and a rule for decisions based on the first node whose output is higher than a predefined threshold (T=0.5). The model has one hidden layer and one output layer with as many neurons as the number of classes minus one.
   - [REDSVM](src/Algorithms/REDSVM.m) [11]: Augmented Binary Classification framework that solves the Ordinal Regression problem by a single binary model (SVM is applied in this case).
   - [ORBoost](src/Algorithms/ORBoost.m) [12]: This is an ensemble model based on the threshold model structure, where normalised sigmoid functions are used as the base classifier. The *weights* parameter configures whether the All margins versions is used (`weights=true`) or the Left-Right margin is used (`weights=false`).
   - [OPBE](src/Algorithms/OPBE.m) [13]: Ordinal projection-based ensemble (OPBE) based on three-class decompositions, following the ordinal structure. A specific method for fusing the probabilities returned by the different three-class classifiers is implemented (product combiner, logit function and equal distribution of the probabilities). The base classifier is SVORIM but potentially any of the methods in ORCA can be setup as base classifier.
@@ -118,15 +118,15 @@ The [measures](src/Measures) folder contains the MATLAB classes for the metrics 
 
 # Utilities, classes and scripts
 
-- [DataSet.m](src/DataSet.m): Class for data preprocessing.
-- [Experiment.m](src/Experiment.m): Class that runs the different experiments.
-- [Utilities.m](src/Utilities.m): Class that pre-process the experiment files, run the different algorithms and produces the results.
-- [runtests_single.m](src/runtests_single.m): Script to run all the methods using the ORCA API. Reference performance is compared with toy dataset in order to check that the installation is correct.
+- [DataSet.m](src/Utils/DataSet.m): Class for data preprocessing.
+- [Experiment.m](src/Utils/Experiment.m): Class that runs the different experiments.
+- [Utilities.m](src/Utils/Utilities.m): Class that pre-process the experiment files, run the different algorithms and produces the results.
+- [runtests_single.m](src/runtests_single.m): Script to run all the methods using the ORCA API. Reference performance is compared with `toy` dataset in order to check that the installation is correct.
 - [runtestscv.m](src/runtestscv.m): This script runs full experiment tests using the ORCA configuration files to describe experiments.
 
 # Datasets
 
-The [example-data](exampledata) folder includes partitions of several small ordinal datasets for code testing purposes. We have also collected 44 publicly available ordinal datasets from various sources. These can be downloaded from: [datasets-OR-review](www.uco.es/grupos/ayrna/ucobigfiles/datasets-orreview.zip). The link also contains data partitions as used in different papers in the literature to ease experimental comparison. The characteristics of these datasets are the following:
+The [example-data](exampledata) folder includes partitions of several small ordinal datasets for code testing purposes. We have also collected 44 publicly available ordinal datasets from various sources. These can be downloaded from: [datasets-OR-review](http://www.uco.es/grupos/ayrna/ucobigfiles/datasets-orreview.zip). The link also contains data partitions as used in different papers in the literature to ease experimental comparison. The characteristics of these datasets are the following:
 
 | Dataset	|	\#Pat.	|	\#Attr.	|	\#Classes	|	Class distribution	|
 | --- | --- | --- | --- | --- |
