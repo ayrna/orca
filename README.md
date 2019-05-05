@@ -67,9 +67,9 @@ The documentation can be found in the [doc](doc) folder and includes:
 	  - A first *'how to' tutorial* ([HTML](http://htmlpreview.github.io/?https://github.com/ayrna/orca/blob/master/doc/orca_tutorial_1.html), [Jupyter Notebook](doc/orca_tutorial_1.ipynb), [MD](doc/orca_tutorial_1.md)) to get started with ORCA.
   	- A specific *tutorial for naive approaches and decomposition methods* ([HTML](http://htmlpreview.github.io/?https://github.com/ayrna/orca/blob/master/doc/orca_tutorial_2.html), [Jupyter Notebook](doc/orca_tutorial_2.ipynb), [MD](doc/orca_tutorial_2.md)) covering the different considerations needed for these methods.
   	- A *tutorial for threshold models* ([HTML](http://htmlpreview.github.io/?https://github.com/ayrna/orca/blob/master/doc/orca_tutorial_3.html), [Jupyter Notebook](doc/orca_tutorial_3.ipynb), [MD](doc/orca_tutorial_3.md)) examining the differences of these models.
-  - A tutorial on how to [paralelize ORCA experiments](doc/orca_parallel.md).
-  - A tutorial to [use ORCA with HTCondor](doc/orca_condor.md).
-  - An example of how to [add a new method to ORCA](doc/orca_addmethod.md).
+  - A guide about how to [paralelize ORCA experiments](doc/orca_parallel.md).
+  - Some notes about the [use of ORCA with HTCondor](doc/orca_condor.md).
+  - An example about how to [add a new method to ORCA](doc/orca_addmethod.md).
   - An additional branch that includes other methods ready to use in ORCA. Visit [orca-extra-methods branch](https://github.com/ayrna/orca/tree/orca-extra-methods).
 
 # Methods included
