@@ -716,7 +716,7 @@ Utilities.runExperiments('tutorial/config-files/svrMelanomafs.ini')
     warning: called from
         results at line 142 column 13
         runExperiments at line 98 column 13
-    Experiments/exp-2019-5-6-12-53-6/Results/melanoma-5classes-abcd-100-fs-svr-mae-tutorial-melanoma/dataset
+    Experiments/exp-2019-5-6-16-14-12/Results/melanoma-5classes-abcd-100-fs-svr-mae-tutorial-melanoma/dataset
     warning: rmpath: /home/pedroa/orca/src/Utils/Measures: not found
     warning: called from
         results at line 380 column 13
@@ -733,7 +733,7 @@ Utilities.runExperiments('tutorial/config-files/svrMelanomafs.ini')
     warning: called from
         results at line 142 column 13
         runExperiments at line 100 column 13
-    Experiments/exp-2019-5-6-12-53-6/Results/melanoma-5classes-abcd-100-fs-svr-mae-tutorial-melanoma/dataset
+    Experiments/exp-2019-5-6-16-14-12/Results/melanoma-5classes-abcd-100-fs-svr-mae-tutorial-melanoma/dataset
     warning: rmpath: /home/pedroa/orca/src/Utils/Measures: not found
     warning: called from
         results at line 380 column 13
@@ -742,7 +742,7 @@ Utilities.runExperiments('tutorial/config-files/svrMelanomafs.ini')
     warning: called from
         results at line 381 column 13
         runExperiments at line 100 column 13
-    ans = Experiments/exp-2019-5-6-12-53-6
+    ans = Experiments/exp-2019-5-6-16-14-12
 
 
 Note that the number of experiments is high, so the execution can take a considerable amount of time. To accelerate the experiments you can use multiple cores of your CPU with `Utilities.runExperiments('experiments.ini','parallel', true)` (see this [page](orca_parallel.md)).
@@ -976,6 +976,8 @@ info.projectedTest(1:10,:)
        0.54278   0.28486   0.10204   0.03509   0.00000
     
 
+
+### Neural network approaches (ELMOP and NNOP)
 
 Neural networks allow solving all the binary subproblems using a single model with several output nodes. Two neural network models are considered in ORCA:
 - [Extreme learning machines with ordered partitions (ELMOP)](../src/Algorithms/ELMOP.m) [6].
