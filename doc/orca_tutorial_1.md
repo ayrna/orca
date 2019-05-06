@@ -1,11 +1,28 @@
 
+1. [How to use ORCA](#how-to-use-orca)
+	1. [Launch experiments through `ini` files](#launch-experiments-through-ini-files)
+		1. [Syntax of `ini` files](#syntax-of-ini-files)
+		2. [Hyper-parameter optimization](#hyper-parameter-optimization)
+		3. [Experimental results and reports](#experimental-results-and-reports)
+	2. [Running algorithms with ORCA API](#running-algorithms-with-orca-api)
+		1. [Run a pair of train-test files with runAlgorithm](#run-a-pair-of-train-test-files-with-runalgorithm)
+		2. [Using performance metrics](#using-performance-metrics)
+		3. [Visualizing projections](#visualizing-projections)
+		4. [Visualizing projections and decision thresholds](#visualizing-projections-and-decision-thresholds)
+	3. [Using ORCA with your own datasets](#using-orca-with-your-own-datasets)
+		1. [Data format](#data-format)
+		2. [Data partitions for the experiments](#data-partitions-for-the-experiments)
+		3. [Generating your own partitions](#generating-your-own-partitions)
+		4. [Warning about highly imbalanced datasets](#warning-about-highly-imbalanced-datasets)
+2. [References](#references)
+
 # How to use ORCA
 
 ORCA is an experimental framework focused on productivity and experiments reproducibility for machine learning researchers. Although initially created to collect ordinal classification methods, it is also suitable for other classifiers.
 
-First, you will need to install the framework. To do so, please visit [ORCA Quick Install Guide](orca-quick-install.md). Note that you should be able to perform the test when the framework is successfully installed.
+First, you will need to install the framework. To do so, please visit [ORCA Quick Install Guide](orca_quick_install.md). Note that you should be able to perform the test when the framework is successfully installed.
 
-This tutorial uses tree small datasets (`pasture`, `tae`, `toy`) contained in folder [example data](../exampledata/30-holdout). The datasets are already partitioned with a 30-holdout experimental design.
+This tutorial uses three small datasets (`pasture`, `tae`, `toy`) contained in folder [example data](../exampledata/30-holdout). The datasets are already partitioned with a 30-holdout experimental design.
 
 This tutorial has been tested in Octave 4.2 and 4.4, but it should work with minor changes in Matlab. 
 
@@ -151,13 +168,13 @@ Utilities.runExperiments('tutorial/config-files/pom.ini')
     Running experiment exp-pom-tutorial-toy-8.ini
     Running experiment exp-pom-tutorial-toy-9.ini
     Calculating results...
-    Experiments/exp-2019-5-3-14-17-30/Results/pasture-pom-tutorial/dataset
-    Experiments/exp-2019-5-3-14-17-30/Results/tae-pom-tutorial/dataset
-    Experiments/exp-2019-5-3-14-17-30/Results/toy-pom-tutorial/dataset
-    Experiments/exp-2019-5-3-14-17-30/Results/pasture-pom-tutorial/dataset
-    Experiments/exp-2019-5-3-14-17-30/Results/tae-pom-tutorial/dataset
-    Experiments/exp-2019-5-3-14-17-30/Results/toy-pom-tutorial/dataset
-    ans = Experiments/exp-2019-5-3-14-17-30
+    Experiments/exp-2019-5-6-12-48-43/Results/pasture-pom-tutorial/dataset
+    Experiments/exp-2019-5-6-12-48-43/Results/tae-pom-tutorial/dataset
+    Experiments/exp-2019-5-6-12-48-43/Results/toy-pom-tutorial/dataset
+    Experiments/exp-2019-5-6-12-48-43/Results/pasture-pom-tutorial/dataset
+    Experiments/exp-2019-5-6-12-48-43/Results/tae-pom-tutorial/dataset
+    Experiments/exp-2019-5-6-12-48-43/Results/toy-pom-tutorial/dataset
+    ans = Experiments/exp-2019-5-6-12-48-43
 
 
 As can be observed, ORCA analyses all the files included in the folder of the dataset, where training and test partitions are included (a pair of files `train_dataset.X` and `test_dataset.X` for each dataset, where `X` is the number of partition). For each partition, a model is trained on training data and tested on test data.
@@ -182,13 +199,13 @@ Utilities.runExperiments('tutorial/config-files/svc1v1-3holdout.ini')
     Running experiment exp-svorim-mae-tutorial-toy-2.ini
     Running experiment exp-svorim-mae-tutorial-toy-3.ini
     Calculating results...
-    Experiments/exp-2019-5-3-14-17-58/Results/pasture-svorim-mae-tutorial/dataset
-    Experiments/exp-2019-5-3-14-17-58/Results/tae-svorim-mae-tutorial/dataset
-    Experiments/exp-2019-5-3-14-17-58/Results/toy-svorim-mae-tutorial/dataset
-    Experiments/exp-2019-5-3-14-17-58/Results/pasture-svorim-mae-tutorial/dataset
-    Experiments/exp-2019-5-3-14-17-58/Results/tae-svorim-mae-tutorial/dataset
-    Experiments/exp-2019-5-3-14-17-58/Results/toy-svorim-mae-tutorial/dataset
-    ans = Experiments/exp-2019-5-3-14-17-58
+    Experiments/exp-2019-5-6-12-48-59/Results/pasture-svorim-mae-tutorial/dataset
+    Experiments/exp-2019-5-6-12-48-59/Results/tae-svorim-mae-tutorial/dataset
+    Experiments/exp-2019-5-6-12-48-59/Results/toy-svorim-mae-tutorial/dataset
+    Experiments/exp-2019-5-6-12-48-59/Results/pasture-svorim-mae-tutorial/dataset
+    Experiments/exp-2019-5-6-12-48-59/Results/tae-svorim-mae-tutorial/dataset
+    Experiments/exp-2019-5-6-12-48-59/Results/toy-svorim-mae-tutorial/dataset
+    ans = Experiments/exp-2019-5-6-12-48-59
     Setting up experiments...
     Running experiment exp-svc1v1-mae-tutorial-pasture-1.ini
     Running experiment exp-svc1v1-mae-tutorial-pasture-2.ini
@@ -200,13 +217,13 @@ Utilities.runExperiments('tutorial/config-files/svc1v1-3holdout.ini')
     Running experiment exp-svc1v1-mae-tutorial-toy-2.ini
     Running experiment exp-svc1v1-mae-tutorial-toy-3.ini
     Calculating results...
-    Experiments/exp-2019-5-3-14-18-10/Results/pasture-svc1v1-mae-tutorial/dataset
-    Experiments/exp-2019-5-3-14-18-10/Results/tae-svc1v1-mae-tutorial/dataset
-    Experiments/exp-2019-5-3-14-18-10/Results/toy-svc1v1-mae-tutorial/dataset
-    Experiments/exp-2019-5-3-14-18-10/Results/pasture-svc1v1-mae-tutorial/dataset
-    Experiments/exp-2019-5-3-14-18-10/Results/tae-svc1v1-mae-tutorial/dataset
-    Experiments/exp-2019-5-3-14-18-10/Results/toy-svc1v1-mae-tutorial/dataset
-    ans = Experiments/exp-2019-5-3-14-18-10
+    Experiments/exp-2019-5-6-12-49-6/Results/pasture-svc1v1-mae-tutorial/dataset
+    Experiments/exp-2019-5-6-12-49-6/Results/tae-svc1v1-mae-tutorial/dataset
+    Experiments/exp-2019-5-6-12-49-6/Results/toy-svc1v1-mae-tutorial/dataset
+    Experiments/exp-2019-5-6-12-49-6/Results/pasture-svc1v1-mae-tutorial/dataset
+    Experiments/exp-2019-5-6-12-49-6/Results/tae-svc1v1-mae-tutorial/dataset
+    Experiments/exp-2019-5-6-12-49-6/Results/toy-svc1v1-mae-tutorial/dataset
+    ans = Experiments/exp-2019-5-6-12-49-6
 
 
 Once the experiments are finished, the corresponding results can be found in the `Experiments` subfolder, as described in the [corresponding section](#Experimental-results-and-reports) of this tutorial.
@@ -266,7 +283,7 @@ title('AMAE performance (smaller is better)')
 ```
 
 
-![png](orca_tutorial_1_files/orca_tutorial_1_10_0.png)
+![png](orca_tutorial_1_files/orca_tutorial_1_11_0.png)
 
 
 
@@ -417,7 +434,7 @@ If you provide the option `report_sum = true` in `{general-conf}`, additionally 
 
 ### Run a pair of train-test files with fitpredict
 
-ORCA algorithms can be used from your own Matlab code. All algorithms included in the [Algorithms](../src/Algorithms) have a `fitpredict` method, which can be used for running the algorithms with your data. The method receives a structure with the matrix of training data and labels, the equivalent for test data and a structure with the values of the parameters associated to the method. With respect to other tools, parameters are a mandatory argument for the method to avoid the use of default values.
+ORCA algorithms can be used from your own Matlab/Octave code. All algorithms included in the [Algorithms](../src/Algorithms) have a `fitpredict` method, which can be used for running the algorithms with your data. The method receives a structure with the matrix of training data and labels, the equivalent for test data and a structure with the values of the parameters associated to the method. With respect to other tools, parameters are a mandatory argument for the method to avoid the use of default values.
 
 For example, the [KDLOR (Kernel Discriminant Learning for Ordinal Regression)](../src/Algorithms/KDLOR.m) [5]  method has a total of five parameters. Two of them (the type of kernel, `kernelType`, and the optimisation routine considered, `optimizationMethod`) are received in the constructor of the corresponding class, and the other three parameters (cost, `C`, kernel parameter, `k`, and value to avoid singularities, `u`) are supposed to have to be fine-tuned for each dataset and partition, so they are received in a structure passed to the `fitpredict` method.
 
@@ -531,3 +548,12 @@ rmpath('../src/Measures')
 rmpath('../src/Algorithms')
 rmpath('../src/Utils/')
 ```
+
+# References
+
+1. P. McCullagh, "Regression models for ordinal data",  Journal of the Royal Statistical Society. Series B (Methodological), vol. 42, no. 2, pp. 109–142, 1980.
+1. W. Chu and S. S. Keerthi, "Support Vector Ordinal Regression", Neural Computation, vol. 19, no. 3, pp. 792–815, 2007. http://10.1162/neco.2007.19.3.792
+1. C.-W. Hsu and C.-J. Lin. "A comparison of methods for multi-class support vector machines", IEEE Transaction on Neural Networks,vol. 13, no. 2, pp. 415–425, 2002. https://doi.org/10.1109/72.991427
+1. M. Cruz-Ramírez, C. Hervás-Martínez, J. Sánchez-Monedero and P. A. Gutiérrez, "Metrics to guide a multi-objective evolutionary algorithm for ordinal classification", Neurocomputing, Vol. 135, July, 2014, pp. 21-31. https://doi.org/10.1016/j.neucom.2013.05.058
+1. B.-Y. Sun, J. Li, D. D. Wu, X.-M. Zhang, and W.-B. Li, "Kernel discriminant learning for ordinal regression", IEEE Transactions on Knowledge and Data Engineering, vol. 22, no. 6, pp. 906-910, 2010. https://doi.org/10.1109/TKDE.2009.170
+
