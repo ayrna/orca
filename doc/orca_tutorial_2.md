@@ -716,7 +716,7 @@ Utilities.runExperiments('tutorial/config-files/svrMelanomafs.ini')
     warning: called from
         results at line 142 column 13
         runExperiments at line 98 column 13
-    Experiments/exp-2019-5-6-17-46-59/Results/melanoma-5classes-abcd-100-fs-svr-mae-tutorial-melanoma/dataset
+    Experiments/exp-2019-5-6-18-38-20/Results/melanoma-5classes-abcd-100-fs-svr-mae-tutorial-melanoma/dataset
     warning: rmpath: /home/pedroa/orca/src/Utils/Measures: not found
     warning: called from
         results at line 380 column 13
@@ -733,7 +733,7 @@ Utilities.runExperiments('tutorial/config-files/svrMelanomafs.ini')
     warning: called from
         results at line 142 column 13
         runExperiments at line 100 column 13
-    Experiments/exp-2019-5-6-17-46-59/Results/melanoma-5classes-abcd-100-fs-svr-mae-tutorial-melanoma/dataset
+    Experiments/exp-2019-5-6-18-38-20/Results/melanoma-5classes-abcd-100-fs-svr-mae-tutorial-melanoma/dataset
     warning: rmpath: /home/pedroa/orca/src/Utils/Measures: not found
     warning: called from
         results at line 380 column 13
@@ -742,7 +742,7 @@ Utilities.runExperiments('tutorial/config-files/svrMelanomafs.ini')
     warning: called from
         results at line 381 column 13
         runExperiments at line 100 column 13
-    ans = Experiments/exp-2019-5-6-17-46-59
+    ans = Experiments/exp-2019-5-6-18-38-20
 
 
 Note that the number of experiments is high, so the execution can take a considerable amount of time. To accelerate the experiments you can use multiple cores of your CPU with `Utilities.runExperiments('experiments.ini','parallel', true)` (see this [page](orca_parallel.md)).
@@ -1053,18 +1053,17 @@ This is an example of execution of NNOP (note that results may vary among differ
 
 ```octave
 algorithmObj = NNOP();
-info = algorithmObj.runAlgorithm(train,test,struct('hiddenN',20,'iter',500,'lambda',0.1));
+info = algorithmObj.fitpredict(train,test,struct('hiddenN',20,'iter',500,'lambda',0.1));
 fprintf('\nNNOP\n---------------\n');
 fprintf('NNOP Accuracy: %f\n', CCR.calculateMetric(test.targets,info.predictedTest));
 fprintf('NNOP MAE: %f\n', MAE.calculateMetric(test.targets,info.predictedTest));
 ```
 
-    error: subsref: unknown method or property: runAlgorithm
     
     NNOP
     ---------------
-    NNOP Accuracy: 0.571429
-    NNOP MAE: 0.660714
+    NNOP Accuracy: 0.678571
+    NNOP MAE: 0.464286
 
 
 and the decision values are:
@@ -1076,16 +1075,16 @@ info.projectedTest(1:10,:)
 
     ans =
     
-       1.2036343  -0.0055001  -0.2851831  -1.0010200  -1.2044457
-       0.9858764   0.3360593   0.0278092  -0.4356352  -0.7189091
-       0.9416157  -0.9028640  -0.9419760  -1.0048346  -1.0732204
-       0.8335232  -1.2336850  -1.4985189  -1.2544321  -1.0225486
-       0.9269770  -0.7206762  -0.7061313  -0.7292317  -0.8490904
-       1.0290112  -0.3492385  -0.4893755  -0.6532266  -0.9286454
-       1.0603736  -0.5059608  -0.4953103  -0.8666818  -1.0108457
-       0.9831062  -0.4414839  -0.5067971  -0.8154047  -0.9245022
-       0.9944992  -0.1988149  -0.4942782  -0.6763527  -0.8641775
-       1.0178090  -0.4457965  -0.9275670  -0.9493513  -0.9546883
+       0.47295   0.80749   0.99823   0.99987
+       0.47382   0.89272   0.92289   0.93704
+       0.99370   0.99566   0.99579   0.99809
+       0.99676   0.99880   0.99991   0.99988
+       0.66678   0.98935   0.95811   0.99597
+       0.88669   0.97820   0.99759   0.98887
+       0.50972   0.52114   0.56372   0.98288
+       0.68842   0.96592   0.98453   0.99289
+       0.77763   0.95842   0.97385   0.98541
+       0.50711   0.93935   0.97329   0.97562
     
 
 
@@ -1110,7 +1109,7 @@ The base algorithm used can be configured by the user in the constructor, but it
 
 ```octave
 algorithmObj = OPBE('base_algorithm','SVORIM');
-info = algorithmObj.runAlgorithm(train,test,struct('C',10,'k',0.001));
+info = algorithmObj.fitpredict(train,test,struct('C',10,'k',0.001));
 fprintf('\nOPBE\n---------------\n');
 fprintf('OPBE Accuracy: %f\n', CCR.calculateMetric(test.targets,info.predictedTest));
 fprintf('OPBE MAE: %f\n', MAE.calculateMetric(test.targets,info.predictedTest));
@@ -1121,12 +1120,11 @@ fprintf('OPBE MAE: %f\n', MAE.calculateMetric(test.targets,info.predictedTest));
         fieldnames at line 47 column 11
         parseArgs at line 114 column 29
         OPBE at line 46 column 13
-    error: subsref: unknown method or property: runAlgorithm
     
     OPBE
     ---------------
-    OPBE Accuracy: 0.571429
-    OPBE MAE: 0.660714
+    OPBE Accuracy: 0.696429
+    OPBE MAE: 0.446429
 
 
 In this case, the decision values only include the maximum probability after considering the weights given for each class:
@@ -1138,16 +1136,16 @@ info.projectedTest(1:10,:)
 
     ans =
     
-       1.2036343  -0.0055001  -0.2851831  -1.0010200  -1.2044457
-       0.9858764   0.3360593   0.0278092  -0.4356352  -0.7189091
-       0.9416157  -0.9028640  -0.9419760  -1.0048346  -1.0732204
-       0.8335232  -1.2336850  -1.4985189  -1.2544321  -1.0225486
-       0.9269770  -0.7206762  -0.7061313  -0.7292317  -0.8490904
-       1.0290112  -0.3492385  -0.4893755  -0.6532266  -0.9286454
-       1.0603736  -0.5059608  -0.4953103  -0.8666818  -1.0108457
-       0.9831062  -0.4414839  -0.5067971  -0.8154047  -0.9245022
-       0.9944992  -0.1988149  -0.4942782  -0.6763527  -0.8641775
-       1.0178090  -0.4457965  -0.9275670  -0.9493513  -0.9546883
+       0.0071182
+       0.0012516
+       0.0083398
+       0.0102805
+       0.0081130
+       0.0082841
+       0.0044554
+       0.0072284
+       0.0054428
+       0.0025620
     
 
 
