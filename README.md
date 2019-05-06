@@ -63,7 +63,7 @@ For more information about our research group please visit [Learning and Artific
 
 The documentation can be found in the [doc](doc) folder and includes:
   - A [quick installation guide of ORCA](doc/orca_quick_install.md) and the associated [build troubleshooting](doc/orca_install.md). Binaries are available for downloading in the [release page](https://github.com/ayrna/orca/releases).
-  - Three **tutorials** on ordinal regression and ORCA. Note: you will need Jupyter and the Octave kernel to use the notebooks (`pip install --user jupyter && pip install --user octave_kernel`):
+  - Three **tutorials** on ordinal regression and ORCA (prepared for Octave). Note: you will need Jupyter and the Octave kernel to use the notebooks (`pip install --user jupyter && pip install --user octave_kernel`):
 	  - A first *'how to' tutorial* ([HTML](http://htmlpreview.github.io/?https://github.com/ayrna/orca/blob/master/doc/orca_tutorial_1.html), [Jupyter Notebook](doc/orca_tutorial_1.ipynb), [MD](doc/orca_tutorial_1.md)) to get started with ORCA.
   	- A specific *tutorial for naive approaches and decomposition methods* ([HTML](http://htmlpreview.github.io/?https://github.com/ayrna/orca/blob/master/doc/orca_tutorial_2.html), [Jupyter Notebook](doc/orca_tutorial_2.ipynb), [MD](doc/orca_tutorial_2.md)) covering the different considerations needed for these methods.
   	- A *tutorial for threshold models* ([HTML](http://htmlpreview.github.io/?https://github.com/ayrna/orca/blob/master/doc/orca_tutorial_3.html), [Jupyter Notebook](doc/orca_tutorial_3.ipynb), [MD](doc/orca_tutorial_3.md)) examining the differences of these models.
