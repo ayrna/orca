@@ -5,7 +5,7 @@
 		2. [Hyper-parameter optimization](#hyper-parameter-optimization)
 		3. [Experimental results and reports](#experimental-results-and-reports)
 	2. [Running algorithms with ORCA API](#running-algorithms-with-orca-api)
-		1. [Run a pair of train-test files with fitPredict](#run-a-pair-of-train-test-files-with-fitpredict)
+		1. [Run a pair of train-test files with fitpredict](#run-a-pair-of-train-test-files-with-fitpredict)
 		2. [Using performance metrics](#using-performance-metrics)
 		3. [Visualizing projections](#visualizing-projections)
 		4. [Visualizing projections and decision thresholds](#visualizing-projections-and-decision-thresholds)
@@ -168,13 +168,13 @@ Utilities.runExperiments('tutorial/config-files/pom.ini')
     Running experiment exp-pom-tutorial-toy-8.ini
     Running experiment exp-pom-tutorial-toy-9.ini
     Calculating results...
-    Experiments/exp-2019-5-6-16-59-21/Results/pasture-pom-tutorial/dataset
-    Experiments/exp-2019-5-6-16-59-21/Results/tae-pom-tutorial/dataset
-    Experiments/exp-2019-5-6-16-59-21/Results/toy-pom-tutorial/dataset
-    Experiments/exp-2019-5-6-16-59-21/Results/pasture-pom-tutorial/dataset
-    Experiments/exp-2019-5-6-16-59-21/Results/tae-pom-tutorial/dataset
-    Experiments/exp-2019-5-6-16-59-21/Results/toy-pom-tutorial/dataset
-    ans = Experiments/exp-2019-5-6-16-59-21
+    Experiments/exp-2019-5-6-17-42-33/Results/pasture-pom-tutorial/dataset
+    Experiments/exp-2019-5-6-17-42-33/Results/tae-pom-tutorial/dataset
+    Experiments/exp-2019-5-6-17-42-33/Results/toy-pom-tutorial/dataset
+    Experiments/exp-2019-5-6-17-42-33/Results/pasture-pom-tutorial/dataset
+    Experiments/exp-2019-5-6-17-42-33/Results/tae-pom-tutorial/dataset
+    Experiments/exp-2019-5-6-17-42-33/Results/toy-pom-tutorial/dataset
+    ans = Experiments/exp-2019-5-6-17-42-33
 
 
 As can be observed, ORCA analyses all the files included in the folder of the dataset, where training and test partitions are included (a pair of files `train_dataset.X` and `test_dataset.X` for each dataset, where `X` is the number of partition). For each partition, a model is trained on training data and tested on test data.
@@ -199,13 +199,13 @@ Utilities.runExperiments('tutorial/config-files/svc1v1-3holdout.ini')
     Running experiment exp-svorim-mae-tutorial-toy-2.ini
     Running experiment exp-svorim-mae-tutorial-toy-3.ini
     Calculating results...
-    Experiments/exp-2019-5-6-16-59-37/Results/pasture-svorim-mae-tutorial/dataset
-    Experiments/exp-2019-5-6-16-59-37/Results/tae-svorim-mae-tutorial/dataset
-    Experiments/exp-2019-5-6-16-59-37/Results/toy-svorim-mae-tutorial/dataset
-    Experiments/exp-2019-5-6-16-59-37/Results/pasture-svorim-mae-tutorial/dataset
-    Experiments/exp-2019-5-6-16-59-37/Results/tae-svorim-mae-tutorial/dataset
-    Experiments/exp-2019-5-6-16-59-37/Results/toy-svorim-mae-tutorial/dataset
-    ans = Experiments/exp-2019-5-6-16-59-37
+    Experiments/exp-2019-5-6-17-42-50/Results/pasture-svorim-mae-tutorial/dataset
+    Experiments/exp-2019-5-6-17-42-50/Results/tae-svorim-mae-tutorial/dataset
+    Experiments/exp-2019-5-6-17-42-50/Results/toy-svorim-mae-tutorial/dataset
+    Experiments/exp-2019-5-6-17-42-50/Results/pasture-svorim-mae-tutorial/dataset
+    Experiments/exp-2019-5-6-17-42-50/Results/tae-svorim-mae-tutorial/dataset
+    Experiments/exp-2019-5-6-17-42-50/Results/toy-svorim-mae-tutorial/dataset
+    ans = Experiments/exp-2019-5-6-17-42-50
     Setting up experiments...
     Running experiment exp-svc1v1-mae-tutorial-pasture-1.ini
     Running experiment exp-svc1v1-mae-tutorial-pasture-2.ini
@@ -217,13 +217,13 @@ Utilities.runExperiments('tutorial/config-files/svc1v1-3holdout.ini')
     Running experiment exp-svc1v1-mae-tutorial-toy-2.ini
     Running experiment exp-svc1v1-mae-tutorial-toy-3.ini
     Calculating results...
-    Experiments/exp-2019-5-6-16-59-43/Results/pasture-svc1v1-mae-tutorial/dataset
-    Experiments/exp-2019-5-6-16-59-43/Results/tae-svc1v1-mae-tutorial/dataset
-    Experiments/exp-2019-5-6-16-59-43/Results/toy-svc1v1-mae-tutorial/dataset
-    Experiments/exp-2019-5-6-16-59-43/Results/pasture-svc1v1-mae-tutorial/dataset
-    Experiments/exp-2019-5-6-16-59-43/Results/tae-svc1v1-mae-tutorial/dataset
-    Experiments/exp-2019-5-6-16-59-43/Results/toy-svc1v1-mae-tutorial/dataset
-    ans = Experiments/exp-2019-5-6-16-59-43
+    Experiments/exp-2019-5-6-17-42-56/Results/pasture-svc1v1-mae-tutorial/dataset
+    Experiments/exp-2019-5-6-17-42-56/Results/tae-svc1v1-mae-tutorial/dataset
+    Experiments/exp-2019-5-6-17-42-56/Results/toy-svc1v1-mae-tutorial/dataset
+    Experiments/exp-2019-5-6-17-42-56/Results/pasture-svc1v1-mae-tutorial/dataset
+    Experiments/exp-2019-5-6-17-42-56/Results/tae-svc1v1-mae-tutorial/dataset
+    Experiments/exp-2019-5-6-17-42-56/Results/toy-svc1v1-mae-tutorial/dataset
+    ans = Experiments/exp-2019-5-6-17-42-56
 
 
 Once the experiments are finished, the corresponding results can be found in the `Experiments` subfolder, as described in the [corresponding section](#Experimental-results-and-reports) of this tutorial.
@@ -729,7 +729,7 @@ Specifically, 4 input attributes are used for evaluating each individual, and th
 ```octave
 load ../exampledata/ERA.csv
 ERA(1:20,:)
-pkg install -forge statistics
+pkg load statistics;
 ```
 
     ans =
@@ -755,7 +755,6 @@ pkg install -forge statistics
         2    1    5    1    1
         5    7    3   12    1
     
-    For information about changes from previous versions of the statistics package, run 'news statistics'.
 
 
 
@@ -776,11 +775,6 @@ for ff = 1:numTests
     dlmwrite(fullfile(rootDir,sprintf('test-%s.%d',nameDataset,ff-1)),ERA(teIdx,:),' ');
 end
 ```
-
-    error: 'cvpartition' undefined near line 1 column 7
-    error: 'CVO' undefined near line 1 column 16
-    error: 'numTests' undefined near line 1 column 12
-
 
 This will generate all the partitions for a `10`fold crossvalidation experimental design. The source code of this example is in [exampleERAKFold.m](../src/code-examples/exampleERAKFold.m).
 
@@ -838,9 +832,6 @@ for ff = 1:h
     dlmwrite(fullfile(rootDir,sprintf('test-%s.%d',nameDataset,ff-1)),ERA(teIdx,:),' ');
 end
 ```
-
-    error: 'cvpartition' undefined near line 3 column 11
-
 
 The source code of this example is in [exampleERAHHoldout.m](../src/code-examples/exampleERAHHoldout.m). As can be checked, the `cvpartition` function performs the partitions, receiving the target vector. The targets are used in order to obtain a stratified partition.
 
