@@ -30,6 +30,10 @@ do
 	  echo "Test notebook $i ERROR in logs!" 
 	  exit $n_errors
 	fi
+	echo "Contents of stderr"
+	echo "------------------"
+	cat test.err
+	echo "------------------"
 	
 	((i++))
 done
