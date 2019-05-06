@@ -1,7 +1,21 @@
 
+1. [Naive approaches and decomposition methods in orca](#naive-approaches-and-decomposition-methods-in-orca)
+	1. [Loading the dataset and performing some preliminary experiments](#loading-the-dataset-and-performing-some-preliminary-experiments)
+	2. [Naive approaches](#naive-approaches)
+		1. [Regression (SVR)](#regression-svr)
+		2. [Nominal classification (SVC1V1 and SVC1VA)](#nominal-classification-svc1v1-and-svc1va)
+		3. [Cost sensitive classification (CSSVC)](#cost-sensitive-classification-cssvc)
+		4. [Summary of results for naive approaches](#summary-of-results-for-naive-approaches)
+	3. [Binary decomposition methods](#binary-decomposition-methods)
+		1. [SVM with ordered partitions (SVMOP)](#svm-with-ordered-partitions-svmop)
+		2. [Neural network approaches (ELMOP and NNOP)](#neural-network-approaches-elmop-and-nnop)
+		3. [Summary of results for binary decompositions](#summary-of-results-for-binary-decompositions)
+	4. [Ternary decomposition](#ternary-decomposition)
+2. [References](#references)
+
 # Naive approaches and decomposition methods in orca
 
-This tutorial covers how to apply naive approaches and decomposition methods in ORCA. It is highly recommended to have previously completed the ['how to' tutorial (Notebook)](orca-tutorial-1.ipynb)/['how to' tutorial (HTML)](orca-tutorial-1.html).
+This tutorial covers how to apply naive approaches and decomposition methods in ORCA. It is highly recommended to have previously completed the ['how to' tutorial (Notebook)](orca_tutorial_1.ipynb)/['how to' tutorial (HTML)](http://htmlpreview.github.io/?https://github.com/ayrna/orca/blob/master/doc/orca_tutorial_1.html).
 
 We are going to test these methods using a melanoma diagnosis dataset based on dermatoscopic images. Melanoma is a type of cancer that develops from the pigment-containing cells known as melanocytes. Usually occurring on the skin, early detection and diagnosis is strongly related to survival rates. The dataset is aimed at predicting the severity of the lesion:
 - A total of `100` image descriptors are used as input features, including features related to shape, colour, pigment network and texture.
@@ -58,7 +72,7 @@ set (gca, 'xticklabel',labels)
 ```
 
 
-![png](orca_tutorial_2_files/orca_tutorial_2_5_0.png)
+![png](orca_tutorial_2_files/orca_tutorial_2_6_0.png)
 
 
 ---
@@ -676,10 +690,10 @@ In this way, we will obtain the results for the 10 partitions. This `ini` file c
 Utilities.runExperiments('tutorial/config-files/svrMelanomafs.ini')
 ```
 
-    warning: addpath: /home/javier/Documentos/uco/SVNAYRNA/orca/src/Utils/Measures: No such file or directory
+    warning: addpath: /home/pedroa/orca/src/Utils/Measures: No such file or directory
     warning: called from
         runExperiments at line 55 column 13
-    warning: addpath: /home/javier/Documentos/uco/SVNAYRNA/orca/src/Utils/Algorithms: No such file or directory
+    warning: addpath: /home/pedroa/orca/src/Utils/Algorithms: No such file or directory
     warning: called from
         runExperiments at line 56 column 13
     Setting up experiments...
@@ -694,44 +708,44 @@ Utilities.runExperiments('tutorial/config-files/svrMelanomafs.ini')
     Running experiment exp-svr-mae-tutorial-melanoma-melanoma-5classes-abcd-100-fs-8.ini
     Running experiment exp-svr-mae-tutorial-melanoma-melanoma-5classes-abcd-100-fs-9.ini
     Calculating results...
-    warning: addpath: /home/javier/Documentos/uco/SVNAYRNA/orca/src/Utils/Measures: No such file or directory
+    warning: addpath: /home/pedroa/orca/src/Utils/Measures: No such file or directory
     warning: called from
         results at line 141 column 13
         runExperiments at line 98 column 13
-    warning: addpath: /home/javier/Documentos/uco/SVNAYRNA/orca/src/Utils/Algorithms: No such file or directory
+    warning: addpath: /home/pedroa/orca/src/Utils/Algorithms: No such file or directory
     warning: called from
         results at line 142 column 13
         runExperiments at line 98 column 13
-    Experiments/exp-2019-5-3-14-30-25/Results/melanoma-5classes-abcd-100-fs-svr-mae-tutorial-melanoma/dataset
-    warning: rmpath: /home/javier/Documentos/uco/SVNAYRNA/orca/src/Utils/Measures: not found
+    Experiments/exp-2019-5-6-12-53-6/Results/melanoma-5classes-abcd-100-fs-svr-mae-tutorial-melanoma/dataset
+    warning: rmpath: /home/pedroa/orca/src/Utils/Measures: not found
     warning: called from
         results at line 380 column 13
         runExperiments at line 98 column 13
-    warning: rmpath: /home/javier/Documentos/uco/SVNAYRNA/orca/src/Utils/Algorithms: not found
+    warning: rmpath: /home/pedroa/orca/src/Utils/Algorithms: not found
     warning: called from
         results at line 381 column 13
         runExperiments at line 98 column 13
-    warning: addpath: /home/javier/Documentos/uco/SVNAYRNA/orca/src/Utils/Measures: No such file or directory
+    warning: addpath: /home/pedroa/orca/src/Utils/Measures: No such file or directory
     warning: called from
         results at line 141 column 13
         runExperiments at line 100 column 13
-    warning: addpath: /home/javier/Documentos/uco/SVNAYRNA/orca/src/Utils/Algorithms: No such file or directory
+    warning: addpath: /home/pedroa/orca/src/Utils/Algorithms: No such file or directory
     warning: called from
         results at line 142 column 13
         runExperiments at line 100 column 13
-    Experiments/exp-2019-5-3-14-30-25/Results/melanoma-5classes-abcd-100-fs-svr-mae-tutorial-melanoma/dataset
-    warning: rmpath: /home/javier/Documentos/uco/SVNAYRNA/orca/src/Utils/Measures: not found
+    Experiments/exp-2019-5-6-12-53-6/Results/melanoma-5classes-abcd-100-fs-svr-mae-tutorial-melanoma/dataset
+    warning: rmpath: /home/pedroa/orca/src/Utils/Measures: not found
     warning: called from
         results at line 380 column 13
         runExperiments at line 100 column 13
-    warning: rmpath: /home/javier/Documentos/uco/SVNAYRNA/orca/src/Utils/Algorithms: not found
+    warning: rmpath: /home/pedroa/orca/src/Utils/Algorithms: not found
     warning: called from
         results at line 381 column 13
         runExperiments at line 100 column 13
-    ans = Experiments/exp-2019-5-3-14-30-25
+    ans = Experiments/exp-2019-5-6-12-53-6
 
 
-Note that the number of experiments is crucial, so the execution can take a considerable amount of time. To accelerate the experiments you can use multiple cores of your CPU with `Utilities.runExperiments('experiments.ini','parallel', true)` (see this [page](orca-parallel.md)).
+Note that the number of experiments is high, so the execution can take a considerable amount of time. To accelerate the experiments you can use multiple cores of your CPU with `Utilities.runExperiments('experiments.ini','parallel', true)` (see this [page](orca_parallel.md)).
 
 ### Nominal classification (SVC1V1 and SVC1VA)
 
@@ -890,8 +904,6 @@ info.projectedTest(1:10,:)
 
 ### Summary of results for naive approaches
 
-### TODO: now SVR does not get the best MAE since the order information is missed in the reduded dataset
-
 We can compare all the results obtained by naive methods in the third partition of the melanoma dataset:
 - SVR Accuracy: 0.678571
 - SVC1V1 Accuracy: 0.678571
@@ -903,3 +915,257 @@ We can compare all the results obtained by naive methods in the third partition 
 - CSSVC MAE: 0.571429
 
 In this case, SVR has definitely obtained the best results. As can be checked, SVC1V1 accuracy is quite high, but it is masking a not so good MAE value.
+
+## Binary decomposition methods
+
+These methods decompose the original problem in several binary problems (as SVC1V1 and SVC1VA do) but they binary subproblems are organised in such a way that the ordinal structure of the targets is maintained. Specifically, patterns of two non-consecutive categories in the ordinal scale will never be included in the same class against a pattern of an intermediate category. ORCA includes three methods with this structure:
+- One based on SVMs. Because of the way SVM is formulated, the binary subproblems are trained with **multiple models**.
+- Two based on neural networks. The flexibility of NN training makes possible learn all binary subproblems with one **single model**.
+All of them are based on an ordered partition decomposition, where the binary subproblems have the following structure:
+
+| Class | Problem1 | Problem2 | Problem3 | Problem4 |
+| --- | --- | --- | --- | --- |
+| C1 | 0 | 0 | 0 | 0 |
+| C2 | 1 | 0 | 0 | 0 |
+| C3 | 1 | 1 | 0 | 0 |
+| C4 | 1 | 1 | 1 | 0 |
+| C5 | 1 | 1 | 1 | 1 |
+
+### SVM with ordered partitions (SVMOP)
+
+[SVMOP](../src/Algorithms/SVMOP) method is based on applying the ordered partition binary decomposition, together different weights according to the absolute distance between the class of the binary problem and the specific category being examined [4,5]. The models are trained independently and final prediction is based on the first model (in the ordinal scale) predicting a positive class. Again, the parameters of this model are:
+- Parameter `C`, importance given to errors.
+- Parameter `k`, inverse of the width of the RBF kernel.
+
+The same parameter values are considered for all subproblems, although the results could be improved by considering different `C` and `k` for each subproblem (resulting in a significantly higher computational cost). Here, we can check the performance of SVMOP on the partition of melanoma we have been studying:
+
+
+```octave
+algorithmObj = SVMOP();
+info = algorithmObj.fitpredict(train,test,struct('C',10,'k',0.001));
+fprintf('\nSVMOP\n---------------\n');
+fprintf('SVMOP Accuracy: %f\n', CCR.calculateMetric(test.targets,info.predictedTest));
+fprintf('SVMOP MAE: %f\n', MAE.calculateMetric(test.targets,info.predictedTest));
+```
+
+    
+    SVMOP
+    ---------------
+    SVMOP Accuracy: 0.678571
+    SVMOP MAE: 0.517857
+
+
+Of course, decision values include the independent values obtained for all subproblems:
+
+
+```octave
+info.projectedTest(1:10,:)
+```
+
+    ans =
+    
+       0.31615   0.23208   0.02562   0.00550   0.00000
+       0.67879   0.39288   0.11599   0.02118   0.00000
+       0.08728   0.08264   0.05402   0.01033   0.00000
+       0.02134   0.03975   0.01857   0.00573   0.00000
+       0.14110   0.12279   0.05476   0.00743   0.00000
+       0.10214   0.09159   0.04412   0.01653   0.00000
+       0.28966   0.20816   0.11557   0.06967   0.00000
+       0.18825   0.13102   0.05374   0.01412   0.00000
+       0.41639   0.21402   0.04243   0.00952   0.00000
+       0.54278   0.28486   0.10204   0.03509   0.00000
+    
+
+
+Neural networks allow solving all the binary subproblems using a single model with several output nodes. Two neural network models are considered in ORCA:
+- [Extreme learning machines with ordered partitions (ELMOP)](../src/Algorithms/ELMOP.m) [6].
+- [Neural network with ordered partitions (NNOP)](../src/Algorithms/NNOP.m) [7].
+
+ELMOP model is based on ELM, which are a quite popular type of neural network. In ELMs, the hidden weights are randomly set and the output weights are analytically set. The implementation in ORCA consider the ordered partition decomposition in the output layer. The prediction phase is tackled using an exponential loss based decoding process, where the class predicted is that with the minimum exponential loss with respect to the decision values.
+
+The algorithm can be configured using different activation functions for the hidden layer ('sig, 'sin', 'hardlim','tribas', 'radbas', 'up','rbf'/'krbf' or 'grbf'). During training, the user has to specify the following parameter in the `param` structure:
+- Parameter `hiddenN`: number of hidden nodes of the model. This is a decisive parameter for avoiding overfitting.
+
+Now, we perform a test for training ELMOP (note that ELMOP is not deterministic, this is, the results may vary among different runs of the algorithm):
+
+
+```octave
+algorithmObj = ELMOP('activationFunction','sig');
+info = algorithmObj.fitpredict(train,test,struct('hiddenN',20));
+fprintf('\nELMOP\n---------------\n');
+fprintf('ELMOP Accuracy: %f\n', CCR.calculateMetric(test.targets,info.predictedTest));
+fprintf('ELMOP MAE: %f\n', MAE.calculateMetric(test.targets,info.predictedTest));
+```
+
+    warning: struct: converting a classdef object into a struct overrides the access restrictions defined for properties. All properties are returned, including private and protected ones.
+    warning: called from
+        fieldnames at line 47 column 11
+        parseArgs at line 114 column 29
+        ELMOP at line 58 column 13
+    
+    ELMOP
+    ---------------
+    ELMOP Accuracy: 0.571429
+    ELMOP MAE: 0.660714
+
+
+These are the decision values for ELMOP:
+
+
+```octave
+info.projectedTest(1:10,:)
+```
+
+    ans =
+    
+       1.2036343  -0.0055001  -0.2851831  -1.0010200  -1.2044457
+       0.9858764   0.3360593   0.0278092  -0.4356352  -0.7189091
+       0.9416157  -0.9028640  -0.9419760  -1.0048346  -1.0732204
+       0.8335232  -1.2336850  -1.4985189  -1.2544321  -1.0225486
+       0.9269770  -0.7206762  -0.7061313  -0.7292317  -0.8490904
+       1.0290112  -0.3492385  -0.4893755  -0.6532266  -0.9286454
+       1.0603736  -0.5059608  -0.4953103  -0.8666818  -1.0108457
+       0.9831062  -0.4414839  -0.5067971  -0.8154047  -0.9245022
+       0.9944992  -0.1988149  -0.4942782  -0.6763527  -0.8641775
+       1.0178090  -0.4457965  -0.9275670  -0.9493513  -0.9546883
+    
+
+
+---
+
+***Exercise 4***: compare all different activation functions for ELM trying to find the most appropriate one. Check the source code of [ELMOP](../src/Algorithms/ELMOP.m) to understand the different functions.
+
+---
+
+The other neural network model is NNOP. In this case, a standard neural network is considered, training all its parameters (hidden and output weights). In the output layer, a standard sigmoidal function is used, and the mean squared error with respect to the ordered partition targets is used for gradient descent. The algorithm used for gradient descent is the iRProp+ algorithm.
+
+The prediction rule is based on checking which is the first class whose output value is higher than a predefined threshold (0.5 in this case).
+
+Three parameters have to be specified in this case:
+- Parameter `hiddenN`, number of hidden neurons of the model.
+- Parameter `iter`, number of iterations for gradient descent.
+- Parameter `lambda`, regularization parameter in the error function (L2 regularizer), in order to avoid overfitting.
+
+This is an example of execution of NNOP (note that results may vary among different runs):
+
+
+```octave
+algorithmObj = NNOP();
+info = algorithmObj.runAlgorithm(train,test,struct('hiddenN',20,'iter',500,'lambda',0.1));
+fprintf('\nNNOP\n---------------\n');
+fprintf('NNOP Accuracy: %f\n', CCR.calculateMetric(test.targets,info.predictedTest));
+fprintf('NNOP MAE: %f\n', MAE.calculateMetric(test.targets,info.predictedTest));
+```
+
+    error: subsref: unknown method or property: runAlgorithm
+    
+    NNOP
+    ---------------
+    NNOP Accuracy: 0.571429
+    NNOP MAE: 0.660714
+
+
+and the decision values are:
+
+
+```octave
+info.projectedTest(1:10,:)
+```
+
+    ans =
+    
+       1.2036343  -0.0055001  -0.2851831  -1.0010200  -1.2044457
+       0.9858764   0.3360593   0.0278092  -0.4356352  -0.7189091
+       0.9416157  -0.9028640  -0.9419760  -1.0048346  -1.0732204
+       0.8335232  -1.2336850  -1.4985189  -1.2544321  -1.0225486
+       0.9269770  -0.7206762  -0.7061313  -0.7292317  -0.8490904
+       1.0290112  -0.3492385  -0.4893755  -0.6532266  -0.9286454
+       1.0603736  -0.5059608  -0.4953103  -0.8666818  -1.0108457
+       0.9831062  -0.4414839  -0.5067971  -0.8154047  -0.9245022
+       0.9944992  -0.1988149  -0.4942782  -0.6763527  -0.8641775
+       1.0178090  -0.4457965  -0.9275670  -0.9493513  -0.9546883
+    
+
+
+### Summary of results for binary decompositions
+
+As a summary, the results obtained for the third partition of melanoma dataset are:
+- SVMOP Accuracy: 0.678571
+- ELMOP Accuracy: 0.535714
+- NNOP Accuracy: 0.642857
+- SVMOP MAE: 0.517857
+- ELMOP MAE: 0.678571
+- NNOP MAE: 0.571429
+
+In this case, the best classifier is SVMOP, although parameter values can be influencing these results.
+
+## Ternary decomposition
+
+The last method considered in the tutorial is a projection similar to One-Vs-All but generating three class subproblems, instead of binary ones [8]. The subproblems are solved considering independent classifiers, and the prediction phase is performed under a probabilistic approach (which firstly obtain a `Q` class probability distribution for each ternary classifier and then fuse all the distributions).
+
+The base algorithm used can be configured by the user in the constructor, but it is necessary to use a one-dimensional projection method (threshold model). The parameters of OPBE are the same than the base algorithm, all subproblems being solved using the same parameter values.
+
+
+```octave
+algorithmObj = OPBE('base_algorithm','SVORIM');
+info = algorithmObj.runAlgorithm(train,test,struct('C',10,'k',0.001));
+fprintf('\nOPBE\n---------------\n');
+fprintf('OPBE Accuracy: %f\n', CCR.calculateMetric(test.targets,info.predictedTest));
+fprintf('OPBE MAE: %f\n', MAE.calculateMetric(test.targets,info.predictedTest));
+```
+
+    warning: struct: converting a classdef object into a struct overrides the access restrictions defined for properties. All properties are returned, including private and protected ones.
+    warning: called from
+        fieldnames at line 47 column 11
+        parseArgs at line 114 column 29
+        OPBE at line 46 column 13
+    error: subsref: unknown method or property: runAlgorithm
+    
+    OPBE
+    ---------------
+    OPBE Accuracy: 0.571429
+    OPBE MAE: 0.660714
+
+
+In this case, the decision values only include the maximum probability after considering the weights given for each class:
+
+
+```octave
+info.projectedTest(1:10,:)
+```
+
+    ans =
+    
+       1.2036343  -0.0055001  -0.2851831  -1.0010200  -1.2044457
+       0.9858764   0.3360593   0.0278092  -0.4356352  -0.7189091
+       0.9416157  -0.9028640  -0.9419760  -1.0048346  -1.0732204
+       0.8335232  -1.2336850  -1.4985189  -1.2544321  -1.0225486
+       0.9269770  -0.7206762  -0.7061313  -0.7292317  -0.8490904
+       1.0290112  -0.3492385  -0.4893755  -0.6532266  -0.9286454
+       1.0603736  -0.5059608  -0.4953103  -0.8666818  -1.0108457
+       0.9831062  -0.4414839  -0.5067971  -0.8154047  -0.9245022
+       0.9944992  -0.1988149  -0.4942782  -0.6763527  -0.8641775
+       1.0178090  -0.4457965  -0.9275670  -0.9493513  -0.9546883
+    
+
+
+
+---
+
+***Exercise 5***: in this tutorial, we have considered a total of 8 classifiers with different parameter values for one of the folds of the melanoma dataset. In this exercise, you should generalise these results over the `10` partitions and interpret the results, trying to search for the best method. Apart from the two metrics considered in the tutorial (CCR and MAE), include metrics more sensitive to minority classes (for example, MS and MMAE). Construct a table with the average of these four metrics over the 10 folds. You can use the parameter values given in this tutorial or try to tune a bit them.
+
+---
+
+***Exercise 6***: now you should consider cross-validation to tune hyper parameters. In order to limit the computational time, do not include too many values for each parameter and only use the three first partitions of the dataset (by deleting or moving the files for the rest of partitions). Check again the conclusions about the methods. **Hyper parameters are decisive for performance!!**
+
+
+# References
+
+1. J. Sánchez-Monedero, M. Pérez-Ortiz, A. Sáez, P.A. Gutiérrez, and C. Hervás-Martínez. "Partial order label decomposition approaches for melanoma diagnosis". Applied Soft Computing. Volume 64, March 2018, Pages 341-355. https://doi.org/10.1016/j.asoc.2017.11.042
+1. P. McCullagh, "Regression models for ordinal data",  Journal of the Royal Statistical Society. Series B (Methodological), vol. 42, no. 2, pp. 109–142, 1980.
+1. C.-W. Hsu and C.-J. Lin. "A comparison of methods for multi-class support vector machines", IEEE Transaction on Neural Networks,vol. 13, no. 2, pp. 415–425, 2002. https://doi.org/10.1109/72.991427
+1. E. Frank and M. Hall, "A simple approach to ordinal classification", in Proceedings of the 12th European Conference on Machine Learning, ser. EMCL'01. London, UK: Springer-Verlag, 2001, pp. 145–156. https://doi.org/10.1007/3-540-44795-4_13
+1. W. Waegeman and L. Boullart, "An ensemble of weighted support vector machines for ordinal regression", International Journal of Computer Systems Science and Engineering, vol. 3, no. 1, pp. 47–51, 2009.
+1. W.-Y. Deng, Q.-H. Zheng, S. Lian, L. Chen, and X. Wang, "Ordinal extreme learning machine", Neurocomputing, vol. 74, no. 1-3, pp. 447-456, 2010.         http://dx.doi.org/10.1016/j.neucom.2010.08.022
+1. J. Cheng, Z. Wang, and G. Pollastri, "A neural network  approach to ordinal regression," in Proc. IEEE Int. Joint Conf. Neural Netw. (IEEE World Congr. Comput. Intell.), 2008, pp. 1279-1284.
+1. M. Pérez-Ortiz, P. A. Gutiérrez y C. Hervás-Martínez. "Projection based ensemble learning for ordinal regression", IEEE Transactions on Cybernetics, Vol. 44, May, 2014, pp. 681-694.
