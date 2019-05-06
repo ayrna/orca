@@ -716,7 +716,7 @@ Utilities.runExperiments('tutorial/config-files/svrMelanomafs.ini')
     warning: called from
         results at line 142 column 13
         runExperiments at line 98 column 13
-    Experiments/exp-2019-5-6-16-14-12/Results/melanoma-5classes-abcd-100-fs-svr-mae-tutorial-melanoma/dataset
+    Experiments/exp-2019-5-6-17-5-13/Results/melanoma-5classes-abcd-100-fs-svr-mae-tutorial-melanoma/dataset
     warning: rmpath: /home/pedroa/orca/src/Utils/Measures: not found
     warning: called from
         results at line 380 column 13
@@ -733,7 +733,7 @@ Utilities.runExperiments('tutorial/config-files/svrMelanomafs.ini')
     warning: called from
         results at line 142 column 13
         runExperiments at line 100 column 13
-    Experiments/exp-2019-5-6-16-14-12/Results/melanoma-5classes-abcd-100-fs-svr-mae-tutorial-melanoma/dataset
+    Experiments/exp-2019-5-6-17-5-13/Results/melanoma-5classes-abcd-100-fs-svr-mae-tutorial-melanoma/dataset
     warning: rmpath: /home/pedroa/orca/src/Utils/Measures: not found
     warning: called from
         results at line 380 column 13
@@ -742,7 +742,7 @@ Utilities.runExperiments('tutorial/config-files/svrMelanomafs.ini')
     warning: called from
         results at line 381 column 13
         runExperiments at line 100 column 13
-    ans = Experiments/exp-2019-5-6-16-14-12
+    ans = Experiments/exp-2019-5-6-17-5-13
 
 
 Note that the number of experiments is high, so the execution can take a considerable amount of time. To accelerate the experiments you can use multiple cores of your CPU with `Utilities.runExperiments('experiments.ini','parallel', true)` (see this [page](orca_parallel.md)).

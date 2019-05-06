@@ -5,7 +5,7 @@
 		2. [Hyper-parameter optimization](#hyper-parameter-optimization)
 		3. [Experimental results and reports](#experimental-results-and-reports)
 	2. [Running algorithms with ORCA API](#running-algorithms-with-orca-api)
-		1. [Run a pair of train-test files with runAlgorithm](#run-a-pair-of-train-test-files-with-runalgorithm)
+		1. [Run a pair of train-test files with fitPredict](#run-a-pair-of-train-test-files-with-fitpredict)
 		2. [Using performance metrics](#using-performance-metrics)
 		3. [Visualizing projections](#visualizing-projections)
 		4. [Visualizing projections and decision thresholds](#visualizing-projections-and-decision-thresholds)
@@ -168,13 +168,13 @@ Utilities.runExperiments('tutorial/config-files/pom.ini')
     Running experiment exp-pom-tutorial-toy-8.ini
     Running experiment exp-pom-tutorial-toy-9.ini
     Calculating results...
-    Experiments/exp-2019-5-6-16-7-29/Results/pasture-pom-tutorial/dataset
-    Experiments/exp-2019-5-6-16-7-29/Results/tae-pom-tutorial/dataset
-    Experiments/exp-2019-5-6-16-7-29/Results/toy-pom-tutorial/dataset
-    Experiments/exp-2019-5-6-16-7-29/Results/pasture-pom-tutorial/dataset
-    Experiments/exp-2019-5-6-16-7-29/Results/tae-pom-tutorial/dataset
-    Experiments/exp-2019-5-6-16-7-29/Results/toy-pom-tutorial/dataset
-    ans = Experiments/exp-2019-5-6-16-7-29
+    Experiments/exp-2019-5-6-16-59-21/Results/pasture-pom-tutorial/dataset
+    Experiments/exp-2019-5-6-16-59-21/Results/tae-pom-tutorial/dataset
+    Experiments/exp-2019-5-6-16-59-21/Results/toy-pom-tutorial/dataset
+    Experiments/exp-2019-5-6-16-59-21/Results/pasture-pom-tutorial/dataset
+    Experiments/exp-2019-5-6-16-59-21/Results/tae-pom-tutorial/dataset
+    Experiments/exp-2019-5-6-16-59-21/Results/toy-pom-tutorial/dataset
+    ans = Experiments/exp-2019-5-6-16-59-21
 
 
 As can be observed, ORCA analyses all the files included in the folder of the dataset, where training and test partitions are included (a pair of files `train_dataset.X` and `test_dataset.X` for each dataset, where `X` is the number of partition). For each partition, a model is trained on training data and tested on test data.
@@ -199,13 +199,13 @@ Utilities.runExperiments('tutorial/config-files/svc1v1-3holdout.ini')
     Running experiment exp-svorim-mae-tutorial-toy-2.ini
     Running experiment exp-svorim-mae-tutorial-toy-3.ini
     Calculating results...
-    Experiments/exp-2019-5-6-16-7-46/Results/pasture-svorim-mae-tutorial/dataset
-    Experiments/exp-2019-5-6-16-7-46/Results/tae-svorim-mae-tutorial/dataset
-    Experiments/exp-2019-5-6-16-7-46/Results/toy-svorim-mae-tutorial/dataset
-    Experiments/exp-2019-5-6-16-7-46/Results/pasture-svorim-mae-tutorial/dataset
-    Experiments/exp-2019-5-6-16-7-46/Results/tae-svorim-mae-tutorial/dataset
-    Experiments/exp-2019-5-6-16-7-46/Results/toy-svorim-mae-tutorial/dataset
-    ans = Experiments/exp-2019-5-6-16-7-46
+    Experiments/exp-2019-5-6-16-59-37/Results/pasture-svorim-mae-tutorial/dataset
+    Experiments/exp-2019-5-6-16-59-37/Results/tae-svorim-mae-tutorial/dataset
+    Experiments/exp-2019-5-6-16-59-37/Results/toy-svorim-mae-tutorial/dataset
+    Experiments/exp-2019-5-6-16-59-37/Results/pasture-svorim-mae-tutorial/dataset
+    Experiments/exp-2019-5-6-16-59-37/Results/tae-svorim-mae-tutorial/dataset
+    Experiments/exp-2019-5-6-16-59-37/Results/toy-svorim-mae-tutorial/dataset
+    ans = Experiments/exp-2019-5-6-16-59-37
     Setting up experiments...
     Running experiment exp-svc1v1-mae-tutorial-pasture-1.ini
     Running experiment exp-svc1v1-mae-tutorial-pasture-2.ini
@@ -217,13 +217,13 @@ Utilities.runExperiments('tutorial/config-files/svc1v1-3holdout.ini')
     Running experiment exp-svc1v1-mae-tutorial-toy-2.ini
     Running experiment exp-svc1v1-mae-tutorial-toy-3.ini
     Calculating results...
-    Experiments/exp-2019-5-6-16-7-52/Results/pasture-svc1v1-mae-tutorial/dataset
-    Experiments/exp-2019-5-6-16-7-52/Results/tae-svc1v1-mae-tutorial/dataset
-    Experiments/exp-2019-5-6-16-7-52/Results/toy-svc1v1-mae-tutorial/dataset
-    Experiments/exp-2019-5-6-16-7-52/Results/pasture-svc1v1-mae-tutorial/dataset
-    Experiments/exp-2019-5-6-16-7-52/Results/tae-svc1v1-mae-tutorial/dataset
-    Experiments/exp-2019-5-6-16-7-52/Results/toy-svc1v1-mae-tutorial/dataset
-    ans = Experiments/exp-2019-5-6-16-7-52
+    Experiments/exp-2019-5-6-16-59-43/Results/pasture-svc1v1-mae-tutorial/dataset
+    Experiments/exp-2019-5-6-16-59-43/Results/tae-svc1v1-mae-tutorial/dataset
+    Experiments/exp-2019-5-6-16-59-43/Results/toy-svc1v1-mae-tutorial/dataset
+    Experiments/exp-2019-5-6-16-59-43/Results/pasture-svc1v1-mae-tutorial/dataset
+    Experiments/exp-2019-5-6-16-59-43/Results/tae-svc1v1-mae-tutorial/dataset
+    Experiments/exp-2019-5-6-16-59-43/Results/toy-svc1v1-mae-tutorial/dataset
+    ans = Experiments/exp-2019-5-6-16-59-43
 
 
 Once the experiments are finished, the corresponding results can be found in the `Experiments` subfolder, as described in the [corresponding section](#Experimental-results-and-reports) of this tutorial.
@@ -542,22 +542,6 @@ i.e., the algorithm used for training (`algorithm`), the weight given to each pa
 
 The corresponding script ([exampleKDLOR.m](../src/code-examples/exampleKDLOR.m)) can be found and run in the [code example](../src/code-examples) folder.
 
-
-```octave
-rmpath('../src/Measures')
-rmpath('../src/Algorithms')
-rmpath('../src/Utils/')
-```
-
-# References
-
-1. P. McCullagh, "Regression models for ordinal data",  Journal of the Royal Statistical Society. Series B (Methodological), vol. 42, no. 2, pp. 109–142, 1980.
-1. W. Chu and S. S. Keerthi, "Support Vector Ordinal Regression", Neural Computation, vol. 19, no. 3, pp. 792–815, 2007. http://10.1162/neco.2007.19.3.792
-1. C.-W. Hsu and C.-J. Lin. "A comparison of methods for multi-class support vector machines", IEEE Transaction on Neural Networks,vol. 13, no. 2, pp. 415–425, 2002. https://doi.org/10.1109/72.991427
-1. M. Cruz-Ramírez, C. Hervás-Martínez, J. Sánchez-Monedero and P. A. Gutiérrez, "Metrics to guide a multi-objective evolutionary algorithm for ordinal classification", Neurocomputing, Vol. 135, July, 2014, pp. 21-31. https://doi.org/10.1016/j.neucom.2013.05.058
-1. B.-Y. Sun, J. Li, D. D. Wu, X.-M. Zhang, and W.-B. Li, "Kernel discriminant learning for ordinal regression", IEEE Transactions on Knowledge and Data Engineering, vol. 22, no. 6, pp. 906-910, 2010. https://doi.org/10.1109/TKDE.2009.170
-
-
 ### Using performance metrics
 
 Ordinal classification problems should be evaluated with specific metrics that consider the magnitude of the prediction errors in different ways. ORCA includes a set of these metrics in [Measures](../src/Measures) folder. Given the previous example, we can calculate different performance metrics with the actual and predicted labels:
@@ -573,12 +557,8 @@ Wkappa.calculateMetric(test.targets,info.predictedTest)
 
     ans =  0.85333
     ans =  0.14667
-    error: 'confusionmat' undefined near line 44 column 26
-    error: called from
-        calculateMetric at line 44 column 24
-    error: 'confusionmat' undefined near line 39 column 26
-    error: called from
-        calculateMetric at line 39 column 24
+    ans =  0.10802
+    ans =  0.88543
 
 
 The same results can be obtained from the confusion matrix:
@@ -594,11 +574,18 @@ AMAE.calculateMetric(cm)
 Wkappa.calculateMetric(cm)
 ```
 
-    error: 'confusionmat' undefined near line 1 column 6
-    error: 'cm' undefined near line 1 column 21
-    error: 'cm' undefined near line 1 column 21
-    error: 'cm' undefined near line 1 column 22
-    error: 'cm' undefined near line 1 column 24
+    cm =
+    
+        9    0    0    0    0
+        1   14    7    0    0
+        0    0   20    0    0
+        0    0    3   14    0
+        0    0    0    0    7
+    
+    ans =  0.85333
+    ans =  0.14667
+    ans =  0.10802
+    ans =  0.88543
 
 
 ### Visualizing projections
@@ -610,56 +597,76 @@ Many ordinal regression methods belong to the category of threshold methods, whi
 
 ```octave
 figure; hold on;
+param.k = 1;
 info1 = kdlorAlgorithm.fitpredict(train,test,param);
 hist(info1.projectedTest', 30);
-y1=get(gca,'ylim');
-for i=1:size(info1.model.thresholds,2)
-    line([+info1.model.thresholds(i) +info1.model.thresholds(i)],y1,'Color',[1 0 0]);
-end
-legend('KDLOR k=0.1','Thresholds KDLOR k=0.1', 'Location','NorthWest')
+legend('KDLOR k=1','Location','NorthWest')
 hold off;
-```
 
-    error: 'computeKernelMatrix' undefined near line 107 column 28
-    error: called from
-        privfit at line 107 column 26
-        fit at line 65 column 44
-        fitpredict at line 33 column 54
-    error: 'info1' undefined near line 1 column 6
-    error: 'info1' undefined near line 1 column 14
-
-
-
-![png](orca_tutorial_1_files/orca_tutorial_1_35_1.png)
-
-
-
-```octave
 figure; hold on;
 param.k = 100;
 info2 = kdlorAlgorithm.fitpredict(train,test,param);
 hist(info2.projectedTest', 30);
-for i=1:size(info2.model.thresholds,2)
-    line([+info2.model.thresholds(i) +info2.model.thresholds(i)],y1,'Color',[0 1 0]);
-end
-legend('KDLOR k=10','Thresholds KDLOR k=10', 'Location','NorthWest')
+legend('KDLOR k=100','Location','NorthWest')
 hold off;
 ```
 
-    error: 'computeKernelMatrix' undefined near line 107 column 28
-    error: called from
-        privfit at line 107 column 26
-        fit at line 65 column 44
-        fitpredict at line 33 column 54
-    error: 'info2' undefined near line 1 column 6
-    error: 'info2' undefined near line 1 column 14
+
+![png](orca_tutorial_1_files/orca_tutorial_1_33_0.png)
 
 
 
-![png](orca_tutorial_1_files/orca_tutorial_1_36_1.png)
+![png](orca_tutorial_1_files/orca_tutorial_1_33_1.png)
 
 
-The whole example is available at [exampleProjections.m](../code-examples/exampleProjectionsThresholds.m).
+Now, you can compare performance using AMAE:
+
+
+
+
+```octave
+amae1 = AMAE.calculateMetric(test.targets,info1.predictedTest)
+amae2 = AMAE.calculateMetric(test.targets,info2.predictedTest)
+```
+
+    amae1 =  0.10535
+    amae2 =  0.11670
+
+
+The whole example is available at [exampleProjections.m](../code-examples/exampleProjections.m).
+
+### Visualizing projections and decision thresholds
+
+The `model` structure stores decision thresholds in the field thresholds. Starting from the previous example:
+
+
+```octave
+% Run algorithm
+info1 = kdlorAlgorithm.fitpredict(train,test,param);
+amaeTest1 = AMAE.calculateMetric(test.targets,info1.predictedTest);
+% Build legend text
+msg{1} = sprintf('KDLOR k=%f. AMAE=%f', param.k, amaeTest1);
+msg{2} = 'Thresholds';
+
+figure; hold on;
+info1 = kdlorAlgorithm.fitpredict(train,test,param);
+hist(info1.projectedTest', 30);
+y1=get(gca,'ylim');
+plot(info1.model.thresholds, ...
+    zeros(length(info1.model.thresholds),1),...
+    'r+', 'MarkerSize', 10)
+legend(msg)
+legend('Location','NorthWest')
+hold off;
+
+
+```
+
+
+![png](orca_tutorial_1_files/orca_tutorial_1_38_0.png)
+
+
+The whole example is available at [exampleProjectionsThresholds.m](../code-examples/exampleProjectionsThresholds.m).
 
 ## Using ORCA with your own datasets
 

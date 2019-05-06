@@ -225,8 +225,8 @@ fprintf('NNPOM MAE: %f\n', MAE.calculateMetric(test.targets,info.predictedTest))
 
     NNPOM method
     ---------------
-    NNPOM Accuracy: 0.625000
-    NNPOM MAE: 0.571429
+    NNPOM Accuracy: 0.642857
+    NNPOM MAE: 0.517857
 
 
 The source code of NNPOM clearly shows how the prediction is performed, which clarify a lot the model:
@@ -259,7 +259,7 @@ info.model.thresholds
 
     ans =
     
-        0.16125    6.79384   14.58535   22.33126
+       -3.4466    3.1915   10.9918   18.4126
     
 
 
@@ -270,16 +270,16 @@ info.projectedTest(1:10)
 
     ans =
     
-      -16.2267
-       -9.0195
-       -9.4506
-      -10.3527
-       -3.4101
-       -9.7718
-       -4.5196
-       -1.3614
-       10.6073
-      -16.8267
+      -10.5596
+      -14.2246
+      -11.2118
+      -13.7999
+      -15.8424
+      -12.0802
+       -8.9478
+        2.0719
+        7.3462
+      -19.9952
     
 
 
