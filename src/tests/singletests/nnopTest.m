@@ -1,7 +1,7 @@
 % Reference performance
 accTestRef = 0.9;
 % Increase the error due to method's variability
-allowedError = 0.1; 
+allowedError = 0.13; 
 method = 'NNOP';
 
 % Create the algorithm object
