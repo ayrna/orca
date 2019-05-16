@@ -5,6 +5,6 @@ if [ $# != 2 ]; then
 	exit 127
 fi
 
-cmd="/usr/local/matlab/bin/matlab -nodesktop -nojvm -nodisplay -r addpath('..');Utilities.configureExperiment('$1','$2');quit";
+cmd="/usr/local/matlab/bin/matlab -nodesktop -nojvm -nodisplay -r addpath('../Utils');Utilities.configureExperiment('$1','$2');quit";
 echo $cmd;
 $cmd;

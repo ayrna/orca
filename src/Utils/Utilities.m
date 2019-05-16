@@ -52,8 +52,8 @@ classdef Utilities < handle
             %   Utilities.runExperiments('tests/cvtests-30-holdout/kdlor.ini', 'parallel', 1, 'closepool', false)
             %   Utilities.runExperiments('tests/cvtests-30-holdout/svorim.ini', 'parallel', 1, 'closepool', false)
             %
-            addpath(fullfile(fileparts(which('Utilities.m')),'Measures'));
-            addpath(fullfile(fileparts(which('Utilities.m')),'Algorithms'));
+            addpath(fullfile(fileparts(which('Utilities.m')),'../Measures'));
+            addpath(fullfile(fileparts(which('Utilities.m')),'../Algorithms'));
             
             disp('Setting up experiments...');
             
@@ -98,8 +98,8 @@ classdef Utilities < handle
             Utilities.results([logsDir '/' 'Results'],'report_sum', myExperiment.report_sum, 'train', true);
             % Test results
             Utilities.results([logsDir '/' 'Results'], 'report_sum', myExperiment.report_sum);
-            %rmpath('Measures');
-            %rmpath('Algorithms');
+            %rmpath('../Measures');
+            %rmpath('../Algorithms');
             
         end
         
@@ -138,8 +138,8 @@ classdef Utilities < handle
             %   MEASURES/MMAE, MEASURES/GM, MEASURES/MS, MEASURES/Spearman,
             %   MEASURES/Tkendall, MEASURES/Wkappa
             
-            addpath(fullfile(fileparts(which('Utilities.m')),'Measures'));
-            addpath(fullfile(fileparts(which('Utilities.m')),'Algorithms'));
+            addpath(fullfile(fileparts(which('Utilities.m')),'../Measures'));
+            addpath(fullfile(fileparts(which('Utilities.m')),'../Algorithms'));
             
             opt.train = false;
             opt.report_sum = false;
@@ -377,8 +377,8 @@ classdef Utilities < handle
                 end
                 
             end
-            rmpath(fullfile(fileparts(which('Utilities.m')),'Measures'));
-            rmpath(fullfile(fileparts(which('Utilities.m')),'Algorithms'));
+            rmpath(fullfile(fileparts(which('Utilities.m')),'../Measures'));
+            rmpath(fullfile(fileparts(which('Utilities.m')),'../Algorithms'));
             
             
         end
@@ -460,14 +460,14 @@ classdef Utilities < handle
         function runExperimentFold(confFile)
             % RUNEXPERIMENTFOLD(CONFFILE) launch a single experiment described in
             %   file CONFFILE
-            addpath(fullfile(fileparts(which('Utilities.m')),'Measures'));
-            addpath(fullfile(fileparts(which('Utilities.m')),'Algorithms'));
+            addpath(fullfile(fileparts(which('Utilities.m')),'../Measures'));
+            addpath(fullfile(fileparts(which('Utilities.m')),'../Algorithms'));
             
             auxiliar = Experiment;
             auxiliar.launch(confFile);
             
-            rmpath(fullfile(fileparts(which('Utilities.m')),'Measures'));
-            rmpath(fullfile(fileparts(which('Utilities.m')),'Algorithms'));
+            rmpath(fullfile(fileparts(which('Utilities.m')),'../Measures'));
+            rmpath(fullfile(fileparts(which('Utilities.m')),'../Algorithms'));
             
         end
     end
