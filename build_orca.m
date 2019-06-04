@@ -10,6 +10,12 @@ if (exist ('OCTAVE_VERSION', 'builtin') > 0)
 	if length(ip) == 0
 		pkg install -forge io
 		pkg install -forge statistics
+	else
+		verref = '1.4.1';
+		if prod(ip{1,1}.version <= verref) == 0
+			pkg install -forge io
+			pkg install -forge statistics
+		end
 	end
 	ip = pkg ("list", "optim");
 	if length(ip) == 0
