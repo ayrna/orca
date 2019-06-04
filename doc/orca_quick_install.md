@@ -20,7 +20,7 @@ In order to use ORCA you need:
 * GNU `gcc` and `g++`
 * MATLAB/Octave (Octave >= 4.2), including `mex`.
   * MATLAB toolboxes: MATLAB compiler, Optimization, Statistics and Machine Learning. Optional Parallel Computing.
-  * Octave packages (ORCA will install them for you): statistics, optim and dependencies io, struct. Depending on your GNU/Linux distribution you may also have to install `liboctave-dev` with your distribution package manager.
+  * Octave packages (ORCA will install them for you): **recent versions from octave forge** of statistics, optim and dependencies io, struct. Depending on your GNU/Linux distribution you may also have to install `liboctave-dev` with your distribution package manager. 
 
 ## Download and install ORCA
 
