@@ -20,7 +20,7 @@ then
 	rm "./Experiments/exp-$1/experiments.tar.gz";
 fi
 
-cmd="/usr/local/matlab/bin/matlab -nodesktop -nojvm -nodisplay -r addpath('..');Utilities.results('Experiments/exp-$1/Results');quit";
+cmd="/usr/local/matlab/bin/matlab -nodesktop -nojvm -nodisplay -r addpath('../Utils');Utilities.results('Experiments/exp-$1/Results');quit";
 $cmd;
 
 
