@@ -39,5 +39,11 @@ priority = 0
 # Get all environment variables
 getenv = True
 
+# Send the job to Held state on failure. 
+on_exit_hold = (ExitBySignal == True) || (ExitCode != 0)  
+
+# Periodically retry the jobs every 10 seconds, up to a maximum of 25 retries.
+periodic_release =  (NumJobStarts < 25) && ((CurrentTime - EnteredCurrentStatus) > 10)
+
 # Queue executions considering variable $(Process)
 queue $(numRuns)
