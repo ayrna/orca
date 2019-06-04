@@ -6,12 +6,12 @@
 disp('== Check and install dependencies... ==')
 % Build ORCA for Octave and install dependencies
 if (exist ('OCTAVE_VERSION', 'builtin') > 0)
-	ip = pkg ("list", "statistics");
+	ip = pkg ('list', 'statistics');
 	if length(ip) == 0
 		pkg install -forge io
 		pkg install -forge statistics
 	end
-	ip = pkg ("list", "optim");
+	ip = pkg ('list', 'optim');
 	if length(ip) == 0
 		pkg install -forge struct
 		pkg install -forge optim
