@@ -34,10 +34,10 @@ octave:
 binary: train.$(MEX_EXT) predict.$(MEX_EXT)
 
 train.$(MEX_EXT): svmtrain.cpp ../linear.h ../tron.o ../linear.o linear_model_matlab.o ../blas/blas.a
-	$(MEX) $(MEX_OPTION) svmtrain.cpp ../tron.o ../linear.o linear_model_matlab.o ../blas/blas.a
+	$(MEX) $(MEX_OPTION) -I.. svmtrain.cpp ../tron.o ../linear.o linear_model_matlab.o ../blas/blas.a
 
 predict.$(MEX_EXT): svmpredict.cpp ../linear.h ../tron.o ../linear.o linear_model_matlab.o ../blas/blas.a
-	$(MEX) $(MEX_OPTION) svmpredict.cpp ../tron.o ../linear.o linear_model_matlab.o ../blas/blas.a
+	$(MEX) $(MEX_OPTION) -I.. svmpredict.cpp ../tron.o ../linear.o linear_model_matlab.o ../blas/blas.a
 
 #libsvmread.$(MEX_EXT):	libsvmread.c
 #	$(MEX) $(MEX_OPTION) libsvmread.c
