@@ -14,6 +14,8 @@ pkg install -forge parallel
 
 These are some examples measuring the performance improvement:
 ```MATLAB
+cd src
+addpath('Utils')
 % Launch experiments sequentially
 tic;Utilities.runExperiments('tests/cvtests-30-holdout/kdlor.ini');toc
 ...
