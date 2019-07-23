@@ -4,20 +4,20 @@
 ![ORCA logo](doc/orca_small.png)
 <!-- TOC depthFrom:1 depthTo:6 withLinks:1 updateOnSave:1 orderedList:1 -->
 
-1. [ORCA](#orca)
-2. [Cite ORCA](#cite-orca)
-3. [Installation, tutorials and documentation](#installation-tutorials-and-documentation)
-4. [Methods](#methods)
-	1. [Ordinal regression algorithms](#ordinal-regression-algorithms)
-	2. [Partial order methods](#partial-order-methods)
-	3. [Nominal methods](#nominal-methods)
-5. [Performance metrics](#performance-metrics)
-6. [Utilities, classes and scripts](#utilities-classes-and-scripts)
-7. [Datasets](#datasets)
-8. [Experiments parallelization with HTCondor](#experiments-parallelization-with-htcondor)
-9. [External software](#external-software)
-10. [Other contributors](#other-contributors)
-11. [References](#references)
+- [ORCA](#orca)
+- [Cite ORCA](#cite-orca)
+- [Installation, tutorials and documentation](#installation-tutorials-and-documentation)
+- [Methods included](#methods-included)
+  - [Ordinal regression algorithms](#ordinal-regression-algorithms)
+  - [Partial order methods](#partial-order-methods)
+  - [Nominal methods](#nominal-methods)
+- [Performance metrics](#performance-metrics)
+- [Utilities, classes and scripts](#utilities-classes-and-scripts)
+- [Datasets](#datasets)
+- [Experiments parallelization with HTCondor](#experiments-parallelization-with-htcondor)
+- [External software](#external-software)
+- [Other contributors](#other-contributors)
+- [References](#references)
 
 <!-- /TOC -->
 
@@ -67,7 +67,7 @@ The documentation can be found in the [doc](doc) folder and includes:
 	  1. A first *'how to' tutorial* ([Jupyter Notebook](doc/orca_tutorial_1.ipynb), [MD](doc/orca_tutorial_1.md)) to get started with ORCA.
   	1. A specific *tutorial for naive approaches and decomposition methods* ([Jupyter Notebook](doc/orca_tutorial_2.ipynb), [MD](doc/orca_tutorial_2.md)) covering the different considerations needed for these methods.
   	1. A *tutorial for threshold models* ([Jupyter Notebook](doc/orca_tutorial_3.ipynb), [MD](doc/orca_tutorial_3.md)) examining the differences of these models.
-  - A guide about how to [paralelize ORCA experiments](doc/orca_parallel.md).
+  - A guide about how to [parallelize ORCA experiments](doc/orca_parallel.md).
   - Some notes about the [use of ORCA with HTCondor](doc/orca_condor.md).
   - An example about how to [add a new method to ORCA](doc/orca_addmethod.md).
   - An additional branch that includes other methods ready to use in ORCA. Visit [orca-extra-methods branch](https://github.com/ayrna/orca/tree/orca-extra-methods).
@@ -125,7 +125,7 @@ The [measures](src/Measures) folder contains the MATLAB classes for the metrics 
 - [Experiment.m](src/Utils/Experiment.m): Class that runs the different experiments.
 - [Utilities.m](src/Utils/Utilities.m): Class that pre-process the experiment files, run the different algorithms and produces the results.
 - [runtests_single.m](src/runtests_single.m): Script to run all the methods using the ORCA API. Reference performance is compared with `toy` dataset in order to check that the installation is correct.
-- [runtestscv.m](src/runtestscv.m): This script runs full experiment tests using the ORCA configuration files to describe experiments.
+- [runtests_cv.m](src/runtests_cv.m): This script runs full experiment tests using the ORCA configuration files to describe experiments.
 
 # Datasets
 

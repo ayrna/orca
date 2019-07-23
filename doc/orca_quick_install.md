@@ -59,7 +59,7 @@ If you prefer to build `mex` files from the Linux shell, you can use standard `m
 
 ## Installation testing
 
-We provide a set of basic tests to for checking that all the algorithms work, both using ORCA's API and experiment scripts (see [tutorial](orca_tutorial_1_md) for more information).
+We provide a set of basic tests to for checking that all the algorithms work, both using ORCA's API and experiment scripts (see [tutorial](orca_tutorial_1.md) for more information).
 
 The way to run the tests checking the API (see [single test scripts](../src/tests/singletests/)) is the following (running time is ~12 seconds):
 
@@ -83,7 +83,7 @@ To run the tests checking the experiment scripts (running time is ~123 seconds):
 
 ```MATLAB
 >> cd src/
->> runtestscv
+>> runtests_cv
 ...
 Running experiment exp-svr-real1-toy-1
 Processing Experiments/exp-2017-11-16-13-59-1/exp-svr-real1-toy-1
@@ -98,7 +98,7 @@ If any of these tests fail, please read the [detailed installation guide](orca_i
 
 ## Use ORCA as a toolbox
 
-The first of three tutorials cvers the basic use of ORCA as a toolbox but also as an experimental framework: *'how to' tutorial* ([HTML](doc/orca_tutorial_1.html), [Jupyter Notebook](doc/orca_tutorial_1.ipynb), [MD](doc/orca_tutorial_1.md)).
+The first of three tutorials covers the basic use of ORCA as a toolbox but also as an experimental framework: *'how to' tutorial* ([HTML](doc/orca_tutorial_1.html), [Jupyter Notebook](doc/orca_tutorial_1.ipynb), [MD](doc/orca_tutorial_1.md)).
 
 For instance, to use ORCA as a toolbox:
 
