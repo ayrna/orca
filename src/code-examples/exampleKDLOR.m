@@ -1,4 +1,5 @@
 % Note: this code should be run from orca/src/code-examples
+clear param;
 addpath ../Algorithms/
 
 % Load the different partitions of the dataset
@@ -24,7 +25,7 @@ param.k = 0.1;
 param.u = 0.001;
 
 % Running the algorithm
-info = kdlorAlgorithm.runAlgorithm(train,test,param);
+info = kdlorAlgorithm.fitpredict(train,test,param);
 
 accTrain = sum(train.targets==info.predictedTrain)/size(train.targets,1);
 accTest = sum(test.targets==info.predictedTest)/size(test.targets,1);

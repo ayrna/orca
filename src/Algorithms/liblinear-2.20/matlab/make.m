@@ -14,8 +14,8 @@ if nargin < 1
             end
             %mex libsvmread.c
             %mex libsvmwrite.c
-            mex -I.. -O3 svmtrain.c linear_model_matlab.c ../linear.cpp ../tron.cpp ../blas/daxpy.c ../blas/ddot.c ../blas/dnrm2.c ../blas/dscal.c
-            mex -I.. -O3 svmpredict.c linear_model_matlab.c ../linear.cpp ../tron.cpp ../blas/daxpy.c ../blas/ddot.c ../blas/dnrm2.c ../blas/dscal.c
+            mex -I.. -O3 svmtrain.cpp linear_model_matlab.cpp ../linear.cpp ../tron.cpp ../blas/daxpy.c ../blas/ddot.c ../blas/dnrm2.c ../blas/dscal.c
+            mex -I.. -O3 svmpredict.cpp linear_model_matlab.cpp ../linear.cpp ../tron.cpp ../blas/daxpy.c ../blas/ddot.c ../blas/dnrm2.c ../blas/dscal.c
             delete *.o
             % This part is for MATLAB
             % Add -largeArrayDims on 64-bit machines of MATLAB
@@ -23,13 +23,13 @@ if nargin < 1
             if ispc
                 %mex COMPFLAGS="\$COMPFLAGS -std=c99 -O3" -largeArrayDims libsvmread.c
                 %mex COMPFLAGS="\$COMPFLAGS -std=c99 -O3" -largeArrayDims libsvmwrite.c
-                mex COMPFLAGS="\$COMPFLAGS -O3" -I.. -largeArrayDims svmtrain.c linear_model_matlab.c ../linear.cpp ../tron.cpp ../blas/daxpy.c ../blas/ddot.c ../blas/dnrm2.c ../blas/dscal.c
-                mex COMPFLAGS="\$COMPFLAGS -O3" -I.. -largeArrayDims svmpredict.c linear_model_matlab.c ../linear.cpp ../tron.cpp ../blas/daxpy.c ../blas/ddot.c ../blas/dnrm2.c ../blas/dscal.c
+                mex COMPFLAGS="\$COMPFLAGS -O3" -I.. -largeArrayDims svmtrain.cpp linear_model_matlab.cpp ../linear.cpp ../tron.cpp ../blas/daxpy.c ../blas/ddot.c ../blas/dnrm2.c ../blas/dscal.c
+                mex COMPFLAGS="\$COMPFLAGS -O3" -I.. -largeArrayDims svmpredict.cpp linear_model_matlab.cpp ../linear.cpp ../tron.cpp ../blas/daxpy.c ../blas/ddot.c ../blas/dnrm2.c ../blas/dscal.c
             else
                 %mex CFLAGS="\$CFLAGS -std=c99" -largeArrayDims libsvmread.c
                 %mex CFLAGS="\$CFLAGS -std=c99" -largeArrayDims libsvmwrite.c
-                mex CFLAGS="\$CFLAGS" -I.. -largeArrayDims svmtrain.c linear_model_matlab.c ../linear.cpp ../tron.cpp ../blas/daxpy.c ../blas/ddot.c ../blas/dnrm2.c ../blas/dscal.c
-                mex CFLAGS="\$CFLAGS" -I.. -largeArrayDims svmpredict.c linear_model_matlab.c ../linear.cpp ../tron.cpp ../blas/daxpy.c ../blas/ddot.c ../blas/dnrm2.c ../blas/dscal.c
+                mex CFLAGS="\$CFLAGS" -I.. -largeArrayDims svmtrain.cpp linear_model_matlab.cpp ../linear.cpp ../tron.cpp ../blas/daxpy.c ../blas/ddot.c ../blas/dnrm2.c ../blas/dscal.c
+                mex CFLAGS="\$CFLAGS" -I.. -largeArrayDims svmpredict.cpp linear_model_matlab.cpp ../linear.cpp ../tron.cpp ../blas/daxpy.c ../blas/ddot.c ../blas/dnrm2.c ../blas/dscal.c
             end
         end
     catch err

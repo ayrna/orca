@@ -2,26 +2,25 @@
 
 - [Installing ORCA](#installing-orca)
 	- [Installation requirements](#installation-requirements)
-	- [Download ORCA](#download-orca)
+	- [Download and install ORCA](#download-and-install-orca)
 	- [Binaries](#binaries)
-	- [Compilation of `mex` files from the MATLAB/Octave console (RECOMMENDED)](#compilation-of-mex-files-from-the-matlaboctave-console-recommended)
 	- [Compilation of `mex` files from system shell](#compilation-of-mex-files-from-system-shell)
 	- [Installation testing](#installation-testing)
+	- [Use ORCA as a toolbox](#use-orca-as-a-toolbox)
 
-<!-- /TOC -->
 
 # Installing ORCA
 
-This is a **quick installation** guide. If you experiment any problems, please read the [detailed installation guide](orca_install.md). ORCA has been developed and tested in GNU/Linux systems and ported to Windows. It works in Mac using GNU compilers. It has been tested in MATLAB R2009a-R2017b and Octave >4.0.
+This is a **quick installation** guide. If you experiment any problems, please read the [detailed installation guide](orca_install.md). ORCA has been developed and tested in GNU/Linux systems and ported to Windows. It works in Mac using GNU compilers. It has been tested in MATLAB R2009a-R2017b and Octave >= 4.2.
 
 ## Installation requirements
 
 In order to use ORCA you need:
 
 * GNU `gcc` and `g++`
-* MATLAB/Octave (Octave >= 4.0), including `mex`.
-  * MATLAB toolboxes: Statistics and Machine Learning
-  * Octave packages (ORCA will install them for you): statistics, optim and dependencies io, struct. Depending on your GNU/Linux distribution you may also have to install `liboctave-dev` with your distribution package manager.
+* MATLAB/Octave (Octave >= 4.2), including `mex`.
+  * MATLAB toolboxes: MATLAB compiler, Optimization, Statistics and Machine Learning. Optional Parallel Computing.
+  * Octave packages (ORCA will install them for you): **recent versions from octave forge** of statistics, optim and dependencies io, struct. Depending on your GNU/Linux distribution you may also have to install `liboctave-dev` with your distribution package manager. 
 
 ## Download and install ORCA
 
@@ -50,20 +49,6 @@ $ octave-cli build_orca.m
 
 We provide binary files for several platforms (Debian based and CentOS GNU/Linux and Windows). The compressed files include the git files, so git pull should work. Binaries can be downloaded in the [release page](https://github.com/ayrna/orca/releases).
 
-## Compilation of `mex` files from the MATLAB/Octave console (RECOMMENDED)
-
-ORCA is programmed in MATLAB, but many of the classification algorithms are implemented in C/C++. Because of this, these methods have to be compiled and/or packaged into the corresponding `mex` files.
-
-In Windows and GNU/Linux, you can build ORCA directly **from the MATLAB/Octave console**. Just enter in the `scr` directory and type `make`.
-```MATLAB
->> cd src/Algorithms
->> make
-```
-After building, you can clean the objects files with `make clean`:
-```MATLAB
->> make clean
-```
-
 ## Compilation of `mex` files from system shell
 
 If you prefer to build `mex` files from the Linux shell, you can use standard `make` tool at `src/Algorithms` directory:
@@ -74,13 +59,13 @@ If you prefer to build `mex` files from the Linux shell, you can use standard `m
 
 ## Installation testing
 
-We provide a set of basic tests to for checking that all the algorithms work, both using ORCA's API and experiment scripts (see [tutorial](orca_tutorial_1_md) for more information).
+We provide a set of basic tests to for checking that all the algorithms work, both using ORCA's API and experiment scripts (see [tutorial](orca_tutorial_1.md) for more information).
 
 The way to run the tests checking the API (see [single test scripts](../src/tests/singletests/)) is the following (running time is ~12 seconds):
 
 ```MATLAB
 >> cd src/
->> runtestssingle
+>> runtests_single
 ...
 .........................
 Performing test for SVORLin
@@ -97,8 +82,7 @@ All tests ended successfully
 To run the tests checking the experiment scripts (running time is ~123 seconds):
 
 ```MATLAB
->> cd src/
->> runtestscv
+>> runtests_cv
 ...
 Running experiment exp-svr-real1-toy-1
 Processing Experiments/exp-2017-11-16-13-59-1/exp-svr-real1-toy-1
@@ -110,3 +94,29 @@ All tests ended successfully
 ```
 
 If any of these tests fail, please read the [detailed installation guide](orca_install.md).
+
+## Use ORCA as a toolbox
+
+The first of three tutorials covers the basic use of ORCA as a toolbox but also as an experimental framework: *'how to' tutorial* ([Jupyter Notebook](orca_tutorial_1.ipynb), [MD](orca_tutorial_1.md)).
+
+For instance, to use ORCA as a toolbox:
+
+```MATLAB
+% Create an Algorithm object
+addpath('src/Algorithms/')
+kdlorAlgorithm = KDLOR();
+% Load dataset
+load exampledata/1-holdout/toy/matlab/train_toy.0
+load exampledata/1-holdout/toy/matlab/test_toy.0
+train.patterns = train_toy(:,1:(size(train_toy,2)-1));
+train.targets = train_toy(:,size(train_toy,2));
+test.patterns = test_toy(:,1:(size(test_toy,2)-1));
+test.targets = test_toy(:,size(test_toy,2));
+% Fit the model and predict with test data
+info = kdlorAlgorithm.fitpredict(train,test);
+
+% You can evaluate performance with ordinal metrics:
+addpath('src/Measures/')
+CCR.calculateMetric(info.predictedTest,test.targets)
+MAE.calculateMetric(info.predictedTest,test.targets)
+```

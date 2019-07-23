@@ -4,20 +4,20 @@
 ![ORCA logo](doc/orca_small.png)
 <!-- TOC depthFrom:1 depthTo:6 withLinks:1 updateOnSave:1 orderedList:1 -->
 
-1. [ORCA](#orca)
-2. [Cite ORCA](#cite-orca)
-3. [Installation, tutorials and documentation](#installation-tutorials-and-documentation)
-4. [Methods](#methods)
-	1. [Ordinal regression algorithms](#ordinal-regression-algorithms)
-	2. [Partial order methods](#partial-order-methods)
-	3. [Nominal methods](#nominal-methods)
-5. [Performance metrics](#performance-metrics)
-6. [Utilities, classes and scripts](#utilities-classes-and-scripts)
-7. [Datasets](#datasets)
-8. [Experiments parallelization with HTCondor](#experiments-parallelization-with-htcondor)
-9. [External software](#external-software)
-10. [Other contributors](#other-contributors)
-11. [References](#references)
+- [ORCA](#orca)
+- [Cite ORCA](#cite-orca)
+- [Installation, tutorials and documentation](#installation-tutorials-and-documentation)
+- [Methods included](#methods-included)
+  - [Ordinal regression algorithms](#ordinal-regression-algorithms)
+  - [Partial order methods](#partial-order-methods)
+  - [Nominal methods](#nominal-methods)
+- [Performance metrics](#performance-metrics)
+- [Utilities, classes and scripts](#utilities-classes-and-scripts)
+- [Datasets](#datasets)
+- [Experiments parallelization with HTCondor](#experiments-parallelization-with-htcondor)
+- [External software](#external-software)
+- [Other contributors](#other-contributors)
+- [References](#references)
 
 <!-- /TOC -->
 
@@ -63,18 +63,21 @@ For more information about our research group please visit [Learning and Artific
 
 The documentation can be found in the [doc](doc) folder and includes:
   - A [quick installation guide of ORCA](doc/orca_quick_install.md) and the associated [build troubleshooting](doc/orca_install.md). Binaries are available for downloading in the [release page](https://github.com/ayrna/orca/releases).
-  - Three **tutorials** on ordinal regression and ORCA: 
-	  - A first *'how to' tutorial* ([HTML](doc/orca_tutorial_1.html), [Jupyter Notebook](doc/orca_tutorial_1.ipynb), [MD](doc/orca_tutorial_1.md)) to get started with ORCA.
-  	- A specific *tutorial for naive approaches and decomposition methods* ([HTML](doc/orca_tutorial_2.html), [Jupyter Notebook](doc/orca_tutorial_2.ipynb), [MD](doc/orca_tutorial_2.md)) covering the different considerations needed for these methods.
-  	- A *tutorial for threshold models* ([HTML](doc/orca_tutorial_3.html), [Jupyter Notebook](doc/orca_tutorial_3.ipynb), [MD](doc/orca_tutorial_3.md)) examining the differences of these models.
-  - A tutorial on how to [paralelize ORCA experiments](doc/orca_parallel.md).
-  - A tutorial to [use ORCA with HTCondor](doc/orca_condor.md).
-  - An example of how to [add a new method to ORCA](doc/orca_addmethod.md).
+  - Three **tutorials** on ordinal regression and ORCA (prepared for Octave). Note: you will need Jupyter and the Octave kernel to use the notebooks (`pip install --user jupyter && pip install --user octave_kernel`):
+	  1. A first *'how to' tutorial* ([Jupyter Notebook](doc/orca_tutorial_1.ipynb), [MD](doc/orca_tutorial_1.md)) to get started with ORCA.
+  	1. A specific *tutorial for naive approaches and decomposition methods* ([Jupyter Notebook](doc/orca_tutorial_2.ipynb), [MD](doc/orca_tutorial_2.md)) covering the different considerations needed for these methods.
+  	1. A *tutorial for threshold models* ([Jupyter Notebook](doc/orca_tutorial_3.ipynb), [MD](doc/orca_tutorial_3.md)) examining the differences of these models.
+  - A guide about how to [parallelize ORCA experiments](doc/orca_parallel.md).
+  - Some notes about the [use of ORCA with HTCondor](doc/orca_condor.md).
+  - An example about how to [add a new method to ORCA](doc/orca_addmethod.md).
   - An additional branch that includes other methods ready to use in ORCA. Visit [orca-extra-methods branch](https://github.com/ayrna/orca/tree/orca-extra-methods).
 
 # Methods included
 
 The [Algorithms](src/Algorithms) folder includes the MATLAB classes for the algorithms included and the original code (if applicable). The [config-files](src/config-files) folder includes different configuration files for running all the algorithms. In order to use these files, the [datasets](http://www.uco.es/grupos/ayrna/ucobigfiles/datasets-orreview.zip) used in the previously cited review paper are needed. To add your own method see [Adding a new method to ORCA](doc/orca_addmethod.md).
+
+**Running time** of the algorithms was analysed in ["Ordinal regression methods: survey and experimental study"](http://dx.doi.org/10.1109/TKDE.2015.2457911)
+(2016). From this analysis, it can be concluded that ELMOP, SVORLin and POM are the best option if computational cost is a priority. The training time of neural network methods (NNPOM and NNOP) and GPOR is in general the highest. This cost can be assumed for GPOR, given that it obtains very good performance for balanced ordinal datasets, while neural network-based methods are generally beaten by the ordinal SVM variants. Concerning scalability, the experimental setup in the review also included some relatively large datasets, so the practitioner could check the time it took to train one of those models with the ORCA framework. In general, linear models such as POM and SVORLin perform very well in these scenarios where there is plenty of data while still having a reasonably low running time (e.g. around 10 seconds for cross-validating, training and testing on a dataset of almost 22.000 patterns). Although very high-dimensional datasets were not considered in the analysis, it is well-known that SVMs can handle high-dimensional data, and given that they are one of the best performing methods in ordinal regression, this might be a good choice in such scenario.
 
 ## Ordinal regression algorithms
 
@@ -85,10 +88,10 @@ The [Algorithms](src/Algorithms) folder includes the MATLAB classes for the algo
   - [POM](src/Algorithms/POM.m) [6]: Extension of the linear binary Logistic Regression methodology to Ordinal Classification by means of Cumulative Link Functions.
   - [SVOREX](src/Algorithms/SVOREX.m) [7]: Ordinal formulation of the SVM paradigm, which computes discriminant parallel hyperplanes for the data and a set of thresholds by imposing explicit constraints in the optimization problem.
   - [SVORIM](src/Algorithms/SVORIM.m) [7]: Ordinal formulation of the SVM paradigm, which computes discriminant parallel hyperplanes for the data and a set of thresholds by imposing implicit constraints in the optimization problem.
-  - [SVORLin](src/Algorithms/SVORLin.m) [7]: Linear version of the SVORIM method (considering a linear kernel instead of the Gaussian one) to check how the kernel trick affects the final performance (SVORLin).
+  - [SVORLin](src/Algorithms/SVORLin.m) [7]: Linear version of the SVORIM method (considering a linear kernel instead of the Gaussian one) to check how the kernel trick affects the final performance.
   - [KDLOR](src/Algorithms/KDLOR.m) [8]: Reformulation of the well-known Kernel Discriminant Analysis for Ordinal Regression by imposing an order constraint in the projected classes.
   - [NNPOM](src/Algorithms/NNPOM.m) [6,9]: Neural Network based on Proportional Odd Model (NNPOM), implementing a neural network model for ordinal regression. The model has one hidden layer and one output layer with only one neuron but as many thresholds as the number of classes minus one. The standard POM model is applied in this neuron to provide probabilistic outputs.
-  - [NNOP](src/Algorithms/NNOP.m) [10]: Neural Network with Ordered Partitions (NNOP), this model considers the OrderedPartitions coding scheme for the labels and a rule for decisions based on the first node whose output is higher than a predefined threshold (T=0.5). The model has one hidden layer and one outputlayer with as many neurons as the number of classes minus one.
+  - [NNOP](src/Algorithms/NNOP.m) [10]: Neural Network with Ordered Partitions (NNOP), this model considers the OrderedPartitions coding scheme for the labels and a rule for decisions based on the first node whose output is higher than a predefined threshold (T=0.5). The model has one hidden layer and one output layer with as many neurons as the number of classes minus one.
   - [REDSVM](src/Algorithms/REDSVM.m) [11]: Augmented Binary Classification framework that solves the Ordinal Regression problem by a single binary model (SVM is applied in this case).
   - [ORBoost](src/Algorithms/ORBoost.m) [12]: This is an ensemble model based on the threshold model structure, where normalised sigmoid functions are used as the base classifier. The *weights* parameter configures whether the All margins versions is used (`weights=true`) or the Left-Right margin is used (`weights=false`).
   - [OPBE](src/Algorithms/OPBE.m) [13]: Ordinal projection-based ensemble (OPBE) based on three-class decompositions, following the ordinal structure. A specific method for fusing the probabilities returned by the different three-class classifiers is implemented (product combiner, logit function and equal distribution of the probabilities). The base classifier is SVORIM but potentially any of the methods in ORCA can be setup as base classifier.
@@ -118,15 +121,15 @@ The [measures](src/Measures) folder contains the MATLAB classes for the metrics 
 
 # Utilities, classes and scripts
 
-- [DataSet.m](src/DataSet.m): Class for data preprocessing.
-- [Experiment.m](src/Experiment.m): Class that runs the different experiments.
-- [Utilities.m](src/Utilities.m): Class that pre-process the experiment files, run the different algorithms and produces the results.
-- [runtestssingle.m](src/runtestssingle.m): Script to run all the methods using the ORCA API. Reference performance is compared with toy dataset in order to check that the installation is correct.
-- [runtestscv.m](src/runtestscv.m): This script runs full experiment tests using the ORCA configuration files to describe experiments.
+- [DataSet.m](src/Utils/DataSet.m): Class for data preprocessing.
+- [Experiment.m](src/Utils/Experiment.m): Class that runs the different experiments.
+- [Utilities.m](src/Utils/Utilities.m): Class that pre-process the experiment files, run the different algorithms and produces the results.
+- [runtests_single.m](src/runtests_single.m): Script to run all the methods using the ORCA API. Reference performance is compared with `toy` dataset in order to check that the installation is correct.
+- [runtests_cv.m](src/runtests_cv.m): This script runs full experiment tests using the ORCA configuration files to describe experiments.
 
 # Datasets
 
-The [example-data](exampledata) folder includes partitions of several small ordinal datasets for code testing purposes. We have also collected 44 publicly available ordinal datasets from various sources. These can be downloaded from: [datasets-OR-review](www.uco.es/grupos/ayrna/ucobigfiles/datasets-orreview.zip). The link also contains data partitions as used in different papers in the literature to ease experimental comparison. The characteristics of these datasets are the following:
+The [example-data](exampledata) folder includes partitions of several small ordinal datasets for code testing purposes. We have also collected 44 publicly available ordinal datasets from various sources. These can be downloaded from: [datasets-OR-review](http://www.uco.es/grupos/ayrna/ucobigfiles/datasets-orreview.zip). The link also contains data partitions as used in different papers in the literature to ease experimental comparison. The characteristics of these datasets are the following:
 
 | Dataset	|	\#Pat.	|	\#Attr.	|	\#Classes	|	Class distribution	|
 | --- | --- | --- | --- | --- |

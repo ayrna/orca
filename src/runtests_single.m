@@ -11,9 +11,11 @@
 % add an script just place it in the test/singletests folder following
 % other examples
 %
-
+clear;
 addpath Algorithms
 addpath Measures
+addpath Utils
+
 tests_dir = ['tests' filesep 'singletests'];
 eval(['addpath ' tests_dir])
 
@@ -34,7 +36,7 @@ for i=1:length(files)
     if (exist ('OCTAVE_VERSION', 'builtin') > 0)
       clear -x tests_dir files i train test
     else
-		  clearvars -except tests_dir files i train test 
+		  clearvars -except tests_dir files i train test
     end
     fprintf('==============================================\n');
     cmd = files(i).name;
@@ -48,4 +50,5 @@ fprintf('\nAll tests ended successfully\n')
 
 rmpath Algorithms
 rmpath Measures
+rmpath Utils
 eval(['rmpath ' tests_dir])

@@ -1,5 +1,5 @@
 #!/bin/bash
-## runtestssingle.m is already tested in install_octave.m and install_matlab.m
+## runtests_single.m is already tested in install_octave.m and install_matlab.m
 ## Test notebooks
 
 FILES=*.ipynb
@@ -28,6 +28,10 @@ do
 	  echo "Test notebook $i OK in logs"
 	else
 	  echo "Test notebook $i ERROR in logs!" 
+	  echo "Contents of stderr"
+	  echo "------------------"
+	  cat test.err
+	  echo "------------------"
 	  exit $n_errors
 	fi
 	

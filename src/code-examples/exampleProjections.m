@@ -22,14 +22,14 @@ param.u = 0.001;
 
 
 % Run algorithm
-info1 = kdlorAlgorithm.runAlgorithm(train,test,param);
+info1 = kdlorAlgorithm.fitpredict(train,test,param);
 amaeTest1 = AMAE.calculateMetric(test.targets,info1.predictedTest);
 % Build legend text
 msg{1} = sprintf('KDLOR k=%f. AMAE=%f', param.k, amaeTest1);
 
 % Increase kernel width
 param.k = 10;
-info2 = kdlorAlgorithm.runAlgorithm(train,test,param);
+info2 = kdlorAlgorithm.fitpredict(train,test,param);
 amaeTest2 = AMAE.calculateMetric(test.targets,info2.predictedTest);
 msg{2} = sprintf('KDLOR k=%f. AMAE=%f', param.k, amaeTest2);
 

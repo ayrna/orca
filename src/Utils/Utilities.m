@@ -52,8 +52,8 @@ classdef Utilities < handle
             %   Utilities.runExperiments('tests/cvtests-30-holdout/kdlor.ini', 'parallel', 1, 'closepool', false)
             %   Utilities.runExperiments('tests/cvtests-30-holdout/svorim.ini', 'parallel', 1, 'closepool', false)
             %
-            addpath(fullfile(fileparts(which('Utilities.m')),'Measures'));
-            addpath(fullfile(fileparts(which('Utilities.m')),'Algorithms'));
+            addpath(fullfile(fileparts(which('Utilities.m')),'../Measures'));
+            addpath(fullfile(fileparts(which('Utilities.m')),'../Algorithms'));
             
             disp('Setting up experiments...');
             
@@ -67,17 +67,18 @@ classdef Utilities < handle
             op = Utilities.parseParArgs(varargin);
             myExperiment = Experiment;
             
+            report_sum = zeros(numel(expFiles),1);
+            
             if op.parallel
                 Utilities.preparePool(op.numcores)
                 if (exist ('OCTAVE_VERSION', 'builtin') > 0)
                     logsCell = cell(numel(expFiles),1);
                     logsCell(:) = logsDir;
-                    parcellfun(op.numcores,@(varargin) Utilities.octaveParallelAuxFunction(varargin{:}),num2cell(expFiles),logsCell);
+                    report_sum = parcellfun(op.numcores,@(varargin) Utilities.octaveParallelAuxFunction(varargin{:}),num2cell(expFiles),logsCell);
                 else
                     parfor i=1:numel(expFiles)
                         if ~strcmp(expFiles(i).name(end), '~')
-                            disp(['Running experiment ', expFiles(i).name]);
-                            myExperiment.launch([logsDir '/' expFiles(i).name]);
+                            report_sum(i) = Utilities.octaveParallelAuxFunction(expFiles(i), logsDir);
                         end
                     end
                 end
@@ -86,24 +87,27 @@ classdef Utilities < handle
             else
                 for i=1:numel(expFiles)
                     if ~strcmp(expFiles(i).name(end), '~')
-                        disp(['Running experiment ', expFiles(i).name]);
-                        myExperiment.launch([logsDir '/' expFiles(i).name]);
+                        %disp(['Running experiment ', expFiles(i).name]);
+                        %myExperiment.launch([logsDir '/' expFiles(i).name]);
+                        report_sum(i) = Utilities.octaveParallelAuxFunction(expFiles(i), logsDir);
                     end
                 end
             end
             
             disp('Calculating results...');
+            % If any ini file activates the flag, the results are processed
+            % with the 'report_sum = 1' flag. 
+            report_sum_flag = any(report_sum);
             % Train results (note last argument)
-            
-            Utilities.results([logsDir '/' 'Results'],'report_sum', myExperiment.report_sum, 'train', true);
+            Utilities.results([logsDir '/' 'Results'],'report_sum', report_sum_flag, 'train', true);
             % Test results
-            Utilities.results([logsDir '/' 'Results'], 'report_sum', myExperiment.report_sum);
-            %rmpath('Measures');
-            %rmpath('Algorithms');
+            Utilities.results([logsDir '/' 'Results'], 'report_sum', report_sum_flag);
+            %rmpath('../Measures');
+            %rmpath('../Algorithms');
             
         end
         
-        function octaveParallelAuxFunction(experimentToRun,logsDir)
+        function [report_sum] = octaveParallelAuxFunction(experimentToRun,logsDir)
             % OCTAVEPARALLELAUXFUNCTION Function for running one experiment file
             %   It is used in Octave because it Octave does not have parfor
             %   OCTAVEPARALLELAUXFUNCTION(EXPERIMENT,LOGSDIR) run the experiment
@@ -112,6 +116,7 @@ classdef Utilities < handle
                 myExperiment = Experiment;
                 disp(['Running experiment ', experimentToRun.name]);
                 myExperiment.launch([logsDir '/' experimentToRun.name]);
+                report_sum = myExperiment.report_sum;
             end
         end
         
@@ -138,8 +143,8 @@ classdef Utilities < handle
             %   MEASURES/MMAE, MEASURES/GM, MEASURES/MS, MEASURES/Spearman,
             %   MEASURES/Tkendall, MEASURES/Wkappa
             
-            addpath(fullfile(fileparts(which('Utilities.m')),'Measures'));
-            addpath(fullfile(fileparts(which('Utilities.m')),'Algorithms'));
+            addpath(fullfile(fileparts(which('Utilities.m')),'../Measures'));
+            addpath(fullfile(fileparts(which('Utilities.m')),'../Algorithms'));
             
             opt.train = false;
             opt.report_sum = false;
@@ -377,8 +382,8 @@ classdef Utilities < handle
                 end
                 
             end
-            rmpath(fullfile(fileparts(which('Utilities.m')),'Measures'));
-            rmpath(fullfile(fileparts(which('Utilities.m')),'Algorithms'));
+            rmpath(fullfile(fileparts(which('Utilities.m')),'../Measures'));
+            rmpath(fullfile(fileparts(which('Utilities.m')),'../Algorithms'));
             
             
         end
@@ -460,14 +465,14 @@ classdef Utilities < handle
         function runExperimentFold(confFile)
             % RUNEXPERIMENTFOLD(CONFFILE) launch a single experiment described in
             %   file CONFFILE
-            addpath(fullfile(fileparts(which('Utilities.m')),'Measures'));
-            addpath(fullfile(fileparts(which('Utilities.m')),'Algorithms'));
+            addpath(fullfile(fileparts(which('Utilities.m')),'../Measures'));
+            addpath(fullfile(fileparts(which('Utilities.m')),'../Algorithms'));
             
             auxiliar = Experiment;
             auxiliar.launch(confFile);
             
-            rmpath(fullfile(fileparts(which('Utilities.m')),'Measures'));
-            rmpath(fullfile(fileparts(which('Utilities.m')),'Algorithms'));
+            rmpath(fullfile(fileparts(which('Utilities.m')),'../Measures'));
+            rmpath(fullfile(fileparts(which('Utilities.m')),'../Algorithms'));
             
         end
     end

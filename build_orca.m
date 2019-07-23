@@ -1,17 +1,23 @@
-% This script builds ORCA for Octave/MATLAB. The script check dependencies and 
-% install required Octave packages if needed. In MATLAB, it looks for 
+% This script builds ORCA for Octave/MATLAB. The script check dependencies and
+% install required Octave packages if needed. In MATLAB, it looks for
 % toolboxes.
 % The script runs basic tests after installation.%
 
 disp('== Check and install dependencies... ==')
 % Build ORCA for Octave and install dependencies
 if (exist ('OCTAVE_VERSION', 'builtin') > 0)
-	ip = pkg ("list", "statistics");
+	ip = pkg ('list', 'statistics');
 	if length(ip) == 0
 		pkg install -forge io
 		pkg install -forge statistics
+	else
+		verref = '1.4.1';
+		if prod(ip{1,1}.version <= verref) == 0
+			pkg install -forge io
+			pkg install -forge statistics
+		end
 	end
-	ip = pkg ("list", "optim");
+	ip = pkg ('list', 'optim');
 	if length(ip) == 0
 		pkg install -forge struct
 		pkg install -forge optim
@@ -30,4 +36,5 @@ cd ..
 
 disp('== Run basic tests... == ')
 
-runtestssingle
+runtests_single
+cd ..
