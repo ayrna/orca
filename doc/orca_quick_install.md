@@ -82,7 +82,6 @@ All tests ended successfully
 To run the tests checking the experiment scripts (running time is ~123 seconds):
 
 ```MATLAB
->> cd src/
 >> runtests_cv
 ...
 Running experiment exp-svr-real1-toy-1
