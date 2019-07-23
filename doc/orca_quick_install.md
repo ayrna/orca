@@ -97,7 +97,7 @@ If any of these tests fail, please read the [detailed installation guide](orca_i
 
 ## Use ORCA as a toolbox
 
-The first of three tutorials covers the basic use of ORCA as a toolbox but also as an experimental framework: *'how to' tutorial* ([HTML](doc/orca_tutorial_1.html), [Jupyter Notebook](doc/orca_tutorial_1.ipynb), [MD](doc/orca_tutorial_1.md)).
+The first of three tutorials covers the basic use of ORCA as a toolbox but also as an experimental framework: *'how to' tutorial* ([HTML](orca_tutorial_1.html), [Jupyter Notebook](orca_tutorial_1.ipynb), [MD](orca_tutorial_1.md)).
 
 For instance, to use ORCA as a toolbox:
 
