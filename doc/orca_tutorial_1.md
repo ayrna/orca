@@ -1,20 +1,20 @@
 
-1. [How to use ORCA](#how-to-use-orca)
-	1. [Launch experiments through `ini` files](#launch-experiments-through-ini-files)
-		1. [Syntax of `ini` files](#syntax-of-ini-files)
-		2. [Hyper-parameter optimization](#hyper-parameter-optimization)
-		3. [Experimental results and reports](#experimental-results-and-reports)
-	2. [Running algorithms with ORCA API](#running-algorithms-with-orca-api)
-		1. [Run a pair of train-test files with fitpredict](#run-a-pair-of-train-test-files-with-fitpredict)
-		2. [Using performance metrics](#using-performance-metrics)
-		3. [Visualizing projections](#visualizing-projections)
-		4. [Visualizing projections and decision thresholds](#visualizing-projections-and-decision-thresholds)
-	3. [Using ORCA with your own datasets](#using-orca-with-your-own-datasets)
-		1. [Data format](#data-format)
-		2. [Data partitions for the experiments](#data-partitions-for-the-experiments)
-		3. [Generating your own partitions](#generating-your-own-partitions)
-		4. [Warning about highly imbalanced datasets](#warning-about-highly-imbalanced-datasets)
-2. [References](#references)
+- [How to use ORCA](#how-to-use-orca)
+  - [Launch experiments through `ini` files](#launch-experiments-through-ini-files)
+    - [Syntax of `ini` files](#syntax-of-ini-files)
+    - [Hyper-parameter optimization](#hyper-parameter-optimization)
+    - [Experimental results and reports](#experimental-results-and-reports)
+  - [Running algorithms with ORCA API](#running-algorithms-with-orca-api)
+    - [Run a pair of train-test files with fitpredict](#run-a-pair-of-train-test-files-with-fitpredict)
+    - [Using performance metrics](#using-performance-metrics)
+    - [Visualizing projections](#visualizing-projections)
+    - [Visualizing projections and decision thresholds](#visualizing-projections-and-decision-thresholds)
+  - [Using ORCA with your own datasets](#using-orca-with-your-own-datasets)
+    - [Data format](#data-format)
+    - [Data partitions for the experiments](#data-partitions-for-the-experiments)
+    - [Generating your own partitions](#generating-your-own-partitions)
+    - [Warning about highly imbalanced datasets](#warning-about-highly-imbalanced-datasets)
+- [References](#references)
 
 # How to use ORCA
 
@@ -633,7 +633,7 @@ amae2 = AMAE.calculateMetric(test.targets,info2.predictedTest)
     amae2 =  0.11670
 
 
-The whole example is available at [exampleProjections.m](../code-examples/exampleProjections.m).
+The whole example is available at [exampleProjections.m](../src/code-examples/exampleProjections.m).
 
 ### Visualizing projections and decision thresholds
 
@@ -666,7 +666,7 @@ hold off;
 ![png](orca_tutorial_1_files/orca_tutorial_1_38_0.png)
 
 
-The whole example is available at [exampleProjectionsThresholds.m](../code-examples/exampleProjectionsThresholds.m).
+The whole example is available at [exampleProjectionsThresholds.m](../src/code-examples/exampleProjectionsThresholds.m).
 
 ## Using ORCA with your own datasets
 
@@ -842,7 +842,7 @@ The source code of this example is in [exampleERAHHoldout.m](../src/code-example
 
 ---
 
-***Exercise 4***: train classifiers for both `ERA` and `ESL` datasets, using the same experimental design you used in the [experiment section](orca-tutorial.md#launch-experiments-through-ini-files). Compare the results obtained for both datasets. Generate bar plots for comparing accuracy and AMAE. Which one is better classified? Which one is better ordered?
+***Exercise 4***: train classifiers for both `ERA` and `ESL` datasets, using the same experimental design you used in the [experiment section](orca_tutorial_1.md#launch-experiments-through-ini-files). Compare the results obtained for both datasets. Generate bar plots for comparing accuracy and AMAE. Which one is better classified? Which one is better ordered?
 
 ---
 
