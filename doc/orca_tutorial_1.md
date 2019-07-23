@@ -168,13 +168,13 @@ Utilities.runExperiments('tutorial/config-files/pom.ini')
     Running experiment exp-pom-tutorial-toy-8.ini
     Running experiment exp-pom-tutorial-toy-9.ini
     Calculating results...
-    Experiments/exp-2019-5-6-18-34-3/Results/pasture-pom-tutorial/dataset
-    Experiments/exp-2019-5-6-18-34-3/Results/tae-pom-tutorial/dataset
-    Experiments/exp-2019-5-6-18-34-3/Results/toy-pom-tutorial/dataset
-    Experiments/exp-2019-5-6-18-34-3/Results/pasture-pom-tutorial/dataset
-    Experiments/exp-2019-5-6-18-34-3/Results/tae-pom-tutorial/dataset
-    Experiments/exp-2019-5-6-18-34-3/Results/toy-pom-tutorial/dataset
-    ans = Experiments/exp-2019-5-6-18-34-3
+    Experiments/exp-2019-7-23-10-53-40/Results/pasture-pom-tutorial/dataset
+    Experiments/exp-2019-7-23-10-53-40/Results/tae-pom-tutorial/dataset
+    Experiments/exp-2019-7-23-10-53-40/Results/toy-pom-tutorial/dataset
+    Experiments/exp-2019-7-23-10-53-40/Results/pasture-pom-tutorial/dataset
+    Experiments/exp-2019-7-23-10-53-40/Results/tae-pom-tutorial/dataset
+    Experiments/exp-2019-7-23-10-53-40/Results/toy-pom-tutorial/dataset
+    ans = Experiments/exp-2019-7-23-10-53-40
 
 
 As can be observed, ORCA analyses all the files included in the folder of the dataset, where training and test partitions are included (a pair of files `train_dataset.X` and `test_dataset.X` for each dataset, where `X` is the number of partition). For each partition, a model is trained on training data and tested on test data.
@@ -199,13 +199,13 @@ Utilities.runExperiments('tutorial/config-files/svc1v1-3holdout.ini')
     Running experiment exp-svorim-mae-tutorial-toy-2.ini
     Running experiment exp-svorim-mae-tutorial-toy-3.ini
     Calculating results...
-    Experiments/exp-2019-5-6-18-34-21/Results/pasture-svorim-mae-tutorial/dataset
-    Experiments/exp-2019-5-6-18-34-21/Results/tae-svorim-mae-tutorial/dataset
-    Experiments/exp-2019-5-6-18-34-21/Results/toy-svorim-mae-tutorial/dataset
-    Experiments/exp-2019-5-6-18-34-21/Results/pasture-svorim-mae-tutorial/dataset
-    Experiments/exp-2019-5-6-18-34-21/Results/tae-svorim-mae-tutorial/dataset
-    Experiments/exp-2019-5-6-18-34-21/Results/toy-svorim-mae-tutorial/dataset
-    ans = Experiments/exp-2019-5-6-18-34-21
+    Experiments/exp-2019-7-23-10-54-2/Results/pasture-svorim-mae-tutorial/dataset
+    Experiments/exp-2019-7-23-10-54-2/Results/tae-svorim-mae-tutorial/dataset
+    Experiments/exp-2019-7-23-10-54-2/Results/toy-svorim-mae-tutorial/dataset
+    Experiments/exp-2019-7-23-10-54-2/Results/pasture-svorim-mae-tutorial/dataset
+    Experiments/exp-2019-7-23-10-54-2/Results/tae-svorim-mae-tutorial/dataset
+    Experiments/exp-2019-7-23-10-54-2/Results/toy-svorim-mae-tutorial/dataset
+    ans = Experiments/exp-2019-7-23-10-54-2
     Setting up experiments...
     Running experiment exp-svc1v1-mae-tutorial-pasture-1.ini
     Running experiment exp-svc1v1-mae-tutorial-pasture-2.ini
@@ -217,13 +217,13 @@ Utilities.runExperiments('tutorial/config-files/svc1v1-3holdout.ini')
     Running experiment exp-svc1v1-mae-tutorial-toy-2.ini
     Running experiment exp-svc1v1-mae-tutorial-toy-3.ini
     Calculating results...
-    Experiments/exp-2019-5-6-18-34-27/Results/pasture-svc1v1-mae-tutorial/dataset
-    Experiments/exp-2019-5-6-18-34-27/Results/tae-svc1v1-mae-tutorial/dataset
-    Experiments/exp-2019-5-6-18-34-27/Results/toy-svc1v1-mae-tutorial/dataset
-    Experiments/exp-2019-5-6-18-34-27/Results/pasture-svc1v1-mae-tutorial/dataset
-    Experiments/exp-2019-5-6-18-34-27/Results/tae-svc1v1-mae-tutorial/dataset
-    Experiments/exp-2019-5-6-18-34-27/Results/toy-svc1v1-mae-tutorial/dataset
-    ans = Experiments/exp-2019-5-6-18-34-27
+    Experiments/exp-2019-7-23-10-54-11/Results/pasture-svc1v1-mae-tutorial/dataset
+    Experiments/exp-2019-7-23-10-54-11/Results/tae-svc1v1-mae-tutorial/dataset
+    Experiments/exp-2019-7-23-10-54-11/Results/toy-svc1v1-mae-tutorial/dataset
+    Experiments/exp-2019-7-23-10-54-11/Results/pasture-svc1v1-mae-tutorial/dataset
+    Experiments/exp-2019-7-23-10-54-11/Results/tae-svc1v1-mae-tutorial/dataset
+    Experiments/exp-2019-7-23-10-54-11/Results/toy-svc1v1-mae-tutorial/dataset
+    ans = Experiments/exp-2019-7-23-10-54-11
 
 
 Once the experiments are finished, the corresponding results can be found in the `Experiments` subfolder, as described in the [corresponding section](#Experimental-results-and-reports) of this tutorial.
@@ -633,7 +633,7 @@ amae2 = AMAE.calculateMetric(test.targets,info2.predictedTest)
     amae2 =  0.11670
 
 
-The whole example is available at [exampleProjections.m](../code-examples/exampleProjections.m).
+The whole example is available at [exampleProjections.m](../src/code-examples/exampleProjections.m).
 
 ### Visualizing projections and decision thresholds
 
@@ -666,7 +666,7 @@ hold off;
 ![png](orca_tutorial_1_files/orca_tutorial_1_38_0.png)
 
 
-The whole example is available at [exampleProjectionsThresholds.m](../code-examples/exampleProjectionsThresholds.m).
+The whole example is available at [exampleProjectionsThresholds.m](../src/code-examples/exampleProjectionsThresholds.m).
 
 ## Using ORCA with your own datasets
 
@@ -842,7 +842,7 @@ The source code of this example is in [exampleERAHHoldout.m](../src/code-example
 
 ---
 
-***Exercise 4***: train classifiers for both `ERA` and `ESL` datasets, using the same experimental design you used in the [experiment section](orca-tutorial.md#launch-experiments-through-ini-files). Compare the results obtained for both datasets. Generate bar plots for comparing accuracy and AMAE. Which one is better classified? Which one is better ordered?
+***Exercise 4***: train classifiers for both `ERA` and `ESL` datasets, using the same experimental design you used in the [experiment section](orca_tutorial_1.md#launch-experiments-through-ini-files). Compare the results obtained for both datasets. Generate bar plots for comparing accuracy and AMAE. Which one is better classified? Which one is better ordered?
 
 ---
 
