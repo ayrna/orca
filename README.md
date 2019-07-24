@@ -194,7 +194,7 @@ ORCA makes use of the following external software implementations. For some of t
 
 # Other contributors
 Apart from the authors of the paper and the authors of the implementations referenced in "External software" section, the following persons also contributed to ORCA framework:
-- [Juan Martín Jiménez Alcaide](https://es.linkedin.com/pub/juan-martín-jiménez/89/824/a31) developed the Matlab wrappers for the SVORIM and SVOREX algorithms.
+- [Juan Martín Jiménez Alcaide](http://www.ic.uma.es/contenidos/ficha_personal.action?id=1034) developed the Matlab wrappers for the SVORIM and SVOREX algorithms.
 
 # References
 - [1] C.-W. Hsu and C.-J. Lin, “A comparison of methods for multi-class support vector machines,” IEEE Transaction on Neural Networks, vol. 13, no. 2, pp. 415–425, 2002.
