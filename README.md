@@ -33,17 +33,32 @@ To help these purposes, ORCA is mainly used through **[configuration files](doc/
 
 # Cite ORCA
 
-We have written a scientific software paper (unpublished). In the meanwhile, if you use this framework please cite the following work
+If you use ORCA and/or associated datasets, please cite the following works: 
 
 ```
-P.A. Gutiérrez, M. Pérez-Ortiz, J. Sánchez-Monedero, F. Fernández-Navarro and C. Hervás-Martínez (2016),
+J. Sánchez-Monedero, P. A. Gutiérrez and M. Pérez-Ortiz, 
+"ORCA: A Matlab/Octave Toolbox for Ordinal Regression", 
+Journal of Machine Learning Research. Vol. 20. Issue 125. 2019. http://jmlr.org/papers/v20/18-349.html
+
+P.A. Gutiérrez, M. Pérez-Ortiz, J. Sánchez-Monedero, F. Fernández-Navarro and C. Hervás-Martínez,
 "Ordinal regression methods: survey and experimental study",
-IEEE Transactions on Knowledge and Data Engineering. Vol. 28. Issue 1
+IEEE Transactions on Knowledge and Data Engineering. Vol. 28. Issue 1. 2016. http://dx.doi.org/10.1109/TKDE.2015.2457911
 ```
 
 Bibtex entry:
 
 ```
+@article{JMLR:v20:18-349,
+  author  = {Javier S{{\'a}}nchez-Monedero and Pedro A. Guti{{\'e}}rrez and Mar{{\'i}}a P{{\'e}}rez-Ortiz},
+  title   = {ORCA: A Matlab/Octave Toolbox for Ordinal Regression},
+  journal = {Journal of Machine Learning Research},
+  year    = {2019},
+  volume  = {20},
+  number  = {125},
+  pages   = {1-5},
+  url     = {http://jmlr.org/papers/v20/18-349.html}
+}
+
 @Article{Gutierrez2015,
   Title                    = {Ordinal regression methods: survey and experimental study},
   Author                   = {P.A. Guti\'errez and M. P\'erez-Ortiz and J. S\'anchez-Monedero and  F. Fernandez-Navarro and C. Herv\'as-Mart\'inez},
