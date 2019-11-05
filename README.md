@@ -40,9 +40,8 @@ J. Sánchez-Monedero, P. A. Gutiérrez and M. Pérez-Ortiz,
 "ORCA: A Matlab/Octave Toolbox for Ordinal Regression", 
 Journal of Machine Learning Research. Vol. 20. Issue 125. 2019. http://jmlr.org/papers/v20/18-349.html
 
-P.A. Gutiérrez, M. Pérez-Ortiz, J. Sánchez-Monedero, F. Fernández-Navarro and C. Hervás-Martínez,
-"Ordinal regression methods: survey and experimental study",
-IEEE Transactions on Knowledge and Data Engineering. Vol. 28. Issue 1. 2016. http://dx.doi.org/10.1109/TKDE.2015.2457911
+P.A. Gutiérrez, M. Pérez-Ortiz, J. Sánchez-Monedero, F. Fernandez-Navarro and C. Hervás-Martínez.
+"Ordinal regression methods: survey and experimental study", IEEE Transactions on Knowledge and Data Engineering, Vol. 28, January, 2016, pp. 127-146. http://dx.doi.org/10.1109/TKDE.2015.2457911
 ```
 
 Bibtex entry:
@@ -66,7 +65,8 @@ Bibtex entry:
   Year                     = {2016},
   Url                      = {http://dx.doi.org/10.1109/TKDE.2015.2457911},
   Volume                   = {28},
-  Number                   = {1}
+  Number                   = {1},
+  pages                    = {127-146},
 }
 ```
 
