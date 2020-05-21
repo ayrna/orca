@@ -3413,8 +3413,12 @@ out2:
 
 void svm_free_model_content(svm_model* model_ptr)
 {
-	if(model_ptr->free_sv && model_ptr->l > 0 && model_ptr->SV != NULL)
-		free((void *)(model_ptr->SV[0]));
+	/*if(model_ptr->free_sv && model_ptr->l > 0 && model_ptr->SV != NULL)
+		free((void *)(model_ptr->SV[0]));*/
+    if(model_ptr->free_sv && model_ptr->l > 0 && model_ptr->SV != NULL){
+        for(int i=0;i<model_ptr->l;i++)
+			free((void *)(model_ptr->SV[i]));
+    }
 	if(model_ptr->sv_coef)
 	{
 		
