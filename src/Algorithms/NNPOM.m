@@ -175,9 +175,9 @@ classdef NNPOM < Algorithm
             % CONVERTTHRESHOLDS transforms thresholds to perform
             % unconstrained optimization
             % thresholds(1) = thresholds_param(1)
-            % thresholds(2) = thresholds_param(1) + thresholds_param(1)^2
-            % thresholds(3) = thresholds_param(1) + thresholds_param(1)^2
-            %               + thresholds_param(2)^2
+            % thresholds(2) = thresholds_param(1) + thresholds_param(2)^2
+            % thresholds(3) = thresholds_param(1) + thresholds_param(2)^2
+            %               + thresholds_param(3)^2
             % ...
             thresholds_pquad=thresholds_param.^2;
             thresholds = sum(tril(ones(num_labels-1,num_labels-1)).*...
