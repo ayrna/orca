@@ -34,7 +34,7 @@ To help these purposes, ORCA is mainly used through **[configuration files](doc/
 
 # skordinal: Ordinal regression in Python
 
-There is a Python scikit-learn-compatible library that includes most of the methods and metrics available in ORCA.: [skordinal](https://github.com/ayrna/skordinal).
+There is a Python scikit-learn-compatible library that includes most of the methods and metrics available in ORCA: [skordinal](https://github.com/ayrna/skordinal).
 
 # Cite ORCA
 
