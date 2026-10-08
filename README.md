@@ -5,6 +5,7 @@
 <!-- TOC depthFrom:1 depthTo:6 withLinks:1 updateOnSave:1 orderedList:1 -->
 
 - [ORCA](#orca)
+- [skordinal: Ordinal regression in Python](#skordinal-ordinal-regression-in-python)
 - [Cite ORCA](#cite-orca)
 - [Installation, tutorials and documentation](#installation-tutorials-and-documentation)
 - [Methods included](#methods-included)
@@ -30,6 +31,10 @@ As a generic experimental framework, its two main objectives are:
 2. To provide an easy way of including new algorithms into the framework by simply defining the training and test methods and the hyperparameters of the algorithms.
 
 To help these purposes, ORCA is mainly used through **[configuration files](doc/orca_tutorial_1.md#launch-experiments-through-ini-files)** that describe experiments, but the methods can also be easily used through a common **[API](doc/orca_tutorial_1.md#running-algorithms-with-orca-api)**.
+
+# skordinal: Ordinal regression in Python
+
+There is a Python scikit-learn-compatible library that includes most of the methods and metrics available in ORCA.: [skordinal](https://github.com/ayrna/skordinal).
 
 # Cite ORCA
 
